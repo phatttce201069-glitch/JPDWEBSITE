@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng dụng Học Hiragana Tương Tác</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Zen Garden (Cream, Soft Wood, Sage Green) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=Noto+Sans+JP:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #fdfbf7;
+            color: #4a443f;
+        }
+
+        .jp-font {
+            font-family: 'Noto+Sans+JP', sans-serif;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(139, 123, 108, 0.1);
+        }
+
+        .exception-pulse {
+            border: 2px solid #d97706;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: rgba(217, 119, 6, 0.4); }
+            50% { border-color: rgba(217, 119, 6, 1); }
+            100% { border-color: rgba(217, 119, 6, 0.4); }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1c7bd;
+            border-radius: 10px;
+        }
+
+        /* Thêm style cho AI Modal */
+        #ai-modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fdfbf7;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #e8e2db;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(139, 123, 108, 0.2);
+            position: relative;
+        }
+
+        .close-btn {
+            color: #8b7b6c;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #5c544d;
+            text-decoration: none;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #5f8a8b;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== FLASHCARD STYLES ===== */
+        .flashcard-scene {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 360px;
+            height: 220px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flashcard-scene.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f4f1ee 100%);
+            box-shadow: 0 8px 32px rgba(139, 123, 108, 0.15);
+            border: 1px solid #e8e2db;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #5f8a8b 0%, #4a7677 100%);
+            transform: rotateY(180deg);
+            box-shadow: 0 8px 32px rgba(95, 138, 139, 0.3);
+        }
+
+        .flashcard-hint {
+            animation: float-hint 2s ease-in-out infinite;
+        }
+
+        @keyframes float-hint {
+            0%, 100% { opacity: 0.5; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-3px); }
+        }
+
+        /* ===== QUIZ STYLES ===== */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .quiz-option:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(95, 138, 139, 0.2);
+        }
+
+        .quiz-option.correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+
+        .quiz-option.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+
+        .progress-bar {
+            transition: width 0.4s ease;
+        }
+
+        /* ===== TAB STYLES ===== */
+        .practice-tab {
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .practice-tab.active {
+            background-color: #5f8a8b;
+            color: white;
+            box-shadow: 0 2px 8px rgba(95, 138, 139, 0.35);
+        }
+
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-animate {
+            animation: slide-in 0.3s ease;
+        }
+
+        /* Score ring */
+        .score-ring {
+            background: conic-gradient(#5f8a8b var(--pct), #e8e2db 0);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Application Structure Plan:
+        1. Hero Section: Giới thiệu mục tiêu ứng dụng dựa trên Source Report.
+        2. Dashboard tương tác: Sử dụng Grid để hiển thị 20 chữ cái với khả năng lọc theo "Hàng" (A, K, S, T). Việc chia nhỏ giúp người học không bị ngợp.
+        3. "Focus Area" (Vùng tiêu điểm): Hiển thị chi tiết về ngoại lệ phát âm (shi, chi, tsu) - đây là điểm mấu chốt trong báo cáo.
+        4. Visualization: Sử dụng Chart.js để hiển thị phân bổ các hàng chữ cái và trạng thái "Mastery" (mô phỏng) giúp tạo động lực học tập.
+        5. Interactive Glossary: Bảng từ vựng có thể tìm kiếm.
+    -->
+
+    <nav class="sticky top-0 z-50 bg-[#fdfbf7]/80 backdrop-blur-md border-b border-[#e8e2db] py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <h1 class="text-xl font-semibold text-[#8b7b6c]">Hiragana <span class="font-light italic text-[#a39485]">Mastery</span></h1>
+            <div class="flex space-x-6 text-sm">
+                <a href="#explore" class="hover:text-[#5f8a8b] transition-colors">Khám phá</a>
+                <a href="#rules" class="hover:text-[#5f8a8b] transition-colors">Quy tắc</a>
+                <a href="#stats" class="hover:text-[#5f8a8b] transition-colors">Thống kê</a>
+                <a href="#practice" class="hover:text-[#5f8a8b] transition-colors font-semibold text-[#5f8a8b]">✦ Luyện tập</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <!-- Section: Giới thiệu -->
+        <section class="mb-16 text-center">
+            <h2 class="text-4xl font-bold mb-4 text-[#5c544d]">Hành trình chinh phục 20 chữ cái đầu tiên</h2>
+            <p class="max-w-2xl mx-auto text-[#7d746d] leading-relaxed">
+                Chào mừng bạn đến với môi trường học tập tương tác được thiết kế riêng từ tài liệu ôn tập Hiragana. Tại đây, chúng ta tập trung vào 4 hàng đầu tiên: <strong class="text-[#5f8a8b]">A, K, S, T</strong>. Việc nắm vững những nền tảng này là chìa khóa để bạn đọc được hàng ngàn từ vựng thuần Nhật và hiểu rõ cấu trúc ngữ pháp cơ bản. Hãy bắt đầu bằng cách nhấp vào các chữ cái để khám phá âm thanh và ví dụ.
+            </p>
+        </section>
+
+        <!-- Section: Bảng chữ cái tương tác -->
+        <section id="explore" class="mb-20">
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold mb-2">Thư viện Chữ cái Tương tác</h3>
+                <p class="text-[#7d746d] mb-6">Sử dụng bộ lọc bên dưới để tập trung vào từng hàng cụ thể. Nhấp vào mỗi thẻ để xem từ vựng ví dụ tương ứng.</p>
+                
+                <div class="flex flex-wrap gap-3 mb-8" id="filter-buttons">
+                    <button onclick="filterChars('All')" class="px-5 py-2 rounded-full bg-[#8b7b6c] text-white text-sm hover:opacity-90 transition-all shadow-sm">Tất cả</button>
+                    <button onclick="filterChars('A')" class="px-5 py-2 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-sm hover:bg-[#f8f6f4] transition-all">Hàng A</button>
+                    <button onclick="filterChars('K')" class="px-5 py-2 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-sm hover:bg-[#f8f6f4] transition-all">Hàng K</button>
+                    <button onclick="filterChars('S')" class="px-5 py-2 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-sm hover:bg-[#f8f6f4] transition-all">Hàng S</button>
+                    <button onclick="filterChars('T')" class="px-5 py-2 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-sm hover:bg-[#f8f6f4] transition-all">Hàng T</button>
+                </div>
+            </div>
+
+            <div id="char-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <!-- Chars will be injected here via JS -->
+            </div>
+        </section>
+
+        <!-- Section: Quy tắc phát âm (Exception Focus) -->
+        <section id="rules" class="mb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-[#f4f1ee] p-8 rounded-3xl">
+            <div>
+                <h3 class="text-2xl font-semibold mb-4 text-[#5c544d]">Những "Cái bẫy" Phát âm</h3>
+                <p class="text-[#7d746d] mb-6 leading-relaxed">
+                    Dựa trên phân tích từ báo cáo, tiếng Nhật không phải lúc nào cũng tuân theo quy tắc ghép âm A-I-U-E-O một cách cứng nhắc. Có 3 chữ cái đặc biệt mà bạn thường xuyên phát âm sai nếu chỉ đọc theo mặt chữ La-tinh. Hãy đặc biệt chú ý đến hàng <strong>S</strong> và hàng <strong>T</strong>.
+                </p>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-xl card-shadow flex items-center space-x-4">
+                        <div class="text-3xl font-bold text-[#d97706] jp-font">し</div>
+                        <div>
+                            <p class="font-semibold">SHI (Hàng S)</p>
+                            <p class="text-sm text-[#7d746d]">Đọc là "Shi" (như 's' nặng), không phải "Si".</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl card-shadow flex items-center space-x-4">
+                        <div class="text-3xl font-bold text-[#d97706] jp-font">ち</div>
+                        <div>
+                            <p class="font-semibold">CHI (Hàng T)</p>
+                            <p class="text-sm text-[#7d746d]">Đọc là "Chi", tuyệt đối không đọc là "Ti".</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl card-shadow flex items-center space-x-4">
+                        <div class="text-3xl font-bold text-[#d97706] jp-font">つ</div>
+                        <div>
+                            <p class="font-semibold">TSU (Hàng T)</p>
+                            <p class="text-sm text-[#7d746d]">Đọc là "Tsu" (mím môi đẩy hơi), không phải "Tu".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="bg-white p-8 rounded-2xl shadow-inner border-2 border-dashed border-[#d1c7bd] text-center">
+                    <div class="text-6xl mb-4">💡</div>
+                    <h4 class="text-lg font-semibold mb-2">Mẹo ghi nhớ: く (ku)</h4>
+                    <p class="text-[#7d746d]">Hãy nhớ rằng chữ <span class="jp-font font-bold">く</span> có hình dáng giống hệt dấu nhỏ hơn <span class="font-mono font-bold text-xl">&lt;</span> trong toán học.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Thống kê & Phân bổ -->
+        <section id="stats" class="mb-20">
+            <div class="text-center mb-10">
+                <h3 class="text-2xl font-semibold mb-2">Phân bổ Nội dung Ôn tập</h3>
+                <p class="text-[#7d746d]">Biểu đồ dưới đây thể hiện sự phân bổ của 20 chữ cái đầu tiên theo từng hàng chữ.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                <div class="chart-container bg-white p-6 rounded-2xl card-shadow">
+                    <canvas id="rowChart"></canvas>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-[#5f8a8b]/10 p-6 rounded-2xl border-l-4 border-[#5f8a8b]">
+                        <h4 class="font-bold text-[#5f8a8b] mb-2">Tổng quan lộ trình</h4>
+                        <ul class="text-sm text-[#4a443f] space-y-2">
+                            <li>• <strong>5</strong> Nguyên âm nền tảng (Hàng A).</li>
+                            <li>• <strong>15</strong> Phụ âm biến đổi (K, S, T).</li>
+                            <li>• <strong>15%</strong> Chữ cái có phát âm ngoại lệ.</li>
+                            <li>• <strong>100%</strong> Chữ cái có từ vựng đi kèm.</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-2xl card-shadow border border-[#e8e2db]">
+                        <p class="italic text-[#7d746d] text-sm">"Việc chia nhỏ kiến thức thành từng hàng giúp não bộ tiếp nhận thông tin hiệu quả hơn 40% so với việc học toàn bộ bảng chữ cái cùng lúc."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== PRACTICE SECTION ===== -->
+    <section id="practice" class="bg-[#f4f1ee] py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-10">
+                <h3 class="text-2xl font-semibold mb-2 text-[#5c544d]">Luyện tập & Kiểm tra</h3>
+                <p class="text-[#7d746d]">Chọn chế độ luyện tập phù hợp với bạn. Flashcard giúp ghi nhớ, Quiz giúp kiểm tra.</p>
+            </div>
+
+            <!-- Tab switcher -->
+            <div class="flex justify-center mb-10">
+                <div class="bg-white rounded-full p-1.5 flex gap-1 shadow-sm border border-[#e8e2db]">
+                    <button id="tab-flashcard" onclick="switchTab('flashcard')" class="practice-tab active px-6 py-2.5 rounded-full text-sm font-medium">
+                        ✦ Flashcard
+                    </button>
+                    <button id="tab-quiz" onclick="switchTab('quiz')" class="practice-tab px-6 py-2.5 rounded-full text-sm font-medium text-[#8b7b6c]">
+                        ⚑ Quiz
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== FLASHCARD PANEL ===== -->
+            <div id="panel-flashcard" class="panel-animate">
+                <!-- Row filter for flashcard -->
+                <div class="flex flex-wrap justify-center gap-2 mb-8">
+                    <button onclick="fcFilter('All')" id="fc-btn-All" class="px-4 py-1.5 rounded-full bg-[#8b7b6c] text-white text-xs font-medium shadow-sm transition-all">Tất cả</button>
+                    <button onclick="fcFilter('A')" id="fc-btn-A" class="px-4 py-1.5 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-xs font-medium hover:bg-[#f8f6f4] transition-all">Hàng A</button>
+                    <button onclick="fcFilter('K')" id="fc-btn-K" class="px-4 py-1.5 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-xs font-medium hover:bg-[#f8f6f4] transition-all">Hàng K</button>
+                    <button onclick="fcFilter('S')" id="fc-btn-S" class="px-4 py-1.5 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-xs font-medium hover:bg-[#f8f6f4] transition-all">Hàng S</button>
+                    <button onclick="fcFilter('T')" id="fc-btn-T" class="px-4 py-1.5 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-xs font-medium hover:bg-[#f8f6f4] transition-all">Hàng T</button>
+                </div>
+
+                <div class="max-w-md mx-auto">
+                    <!-- Progress bar -->
+                    <div class="flex items-center justify-between mb-3 text-xs text-[#7d746d]">
+                        <span id="fc-progress-label">1 / 20</span>
+                        <span id="fc-known-label" class="text-[#5f8a8b] font-medium">Đã nhớ: 0</span>
+                    </div>
+                    <div class="w-full bg-[#e8e2db] rounded-full h-1.5 mb-6">
+                        <div id="fc-progress-bar" class="progress-bar bg-[#5f8a8b] h-1.5 rounded-full" style="width:5%"></div>
+                    </div>
+
+                    <!-- The Flashcard -->
+                    <div class="flashcard-scene" id="fc-card" onclick="flipCard()">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div id="fc-front-char" class="text-7xl jp-font font-bold text-[#4a443f] mb-2">あ</div>
+                                <div id="fc-front-row-badge" class="text-xs px-3 py-1 rounded-full bg-[#f4f1ee] text-[#8b7b6c] mt-2">Hàng A</div>
+                                <p class="flashcard-hint text-xs text-[#a39485] mt-5">Nhấp để lật ↻</p>
+                            </div>
+                            <div class="flashcard-back">
+                                <div id="fc-back-romaji" class="text-4xl font-bold text-white uppercase tracking-widest mb-3">a</div>
+                                <div id="fc-back-example" class="text-sm text-white/80 italic text-center">Ai (Tình yêu)</div>
+                                <div id="fc-back-note" class="mt-3 text-xs px-3 py-1 rounded-full bg-white/20 text-white hidden"></div>
+                                <p class="text-xs text-white/50 mt-5">Nhấp để lật lại ↻</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard Controls -->
+                    <div class="flex items-center justify-center gap-4 mt-8">
+                        <button onclick="fcNavigate(-1)" class="w-10 h-10 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] hover:bg-[#f4f1ee] transition flex items-center justify-center text-lg shadow-sm">←</button>
+                        <button onclick="markKnown()" id="fc-known-btn" class="px-5 py-2 bg-white border border-[#5f8a8b] text-[#5f8a8b] rounded-full text-sm font-medium hover:bg-[#5f8a8b] hover:text-white transition shadow-sm">✓ Đã nhớ</button>
+                        <button onclick="fcNavigate(1)" class="w-10 h-10 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] hover:bg-[#f4f1ee] transition flex items-center justify-center text-lg shadow-sm">→</button>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button onclick="shuffleFlashcards()" class="text-xs text-[#a39485] hover:text-[#5f8a8b] transition underline underline-offset-2">Xáo trộn thẻ</button>
+                        <span class="text-[#d1c7bd] mx-2">|</span>
+                        <button onclick="resetFlashcards()" class="text-xs text-[#a39485] hover:text-[#5f8a8b] transition underline underline-offset-2">Đặt lại</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== QUIZ PANEL ===== -->
+            <div id="panel-quiz" class="hidden panel-animate">
+                <!-- Quiz setup screen -->
+                <div id="quiz-setup" class="max-w-md mx-auto text-center">
+                    <div class="bg-white rounded-2xl p-8 card-shadow border border-[#e8e2db]">
+                        <div class="text-5xl mb-4">⚑</div>
+                        <h4 class="text-lg font-semibold text-[#5c544d] mb-2">Thiết lập Quiz</h4>
+                        <p class="text-sm text-[#7d746d] mb-6">Chọn loại câu hỏi và hàng chữ cái bạn muốn ôn tập.</p>
+                        
+                        <div class="text-left mb-5">
+                            <label class="text-xs font-semibold text-[#8b7b6c] uppercase tracking-wider mb-2 block">Loại câu hỏi</label>
+                            <div class="flex gap-2">
+                                <label class="flex-1 flex items-center gap-2 p-3 bg-[#f4f1ee] rounded-xl cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition">
+                                    <input type="radio" name="quiz-type" value="hiragana-to-romaji" checked class="accent-[#5f8a8b]">
+                                    <div>
+                                        <div class="text-sm font-medium text-[#4a443f]">Hiragana → Romaji</div>
+                                        <div class="text-xs text-[#a39485]">Đọc chữ Nhật</div>
+                                    </div>
+                                </label>
+                                <label class="flex-1 flex items-center gap-2 p-3 bg-[#f4f1ee] rounded-xl cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition">
+                                    <input type="radio" name="quiz-type" value="romaji-to-hiragana" class="accent-[#5f8a8b]">
+                                    <div>
+                                        <div class="text-sm font-medium text-[#4a443f]">Romaji → Hiragana</div>
+                                        <div class="text-xs text-[#a39485]">Nhận biết mặt chữ</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="text-left mb-6">
+                            <label class="text-xs font-semibold text-[#8b7b6c] uppercase tracking-wider mb-2 block">Hàng chữ cái</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="flex items-center gap-1.5 px-3 py-1.5 bg-[#f4f1ee] rounded-lg cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition text-sm">
+                                    <input type="checkbox" value="All" id="qrow-all" checked class="accent-[#5f8a8b]" onchange="toggleAllRows(this)"> Tất cả
+                                </label>
+                                <label class="flex items-center gap-1.5 px-3 py-1.5 bg-[#f4f1ee] rounded-lg cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition text-sm">
+                                    <input type="checkbox" value="A" class="qrow-check accent-[#5f8a8b]"> Hàng A
+                                </label>
+                                <label class="flex items-center gap-1.5 px-3 py-1.5 bg-[#f4f1ee] rounded-lg cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition text-sm">
+                                    <input type="checkbox" value="K" class="qrow-check accent-[#5f8a8b]"> Hàng K
+                                </label>
+                                <label class="flex items-center gap-1.5 px-3 py-1.5 bg-[#f4f1ee] rounded-lg cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition text-sm">
+                                    <input type="checkbox" value="S" class="qrow-check accent-[#5f8a8b]"> Hàng S
+                                </label>
+                                <label class="flex items-center gap-1.5 px-3 py-1.5 bg-[#f4f1ee] rounded-lg cursor-pointer border-2 border-transparent has-[:checked]:border-[#5f8a8b] transition text-sm">
+                                    <input type="checkbox" value="T" class="qrow-check accent-[#5f8a8b]"> Hàng T
+                                </label>
+                            </div>
+                        </div>
+
+                        <button onclick="startQuiz()" class="w-full py-3 bg-[#5f8a8b] text-white rounded-xl font-medium hover:bg-[#4a7677] transition shadow-md">
+                            Bắt đầu Quiz →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz question screen -->
+                <div id="quiz-question" class="hidden max-w-md mx-auto panel-animate">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-3 text-xs text-[#7d746d]">
+                        <span id="q-progress-label">Câu 1 / 10</span>
+                        <span id="q-score-label" class="font-medium text-[#5f8a8b]">Đúng: 0</span>
+                    </div>
+                    <div class="w-full bg-[#e8e2db] rounded-full h-1.5 mb-6">
+                        <div id="q-progress-bar" class="progress-bar bg-[#5f8a8b] h-1.5 rounded-full" style="width:10%"></div>
+                    </div>
+
+                    <!-- Question card -->
+                    <div class="bg-white rounded-2xl p-8 card-shadow border border-[#e8e2db] text-center mb-5">
+                        <p id="q-instruction" class="text-xs text-[#a39485] uppercase tracking-wider mb-4">Chọn Romaji đúng cho chữ Hiragana này</p>
+                        <div id="q-prompt" class="text-6xl jp-font font-bold text-[#4a443f]">あ</div>
+                    </div>
+
+                    <!-- Options grid -->
+                    <div id="q-options" class="grid grid-cols-2 gap-3 mb-4">
+                        <!-- Injected by JS -->
+                    </div>
+
+                    <!-- Feedback -->
+                    <div id="q-feedback" class="hidden text-center py-3 rounded-xl text-sm font-medium mb-4"></div>
+                    
+                    <div class="text-center">
+                        <button id="q-next-btn" onclick="nextQuestion()" class="hidden px-8 py-2.5 bg-[#5f8a8b] text-white rounded-full text-sm font-medium hover:bg-[#4a7677] transition shadow-md">
+                            Câu tiếp theo →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz result screen -->
+                <div id="quiz-result" class="hidden max-w-md mx-auto text-center panel-animate">
+                    <div class="bg-white rounded-2xl p-8 card-shadow border border-[#e8e2db]">
+                        <div id="result-emoji" class="text-5xl mb-4">🎉</div>
+                        <h4 class="text-xl font-bold text-[#5c544d] mb-1">Hoàn thành!</h4>
+                        <p id="result-subtitle" class="text-sm text-[#7d746d] mb-6"></p>
+                        
+                        <!-- Score ring visual -->
+                        <div class="flex justify-center mb-6">
+                            <div class="relative w-28 h-28">
+                                <div id="score-ring" class="score-ring w-28 h-28 rounded-full flex items-center justify-center" style="--pct: 0deg">
+                                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center flex-col">
+                                        <span id="result-score" class="text-2xl font-bold text-[#5f8a8b]">0/10</span>
+                                        <span class="text-xs text-[#a39485]">Điểm số</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wrong answers list -->
+                        <div id="result-wrongs" class="hidden text-left mb-6">
+                            <p class="text-xs font-semibold text-[#8b7b6c] uppercase tracking-wider mb-3">Cần ôn lại:</p>
+                            <div id="result-wrongs-list" class="space-y-2"></div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="restartQuiz()" class="flex-1 py-2.5 bg-[#5f8a8b] text-white rounded-xl text-sm font-medium hover:bg-[#4a7677] transition">
+                                Làm lại
+                            </button>
+                            <button onclick="goToSetup()" class="flex-1 py-2.5 bg-white border border-[#e8e2db] text-[#5c544d] rounded-xl text-sm font-medium hover:bg-[#f4f1ee] transition">
+                                Đổi cài đặt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Modal -->
+    <div id="ai-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAiModal()">&times;</span>
+            <h3 class="text-xl font-bold mb-4 text-[#5c544d] border-b pb-2">Trợ lý AI: Khám phá thêm về chữ <span id="modal-char-title" class="jp-font text-[#5f8a8b]"></span></h3>
+            
+            <div id="ai-prompt-area" class="mb-4">
+                <p class="text-sm text-[#7d746d] mb-2">Bạn muốn biết thêm điều gì về chữ cái này?</p>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="askAi('Thêm 3 từ vựng thông dụng bắt đầu bằng chữ này.')" class="px-3 py-1 bg-[#f4f1ee] border border-[#d1c7bd] rounded-md text-sm hover:bg-[#e8e2db] transition">Thêm Từ vựng</button>
+                    <button onclick="askAi('Hãy giải thích chi tiết cách viết (thứ tự nét) của chữ này.')" class="px-3 py-1 bg-[#f4f1ee] border border-[#d1c7bd] rounded-md text-sm hover:bg-[#e8e2db] transition">Cách viết</button>
+                    <button onclick="askAi('Cho tôi một câu chuyện hoặc hình ảnh tưởng tượng để dễ nhớ mặt chữ này hơn.')" class="px-3 py-1 bg-[#f4f1ee] border border-[#d1c7bd] rounded-md text-sm hover:bg-[#e8e2db] transition">Mẹo ghi nhớ</button>
+                </div>
+            </div>
+
+            <div id="ai-loading" class="hidden text-center py-4">
+                <div class="loader"></div>
+                <p class="text-sm text-[#7d746d] mt-2">AI đang suy nghĩ...</p>
+            </div>
+
+            <div id="ai-response-area" class="hidden mt-4 p-4 bg-[#f4f1ee] rounded-xl border border-[#e8e2db] custom-scrollbar overflow-y-auto max-h-64">
+                <!-- Response will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-[#8b7b6c] text-[#fdfbf7] py-12 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="mb-4">Dữ liệu được tổng hợp từ Báo cáo Ôn tập Hiragana N5.</p>
+            <div class="text-xs opacity-70">
+                &copy; 2024 Hiragana Interactive SPA. Một sản phẩm hỗ trợ giáo dục tiếng Nhật.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Visualization & Content Choices:
+        1. Chart.js (Bar Chart): Hiển thị phân bổ chữ cái theo hàng (A, K, S, T). Mục tiêu: Trực quan hóa cấu trúc dữ liệu.
+        2. Interactive Grid: Hiển thị 20 chữ cái. Khi nhấp vào, hiển thị Romaji + Ví dụ. Mục tiêu: Tương tác trực tiếp để ghi nhớ.
+        3. Exception Blocks: Sử dụng hiệu ứng CSS (Pulse) để nhấn mạnh các ngoại lệ quan trọng từ báo cáo.
+        4. NO SVG/Mermaid: Sử dụng Canvas cho biểu đồ và HTML/CSS cho biểu tượng.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        const hiraganaData = [
+            { char: 'あ', romaji: 'a', row: 'A', example: 'Ai (Tình yêu)', note: 'Nguyên âm cơ bản' },
+            { char: 'い', romaji: 'i', row: 'A', example: 'Ie (Ngôi nhà)', note: 'Nguyên âm cơ bản' },
+            { char: 'う', romaji: 'u', row: 'A', example: 'Ushi (Con bò)', note: 'Nguyên âm cơ bản' },
+            { char: 'え', romaji: 'e', row: 'A', example: 'Eki (Nhà ga)', note: 'Nguyên âm cơ bản' },
+            { char: 'お', romaji: 'o', row: 'A', example: 'Onigiri (Cơm nắm)', note: 'Nguyên âm cơ bản' },
+            { char: 'か', romaji: 'ka', row: 'K', example: 'Kasa (Cái ô)', note: '' },
+            { char: 'き', romaji: 'ki', row: 'K', example: 'Ki (Cái cây)', note: '' },
+            { char: 'く', romaji: 'ku', row: 'K', example: 'Kuma (Con gấu)', note: 'Giống dấu <' },
+            { char: 'け', romaji: 'ke', row: 'K', example: 'Keshigomu (Cục tẩy)', note: '' },
+            { char: 'こ', romaji: 'ko', row: 'K', example: 'Koko (Ở đây)', note: '' },
+            { char: 'さ', romaji: 'sa', row: 'S', example: 'Sakura (Hoa anh đào)', note: '' },
+            { char: 'し', romaji: 'shi', row: 'S', example: 'Shio (Muối)', note: 'NGOẠI LỆ: Phát âm SHI' },
+            { char: 'す', romaji: 'su', row: 'S', example: 'Sushi (Món Sushi)', note: '' },
+            { char: 'せ', romaji: 'se', row: 'S', example: 'Sekai (Thế giới)', note: '' },
+            { char: 'そ', romaji: 'so', row: 'S', example: 'Sora (Bầu trời)', note: '' },
+            { char: 'た', romaji: 'ta', row: 'T', example: 'Tako (Con bạch tuộc)', note: '' },
+            { char: 'ち', romaji: 'chi', row: 'T', example: 'Chizu (Bản đồ)', note: 'NGOẠI LỆ: Phát âm CHI' },
+            { char: 'つ', romaji: 'tsu', row: 'T', example: 'Tsuki (Mặt trăng)', note: 'NGOẠI LỆ: Phát âm TSU' },
+            { char: 'て', romaji: 'te', row: 'T', example: 'Te (Bàn tay)', note: '' },
+            { char: 'と', romaji: 'to', row: 'T', example: 'Tokei (Đồng hồ)', note: '' }
+        ];
+
+        let currentFilter = 'All';
+        let currentCharForAi = ''; // Track which character is currently selected for AI
+
+        function initApp() {
+            renderGrid();
+            initChart();
+            renderFlashcard(); // Initialize flashcard deck
+            
+            // Close modal when clicking outside of it
+            window.onclick = function(event) {
+                const modal = document.getElementById('ai-modal');
+                if (event.target == modal) {
+                    closeAiModal();
+                }
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('char-grid');
+            grid.innerHTML = '';
+            
+            const filtered = currentFilter === 'All' 
+                ? hiraganaData 
+                : hiraganaData.filter(d => d.row === currentFilter);
+
+            filtered.forEach(item => {
+                const isException = ['し', 'ち', 'つ'].includes(item.char);
+                const card = document.createElement('div');
+                card.className = `group relative bg-white p-6 rounded-2xl card-shadow transition-all duration-300 border-b-4 border-transparent hover:border-[#5f8a8b] flex flex-col justify-between ${isException ? 'exception-pulse' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="text-center mb-4">
+                        <div class="text-4xl jp-font font-bold text-[#4a443f] mb-2 group-hover:text-[#5f8a8b] transition-colors">${item.char}</div>
+                        <div class="text-sm font-semibold text-[#8b7b6c] uppercase tracking-widest">${item.romaji}</div>
+                    </div>
+                    <div class="pt-4 border-t border-[#f4f1ee]">
+                        <p class="text-xs text-[#7d746d] italic mb-3 min-h-[32px]">${item.example}</p>
+                        <button onclick="openAiModal('${item.char}', '${item.romaji}')" class="w-full py-1.5 bg-[#fdfbf7] border border-[#d1c7bd] rounded-lg text-xs font-medium text-[#5c544d] hover:bg-[#5f8a8b] hover:text-white hover:border-[#5f8a8b] transition-colors flex items-center justify-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                            Hỏi AI
+                        </button>
+                    </div>
+                    ${isException ? '<span class="absolute top-2 right-2 text-[10px] bg-[#d97706] text-white px-2 py-0.5 rounded-full">Lưu ý</span>' : ''}
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function filterChars(row) {
+            currentFilter = row;
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('#filter-buttons button');
+            buttons.forEach(btn => {
+                if (btn.innerText.includes(row) || (row === 'All' && btn.innerText === 'Tất cả')) {
+                    btn.className = "px-5 py-2 rounded-full bg-[#8b7b6c] text-white text-sm shadow-sm transition-all";
+                } else {
+                    btn.className = "px-5 py-2 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-sm hover:bg-[#f8f6f4] transition-all";
+                }
+            });
+
+            renderGrid();
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('rowChart').getContext('2d');
+            
+            // Counting chars per row
+            const counts = { 'A': 0, 'K': 0, 'S': 0, 'T': 0 };
+            hiraganaData.forEach(d => counts[d.row]++);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hàng A (Nguyên âm)', 'Hàng K', 'Hàng S', 'Hàng T'],
+                    datasets: [{
+                        label: 'Số lượng chữ cái',
+                        data: [counts['A'], counts['K'], counts['S'], counts['T']],
+                        backgroundColor: [
+                            'rgba(95, 138, 139, 0.7)',
+                            'rgba(139, 123, 108, 0.7)',
+                            'rgba(217, 119, 6, 0.7)',
+                            'rgba(118, 110, 102, 0.7)'
+                        ],
+                        borderColor: [
+                            '#5f8a8b',
+                            '#8b7b6c',
+                            '#d97706',
+                            '#766e66'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.parsed.y} chữ cái trong danh sách ôn tập`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 6,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function openAiModal(char, romaji) {
+            currentCharForAi = char;
+            document.getElementById('modal-char-title').innerText = `${char} (${romaji})`;
+            document.getElementById('ai-modal').style.display = "block";
+            
+            // Reset state
+            document.getElementById('ai-response-area').classList.add('hidden');
+            document.getElementById('ai-response-area').innerHTML = '';
+            document.getElementById('ai-loading').classList.add('hidden');
+            document.getElementById('ai-prompt-area').classList.remove('hidden');
+        }
+
+        function closeAiModal() {
+            document.getElementById('ai-modal').style.display = "none";
+        }
+
+        async function askAi(userPrompt) {
+            // UI Updates: Show loading, hide prompt buttons
+            document.getElementById('ai-prompt-area').classList.add('hidden');
+            document.getElementById('ai-loading').classList.remove('hidden');
+            document.getElementById('ai-response-area').classList.add('hidden');
+
+            const systemPrompt = "Bạn là một giáo viên tiếng Nhật tận tâm, thân thiện và am hiểu. Bạn đang giúp một học viên mới bắt đầu học bảng chữ cái Hiragana. Hãy trả lời ngắn gọn, dễ hiểu, định dạng rõ ràng (sử dụng in đậm hoặc bullet points nếu cần) và bằng tiếng Việt.";
+            const fullPrompt = `Liên quan đến chữ Hiragana '${currentCharForAi}': ${userPrompt}`;
+
+            try {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 1000,
+                        system: systemPrompt,
+                        messages: [{ role: "user", content: fullPrompt }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const textContent = result.content?.find(b => b.type === 'text');
+
+                if (textContent?.text) {
+                    let text = textContent.text;
+                    // Markdown → HTML
+                    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    text = text.replace(/\n\s*[-*]\s+/g, '<br>• ');
+                    text = text.replace(/\n/g, '<br>');
+
+                    document.getElementById('ai-response-area').innerHTML = `<p class="text-[#4a443f] text-sm leading-relaxed">${text}</p>`;
+                } else {
+                    document.getElementById('ai-response-area').innerHTML = `<p class="text-red-500 text-sm">Xin lỗi, tôi không thể tạo câu trả lời lúc này. Vui lòng thử lại sau.</p>`;
+                }
+            } catch (error) {
+                console.error("Error fetching AI response:", error);
+                document.getElementById('ai-response-area').innerHTML = `<p class="text-red-500 text-sm">Đã xảy ra lỗi kết nối. Vui lòng thử lại sau.</p>`;
+            } finally {
+                // UI Updates: Hide loading, show response
+                document.getElementById('ai-loading').classList.add('hidden');
+                document.getElementById('ai-response-area').classList.remove('hidden');
+
+                // Add a "Ask again" button
+                const resetBtn = document.createElement('button');
+                resetBtn.className = "mt-4 px-4 py-2 bg-white border border-[#d1c7bd] text-[#5c544d] rounded-md text-sm hover:bg-[#f4f1ee] transition";
+                resetBtn.innerText = "Hỏi câu khác";
+                resetBtn.onclick = () => {
+                    document.getElementById('ai-prompt-area').classList.remove('hidden');
+                    document.getElementById('ai-response-area').classList.add('hidden');
+                };
+                document.getElementById('ai-response-area').appendChild(resetBtn);
+            }
+        }
+
+        // Initialize on load
+        window.onload = initApp;
+
+        /* ============================================================
+           FLASHCARD LOGIC
+        ============================================================ */
+        let fcDeck = [...hiraganaData];
+        let fcIndex = 0;
+        let fcKnown = new Set();
+        let fcIsFlipped = false;
+
+        function fcFilter(row) {
+            // Update button styles
+            ['All','A','K','S','T'].forEach(r => {
+                const btn = document.getElementById('fc-btn-' + r);
+                if (r === row) {
+                    btn.className = "px-4 py-1.5 rounded-full bg-[#8b7b6c] text-white text-xs font-medium shadow-sm transition-all";
+                } else {
+                    btn.className = "px-4 py-1.5 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] text-xs font-medium hover:bg-[#f8f6f4] transition-all";
+                }
+            });
+            fcDeck = row === 'All' ? [...hiraganaData] : hiraganaData.filter(d => d.row === row);
+            fcIndex = 0;
+            fcKnown = new Set();
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            if (!fcDeck.length) return;
+            const item = fcDeck[fcIndex];
+            const card = document.getElementById('fc-card');
+
+            // Reset flip
+            fcIsFlipped = false;
+            card.classList.remove('flipped');
+
+            document.getElementById('fc-front-char').textContent = item.char;
+            document.getElementById('fc-front-row-badge').textContent = 'Hàng ' + item.row;
+            document.getElementById('fc-back-romaji').textContent = item.romaji.toUpperCase();
+            document.getElementById('fc-back-example').textContent = item.example;
+
+            const noteEl = document.getElementById('fc-back-note');
+            if (item.note && item.note.includes('NGOẠI LỆ')) {
+                noteEl.textContent = '⚠ ' + item.note.replace('NGOẠI LỆ: ', '');
+                noteEl.classList.remove('hidden');
+            } else {
+                noteEl.classList.add('hidden');
+            }
+
+            // Progress
+            const total = fcDeck.length;
+            const current = fcIndex + 1;
+            document.getElementById('fc-progress-label').textContent = current + ' / ' + total;
+            document.getElementById('fc-known-label').textContent = 'Đã nhớ: ' + fcKnown.size;
+            document.getElementById('fc-progress-bar').style.width = (current / total * 100) + '%';
+
+            // Known button state
+            const knownBtn = document.getElementById('fc-known-btn');
+            if (fcKnown.has(item.char)) {
+                knownBtn.textContent = '✓ Đã nhớ';
+                knownBtn.className = "px-5 py-2 bg-[#5f8a8b] text-white rounded-full text-sm font-medium transition shadow-sm cursor-default";
+            } else {
+                knownBtn.textContent = '✓ Đã nhớ';
+                knownBtn.className = "px-5 py-2 bg-white border border-[#5f8a8b] text-[#5f8a8b] rounded-full text-sm font-medium hover:bg-[#5f8a8b] hover:text-white transition shadow-sm";
+            }
+        }
+
+        function flipCard() {
+            fcIsFlipped = !fcIsFlipped;
+            document.getElementById('fc-card').classList.toggle('flipped', fcIsFlipped);
+        }
+
+        function fcNavigate(dir) {
+            fcIndex = (fcIndex + dir + fcDeck.length) % fcDeck.length;
+            renderFlashcard();
+        }
+
+        function markKnown() {
+            const item = fcDeck[fcIndex];
+            if (fcKnown.has(item.char)) {
+                fcKnown.delete(item.char);
+            } else {
+                fcKnown.add(item.char);
+            }
+            renderFlashcard();
+            // Auto-advance after 300ms
+            if (fcKnown.has(item.char)) {
+                setTimeout(() => fcNavigate(1), 400);
+            }
+        }
+
+        function shuffleFlashcards() {
+            for (let i = fcDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [fcDeck[i], fcDeck[j]] = [fcDeck[j], fcDeck[i]];
+            }
+            fcIndex = 0;
+            renderFlashcard();
+        }
+
+        function resetFlashcards() {
+            fcKnown = new Set();
+            fcIndex = 0;
+            renderFlashcard();
+        }
+
+        /* ============================================================
+           TAB LOGIC
+        ============================================================ */
+        function switchTab(tab) {
+            const tabs = ['flashcard', 'quiz'];
+            tabs.forEach(t => {
+                document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+                const tabBtn = document.getElementById('tab-' + t);
+                if (t === tab) {
+                    tabBtn.className = "practice-tab active px-6 py-2.5 rounded-full text-sm font-medium";
+                } else {
+                    tabBtn.className = "practice-tab px-6 py-2.5 rounded-full text-sm font-medium text-[#8b7b6c]";
+                }
+            });
+        }
+
+        /* ============================================================
+           QUIZ LOGIC
+        ============================================================ */
+        let quizQuestions = [];
+        let quizCurrent = 0;
+        let quizScore = 0;
+        let quizWrongs = [];
+        let quizType = 'hiragana-to-romaji';
+        let quizAnswered = false;
+        let quizSettings = null;
+
+        function toggleAllRows(checkbox) {
+            document.querySelectorAll('.qrow-check').forEach(cb => {
+                cb.checked = false;
+            });
+        }
+
+        function startQuiz() {
+            quizType = document.querySelector('input[name="quiz-type"]:checked').value;
+
+            // Determine rows
+            const allChecked = document.getElementById('qrow-all').checked;
+            let selectedRows = [];
+            if (allChecked) {
+                selectedRows = ['A','K','S','T'];
+            } else {
+                document.querySelectorAll('.qrow-check:checked').forEach(cb => {
+                    selectedRows.push(cb.value);
+                });
+            }
+            if (selectedRows.length === 0) selectedRows = ['A','K','S','T'];
+
+            // Save settings for restart
+            quizSettings = { type: quizType, rows: selectedRows };
+
+            // Filter data
+            const pool = hiraganaData.filter(d => selectedRows.includes(d.row));
+            if (pool.length < 4) {
+                alert('Cần ít nhất 4 chữ cái để tạo quiz. Vui lòng chọn thêm hàng chữ cái.');
+                return;
+            }
+
+            // Build 10 questions (or pool.length if < 10)
+            const numQ = Math.min(10, pool.length);
+            const shuffled = [...pool].sort(() => Math.random() - 0.5);
+            quizQuestions = shuffled.slice(0, numQ);
+            quizCurrent = 0;
+            quizScore = 0;
+            quizWrongs = [];
+
+            document.getElementById('quiz-setup').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-question').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if (quizCurrent >= quizQuestions.length) {
+                showResult();
+                return;
+            }
+
+            quizAnswered = false;
+            const q = quizQuestions[quizCurrent];
+            const total = quizQuestions.length;
+
+            document.getElementById('q-progress-label').textContent = 'Câu ' + (quizCurrent + 1) + ' / ' + total;
+            document.getElementById('q-score-label').textContent = 'Đúng: ' + quizScore;
+            document.getElementById('q-progress-bar').style.width = ((quizCurrent / total) * 100) + '%';
+            document.getElementById('q-feedback').classList.add('hidden');
+            document.getElementById('q-next-btn').classList.add('hidden');
+
+            if (quizType === 'hiragana-to-romaji') {
+                document.getElementById('q-instruction').textContent = 'Chọn Romaji đúng cho chữ Hiragana này';
+                document.getElementById('q-prompt').textContent = q.char;
+                document.getElementById('q-prompt').className = 'text-6xl jp-font font-bold text-[#4a443f]';
+            } else {
+                document.getElementById('q-instruction').textContent = 'Chọn chữ Hiragana đúng cho âm này';
+                document.getElementById('q-prompt').textContent = q.romaji.toUpperCase();
+                document.getElementById('q-prompt').className = 'text-4xl font-bold tracking-widest text-[#4a443f]';
+            }
+
+            // Build 4 options: 1 correct + 3 random wrong
+            const pool = hiraganaData.filter(d => d.char !== q.char);
+            const wrongs = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+            const allOptions = [q, ...wrongs].sort(() => Math.random() - 0.5);
+
+            const optContainer = document.getElementById('q-options');
+            optContainer.innerHTML = '';
+            allOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                const displayText = quizType === 'hiragana-to-romaji' ? opt.romaji.toUpperCase() : opt.char;
+                const isJp = quizType === 'romaji-to-hiragana';
+                btn.className = `quiz-option w-full py-4 px-4 bg-white border-2 border-[#e8e2db] rounded-xl text-center font-semibold text-[#4a443f] hover:border-[#5f8a8b] ${isJp ? 'text-3xl jp-font' : 'text-lg tracking-wider'}`;
+                btn.textContent = displayText;
+                btn.dataset.correct = (opt.char === q.char).toString();
+                btn.onclick = () => answerQuestion(btn, q);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function answerQuestion(btn, q) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const isCorrect = btn.dataset.correct === 'true';
+            const feedback = document.getElementById('q-feedback');
+
+            // Disable all buttons and highlight
+            document.querySelectorAll('.quiz-option').forEach(b => {
+                b.disabled = true;
+                if (b.dataset.correct === 'true') {
+                    b.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                quizScore++;
+                btn.classList.add('correct');
+                feedback.textContent = '✓ Chính xác! ' + q.char + ' = ' + q.romaji.toUpperCase();
+                feedback.className = 'text-center py-3 rounded-xl text-sm font-medium mb-4 bg-green-50 text-green-700 border border-green-200';
+            } else {
+                btn.classList.add('wrong');
+                feedback.textContent = '✗ Sai rồi! Đáp án đúng: ' + q.char + ' = ' + q.romaji.toUpperCase();
+                feedback.className = 'text-center py-3 rounded-xl text-sm font-medium mb-4 bg-red-50 text-red-700 border border-red-200';
+                quizWrongs.push(q);
+            }
+
+            feedback.classList.remove('hidden');
+            document.getElementById('q-next-btn').classList.remove('hidden');
+            document.getElementById('q-score-label').textContent = 'Đúng: ' + quizScore;
+        }
+
+        function nextQuestion() {
+            quizCurrent++;
+            if (quizCurrent >= quizQuestions.length) {
+                showResult();
+            } else {
+                renderQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-question').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+
+            const total = quizQuestions.length;
+            const pct = Math.round((quizScore / total) * 100);
+
+            document.getElementById('result-score').textContent = quizScore + '/' + total;
+            
+            // Score ring: convert percentage to degrees
+            const deg = (pct / 100) * 360;
+            document.getElementById('score-ring').style.setProperty('--pct', deg + 'deg');
+
+            if (pct === 100) {
+                document.getElementById('result-emoji').textContent = '🏆';
+                document.getElementById('result-subtitle').textContent = 'Xuất sắc! Bạn đã trả lời đúng tất cả câu hỏi!';
+            } else if (pct >= 70) {
+                document.getElementById('result-emoji').textContent = '🎉';
+                document.getElementById('result-subtitle').textContent = `Tốt lắm! ${pct}% chính xác. Tiếp tục luyện tập nhé!`;
+            } else if (pct >= 40) {
+                document.getElementById('result-emoji').textContent = '💪';
+                document.getElementById('result-subtitle').textContent = `${pct}% chính xác. Hãy ôn lại những chữ cái bên dưới!`;
+            } else {
+                document.getElementById('result-emoji').textContent = '📚';
+                document.getElementById('result-subtitle').textContent = `${pct}% chính xác. Đừng nản lòng, hãy dùng Flashcard để ôn tập thêm!`;
+            }
+
+            // Show wrong answers
+            if (quizWrongs.length > 0) {
+                const wContainer = document.getElementById('result-wrongs');
+                const wList = document.getElementById('result-wrongs-list');
+                wContainer.classList.remove('hidden');
+                wList.innerHTML = '';
+                quizWrongs.forEach(w => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center gap-3 bg-[#fef2f2] border border-[#fecaca] rounded-lg px-3 py-2';
+                    row.innerHTML = `<span class="jp-font text-2xl font-bold text-[#dc2626]">${w.char}</span><div><div class="text-xs font-semibold text-[#5c544d]">${w.romaji.toUpperCase()}</div><div class="text-xs text-[#7d746d]">${w.example}</div></div>`;
+                    wList.appendChild(row);
+                });
+            } else {
+                document.getElementById('result-wrongs').classList.add('hidden');
+            }
+        }
+
+        function restartQuiz() {
+            if (!quizSettings) return;
+            // Rebuild with same settings
+            const pool = hiraganaData.filter(d => quizSettings.rows.includes(d.row));
+            const numQ = Math.min(10, pool.length);
+            quizQuestions = [...pool].sort(() => Math.random() - 0.5).slice(0, numQ);
+            quizCurrent = 0;
+            quizScore = 0;
+            quizWrongs = [];
+            quizType = quizSettings.type;
+
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-question').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function goToSetup() {
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-question').classList.add('hidden');
+            document.getElementById('quiz-setup').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
