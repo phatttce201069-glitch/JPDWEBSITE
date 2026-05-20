@@ -10,69 +10,72 @@
     </head>
     <body class="antialiased">
         <nav
-            class="sticky top-0 z-50 bg-[#fdfbf7]/80 backdrop-blur-md border-b border-[#e8e2db] py-4"
+            class="sticky top-0 z-50 bg-[#fdfbf7]/80 backdrop-blur-md border-b border-[#e8e2db] py-3"
         >
             <div
-                class="container mx-auto px-6 flex justify-between items-center"
+                class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-4"
             >
-                <h1 class="text-xl font-semibold text-[#8b7b6c]">
+                <h1
+                    class="text-xl font-semibold text-[#8b7b6c] w-full text-center sm:w-auto sm:text-left"
+                >
                     Kana
                     <span class="font-light italic text-[#a39485]"
                         >Mastery</span
                     >
                 </h1>
+
                 <div
-                    class="flex space-x-4 bg-white rounded-full p-1 shadow-sm border border-[#e8e2db]"
+                    class="flex bg-white rounded-full p-1 shadow-sm border border-[#e8e2db] w-full justify-center order-first sm:order-none sm:w-auto"
                 >
                     <button
                         id="btn-hiragana"
                         onclick="switchAlphabet('hiragana')"
-                        class="px-4 py-1.5 rounded-full bg-[#5f8a8b] text-white text-sm font-medium transition-all"
+                        class="px-6 py-1.5 rounded-full bg-[#5f8a8b] text-white text-sm font-medium transition-all w-1/2 sm:w-auto"
                     >
                         Hiragana
                     </button>
                     <button
                         id="btn-katakana"
                         onclick="switchAlphabet('katakana')"
-                        class="px-4 py-1.5 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all"
+                        class="px-6 py-1.5 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all w-1/2 sm:w-auto"
                     >
                         Katakana
                     </button>
                 </div>
-                <div class="flex space-x-6 text-sm">
+
+                <div
+                    class="flex space-x-6 text-sm w-full justify-center sm:w-auto overflow-x-auto pb-1 sm:pb-0"
+                >
                     <a
                         href="#explore"
-                        class="hover:text-[#5f8a8b] transition-colors"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap transition-colors"
                         >Khám phá</a
                     >
                     <a
                         href="#rules"
-                        class="hover:text-[#5f8a8b] transition-colors"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap transition-colors"
                         >Quy tắc</a
                     >
                     <a
-                        href="#stats"
-                        class="hover:text-[#5f8a8b] transition-colors"
-                        >Thống kê</a
-                    >
-                    <a
                         href="#practice"
-                        class="hover:text-[#5f8a8b] transition-colors font-semibold text-[#5f8a8b]"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap font-semibold text-[#5f8a8b]"
                         >✦ Luyện tập</a
                     >
                 </div>
             </div>
         </nav>
 
-        <main class="container mx-auto px-6 py-12">
-            <section class="mb-16 text-center">
+        <main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
+            <section class="mb-12 md:mb-16 text-center">
                 <h2
-                    class="text-4xl font-bold mb-4 text-[#5c544d]"
+                    class="text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[#5c544d]"
                     id="main-title"
                 >
                     Hành trình chinh phục Hiragana
                 </h2>
-                <p class="max-w-2xl mx-auto text-[#7d746d] leading-relaxed">
+                <p
+                    class="max-w-2xl mx-auto text-sm md:text-base text-[#7d746d] leading-relaxed px-2"
+                >
                     Nắm vững nền tảng bảng chữ cái tiếng Nhật. Bạn có thể chọn
                     học theo từng hàng và sử dụng Flashcard/Quiz để ghi nhớ hiệu
                     quả.
