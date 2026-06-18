@@ -47,6 +47,9 @@ function switchAlphabet(type) {
     // Gọi lại hàm lọc để hiển thị toàn bộ chữ của bảng mới chọn
     filterChars("All");
     renderQuizFilters();
+    
+    // Thoát quiz nếu đang trong quá trình làm để tránh lỗi logic
+    exitQuiz();
 }
 
 // --- RENDER GIAO DIỆN BỘ LỌC ---
@@ -408,8 +411,11 @@ function renderQuestion() {
     const promptEl = document.getElementById("q-prompt");
     if (currentAlphabet === "kanji") {
         if (mode === "romaji2kana") {
-            promptEl.textContent = q.example; 
-            promptEl.className = "text-3xl font-bold text-[#4a443f]";
+            let reading = [];
+            if (q.onyomi !== "-") reading.push("ON: " + q.onyomi);
+            if (q.kunyomi !== "-") reading.push("KUN: " + q.kunyomi);
+            promptEl.textContent = reading.join(" / ") + "\n(" + q.example + ")"; 
+            promptEl.className = "text-3xl font-bold text-[#4a443f] whitespace-pre-line";
         } else {
             promptEl.textContent = q.char; 
             promptEl.className = "text-6xl jp-font font-bold text-[#4a443f]";
@@ -484,8 +490,11 @@ function renderQuestion() {
                 btn.textContent = o.char; 
                 btn.classList.add("text-3xl", "jp-font");
             } else {
-                btn.textContent = o.example; 
-                btn.classList.add("text-sm");
+                let reading = [];
+                if (o.onyomi !== "-") reading.push("ON: " + o.onyomi);
+                if (o.kunyomi !== "-") reading.push("KUN: " + o.kunyomi);
+                btn.textContent = reading.join(" / ") + "\n(" + o.example + ")"; 
+                btn.classList.add("text-sm", "whitespace-pre-line");
             }
         } else {
             if (mode === "romaji2kana") {
@@ -605,6 +614,7 @@ function exitQuiz() {
     quizCur = 0;
     quizScore = 0;
     document.getElementById("quiz-question").classList.add("hidden");
+    document.getElementById("quiz-result").classList.add("hidden");
     document.getElementById("quiz-setup").classList.remove("hidden");
 }
 
