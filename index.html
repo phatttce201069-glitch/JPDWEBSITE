@@ -405,15 +405,33 @@
                                 class="text-sm font-semibold text-[#8b7b6c] block mb-3"
                                 >Chọn phần cần ôn:</label
                             >
-                            <div class="flex flex-wrap gap-2" id="quiz-row-filters"></div>
+                            <div
+                                class="flex flex-wrap gap-2"
+                                id="quiz-row-filters"
+                            ></div>
                         </div>
 
                         <div class="text-left mb-6">
-                            <label class="text-sm font-semibold text-[#8b7b6c] block mb-3">Chế độ hỏi:</label>
-                            <select id="q-mode" class="w-full bg-[#f4f1ee] border border-[#e8e2db] rounded-lg px-4 py-2 text-sm text-[#4a443f] outline-none focus:border-[#5f8a8b]">
-                                <option value="random" selected>Ngẫu nhiên (Đảo chiều liên tục)</option>
-                                <option value="kana2romaji">Nhìn chữ Nhật → Chọn cách đọc</option>
-                                <option value="romaji2kana">Nhìn cách đọc → Chọn chữ Nhật</option>
+                            <label
+                                class="text-sm font-semibold text-[#8b7b6c] block mb-3"
+                                >Chế độ hỏi:</label
+                            >
+                            <select
+                                id="q-mode"
+                                class="w-full bg-[#f4f1ee] border border-[#e8e2db] rounded-lg px-4 py-2 text-sm text-[#4a443f] outline-none focus:border-[#5f8a8b]"
+                            >
+                                <option value="random" selected>
+                                    Ngẫu nhiên (Đảo chiều liên tục)
+                                </option>
+                                <option value="kana2romaji">
+                                    Nhìn chữ Nhật → Chọn cách đọc
+                                </option>
+                                <option value="romaji2kana">
+                                    Nhìn cách đọc → Chọn chữ Nhật
+                                </option>
+                                <option value="typing">
+                                    Gõ phiên âm (chỉ Hiragana/Katakana)
+                                </option>
                             </select>
                         </div>
                         <div class="text-left mb-6">
@@ -475,17 +493,28 @@
                             id="q-options"
                             class="grid grid-cols-2 gap-3 mb-4"
                         ></div>
+                        <div id="q-typing-area" class="hidden mb-4">
+                            <input
+                                id="q-typing-input"
+                                type="text"
+                                placeholder="Gõ phiên âm romaji..."
+                                class="w-full px-4 py-3 border-2 border-[#e8e2db] rounded-xl focus:border-[#5f8a8b] outline-none text-center text-lg"
+                                onkeypress="
+                                    if (event.key === 'Enter')
+                                        checkTypingAnswer();
+                                "
+                            />
+                            <button
+                                onclick="checkTypingAnswer()"
+                                class="w-full mt-3 py-2.5 bg-[#5f8a8b] text-white rounded-xl text-sm font-medium"
+                            >
+                                Kiểm tra
+                            </button>
+                        </div>
                         <div
                             id="q-feedback"
                             class="hidden text-center py-3 rounded-xl text-sm mb-4"
                         ></div>
-                        <button
-                            id="q-next-btn"
-                            onclick="nextQuestion()"
-                            class="hidden w-full py-2.5 bg-[#5f8a8b] text-white rounded-full text-sm"
-                        >
-                            Câu tiếp theo
-                        </button>
                     </div>
 
                     <div
