@@ -51,11 +51,22 @@
                 </div>
 
                 <!-- Mode Selector -->
-                <div class="flex flex-col md:flex-row justify-center items-center gap-4 mb-10">
+                <div class="flex flex-col justify-center items-center gap-4 mb-10">
                     <div class="flex bg-white rounded-full p-1 shadow-sm border border-[#e8e2db] inline-flex">
                         <button id="tab-list" onclick="switchTab('list')" class="px-6 py-2 rounded-full bg-[#5f8a8b] text-white text-sm font-medium transition-all">Danh sách</button>
                         <button id="tab-flashcard" onclick="switchTab('flashcard')" class="px-6 py-2 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all">Flashcard</button>
                         <button id="tab-quiz" onclick="switchTab('quiz')" class="px-6 py-2 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all">Quiz</button>
+                        <button id="tab-game" onclick="switchTab('game')" class="px-6 py-2 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all">Game</button>
+                    </div>
+                    <div class="flex justify-center items-center gap-6 mt-2">
+                        <label class="flex items-center space-x-2 text-sm text-[#8b7b6c] cursor-pointer">
+                            <input type="checkbox" id="global-show-reading" checked onchange="toggleGlobalReading()" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
+                            <span>Hiển thị cách đọc (Romaji)</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm text-[#8b7b6c] cursor-pointer">
+                            <input type="checkbox" id="global-auto-pronounce" onchange="toggleAutoPronounce()" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
+                            <span>Tự động phát âm</span>
+                        </label>
                     </div>
                 </div>
 
@@ -63,9 +74,14 @@
             <section id="view-list" class="view-section block">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-2xl font-semibold text-[#8b7b6c]">Từ vựng N5</h3>
-                    <button id="filter-bookmark-btn" onclick="toggleFilterBookmark()" class="text-sm px-4 py-2 border border-[#e8e2db] rounded hover:bg-[#f4f1ee] transition-colors text-[#8b7b6c]">
-                        <i class="fa-regular fa-star mr-1"></i> Chỉ hiển thị từ đã lưu
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="clearAllBookmarks()" class="text-sm px-4 py-2 border border-red-200 text-red-500 rounded hover:bg-red-50 transition-colors" title="Xóa tất cả từ đã lưu">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Xóa từ đã lưu
+                        </button>
+                        <button id="filter-bookmark-btn" onclick="toggleFilterBookmark()" class="text-sm px-4 py-2 border border-[#e8e2db] rounded hover:bg-[#f4f1ee] transition-colors text-[#8b7b6c]">
+                            <i class="fa-regular fa-star mr-1"></i> Chỉ hiển thị từ đã lưu
+                        </button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="word-list-container">
                     <!-- Word cards will be rendered here -->
@@ -76,10 +92,15 @@
             <section id="view-flashcard" class="view-section hidden max-w-2xl mx-auto">
                 <div class="mb-4 flex justify-between items-center">
                     <div class="text-sm text-[#7d746d]" id="flashcard-progress">0/0</div>
-                    <label class="flex items-center space-x-2 text-sm text-[#8b7b6c]">
-                        <input type="checkbox" id="flashcard-bookmark-only" onchange="initFlashcard()" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
-                        <span>Chỉ học từ đã lưu</span>
-                    </label>
+                    <div class="flex gap-4 items-center">
+                        <button onclick="clearAllBookmarks()" class="text-sm text-red-500 hover:text-red-700 transition-colors" title="Xóa tất cả từ đã lưu">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Xóa từ đã lưu
+                        </button>
+                        <label class="flex items-center space-x-2 text-sm text-[#8b7b6c]">
+                            <input type="checkbox" id="flashcard-bookmark-only" onchange="initFlashcard()" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
+                            <span>Chỉ học từ đã lưu</span>
+                        </label>
+                    </div>
                 </div>
                 <div class="flashcard-scene" style="max-width: 100%; height: 20rem;" id="flashcard-container" onclick="flipFlashcard()">
                     <div class="flashcard-inner" id="flashcard-inner">
@@ -130,10 +151,15 @@
                         </label>
                     </div>
 
-                    <label class="flex items-center justify-center space-x-2 text-sm text-[#8b7b6c] mb-6">
-                        <input type="checkbox" id="quiz-bookmark-only" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
-                        <span>Chỉ tạo Quiz từ các từ đã lưu</span>
-                    </label>
+                    <div class="flex justify-center items-center gap-6 mb-6">
+                        <button onclick="clearAllBookmarks()" class="text-sm text-red-500 hover:text-red-700 transition-colors" title="Xóa tất cả từ đã lưu">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Xóa từ đã lưu
+                        </button>
+                        <label class="flex items-center space-x-2 text-sm text-[#8b7b6c]">
+                            <input type="checkbox" id="quiz-bookmark-only" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
+                            <span>Chỉ tạo Quiz từ các từ đã lưu</span>
+                        </label>
+                    </div>
                     <button onclick="startQuiz()" class="px-8 py-3 bg-[#5f8a8b] text-white rounded-full font-semibold hover:bg-[#4d7576] transition-all shadow-md">
                         Bắt đầu Quiz
                     </button>
@@ -144,8 +170,11 @@
                         <span id="quiz-progress">Câu 1/10</span>
                         <span id="quiz-score">Điểm: 0</span>
                     </div>
-                    <div class="bg-white p-10 rounded-2xl shadow-md border border-[#e8e2db] mb-6">
-                        <h2 class="text-5xl font-bold mb-2 text-[#5c544d]" id="quiz-question-word"></h2>
+                    <div class="bg-white p-10 rounded-2xl shadow-md border border-[#e8e2db] mb-6 relative">
+                        <button onclick="playAudio(document.getElementById('quiz-question-word').textContent, event)" class="absolute top-6 left-6 text-2xl text-[#8b7b6c] hover:text-[#5f8a8b] transition-colors cursor-pointer" title="Phát âm">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <h2 class="text-5xl font-bold mb-2 text-[#5c544d] cursor-pointer hover:text-[#5f8a8b] transition-colors inline-block" id="quiz-question-word" onclick="playAudio(this.textContent, event)" title="Nhấn để nghe phát âm"></h2>
                         <p class="text-lg text-[#7d746d] mb-8" id="quiz-question-reading"></p>
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="quiz-options">
@@ -173,6 +202,43 @@
                             Làm lại các câu sai
                         </button>
                     </div>
+                </div>
+            </section>
+
+            <!-- View: Game -->
+            <section id="view-game" class="view-section hidden max-w-4xl mx-auto">
+                <div id="game-setup" class="text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-[#5c544d]">Trò chơi Lật Thẻ Ghép Từ</h3>
+                    <p class="text-[#7d746d] mb-6">Lật 2 thẻ để tìm 1 cặp từ vựng và nghĩa tiếng Việt tương ứng. Hoàn thành càng nhanh càng tốt!</p>
+                    <div class="flex justify-center items-center gap-6 mb-6">
+                        <label class="flex items-center space-x-2 text-sm text-[#8b7b6c]">
+                            <input type="checkbox" id="game-bookmark-only" class="rounded border-[#e8e2db] text-[#5f8a8b] focus:ring-[#5f8a8b]">
+                            <span>Chỉ chơi với từ đã lưu</span>
+                        </label>
+                    </div>
+                    <button onclick="startGame()" class="px-8 py-3 bg-[#5f8a8b] text-white rounded-full font-semibold hover:bg-[#4d7576] transition-all shadow-md">
+                        Bắt đầu
+                    </button>
+                </div>
+
+                <div id="game-active" class="hidden">
+                    <div class="flex justify-between items-center mb-6 text-lg font-semibold text-[#8b7b6c]">
+                        <div>Lượt: <span id="game-moves" class="text-[#5f8a8b]">0</span></div>
+                        <div>Thời gian: <span id="game-timer" class="text-[#5f8a8b]">00:00</span></div>
+                    </div>
+                    <!-- Game Grid -->
+                    <div id="game-grid" class="grid grid-cols-4 gap-4 perspective-1000">
+                        <!-- Cards injected by JS -->
+                    </div>
+                </div>
+
+                <div id="game-result" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-[#e8e2db] text-center mt-6">
+                    <h3 class="text-3xl font-bold mb-4 text-[#5c544d]">Chúc mừng!</h3>
+                    <p class="text-xl mb-2 text-[#7d746d]">Bạn đã ghép đúng tất cả các thẻ.</p>
+                    <p class="text-lg mb-6 text-[#7d746d]">Lượt: <span id="game-final-moves" class="font-bold text-[#5f8a8b]"></span> | Thời gian: <span id="game-final-time" class="font-bold text-[#5f8a8b]"></span></p>
+                    <button onclick="showGameSetup()" class="px-6 py-2 bg-[#5f8a8b] text-white rounded-full hover:bg-[#4d7576] transition-all shadow-sm">
+                        Chơi lại
+                    </button>
                 </div>
             </section> <!-- End Lesson Detail View -->
         </main>

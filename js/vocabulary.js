@@ -18,11 +18,76 @@ const vocabularyData = [
     { id: 17, lesson: 2, word: "起きる", reading: "おきる", meaning: "Thức dậy", example: "６時に起きます。" },
     { id: 18, lesson: 2, word: "寝る", reading: "ねる", meaning: "Ngủ", example: "１１時に寝ます。" },
     { id: 19, lesson: 2, word: "働く", reading: "はたらく", meaning: "Làm việc", example: "会社で働きます。" },
-    { id: 20, lesson: 2, word: "休む", reading: "やすむ", meaning: "Nghỉ ngơi", example: "日曜日は休みます。" }
+    { id: 20, lesson: 2, word: "休む", reading: "やすむ", meaning: "Nghỉ ngơi", example: "日曜日は休みます。" },
+    { id: 21, lesson: 3, word: "パソコン", reading: "pasokon", meaning: "Máy tính xách tay / PC", example: "" },
+    { id: 22, lesson: 3, word: "カメラ", reading: "kamera", meaning: "Máy ảnh", example: "" },
+    { id: 23, lesson: 3, word: "けいたいでんわ", reading: "keitai denwa", meaning: "Điện thoại di động", example: "" },
+    { id: 24, lesson: 3, word: "でんしじしょ", reading: "denshi jisho", meaning: "Từ điển điện tử", example: "" },
+    { id: 25, lesson: 3, word: "ペン", reading: "pen", meaning: "Cây bút", example: "" },
+    { id: 26, lesson: 3, word: "本", reading: "hon", meaning: "Quyển sách", example: "" },
+    { id: 27, lesson: 3, word: "けしゴム", reading: "keshigomu", meaning: "Cục tẩy / Gôm", example: "" },
+    { id: 28, lesson: 3, word: "日本語の本", reading: "nihongo no hon", meaning: "Sách tiếng Nhật", example: "" },
+    { id: 29, lesson: 3, word: "かばん", reading: "kaban", meaning: "Cặp xách / Túi xách", example: "" },
+    { id: 30, lesson: 3, word: "さいふ", reading: "saifu", meaning: "Cái ví (đựng tiền)", example: "" },
+    { id: 31, lesson: 4, word: "くつ", reading: "kutsu", meaning: "Đôi giày", example: "" },
+    { id: 32, lesson: 4, word: "Tシャツ", reading: "T-shatsu", meaning: "Áo thun (Áo phông)", example: "" },
+    { id: 33, lesson: 4, word: "ズボン", reading: "zubon", meaning: "Quần dài", example: "" },
+    { id: 34, lesson: 4, word: "とけい", reading: "tokei", meaning: "Đồng hồ", example: "" },
+    { id: 35, lesson: 4, word: "パン", reading: "pan", meaning: "Bánh mì", example: "" },
+    { id: 36, lesson: 4, word: "あぶら", reading: "abura", meaning: "Dầu ăn", example: "" },
+    { id: 37, lesson: 4, word: "たまご", reading: "tamago", meaning: "Quả trứng", example: "" },
+    { id: 38, lesson: 4, word: "こめ", reading: "kome", meaning: "Gạo (chưa nấu)", example: "" },
+    { id: 39, lesson: 4, word: "にく", reading: "niku", meaning: "Thịt (nói chung)", example: "" },
+    { id: 40, lesson: 4, word: "ぶたにく", reading: "butaniku", meaning: "Thịt heo (lợn)", example: "" },
+    { id: 41, lesson: 5, word: "とりにく", reading: "toriniku", meaning: "Thịt gà", example: "" },
+    { id: 42, lesson: 5, word: "ぎゅうにく", reading: "gyuuniku", meaning: "Thịt bò", example: "" },
+    { id: 43, lesson: 5, word: "いちご", reading: "ichigo", meaning: "Dâu tây", example: "" },
+    { id: 44, lesson: 5, word: "りんご", reading: "ringo", meaning: "Quả táo", example: "" },
+    { id: 45, lesson: 5, word: "やさい", reading: "yasai", meaning: "Rau củ", example: "" },
+    { id: 46, lesson: 5, word: "カレー", reading: "karee", meaning: "Món cà ri", example: "" },
+    { id: 47, lesson: 5, word: "スープ", reading: "suupu", meaning: "Món súp", example: "" },
+    { id: 48, lesson: 5, word: "ハンバーグ", reading: "hanbaagu", meaning: "Thịt băm viên nướng (Hamburg)", example: "" },
+    { id: 49, lesson: 5, word: "とんかつ", reading: "tonkatsu", meaning: "Thịt heo tẩm bột chiên xù", example: "" },
+    { id: 50, lesson: 5, word: "ごはん", reading: "gohan", meaning: "Cơm (trong bát) / Bữa ăn", example: "" },
+    { id: 51, lesson: 6, word: "ライス", reading: "raisu", meaning: "Cơm (phục vụ trên đĩa kiểu Tây)", example: "" },
+    { id: 52, lesson: 6, word: "さかな", reading: "sakana", meaning: "Con cá / Món cá", example: "" },
+    { id: 53, lesson: 6, word: "メニュー", reading: "menyuu", meaning: "Thực đơn", example: "" },
+    { id: 54, lesson: 6, word: "ジュース", reading: "juusu", meaning: "Nước ép / Nước ngọt", example: "" },
+    { id: 55, lesson: 6, word: "こうちゃ", reading: "koucha", meaning: "Hồng trà / Trà đen", example: "" },
+    { id: 56, lesson: 6, word: "おちゃ", reading: "ocha", meaning: "Trà xanh / Trà kiểu Nhật", example: "" },
+    { id: 57, lesson: 6, word: "みず (水)", reading: "mizu", meaning: "Nước lọc", example: "" },
+    { id: 58, lesson: 6, word: "コーヒー", reading: "koohii", meaning: "Cà phê", example: "" },
+    { id: 59, lesson: 6, word: "ワイン", reading: "wain", meaning: "Rượu vang", example: "" },
+    { id: 60, lesson: 6, word: "ビール", reading: "biiru", meaning: "Bia", example: "" },
+    { id: 61, lesson: 7, word: "フランス", reading: "furansu", meaning: "Nước Pháp", example: "" },
+    { id: 62, lesson: 7, word: "インド", reading: "indo", meaning: "Nước Ấn Độ", example: "" },
+    { id: 63, lesson: 7, word: "ドイツ", reading: "doitsu", meaning: "Nước Đức", example: "" }
 ];
 
 let bookmarks = JSON.parse(localStorage.getItem('vocab_bookmarks')) || [];
 let currentLesson = 'all';
+let showReading = true;
+let autoPronounce = false;
+
+function toggleAutoPronounce() {
+    autoPronounce = document.getElementById('global-auto-pronounce').checked;
+}
+
+function toggleGlobalReading() {
+    showReading = document.getElementById('global-show-reading').checked;
+    
+    // Update currently visible views
+    if (document.getElementById('view-list').classList.contains('block')) renderWordList();
+    if (document.getElementById('view-flashcard').classList.contains('block')) renderFlashcard();
+    if (document.getElementById('view-quiz').classList.contains('block') && !document.getElementById('quiz-active').classList.contains('hidden')) {
+        const readingEl = document.getElementById('quiz-question-reading');
+        if (showReading) {
+            readingEl.classList.remove('hidden');
+        } else {
+            readingEl.classList.add('hidden');
+        }
+    }
+}
 
 function renderDashboard() {
     const container = document.getElementById('dashboard-container');
@@ -105,9 +170,12 @@ function toggleBookmark(id) {
         bookmarks.push(id);
     }
     localStorage.setItem('vocab_bookmarks', JSON.stringify(bookmarks));
-    renderWordList();
+    
+    if (document.getElementById('view-list').classList.contains('block')) {
+        renderWordList();
+    }
     if (document.getElementById('view-flashcard').classList.contains('block')) {
-        initFlashcard();
+        renderFlashcard();
     }
 }
 
@@ -115,9 +183,27 @@ function isBookmarked(id) {
     return bookmarks.includes(id);
 }
 
+function clearAllBookmarks() {
+    if (bookmarks.length === 0) {
+        alert("Bạn chưa lưu từ vựng nào!");
+        return;
+    }
+    if (confirm("Bạn có chắc chắn muốn xóa TẤT CẢ các từ đã lưu không? Hành động này không thể hoàn tác.")) {
+        bookmarks = [];
+        localStorage.setItem('vocab_bookmarks', JSON.stringify(bookmarks));
+        
+        if (document.getElementById('view-list').classList.contains('block')) {
+            renderWordList();
+        }
+        if (document.getElementById('view-flashcard').classList.contains('block')) {
+            initFlashcard(); 
+        }
+    }
+}
+
 // --- Tab Switching ---
 function switchTab(tabId) {
-    ['list', 'flashcard', 'quiz'].forEach(id => {
+    ['list', 'flashcard', 'quiz', 'game'].forEach(id => {
         document.getElementById(`view-${id}`).classList.add('hidden');
         document.getElementById(`view-${id}`).classList.remove('block');
         document.getElementById(`tab-${id}`).classList.remove('bg-[#5f8a8b]', 'text-white');
@@ -132,6 +218,7 @@ function switchTab(tabId) {
     if (tabId === 'list') renderWordList();
     if (tabId === 'flashcard') initFlashcard();
     if (tabId === 'quiz') showQuizSetup();
+    if (tabId === 'game') showGameSetup();
 }
 
 // --- List View ---
@@ -182,7 +269,7 @@ function renderWordList() {
                         <i class="${starIcon} fa-star"></i>
                     </button>
                 </div>
-                <p class="text-sm text-[#7d746d] mb-4">${word.reading}</p>
+                <p class="text-sm text-[#7d746d] mb-4 ${showReading ? '' : 'hidden'}">${word.reading}</p>
                 <p class="text-lg text-[#5f8a8b] font-medium">${word.meaning}</p>
             </div>
             <div class="mt-4 pt-4 border-t border-[#e8e2db]">
@@ -237,6 +324,11 @@ function renderFlashcard() {
     const word = flashcardList[currentFlashcardIndex];
     wordEl.textContent = word.word;
     readingEl.textContent = word.reading;
+    if (showReading) {
+        readingEl.classList.remove('hidden');
+    } else {
+        readingEl.classList.add('hidden');
+    }
     meaningEl.textContent = word.meaning;
     exampleEl.textContent = word.example;
     progressEl.textContent = `${currentFlashcardIndex + 1}/${flashcardList.length}`;
@@ -331,9 +423,20 @@ function startQuiz() {
 function renderQuizQuestion() {
     const word = quizList[currentQuizIndex];
     document.getElementById('quiz-question-word').textContent = word.word;
-    document.getElementById('quiz-question-reading').textContent = word.reading;
+    const readingEl = document.getElementById('quiz-question-reading');
+    readingEl.textContent = word.reading;
+    if (showReading) {
+        readingEl.classList.remove('hidden');
+    } else {
+        readingEl.classList.add('hidden');
+    }
     document.getElementById('quiz-progress').textContent = `Câu ${currentQuizIndex + 1}/${quizList.length}`;
     document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+
+    if (autoPronounce) {
+        // Cần truyền null cho event vì playAudio có tham số event (hoặc sửa playAudio xử lý event undefined)
+        playAudio(word.word, null);
+    }
 
     const optionsContainer = document.getElementById('quiz-options');
     const typingArea = document.getElementById('quiz-typing-area');
@@ -423,7 +526,55 @@ function checkTypingAnswer() {
     const word = quizList[currentQuizIndex];
     const correctAnswer = word.meaning.trim().toLowerCase();
     
-    const isCorrect = userAnswer === correctAnswer;
+    // Hàm tính khoảng cách Levenshtein (chấp nhận sai lỗi chính tả nhỏ)
+    function getEditDistance(a, b) {
+        if(a.length === 0) return b.length;
+        if(b.length === 0) return a.length;
+        var matrix = [];
+        for(var i = 0; i <= b.length; i++){
+            matrix[i] = [i];
+        }
+        for(var j = 0; j <= a.length; j++){
+            matrix[0][j] = j;
+        }
+        for(var i = 1; i <= b.length; i++){
+            for(var j = 1; j <= a.length; j++){
+                if(b.charAt(i-1) === a.charAt(j-1)){
+                    matrix[i][j] = matrix[i-1][j-1];
+                } else {
+                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+
+    let isCorrect = (userAnswer === correctAnswer);
+    
+    if (!isCorrect) {
+        let cleanMeaning = correctAnswer.replace(/\s*\([^)]*\)/g, '').trim();
+        let validAnswers = cleanMeaning.split(/\s*[\/,]\s*/);
+        
+        let extendedAnswers = [];
+        validAnswers.forEach(ans => {
+            extendedAnswers.push(ans);
+            let simplified = ans.replace(/^(quyển|cái|con|chiếc|sự|món|quả|trái|đôi)\s+/g, '').trim();
+            if (simplified && simplified !== ans) extendedAnswers.push(simplified);
+        });
+        
+        isCorrect = extendedAnswers.some(ans => {
+            if (ans === userAnswer) return true;
+            
+            // Tính số lỗi chính tả cho phép dựa trên độ dài đáp án
+            let allowedTypos = 0;
+            if (ans.length > 4 && ans.length <= 8) allowedTypos = 1;
+            else if (ans.length > 8) allowedTypos = 2;
+            
+            let dist = getEditDistance(ans, userAnswer);
+            return dist <= allowedTypos;
+        });
+    }
+    
     const feedbackEl = document.getElementById('quiz-typing-feedback');
     
     if (isCorrect) {
@@ -489,3 +640,162 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDashboard();
     // Default tab when a lesson is opened will be set by openLesson()
 });
+
+// --- Game Logic ---
+let gameTimerInterval = null;
+let gameSeconds = 0;
+let gameMoves = 0;
+let gameCardsData = [];
+let flippedCards = [];
+let matchedPairs = 0;
+let totalPairs = 0;
+
+function showGameSetup() {
+    document.getElementById('game-setup').classList.remove('hidden');
+    document.getElementById('game-active').classList.add('hidden');
+    document.getElementById('game-result').classList.add('hidden');
+    clearInterval(gameTimerInterval);
+}
+
+function startGame() {
+    const onlyBookmarks = document.getElementById('game-bookmark-only').checked;
+    let filteredData = currentLesson === 'all' ? vocabularyData : vocabularyData.filter(w => w.lesson == currentLesson);
+    
+    if (onlyBookmarks) {
+        filteredData = filteredData.filter(w => isBookmarked(w.id));
+    }
+    
+    if (filteredData.length < 2) {
+        alert("Cần ít nhất 2 từ vựng để chơi game!");
+        return;
+    }
+
+    // Shuffle and pick up to 8 words
+    filteredData.sort(() => 0.5 - Math.random());
+    const selectedWords = filteredData.slice(0, 8);
+    totalPairs = selectedWords.length;
+    
+    // Create 16 cards (8 pairs)
+    gameCardsData = [];
+    selectedWords.forEach(word => {
+        gameCardsData.push({ id: word.id, text: word.word, type: 'jp', matchId: word.id });
+        gameCardsData.push({ id: word.id, text: word.meaning, type: 'vn', matchId: word.id });
+    });
+    
+    // Shuffle cards
+    gameCardsData.sort(() => 0.5 - Math.random());
+    
+    // Reset state
+    gameMoves = 0;
+    gameSeconds = 0;
+    matchedPairs = 0;
+    flippedCards = [];
+    updateGameStatus();
+    
+    // Render grid
+    renderGameGrid();
+    
+    document.getElementById('game-setup').classList.add('hidden');
+    document.getElementById('game-result').classList.add('hidden');
+    document.getElementById('game-active').classList.remove('hidden');
+    
+    // Start timer
+    clearInterval(gameTimerInterval);
+    gameTimerInterval = setInterval(() => {
+        gameSeconds++;
+        updateGameStatus();
+    }, 1000);
+}
+
+function updateGameStatus() {
+    document.getElementById('game-moves').textContent = gameMoves;
+    const m = Math.floor(gameSeconds / 60).toString().padStart(2, '0');
+    const s = (gameSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('game-timer').textContent = `${m}:${s}`;
+}
+
+function renderGameGrid() {
+    const grid = document.getElementById('game-grid');
+    grid.innerHTML = '';
+    
+    // Adjust columns based on pairs
+    if (totalPairs <= 3) {
+        grid.className = 'grid grid-cols-2 sm:grid-cols-3 gap-4 perspective-1000 max-w-2xl mx-auto';
+    } else {
+        grid.className = 'grid grid-cols-3 sm:grid-cols-4 gap-4 perspective-1000';
+    }
+
+    gameCardsData.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'game-card shadow-sm';
+        cardEl.dataset.index = index;
+        cardEl.onclick = () => handleGameCardClick(index, cardEl);
+        
+        cardEl.innerHTML = `
+            <div class="game-card-inner">
+                <div class="game-card-face game-card-front">
+                    <i class="fa-solid fa-question text-[#e8e2db] text-4xl"></i>
+                </div>
+                <div class="game-card-face game-card-back">
+                    <p class="${card.type === 'jp' ? 'text-2xl font-bold text-[#5c544d]' : 'text-sm text-[#7d746d] font-medium'}">${card.text}</p>
+                </div>
+            </div>
+        `;
+        grid.appendChild(cardEl);
+    });
+}
+
+function handleGameCardClick(index, cardEl) {
+    if (flippedCards.length >= 2 || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) {
+        return;
+    }
+    
+    cardEl.classList.add('flipped');
+    flippedCards.push({ index, el: cardEl, data: gameCardsData[index] });
+    
+    if (flippedCards.length === 2) {
+        gameMoves++;
+        updateGameStatus();
+        checkGameMatch();
+    }
+}
+
+function checkGameMatch() {
+    const [card1, card2] = flippedCards;
+    
+    if (card1.data.matchId === card2.data.matchId && card1.data.type !== card2.data.type) {
+        // Match
+        setTimeout(() => {
+            card1.el.classList.add('matched');
+            card2.el.classList.add('matched');
+            matchedPairs++;
+            flippedCards = [];
+            
+            if (matchedPairs === totalPairs) {
+                endGame();
+            }
+        }, 400);
+    } else {
+        // Mismatch
+        setTimeout(() => {
+            card1.el.classList.add('mismatched');
+            card2.el.classList.add('mismatched');
+            
+            setTimeout(() => {
+                card1.el.classList.remove('flipped', 'mismatched');
+                card2.el.classList.remove('flipped', 'mismatched');
+                flippedCards = [];
+            }, 400);
+        }, 600);
+    }
+}
+
+function endGame() {
+    clearInterval(gameTimerInterval);
+    document.getElementById('game-active').classList.add('hidden');
+    document.getElementById('game-result').classList.remove('hidden');
+    document.getElementById('game-final-moves').textContent = gameMoves;
+    const m = Math.floor(gameSeconds / 60).toString().padStart(2, '0');
+    const s = (gameSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('game-final-time').textContent = `${m}:${s}`;
+}
