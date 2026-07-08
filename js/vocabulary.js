@@ -68,9 +68,17 @@ let bookmarks = JSON.parse(localStorage.getItem('vocab_bookmarks')) || [];
 let currentLesson = 'all';
 let showReading = true;
 let autoPronounce = false;
+let showMeaning = true;
 
 function toggleAutoPronounce() {
     autoPronounce = document.getElementById('global-auto-pronounce').checked;
+}
+
+function toggleGlobalMeaning() {
+    showMeaning = document.getElementById('global-show-meaning').checked;
+    if (document.getElementById('view-list').classList.contains('block')) {
+        renderWordList();
+    }
 }
 
 function toggleGlobalReading() {
@@ -270,7 +278,7 @@ function renderWordList() {
                     </button>
                 </div>
                 <p class="text-sm text-[#7d746d] mb-4 ${showReading ? '' : 'hidden'}">${word.reading}</p>
-                <p class="text-lg text-[#5f8a8b] font-medium">${word.meaning}</p>
+                <p class="text-lg text-[#5f8a8b] font-medium ${showMeaning ? '' : 'hidden'}">${word.meaning}</p>
             </div>
             <div class="mt-4 pt-4 border-t border-[#e8e2db]">
                 <p class="text-sm text-[#7d746d] italic">${word.example}</p>
