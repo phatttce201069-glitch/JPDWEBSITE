@@ -61,7 +61,20 @@ const vocabularyData = [
     { id: 60, lesson: 6, word: "ビール", reading: "biiru", meaning: "Bia", example: "" },
     { id: 61, lesson: 7, word: "フランス", reading: "furansu", meaning: "Nước Pháp", example: "" },
     { id: 62, lesson: 7, word: "インド", reading: "indo", meaning: "Nước Ấn Độ", example: "" },
-    { id: 63, lesson: 7, word: "ドイツ", reading: "doitsu", meaning: "Nước Đức", example: "" }
+    { id: 63, lesson: 7, word: "ドイツ", reading: "doitsu", meaning: "Nước Đức", example: "" },
+    { id: 64, lesson: 7, word: "トイレ", reading: "toire", meaning: "Nhà vệ sinh", example: "" },
+    { id: 65, lesson: 7, word: "トイレットペーパー", reading: "toiretto peepaa", meaning: "Giấy vệ sinh", example: "" },
+    { id: 66, lesson: 7, word: "100円ショップ", reading: "hyaku-en shoppu", meaning: "Cửa hàng đồng giá 100 yên", example: "" },
+    { id: 67, lesson: 7, word: "きっさてん", reading: "kissaten", meaning: "Quán cà phê / Quán nước", example: "" },
+    { id: 68, lesson: 7, word: "スーパー", reading: "suupaa", meaning: "Siêu thị", example: "" },
+    { id: 69, lesson: 7, word: "レジ", reading: "reji", meaning: "Quầy thu ngân / Máy tính tiền", example: "" },
+    { id: 70, lesson: 7, word: "レストラン", reading: "resutoran", meaning: "Nhà hàng", example: "" },
+    { id: 71, lesson: 8, word: "アルバイト", reading: "arubaito", meaning: "Việc làm thêm / Nhân viên làm thêm", example: "" },
+    { id: 72, lesson: 8, word: "エスカレーター", reading: "esukareetaa", meaning: "Thang cuốn", example: "" },
+    { id: 73, lesson: 8, word: "エレベーター", reading: "erebeetaa", meaning: "Thang máy", example: "" },
+    { id: 74, lesson: 8, word: "きつえんじょ", reading: "kitsuenjo", meaning: "Khu vực hút thuốc", example: "" },
+    { id: 75, lesson: 8, word: "すみません、トイレはどこですか", reading: "sumimasen, toire wa doko desu ka", meaning: "Xin lỗi, nhà vệ sinh ở đâu vậy?", example: "" },
+    { id: 76, lesson: 8, word: "せんせいはどこですか", reading: "sensei wa doko desu ka", meaning: "Giáo viên đang ở đâu?", example: "" }
 ];
 
 let bookmarks = JSON.parse(localStorage.getItem('vocab_bookmarks')) || [];
