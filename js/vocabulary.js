@@ -186,12 +186,12 @@ function renderDashboard() {
         const card = document.createElement('div');
         card.className = 'bg-white p-8 rounded-3xl shadow-sm border border-[#e8e2db] flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-[#5f8a8b] hover:-translate-y-1 transition-all group';
         card.onclick = () => openLesson(l);
-        const titleText = isNaN(l) ? l : \`Bài \${l}\`;
+        const titleText = isNaN(l) ? l : `Bài ${l}`;
         card.innerHTML = `
             <div class="w-16 h-16 rounded-full bg-[#f4f1ee] flex items-center justify-center mb-4 group-hover:bg-[#5f8a8b] group-hover:text-white transition-colors text-[#8b7b6c] text-2xl">
                 <i class="fa-solid fa-book"></i>
             </div>
-            <h3 class="text-2xl font-bold text-[#5c544d] mb-2">\${titleText}</h3>
+            <h3 class="text-2xl font-bold text-[#5c544d] mb-2">${titleText}</h3>
             <p class="text-[#7d746d]">${wordCount} từ vựng</p>
         `;
         container.appendChild(card);
