@@ -106,7 +106,20 @@ const vocabularyData = [
     { id: 105, lesson: 1, word: "すみません", reading: "すみません", meaning: "Xin lỗi", example: "" },
     { id: 106, lesson: 1, word: "そうですか", reading: "そうですか", meaning: "Vậy à", example: "" },
     { id: 107, lesson: 1, word: "はい", reading: "はい", meaning: "Vâng", example: "" },
-    { id: 108, lesson: 1, word: "いいえ", reading: "いいえ", meaning: "Không", example: "" }
+    { id: 108, lesson: 1, word: "いいえ", reading: "いいえ", meaning: "Không", example: "" },
+    { id: 109, lesson: "Sở thích", word: "スポーツ", reading: "スポーツ", meaning: "Thể thao", example: "" },
+    { id: 110, lesson: "Sở thích", word: "サッカー", reading: "サッカー", meaning: "Bóng đá", example: "" },
+    { id: 111, lesson: "Sở thích", word: "テニス", reading: "テニス", meaning: "Quần vợt", example: "" },
+    { id: 112, lesson: "Sở thích", word: "すいえい", reading: "すいえい", meaning: "Bơi lội", example: "" },
+    { id: 113, lesson: "Sở thích", word: "えいが", reading: "えいが", meaning: "Phim", example: "" },
+    { id: 114, lesson: "Sở thích", word: "おんがく", reading: "おんがく", meaning: "Âm nhạc", example: "" },
+    { id: 115, lesson: "Sở thích", word: "どくしょ", reading: "どくしょ", meaning: "Đọc sách", example: "" },
+    { id: 116, lesson: "Sở thích", word: "りょこう", reading: "りょこう", meaning: "Du lịch", example: "" },
+    { id: 117, lesson: "Sở thích", word: "りょうり", reading: "りょうり", meaning: "Nấu ăn / món ăn", example: "" },
+    { id: 118, lesson: "Sở thích", word: "なん", reading: "なん", meaning: "Cái gì", example: "" },
+    { id: 119, lesson: "Sở thích", word: "つり", reading: "つり", meaning: "Câu cá", example: "" },
+    { id: 120, lesson: "Sở thích", word: "おなじ", reading: "おなじ", meaning: "Giống nhau", example: "" },
+    { id: 121, lesson: "Sở thích", word: "おなじですね", reading: "おなじですね", meaning: "Giống nhau nhỉ", example: "" }
 ];
 
 let bookmarks = JSON.parse(localStorage.getItem('vocab_bookmarks')) || [];
@@ -147,7 +160,10 @@ function renderDashboard() {
     if (!container) return;
     
     // get unique lessons
-    const lessons = [...new Set(vocabularyData.map(w => w.lesson))].filter(Boolean).sort((a,b) => a - b);
+    const lessons = [...new Set(vocabularyData.map(w => w.lesson))].filter(Boolean).sort((a,b) => {
+        if (typeof a === 'number' && typeof b === 'number') return a - b;
+        return String(a).localeCompare(String(b), undefined, {numeric: true});
+    });
     
     container.innerHTML = '';
     
@@ -170,11 +186,12 @@ function renderDashboard() {
         const card = document.createElement('div');
         card.className = 'bg-white p-8 rounded-3xl shadow-sm border border-[#e8e2db] flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-[#5f8a8b] hover:-translate-y-1 transition-all group';
         card.onclick = () => openLesson(l);
+        const titleText = isNaN(l) ? l : \`Bài \${l}\`;
         card.innerHTML = `
             <div class="w-16 h-16 rounded-full bg-[#f4f1ee] flex items-center justify-center mb-4 group-hover:bg-[#5f8a8b] group-hover:text-white transition-colors text-[#8b7b6c] text-2xl">
                 <i class="fa-solid fa-book"></i>
             </div>
-            <h3 class="text-2xl font-bold text-[#5c544d] mb-2">Bài ${l}</h3>
+            <h3 class="text-2xl font-bold text-[#5c544d] mb-2">\${titleText}</h3>
             <p class="text-[#7d746d]">${wordCount} từ vựng</p>
         `;
         container.appendChild(card);
@@ -188,7 +205,7 @@ function openLesson(lessonId) {
     document.getElementById('lesson-detail-view').classList.remove('hidden');
     document.getElementById('lesson-detail-view').classList.add('block');
     
-    const titleText = lessonId === 'all' ? 'Tất cả từ vựng' : `Bài ${lessonId}`;
+    const titleText = lessonId === 'all' ? 'Tất cả từ vựng' : (isNaN(lessonId) ? lessonId : `Bài ${lessonId}`);
     document.getElementById('page-title').textContent = titleText;
     document.getElementById('page-subtitle').textContent = "Học từ vựng qua Flashcards và kiểm tra bằng Quiz.";
     
