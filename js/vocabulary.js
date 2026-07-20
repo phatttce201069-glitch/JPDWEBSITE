@@ -151,7 +151,32 @@ const vocabularyData = [
     { id: 151, lesson: "Đếm tháng tuổi", word: "じゅうがつ", reading: "じゅうがつ", meaning: "Tháng 10", example: "" },
     { id: 152, lesson: "Đếm tháng tuổi", word: "じゅういちがつ", reading: "じゅういちがつ", meaning: "Tháng 11", example: "" },
     { id: 153, lesson: "Đếm tháng tuổi", word: "じゅうにがつ", reading: "じゅうにがつ", meaning: "Tháng 12", example: "" },
-    { id: 154, lesson: "Đếm tháng tuổi", word: "なんがつ", reading: "なんがつ", meaning: "Tháng mấy", example: "" }
+    { id: 154, lesson: "Đếm tháng tuổi", word: "なんがつ", reading: "なんがつ", meaning: "Tháng mấy", example: "" },
+    { id: 155, lesson: "Đếm tháng tuổi 2", word: "いつ", reading: "いつ", meaning: "Khi nào", example: "" },
+    { id: 156, lesson: "Đếm tháng tuổi 2", word: "ブラジル", reading: "ブラジル", meaning: "Brazil", example: "" },
+    { id: 157, lesson: "Đếm tháng tuổi 2", word: "たんじょうび", reading: "たんじょうび", meaning: "Sinh nhật", example: "" },
+    { id: 158, lesson: "Đếm tháng tuổi 2", word: "～にち", reading: "～にち", meaning: "Ngày ~", example: "" },
+    { id: 159, lesson: "Đếm tháng tuổi 2", word: "～か", reading: "～か", meaning: "Ngày ~", example: "" },
+    { id: 160, lesson: "Đếm tháng tuổi 2", word: "ついたち", reading: "ついたち", meaning: "Ngày mồng 1", example: "" },
+    { id: 161, lesson: "Đếm tháng tuổi 2", word: "ふつか", reading: "ふつか", meaning: "Ngày mồng 2", example: "" },
+    { id: 162, lesson: "Đếm tháng tuổi 2", word: "みっか", reading: "みっか", meaning: "Ngày mồng 3", example: "" },
+    { id: 163, lesson: "Đếm tháng tuổi 2", word: "よっか", reading: "よっか", meaning: "Ngày mồng 4", example: "" },
+    { id: 164, lesson: "Đếm tháng tuổi 2", word: "いつか", reading: "いつか", meaning: "Ngày mồng 5", example: "" },
+    { id: 165, lesson: "Đếm tháng tuổi 2", word: "むいか", reading: "むいか", meaning: "Ngày mồng 6", example: "" },
+    { id: 166, lesson: "Đếm tháng tuổi 2", word: "なのか", reading: "なのか", meaning: "Ngày mồng 7", example: "" },
+    { id: 167, lesson: "Đếm tháng tuổi 2", word: "ようか", reading: "ようか", meaning: "Ngày mồng 8", example: "" },
+    { id: 168, lesson: "Đếm tháng tuổi 2", word: "ここのか", reading: "ここのか", meaning: "Ngày mồng 9", example: "" },
+    { id: 169, lesson: "Đếm tháng tuổi 2", word: "とおか", reading: "とおか", meaning: "Ngày mồng 10", example: "" },
+    { id: 170, lesson: "Đếm tháng tuổi 2", word: "じゅういちにち", reading: "じゅういちにち", meaning: "Ngày 11", example: "" },
+    { id: 171, lesson: "Đếm tháng tuổi 2", word: "じゅうににち", reading: "じゅうににち", meaning: "Ngày 12", example: "" },
+    { id: 172, lesson: "Đếm tháng tuổi 2", word: "じゅうよっか", reading: "じゅうよっか", meaning: "Ngày 14", example: "" },
+    { id: 173, lesson: "Đếm tháng tuổi 2", word: "じゅうはちにち", reading: "じゅうはちにち", meaning: "Ngày 18", example: "" },
+    { id: 174, lesson: "Đếm tháng tuổi 2", word: "じゅうくにち", reading: "じゅうくにち", meaning: "Ngày 19", example: "" },
+    { id: 175, lesson: "Đếm tháng tuổi 2", word: "はつか", reading: "はつか", meaning: "Ngày 20", example: "" },
+    { id: 176, lesson: "Đếm tháng tuổi 2", word: "にじゅうよっか", reading: "にじゅうよっか", meaning: "Ngày 24", example: "" },
+    { id: 177, lesson: "Đếm tháng tuổi 2", word: "にじゅうくにち", reading: "にじゅうくにち", meaning: "Ngày 29", example: "" },
+    { id: 178, lesson: "Đếm tháng tuổi 2", word: "さんじゅうにち", reading: "さんじゅうにち", meaning: "Ngày 30", example: "" },
+    { id: 179, lesson: "Đếm tháng tuổi 2", word: "なんにち", reading: "なんにち", meaning: "Ngày mấy", example: "" }
 ];
 
 let bookmarks = JSON.parse(localStorage.getItem('vocab_bookmarks')) || [];
