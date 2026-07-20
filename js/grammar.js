@@ -34,7 +34,11 @@ const grammarLessons = [
                 note: "Trợ từ の nối 2 danh từ. N2 bổ nghĩa cho N3.",
                 color: "#ffd700", // yellow
                 examples: [
-                    { jp: "私はIMCの社員です。", romaji: "Watashi wa IMC no shain desu.", vi: "Tôi là nhân viên của công ty IMC." }
+                    { jp: "やまださんはFPTの社員です。", romaji: "やまださんはFPTのしゃいんです。", vi: "Anh Yamada là nhân viên của FPT." },
+                    { jp: "アンさんは東京大学の学生です。", romaji: "アンさんはとうきょうだいがくのがくせいです。", vi: "Bạn An là sinh viên của trường đại học Tokyo." },
+                    { jp: "佐藤さんはABCのエンジニアです。", romaji: "さとうさんはABCのエンジニアです。", vi: "Anh Sato là kỹ sư của công ty ABC." },
+                    { jp: "ミラーさんはIMCの社員です。", romaji: "ミラーさんはIMCのしゃいんです。", vi: "Anh Miller là nhân viên của IMC." },
+                    { jp: "私は日本語センターの先生です。", romaji: "わたしはにほんごセンターのせんせいです。", vi: "Tôi là giáo viên của trung tâm tiếng Nhật." }
                 ]
             },
             {
@@ -47,7 +51,13 @@ const grammarLessons = [
                 usage: "Dùng để miêu tả đặc điểm, thông tin của một vật thuộc sở hữu.",
                 note: "",
                 color: "#98fb98", // green
-                examples: []
+                examples: [
+                    { jp: "私の趣味は映画です。", romaji: "わたしのしゅみはえいがです。", vi: "Sở thích của tôi là phim ảnh." },
+                    { jp: "アンさんの誕生日は６月です。", romaji: "アンさんのたんじょうびはろくがつです。", vi: "Sinh nhật của bạn An là tháng 6." },
+                    { jp: "私の電話番号は123です。", romaji: "わたしのでんわばんごうは123です。", vi: "Số điện thoại của tôi là 123." },
+                    { jp: "田中さんの専門はコンピューターです。", romaji: "たなかさんのせんもんはコンピューターです。", vi: "Chuyên môn của anh Tanaka là máy tính." },
+                    { jp: "私の父の職業は公務員です。", romaji: "わたしのちちのしょくぎょうはこうむいんです。", vi: "Nghề nghiệp của bố tôi là công chức." }
+                ]
             },
             {
                 id: "1_4",
@@ -59,7 +69,13 @@ const grammarLessons = [
                 usage: "Dùng khi thông tin của chủ ngữ này giống với chủ ngữ trước đó.",
                 note: "Thay thế cho trợ từ は.",
                 color: "#dda0dd", // purple
-                examples: []
+                examples: [
+                    { jp: "私は二十歳です。Bさんも二十歳です。", romaji: "わたしははたちです。Bさんもはたちです。", vi: "Tôi 20 tuổi. Bạn B cũng 20 tuổi." },
+                    { jp: "私も学生です。", romaji: "わたしもがくせいです。", vi: "Tôi cũng là sinh viên." },
+                    { jp: "田中さんは日本人です。佐藤さんも日本人です。", romaji: "たなかさんはにほんじんです。さとうさんもにほんじんです。", vi: "Anh Tanaka là người Nhật. Anh Sato cũng là người Nhật." },
+                    { jp: "この本は五百円です。その本も五百円です。", romaji: "このほんはごひゃくえんです。そのほんもごひゃくえんです。", vi: "Quyển sách này 500 yên. Quyển sách đó cũng 500 yên." },
+                    { jp: "マリアさんは主婦です。アンさんも主婦です。", romaji: "マリアさんはしゅふです。アンさんもしゅふです。", vi: "Chị Maria là nội trợ. Bạn An cũng là nội trợ." }
+                ]
             },
             {
                 id: "1_5",
@@ -71,7 +87,13 @@ const grammarLessons = [
                 usage: "Dùng để phủ định một danh từ.",
                 note: "Dạng lịch sự hơn là ではありません (dewa arimasen).",
                 color: "#ffb6c1", // pink
-                examples: []
+                examples: [
+                    { jp: "さとさんは日本人じゃありません。", romaji: "さとさんはにほんじんじゃありません。", vi: "Bạn Sato không phải là người Nhật." },
+                    { jp: "私は学生じゃありません。", romaji: "わたしはがくせいじゃありません。", vi: "Tôi không phải là sinh viên." },
+                    { jp: "ミラーさんはアメリカ人じゃありません。", romaji: "ミラーさんはアメリカじんじゃありません。", vi: "Anh Miller không phải là người Mỹ." },
+                    { jp: "ここは食堂じゃありません。", romaji: "ここはしょくどうじゃありません。", vi: "Ở đây không phải là nhà ăn." },
+                    { jp: "今日は日曜日じゃありません。", romaji: "きょうはにちようびじゃありません。", vi: "Hôm nay không phải là chủ nhật." }
+                ]
             },
             {
                 id: "1_6",
@@ -95,7 +117,13 @@ const grammarLessons = [
                 usage: "Dùng để hỏi thông tin chưa biết.",
                 note: "Không trả lời bằng 'Vâng' hoặc 'Không'.",
                 color: "#98fb98", // green
-                examples: []
+                examples: [
+                    { jp: "Bさんの国はどちらですか。", romaji: "Bさんのくにはどちらですか。", vi: "Đất nước của bạn B là ở đâu?" },
+                    { jp: "お名前は何ですか。", romaji: "おなまえはなんですか。", vi: "Tên bạn là gì?" },
+                    { jp: "あの方はどなたですか。", romaji: "あのかたはどなたですか。", vi: "Vị kia là ai vậy?" },
+                    { jp: "大学の電話番号は何番ですか。", romaji: "だいがくのでんわばんごうはなんばんですか。", vi: "Số điện thoại của trường đại học là số mấy?" },
+                    { jp: "お手洗いはどこですか。", romaji: "おてあらいはどこですか。", vi: "Nhà vệ sinh ở đâu vậy?" }
+                ]
             },
             {
                 id: "1_8",
