@@ -232,9 +232,9 @@ function openGrammarPoint(pointId) {
     let structureHtml = point.structure_jp;
     point.chips.forEach((chip, index) => {
         // Replace exact chip text with styled span
-        structureHtml = structureHtml.replace(chip, \`<span class="inline-block bg-[#e0e7ff] text-[#4f46e5] text-xs font-bold px-2 py-0.5 rounded mr-1">\${chip}</span>\`);
+        structureHtml = structureHtml.replace(chip, `<span class="inline-block bg-[#e0e7ff] text-[#4f46e5] text-xs font-bold px-2 py-0.5 rounded mr-1">${chip}</span>`);
     });
-    structureBox.innerHTML = \`<div class="text-xl font-bold mb-4">\${structureHtml}</div><div class="h-px bg-gray-200 w-full mb-3"></div><div class="text-sm text-gray-600">\${point.formula}</div>\`;
+    structureBox.innerHTML = `<div class="text-xl font-bold mb-4">${structureHtml}</div><div class="h-px bg-gray-200 w-full mb-3"></div><div class="text-sm text-gray-600">${point.formula}</div>`;
     
     // Meaning Box
     document.getElementById('gp-meaning').textContent = point.structure_vi;
