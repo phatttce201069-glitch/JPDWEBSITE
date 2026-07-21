@@ -533,8 +533,15 @@ function startQuiz() {
 
     // Shuffle quizList
     quizList.sort(() => Math.random() - 0.5);
-    // Limit to 10 questions if large
-    if(quizList.length > 10) quizList = quizList.slice(0, 10);
+    
+    // Limit to requested questions if not 'all'
+    const questionCountStr = document.getElementById('quiz-question-count') ? document.getElementById('quiz-question-count').value : "10";
+    if (questionCountStr !== 'all') {
+        const limit = parseInt(questionCountStr, 10);
+        if (quizList.length > limit) {
+            quizList = quizList.slice(0, limit);
+        }
+    }
 
     currentQuizIndex = 0;
     quizScore = 0;
