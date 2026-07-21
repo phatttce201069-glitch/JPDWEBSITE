@@ -16,11 +16,11 @@ const grammarLessons = [
                 note: "Trợ từ は phát âm là 'wa'. です thể hiện sự lịch sự.",
                 color: "#ffb6c1", // pink
                 examples: [
-                    { jp: "Aさんは学生です。", romaji: "A-san wa gakusei desu.", vi: "Bạn A là sinh viên." },
-                    { jp: "私は日本人です。", romaji: "Watashi wa nihonjin desu.", vi: "Tôi là người Nhật." },
-                    { jp: "田中さんは先生です。", romaji: "Tanaka-san wa sensei desu.", vi: "Anh Tanaka là giáo viên." },
-                    { jp: "私は医者です。", romaji: "Watashi wa isha desu.", vi: "Tôi là bác sĩ." },
-                    { jp: "マリアさんはブラジル人です。", romaji: "Maria-san wa Burajiru-jin desu.", vi: "Bạn Maria là người Brazil." }
+                    { jp: "Aさんは学生です。", reading: "Aさんはがくせいです。", romaji: "A-san wa gakusei desu.", vi: "Bạn A là sinh viên." },
+                    { jp: "私は日本人です。", reading: "わたしはにほんじんです。", romaji: "Watashi wa nihonjin desu.", vi: "Tôi là người Nhật." },
+                    { jp: "田中さんは先生です。", reading: "たなかさんはせんせいです。", romaji: "Tanaka-san wa sensei desu.", vi: "Anh Tanaka là giáo viên." },
+                    { jp: "私は医者です。", reading: "わたしはいしゃです。", romaji: "Watashi wa isha desu.", vi: "Tôi là bác sĩ." },
+                    { jp: "マリアさんはブラジル人です。", reading: "マリアさんはブラジルじんです。", romaji: "Maria-san wa Burajiru-jin desu.", vi: "Bạn Maria là người Brazil." }
                 ]
             },
             {
@@ -34,11 +34,11 @@ const grammarLessons = [
                 note: "Trợ từ の nối 2 danh từ. N2 bổ nghĩa cho N3.",
                 color: "#ffd700", // yellow
                 examples: [
-                    { jp: "やまださんはFPTの社員です。", romaji: "やまださんはFPTのしゃいんです。", vi: "Anh Yamada là nhân viên của FPT." },
-                    { jp: "アンさんは東京大学の学生です。", romaji: "アンさんはとうきょうだいがくのがくせいです。", vi: "Bạn An là sinh viên của trường đại học Tokyo." },
-                    { jp: "佐藤さんはABCのエンジニアです。", romaji: "さとうさんはABCのエンジニアです。", vi: "Anh Sato là kỹ sư của công ty ABC." },
-                    { jp: "ミラーさんはIMCの社員です。", romaji: "ミラーさんはIMCのしゃいんです。", vi: "Anh Miller là nhân viên của IMC." },
-                    { jp: "私は日本語センターの先生です。", romaji: "わたしはにほんごセンターのせんせいです。", vi: "Tôi là giáo viên của trung tâm tiếng Nhật." }
+                    { jp: "やまださんはFPTの社員です。", reading: "やまださんはFPTのしゃいんです。", romaji: "Yamada-san wa FPT no shain desu.", vi: "Anh Yamada là nhân viên của FPT." },
+                    { jp: "アンさんは東京大学の学生です。", reading: "アンさんはとうきょうだいがくのがくせいです。", romaji: "An-san wa Toukyou daigaku no gakusei desu.", vi: "Bạn An là sinh viên của trường đại học Tokyo." },
+                    { jp: "佐藤さんはABCのエンジニアです。", reading: "さとうさんはABCのエンジニアです。", romaji: "Satou-san wa ABC no enjinia desu.", vi: "Anh Sato là kỹ sư của công ty ABC." },
+                    { jp: "ミラーさんはIMCの社員です。", reading: "ミラーさんはIMCのしゃいんです。", romaji: "Miraa-san wa IMC no shain desu.", vi: "Anh Miller là nhân viên của IMC." },
+                    { jp: "私は日本語センターの先生です。", reading: "わたしはにほんごセンターのせんせいです。", romaji: "Watashi wa nihongo sentaa no sensei desu.", vi: "Tôi là giáo viên của trung tâm tiếng Nhật." }
                 ]
             },
             {
@@ -52,11 +52,11 @@ const grammarLessons = [
                 note: "",
                 color: "#98fb98", // green
                 examples: [
-                    { jp: "私の趣味は映画です。", romaji: "わたしのしゅみはえいがです。", vi: "Sở thích của tôi là phim ảnh." },
-                    { jp: "アンさんの誕生日は６月です。", romaji: "アンさんのたんじょうびはろくがつです。", vi: "Sinh nhật của bạn An là tháng 6." },
-                    { jp: "私の電話番号は123です。", romaji: "わたしのでんわばんごうは123です。", vi: "Số điện thoại của tôi là 123." },
-                    { jp: "田中さんの専門はコンピューターです。", romaji: "たなかさんのせんもんはコンピューターです。", vi: "Chuyên môn của anh Tanaka là máy tính." },
-                    { jp: "私の父の職業は公務員です。", romaji: "わたしのちちのしょくぎょうはこうむいんです。", vi: "Nghề nghiệp của bố tôi là công chức." }
+                    { jp: "私の趣味は映画です。", reading: "わたしのしゅみはえいがです。", romaji: "Watashi no shumi wa eiga desu.", vi: "Sở thích của tôi là phim ảnh." },
+                    { jp: "アンさんの誕生日は６月です。", reading: "アンさんのたんじょうびはろくがつです。", romaji: "An-san no tanjoubi wa rokugatsu desu.", vi: "Sinh nhật của bạn An là tháng 6." },
+                    { jp: "私の電話番号は123です。", reading: "わたしのでんわばんごうは123です。", romaji: "Watashi no denwa bangou wa 123 desu.", vi: "Số điện thoại của tôi là 123." },
+                    { jp: "田中さんの専門はコンピューターです。", reading: "たなかさんのせんもんはコンピューターです。", romaji: "Tanaka-san no senmon wa konpyuutaa desu.", vi: "Chuyên môn của anh Tanaka là máy tính." },
+                    { jp: "私の父の職業は公務員です。", reading: "わたしのちちのしょくぎょうはこうむいんです。", romaji: "Watashi no chichi no shokugyou wa koumuin desu.", vi: "Nghề nghiệp của bố tôi là công chức." }
                 ]
             },
             {
@@ -70,11 +70,11 @@ const grammarLessons = [
                 note: "Thay thế cho trợ từ は.",
                 color: "#dda0dd", // purple
                 examples: [
-                    { jp: "私は二十歳です。Bさんも二十歳です。", romaji: "わたしははたちです。Bさんもはたちです。", vi: "Tôi 20 tuổi. Bạn B cũng 20 tuổi." },
-                    { jp: "私も学生です。", romaji: "わたしもがくせいです。", vi: "Tôi cũng là sinh viên." },
-                    { jp: "田中さんは日本人です。佐藤さんも日本人です。", romaji: "たなかさんはにほんじんです。さとうさんもにほんじんです。", vi: "Anh Tanaka là người Nhật. Anh Sato cũng là người Nhật." },
-                    { jp: "この本は五百円です。その本も五百円です。", romaji: "このほんはごひゃくえんです。そのほんもごひゃくえんです。", vi: "Quyển sách này 500 yên. Quyển sách đó cũng 500 yên." },
-                    { jp: "マリアさんは主婦です。アンさんも主婦です。", romaji: "マリアさんはしゅふです。アンさんもしゅふです。", vi: "Chị Maria là nội trợ. Bạn An cũng là nội trợ." }
+                    { jp: "私は二十歳です。Bさんも二十歳です。", reading: "わたしははたちです。Bさんもはたちです。", romaji: "Watashi wa hatachi desu. B-san mo hatachi desu.", vi: "Tôi 20 tuổi. Bạn B cũng 20 tuổi." },
+                    { jp: "私も学生です。", reading: "わたしもがくせいです。", romaji: "Watashi mo gakusei desu.", vi: "Tôi cũng là sinh viên." },
+                    { jp: "田中さんは日本人です。佐藤さんも日本人です。", reading: "たなかさんはにほんじんです。さとうさんもにほんじんです。", romaji: "Tanaka-san wa nihonjin desu. Satou-san mo nihonjin desu.", vi: "Anh Tanaka là người Nhật. Anh Sato cũng là người Nhật." },
+                    { jp: "この本は五百円です。その本も五百円です。", reading: "このほんはごひゃくえんです。そのほんもごひゃくえんです。", romaji: "Kono hon wa gohyakuen desu. Sono hon mo gohyakuen desu.", vi: "Quyển sách này 500 yên. Quyển sách đó cũng 500 yên." },
+                    { jp: "マリアさんは主婦です。アンさんも主婦です。", reading: "マリアさんはしゅふです。アンさんもしゅふです。", romaji: "Maria-san wa shufu desu. An-san mo shufu desu.", vi: "Chị Maria là nội trợ. Bạn An cũng là nội trợ." }
                 ]
             },
             {
@@ -88,11 +88,11 @@ const grammarLessons = [
                 note: "Dạng lịch sự hơn là ではありません (dewa arimasen).",
                 color: "#ffb6c1", // pink
                 examples: [
-                    { jp: "さとさんは日本人じゃありません。", romaji: "さとさんはにほんじんじゃありません。", vi: "Bạn Sato không phải là người Nhật." },
-                    { jp: "私は学生じゃありません。", romaji: "わたしはがくせいじゃありません。", vi: "Tôi không phải là sinh viên." },
-                    { jp: "ミラーさんはアメリカ人じゃありません。", romaji: "ミラーさんはアメリカじんじゃありません。", vi: "Anh Miller không phải là người Mỹ." },
-                    { jp: "ここは食堂じゃありません。", romaji: "ここはしょくどうじゃありません。", vi: "Ở đây không phải là nhà ăn." },
-                    { jp: "今日は日曜日じゃありません。", romaji: "きょうはにちようびじゃありません。", vi: "Hôm nay không phải là chủ nhật." }
+                    { jp: "さとさんは日本人じゃありません。", reading: "さとさんはにほんじんじゃありません。", romaji: "Sato-san wa nihonjin ja arimasen.", vi: "Bạn Sato không phải là người Nhật." },
+                    { jp: "私は学生じゃありません。", reading: "わたしはがくせいじゃありません。", romaji: "Watashi wa gakusei ja arimasen.", vi: "Tôi không phải là sinh viên." },
+                    { jp: "ミラーさんはアメリカ人じゃありません。", reading: "ミラーさんはアメリカじんじゃありません。", romaji: "Miraa-san wa amerikajin ja arimasen.", vi: "Anh Miller không phải là người Mỹ." },
+                    { jp: "ここは食堂じゃありません。", reading: "ここはしょくどうじゃありません。", romaji: "Koko wa shokudou ja arimasen.", vi: "Ở đây không phải là nhà ăn." },
+                    { jp: "今日は日曜日じゃありません。", reading: "きょうはにちようびじゃありません。", romaji: "Kyou wa nichiyoubi ja arimasen.", vi: "Hôm nay không phải là chủ nhật." }
                 ]
             },
             {
@@ -118,11 +118,11 @@ const grammarLessons = [
                 note: "Không trả lời bằng 'Vâng' hoặc 'Không'.",
                 color: "#98fb98", // green
                 examples: [
-                    { jp: "Bさんの国はどちらですか。", romaji: "Bさんのくにはどちらですか。", vi: "Đất nước của bạn B là ở đâu?" },
-                    { jp: "お名前は何ですか。", romaji: "おなまえはなんですか。", vi: "Tên bạn là gì?" },
-                    { jp: "あの方はどなたですか。", romaji: "あのかたはどなたですか。", vi: "Vị kia là ai vậy?" },
-                    { jp: "大学の電話番号は何番ですか。", romaji: "だいがくのでんわばんごうはなんばんですか。", vi: "Số điện thoại của trường đại học là số mấy?" },
-                    { jp: "お手洗いはどこですか。", romaji: "おてあらいはどこですか。", vi: "Nhà vệ sinh ở đâu vậy?" }
+                    { jp: "Bさんの国はどちらですか。", reading: "Bさんのくにはどちらですか。", romaji: "B-san no kuni wa dochira desu ka.", vi: "Đất nước của bạn B là ở đâu?" },
+                    { jp: "お名前は何ですか。", reading: "おなまえはなんですか。", romaji: "Onamae wa nan desu ka.", vi: "Tên bạn là gì?" },
+                    { jp: "あの方はどなたですか。", reading: "あのかたはどなたですか。", romaji: "Ano kata wa donata desu ka.", vi: "Vị kia là ai vậy?" },
+                    { jp: "大学の電話番号は何番ですか。", reading: "だいがくのでんわばんごうはなんばんですか。", romaji: "Daigaku no denwa bangou wa nanban desu ka.", vi: "Số điện thoại của trường đại học là số mấy?" },
+                    { jp: "お手洗いはどこですか。", reading: "おてあらいはどこですか。", romaji: "Otearai wa doko desu ka.", vi: "Nhà vệ sinh ở đâu vậy?" }
                 ]
             },
             {
@@ -156,11 +156,11 @@ const grammarLessons = [
                 note: "どちら còn dùng để hỏi phương hướng.",
                 color: "#ffb6c1", // pink
                 examples: [
-                    { jp: "トイレはどこですか。", romaji: "トイレはどこですか。", vi: "Nhà vệ sinh ở đâu?" },
-                    { jp: "エレベーターはどちらですか。", romaji: "エレベーターはどちらですか。", vi: "Thang máy ở đâu (hướng nào)?" },
-                    { jp: "事務所はどこですか。", romaji: "じむしょはどこですか。", vi: "Văn phòng ở đâu vậy?" },
-                    { jp: "あなたの国はどちらですか。", romaji: "あなたのくにはどちらですか。", vi: "Đất nước của bạn là ở đâu (phía nào)?" },
-                    { jp: "受付はどこですか。", romaji: "うけつけはどこですか。", vi: "Quầy tiếp tân ở đâu?" }
+                    { jp: "トイレはどこですか。", reading: "トイレはどこですか。", romaji: "Toire wa doko desu ka.", vi: "Nhà vệ sinh ở đâu?" },
+                    { jp: "エレベーターはどちらですか。", reading: "エレベーターはどちらですか。", romaji: "Erebeetaa wa dochira desu ka.", vi: "Thang máy ở đâu (hướng nào)?" },
+                    { jp: "事務所はどこですか。", reading: "じむしょはどこですか。", romaji: "Jimusho wa doko desu ka.", vi: "Văn phòng ở đâu vậy?" },
+                    { jp: "あなたの国はどちらですか。", reading: "あなたのくにはどちらですか。", romaji: "Anata no kuni wa dochira desu ka.", vi: "Đất nước của bạn là ở đâu (phía nào)?" },
+                    { jp: "受付はどこですか。", reading: "うけつけはどこですか。", romaji: "Uketsuke wa doko desu ka.", vi: "Quầy tiếp tân ở đâu?" }
                 ]
             },
             {
@@ -174,11 +174,11 @@ const grammarLessons = [
                 note: "Trả lời bằng số tầng + かい/がい.",
                 color: "#ffd700", // yellow
                 examples: [
-                    { jp: "レストランは何階ですか。", romaji: "レストランはなんかいですか。", vi: "Nhà hàng ở tầng mấy?" },
-                    { jp: "会議室は何階ですか。", romaji: "かいぎしつはなんかいですか。", vi: "Phòng họp ở tầng mấy?" },
-                    { jp: "売り場は何階ですか。", romaji: "うりばはなんかいですか。", vi: "Quầy bán hàng ở tầng mấy?" },
-                    { jp: "パソコン売り場は何階ですか。", romaji: "パソコンうりばはなんかいですか。", vi: "Quầy bán máy tính ở tầng mấy?" },
-                    { jp: "私の部屋は三階です。", romaji: "わたしのへやはさんがいです。", vi: "Phòng của tôi ở tầng 3." }
+                    { jp: "レストランは何階ですか。", reading: "レストランはなんかいですか。", romaji: "Resutoran wa nankai desu ka.", vi: "Nhà hàng ở tầng mấy?" },
+                    { jp: "会議室は何階ですか。", reading: "かいぎしつはなんかいですか。", romaji: "Kaigishitsu wa nankai desu ka.", vi: "Phòng họp ở tầng mấy?" },
+                    { jp: "売り場は何階ですか。", reading: "うりばはなんかいですか。", romaji: "Uriba wa nankai desu ka.", vi: "Quầy bán hàng ở tầng mấy?" },
+                    { jp: "パソコン売り場は何階ですか。", reading: "パソコンうりばはなんかいですか。", romaji: "Pasokon uriba wa nankai desu ka.", vi: "Quầy bán máy tính ở tầng mấy?" },
+                    { jp: "私の部屋は三階です。", reading: "わたしのへやはさんがいです。", romaji: "Watashi no heya wa sangai desu.", vi: "Phòng của tôi ở tầng 3." }
                 ]
             },
             {
@@ -192,11 +192,11 @@ const grammarLessons = [
                 note: "Có thể thêm số lượng vào trước ください.",
                 color: "#98fb98", // green
                 examples: [
-                    { jp: "そのTシャツをください。", romaji: "そのTシャツをください。", vi: "Cho tôi cái áo thun đó." },
-                    { jp: "りんごを三つください。", romaji: "りんごをみっつください。", vi: "Cho tôi 3 quả táo." },
-                    { jp: "このペンをください。", romaji: "このぺんをください。", vi: "Lấy cho tôi cái bút này." },
-                    { jp: "コーヒーを二つください。", romaji: "コーヒーをふたつください。", vi: "Cho tôi 2 ly cà phê." },
-                    { jp: "水をください。", romaji: "みずをください。", vi: "Cho tôi xin nước." }
+                    { jp: "そのTシャツをください。", reading: "そのTシャツをください。", romaji: "Sono T-shatsu o kudasai.", vi: "Cho tôi cái áo thun đó." },
+                    { jp: "りんごを三つください。", reading: "りんごをみっつください。", romaji: "Ringo o mittsu kudasai.", vi: "Cho tôi 3 quả táo." },
+                    { jp: "このペンをください。", reading: "このペンをください。", romaji: "Kono pen o kudasai.", vi: "Lấy cho tôi cái bút này." },
+                    { jp: "コーヒーを二つください。", reading: "コーヒーをふたつください。", romaji: "Koohii o futatsu kudasai.", vi: "Cho tôi 2 ly cà phê." },
+                    { jp: "水をください。", reading: "みずをください。", romaji: "Mizu o kudasai.", vi: "Cho tôi xin nước." }
                 ]
             },
             {
@@ -222,11 +222,11 @@ const grammarLessons = [
                 note: "どこの trả lời bằng tên quốc gia hoặc tên công ty.",
                 color: "#ffb6c1", // pink
                 examples: [
-                    { jp: "これはどこのビールですか。", romaji: "これはどこのビールですか。", vi: "Đây là bia của nước nào?" },
-                    { jp: "これはどこのカメラですか。", romaji: "これはどこのカメラですか。", vi: "Đây là máy ảnh của hãng nào (nước nào)?" },
-                    { jp: "それはどこの車ですか。", romaji: "それはどこのくるまですか。", vi: "Đó là xe ô tô của hãng nào?" },
-                    { jp: "これはどこのワインですか。", romaji: "これはどこのワインですか。", vi: "Đây là rượu vang của nước nào?" },
-                    { jp: "このネクタイはどこのですか。", romaji: "このねくたいはどこのですか。", vi: "Cái cà vạt này là của hãng nào?" }
+                    { jp: "これはどこのビールですか。", reading: "これはどこのビールですか。", romaji: "Kore wa doko no biiru desu ka.", vi: "Đây là bia của nước nào?" },
+                    { jp: "これはどこのカメラですか。", reading: "これはどこのカメラですか。", romaji: "Kore wa doko no kamera desu ka.", vi: "Đây là máy ảnh của hãng nào (nước nào)?" },
+                    { jp: "それはどこの車ですか。", reading: "それはどこのくるまですか。", romaji: "Sore wa doko no kuruma desu ka.", vi: "Đó là xe ô tô của hãng nào?" },
+                    { jp: "これはどこのワインですか。", reading: "これはどこのワインですか。", romaji: "Kore wa doko no wain desu ka.", vi: "Đây là rượu vang của nước nào?" },
+                    { jp: "このネクタイはどこのですか。", reading: "このネクタイはどこのですか。", romaji: "Kono nekutai wa doko no desu ka.", vi: "Cái cà vạt này là của hãng nào?" }
                 ]
             },
             {
@@ -397,6 +397,7 @@ function openGrammarPoint(pointId) {
             exCard.innerHTML = `
                 <div class="flex-1">
                     <div class="text-lg font-bold text-[#2c3e50]">${ex.jp}</div>
+                    ${ex.reading ? `<div class="example-reading text-sm text-[#4b6584] mt-1 ${showReading ? '' : 'hidden'}">${ex.reading}</div>` : ''}
                     <div class="example-romaji text-xs text-gray-500 mt-1 ${showRomaji ? '' : 'hidden'}">${ex.romaji}</div>
                 </div>
                 <div class="flex-1 text-sm text-gray-700">
@@ -430,6 +431,7 @@ function playAudio(text, rate) {
 }
 
 let showRomaji = false;
+let showReading = false;
 
 function toggleRomaji() {
     showRomaji = !showRomaji;
@@ -450,3 +452,24 @@ function toggleRomaji() {
         }
     });
 }
+
+function toggleReading() {
+    showReading = !showReading;
+    const btn = document.getElementById('toggle-reading-btn');
+    if (showReading) {
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Ẩn Cách đọc';
+    } else {
+        btn.innerHTML = '<i class="fa-solid fa-eye"></i> Hiện Cách đọc';
+    }
+    
+    // Update all visible reading
+    const readingEls = document.querySelectorAll('.example-reading');
+    readingEls.forEach(el => {
+        if (showReading) {
+            el.classList.remove('hidden');
+        } else {
+            el.classList.add('hidden');
+        }
+    });
+}
+
