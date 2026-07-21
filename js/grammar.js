@@ -138,6 +138,110 @@ const grammarLessons = [
                 examples: []
             }
         ]
+    },
+    {
+        id: "2",
+        title: "Bài 2: Vị trí, Giá cả và Xuất xứ",
+        subtitle: "JPD113 – Bài 2",
+        description: "Học cách hỏi vị trí, số tầng, giá tiền, nội dung, xuất xứ và sở hữu.",
+        points: [
+            {
+                id: "2_1",
+                structure_jp: "〜は どこですか / どちらですか。",
+                structure_vi: "~ ở đâu?",
+                chips: ["〜", "どこ/どちら"],
+                formula: "Danh từ + は + どこ (thông thường) / どちら (lịch sự) + ですか",
+                explanation: "Hỏi vị trí",
+                usage: "Hỏi vị trí của địa điểm, đồ vật hoặc người.",
+                note: "どちら còn dùng để hỏi phương hướng.",
+                color: "#ffb6c1", // pink
+                examples: [
+                    { jp: "トイレはどこですか。", romaji: "トイレはどこですか。", vi: "Nhà vệ sinh ở đâu?" },
+                    { jp: "エレベーターはどちらですか。", romaji: "エレベーターはどちらですか。", vi: "Thang máy ở đâu (hướng nào)?" },
+                    { jp: "事務所はどこですか。", romaji: "じむしょはどこですか。", vi: "Văn phòng ở đâu vậy?" },
+                    { jp: "あなたの国はどちらですか。", romaji: "あなたのくにはどちらですか。", vi: "Đất nước của bạn là ở đâu (phía nào)?" },
+                    { jp: "受付はどこですか。", romaji: "うけつけはどこですか。", vi: "Quầy tiếp tân ở đâu?" }
+                ]
+            },
+            {
+                id: "2_2",
+                structure_jp: "〜は なんがいですか。",
+                structure_vi: "~ ở tầng mấy?",
+                chips: ["〜", "なんがい"],
+                formula: "Danh từ + は + なんかい + ですか",
+                explanation: "Hỏi số tầng",
+                usage: "Hỏi vị trí tầng của một địa điểm trong tòa nhà.",
+                note: "Trả lời bằng số tầng + かい/がい.",
+                color: "#ffd700", // yellow
+                examples: [
+                    { jp: "レストランは何階ですか。", romaji: "レストランはなんかいですか。", vi: "Nhà hàng ở tầng mấy?" },
+                    { jp: "会議室は何階ですか。", romaji: "かいぎしつはなんかいですか。", vi: "Phòng họp ở tầng mấy?" },
+                    { jp: "売り場は何階ですか。", romaji: "うりばはなんかいですか。", vi: "Quầy bán hàng ở tầng mấy?" },
+                    { jp: "パソコン売り場は何階ですか。", romaji: "パソコンうりばはなんかいですか。", vi: "Quầy bán máy tính ở tầng mấy?" },
+                    { jp: "私の部屋は三階です。", romaji: "わたしのへやはさんがいです。", vi: "Phòng của tôi ở tầng 3." }
+                ]
+            },
+            {
+                id: "2_3",
+                structure_jp: "N を ください。",
+                structure_vi: "Cho tôi N / Lấy cho tôi N",
+                chips: ["N", "ください"],
+                formula: "Danh từ + を + ください",
+                explanation: "Yêu cầu/Gọi món",
+                usage: "Dùng khi mua hàng hoặc gọi món trong nhà hàng.",
+                note: "Có thể thêm số lượng vào trước ください.",
+                color: "#98fb98", // green
+                examples: [
+                    { jp: "そのTシャツをください。", romaji: "そのTシャツをください。", vi: "Cho tôi cái áo thun đó." },
+                    { jp: "りんごを三つください。", romaji: "りんごをみっつください。", vi: "Cho tôi 3 quả táo." },
+                    { jp: "このペンをください。", romaji: "このぺんをください。", vi: "Lấy cho tôi cái bút này." },
+                    { jp: "コーヒーを二つください。", romaji: "コーヒーをふたつください。", vi: "Cho tôi 2 ly cà phê." },
+                    { jp: "水をください。", romaji: "みずをください。", vi: "Cho tôi xin nước." }
+                ]
+            },
+            {
+                id: "2_4",
+                structure_jp: "〜は いくらですか。",
+                structure_vi: "~ bao nhiêu tiền?",
+                chips: ["〜", "いくら"],
+                formula: "Danh từ + は + いくら + ですか",
+                explanation: "Hỏi giá tiền",
+                usage: "Dùng để hỏi giá của một món đồ.",
+                note: "",
+                color: "#dda0dd", // purple
+                examples: []
+            },
+            {
+                id: "2_5",
+                structure_jp: "〜は どこの N ですか。",
+                structure_vi: "N của nước nào/hãng nào?",
+                chips: ["〜", "どこの N"],
+                formula: "N1 + は + どこの + N2 + ですか",
+                explanation: "Hỏi về xuất xứ/nơi sản xuất",
+                usage: "Hỏi về nguồn gốc, nơi sản xuất của đồ vật.",
+                note: "どこの trả lời bằng tên quốc gia hoặc tên công ty.",
+                color: "#ffb6c1", // pink
+                examples: [
+                    { jp: "これはどこのビールですか。", romaji: "これはどこのビールですか。", vi: "Đây là bia của nước nào?" },
+                    { jp: "これはどこのカメラですか。", romaji: "これはどこのカメラですか。", vi: "Đây là máy ảnh của hãng nào (nước nào)?" },
+                    { jp: "それはどこの車ですか。", romaji: "それはどこのくるまですか。", vi: "Đó là xe ô tô của hãng nào?" },
+                    { jp: "これはどこのワインですか。", romaji: "これはどこのワインですか。", vi: "Đây là rượu vang của nước nào?" },
+                    { jp: "このネクタイはどこのですか。", romaji: "このねくたいはどこのですか。", vi: "Cái cà vạt này là của hãng nào?" }
+                ]
+            },
+            {
+                id: "2_6",
+                structure_jp: "〜は だれの N ですか。",
+                structure_vi: "N của ai?",
+                chips: ["〜", "だれの N"],
+                formula: "Danh từ 1 + は + だれの + Danh từ 2 + ですか",
+                explanation: "Hỏi sở hữu",
+                usage: "Hỏi xem một vật thuộc về ai.",
+                note: "",
+                color: "#ffd700", // yellow
+                examples: []
+            }
+        ]
     }
 ];
 
