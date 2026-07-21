@@ -397,7 +397,7 @@ function openGrammarPoint(pointId) {
             exCard.innerHTML = `
                 <div class="flex-1">
                     <div class="text-lg font-bold text-[#2c3e50]">${ex.jp}</div>
-                    <div class="text-xs text-gray-500 mt-1">${ex.romaji}</div>
+                    <div class="example-romaji text-xs text-gray-500 mt-1 ${showRomaji ? '' : 'hidden'}">${ex.romaji}</div>
                 </div>
                 <div class="flex-1 text-sm text-gray-700">
                     ${ex.vi}
@@ -427,4 +427,26 @@ function playAudio(text, rate) {
     } else {
         alert("Trình duyệt của bạn không hỗ trợ phát âm thanh (Web Speech API).");
     }
+}
+
+let showRomaji = false;
+
+function toggleRomaji() {
+    showRomaji = !showRomaji;
+    const btn = document.getElementById('toggle-romaji-btn');
+    if (showRomaji) {
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Ẩn Romaji';
+    } else {
+        btn.innerHTML = '<i class="fa-solid fa-eye"></i> Hiện Romaji';
+    }
+    
+    // Update all visible romaji
+    const romajiEls = document.querySelectorAll('.example-romaji');
+    romajiEls.forEach(el => {
+        if (showRomaji) {
+            el.classList.remove('hidden');
+        } else {
+            el.classList.add('hidden');
+        }
+    });
 }
