@@ -275,7 +275,7 @@ function toggleGlobalMeaning() {
 
 function toggleGlobalReading() {
     showReading = document.getElementById('global-show-reading').checked;
-    
+
     // Update currently visible views
     if (document.getElementById('view-list').classList.contains('block')) renderWordList();
     if (document.getElementById('view-flashcard').classList.contains('block')) renderFlashcard();
@@ -292,57 +292,91 @@ function toggleGlobalReading() {
 function renderDashboard() {
     const container = document.getElementById('dashboard-container');
     if (!container) return;
-    
-    // get unique lessons
-    const lessons = [...new Set(vocabularyData.map(w => w.lesson))].filter(Boolean).sort((a,b) => {
-        if (typeof a === 'number' && typeof b === 'number') return a - b;
-        return String(a).localeCompare(String(b), undefined, {numeric: true});
-    });
-    
-    container.innerHTML = '';
-    
-    // Thẻ "Tất cả"
-    const allCount = vocabularyData.length;
-    const allCard = document.createElement('div');
-    allCard.className = 'bg-[#5f8a8b] p-8 rounded-3xl shadow-sm border border-[#4d7576] flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group text-white';
-    allCard.onclick = () => openLesson('all');
-    allCard.innerHTML = `
-        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 text-white text-2xl transition-colors">
-            <i class="fa-solid fa-layer-group"></i>
-        </div>
-        <h3 class="text-2xl font-bold mb-2">Tất cả</h3>
-        <p class="text-white/80">${allCount} từ vựng</p>
-    `;
-    container.appendChild(allCard);
-    
-    lessons.forEach(l => {
-        const wordCount = vocabularyData.filter(w => w.lesson == l).length;
-        const card = document.createElement('div');
-        card.className = 'bg-white p-8 rounded-3xl shadow-sm border border-[#e8e2db] flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-[#5f8a8b] hover:-translate-y-1 transition-all group';
-        card.onclick = () => openLesson(l);
-        const titleText = isNaN(l) ? l : `Bài ${l}`;
-        card.innerHTML = `
-            <div class="w-16 h-16 rounded-full bg-[#f4f1ee] flex items-center justify-center mb-4 group-hover:bg-[#5f8a8b] group-hover:text-white transition-colors text-[#8b7b6c] text-2xl">
-                <i class="fa-solid fa-book"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-[#5c544d] mb-2">${titleText}</h3>
-            <p class="text-[#7d746d]">${wordCount} từ vựng</p>
-        `;
-        container.appendChild(card);
-    });
-}
 
+    // Xoá lưới cũ để chia lại bố cục 2 tầng (Tầng 1: Folder, Tầng 2: Bài học)
+    container.className = '';
+    container.innerHTML = '';
+
+    // --- KHU VỰC FOLDER ---
+    const foldersGrid = document.createElement('div');
+    // Set up lưới 3 cột để thẻ Folder trở nên nhỏ và vuông vắn
+    foldersGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8';
+
+    // --- KHU VỰC BÀI HỌC ---
+    const lessonsGrid = document.createElement('div');
+    lessonsGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden border-t-2 border-dashed border-[#e8e2db] pt-8 mt-4';
+
+    // Danh sách các khóa học
+    const courses = ['JPD113', 'JPD123'];
+
+    courses.forEach(courseName => {
+        // Tìm số từ vựng của khóa
+        const courseWords = vocabularyData.filter(w => w.course === courseName || (!w.course && courseName === 'JPD113'));
+
+        const folderCard = document.createElement('div');
+        // Thẻ bây giờ sẽ nhỏ gọn bằng 1 ô bình thường
+        folderCard.className = 'bg-[#5f8a8b] p-6 rounded-3xl shadow-sm border border-[#4d7576] flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group text-white';
+        folderCard.innerHTML = `
+            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-3 text-white text-xl transition-colors">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-1">${courseName}</h3>
+            <p class="text-white/80 text-sm">${courseWords.length} từ vựng</p>
+        `;
+
+        folderCard.onclick = () => {
+            lessonsGrid.innerHTML = '';
+            lessonsGrid.classList.remove('hidden');
+
+            if (courseWords.length === 0) {
+                lessonsGrid.innerHTML = `<p class="col-span-full text-center text-[#7d746d] py-10">Chưa có dữ liệu cho khóa học này.</p>`;
+                return;
+            }
+
+            const lessons = [...new Set(courseWords.map(w => w.lesson))].filter(Boolean).sort((a, b) => {
+                return String(a).localeCompare(String(b), undefined, { numeric: true });
+            });
+
+            lessons.forEach(l => {
+                const wordCount = vocabularyData.filter(w => w.lesson == l).length;
+                const card = document.createElement('div');
+                card.className = 'bg-white p-6 rounded-3xl shadow-sm border border-[#e8e2db] flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-[#5f8a8b] hover:-translate-y-1 transition-all group';
+                card.onclick = () => openLesson(l);
+
+                // Cắt bỏ chữ JPD113 để thẻ bài học chỉ hiện "Bài 1", "Bài 2"
+                const shortName = l.replace(courseName + ' - ', '');
+
+                card.innerHTML = `
+                    <div class="w-12 h-12 rounded-full bg-[#f4f1ee] flex items-center justify-center mb-3 group-hover:bg-[#5f8a8b] group-hover:text-white transition-colors text-[#8b7b6c] text-xl">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#5c544d] mb-1">${shortName}</h3>
+                    <p class="text-[#7d746d] text-sm">${wordCount} từ</p>
+                `;
+                lessonsGrid.appendChild(card);
+            });
+
+            // Tự động cuộn xuống khu vực bài học
+            lessonsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        foldersGrid.appendChild(folderCard);
+    });
+
+    container.appendChild(foldersGrid);
+    container.appendChild(lessonsGrid);
+}
 function openLesson(lessonId) {
     currentLesson = lessonId;
     document.getElementById('dashboard-view').classList.remove('block');
     document.getElementById('dashboard-view').classList.add('hidden');
     document.getElementById('lesson-detail-view').classList.remove('hidden');
     document.getElementById('lesson-detail-view').classList.add('block');
-    
+
     const titleText = lessonId === 'all' ? 'Tất cả từ vựng' : (isNaN(lessonId) ? lessonId : `Bài ${lessonId}`);
     document.getElementById('page-title').textContent = titleText;
     document.getElementById('page-subtitle').textContent = "Học từ vựng qua Flashcards và kiểm tra bằng Quiz.";
-    
+
     switchTab('list');
 }
 
@@ -352,8 +386,8 @@ function closeLesson() {
     document.getElementById('lesson-detail-view').classList.add('hidden');
     document.getElementById('dashboard-view').classList.remove('hidden');
     document.getElementById('dashboard-view').classList.add('block');
-    
-    document.getElementById('page-title').textContent = "Luyện tập Từ Vựng";
+
+    document.getElementById('page-title').textContent = "JPD113 - Từ vựng";
     document.getElementById('page-subtitle').textContent = "Chọn một bài học để bắt đầu ôn tập qua Flashcards và kiểm tra bằng Quiz.";
 }
 
@@ -374,7 +408,7 @@ function toggleBookmark(id) {
         bookmarks.push(id);
     }
     localStorage.setItem('vocab_bookmarks', JSON.stringify(bookmarks));
-    
+
     if (document.getElementById('view-list').classList.contains('block')) {
         renderWordList();
     }
@@ -395,12 +429,12 @@ function clearAllBookmarks() {
     if (confirm("Bạn có chắc chắn muốn xóa TẤT CẢ các từ đã lưu không? Hành động này không thể hoàn tác.")) {
         bookmarks = [];
         localStorage.setItem('vocab_bookmarks', JSON.stringify(bookmarks));
-        
+
         if (document.getElementById('view-list').classList.contains('block')) {
             renderWordList();
         }
         if (document.getElementById('view-flashcard').classList.contains('block')) {
-            initFlashcard(); 
+            initFlashcard();
         }
     }
 }
@@ -413,7 +447,7 @@ function switchTab(tabId) {
         document.getElementById(`tab-${id}`).classList.remove('bg-[#5f8a8b]', 'text-white');
         document.getElementById(`tab-${id}`).classList.add('text-[#8b7b6c]');
     });
-    
+
     document.getElementById(`view-${tabId}`).classList.remove('hidden');
     document.getElementById(`view-${tabId}`).classList.add('block');
     document.getElementById(`tab-${tabId}`).classList.add('bg-[#5f8a8b]', 'text-white');
@@ -442,10 +476,10 @@ function toggleFilterBookmark() {
 function renderWordList() {
     const container = document.getElementById('word-list-container');
     container.innerHTML = '';
-    
+
     let filteredData = currentLesson === 'all' ? vocabularyData : vocabularyData.filter(w => w.lesson == currentLesson);
-    
-    const listToRender = filterBookmarkedList 
+
+    const listToRender = filterBookmarkedList
         ? filteredData.filter(w => isBookmarked(w.id))
         : filteredData;
 
@@ -457,7 +491,7 @@ function renderWordList() {
     listToRender.forEach(word => {
         const bookmarked = isBookmarked(word.id);
         const starIcon = bookmarked ? 'fa-solid text-[#d97706]' : 'fa-regular text-gray-300 hover:text-[#d97706]';
-        
+
         const card = document.createElement('div');
         card.className = 'bg-white p-6 rounded-2xl shadow-sm border border-[#e8e2db] flex flex-col justify-between';
         card.innerHTML = `
@@ -490,15 +524,15 @@ let currentFlashcardIndex = 0;
 
 function initFlashcard() {
     const onlyBookmarks = document.getElementById('flashcard-bookmark-only').checked;
-    
+
     let filteredData = currentLesson === 'all' ? vocabularyData : vocabularyData.filter(w => w.lesson == currentLesson);
-    
-    flashcardList = onlyBookmarks 
+
+    flashcardList = onlyBookmarks
         ? filteredData.filter(w => isBookmarked(w.id))
         : [...filteredData];
-    
+
     currentFlashcardIndex = 0;
-    
+
     const container = document.getElementById('flashcard-container');
     if (container) {
         container.classList.remove('flipped');
@@ -536,10 +570,10 @@ function renderFlashcard() {
     meaningEl.textContent = word.meaning;
     exampleEl.textContent = word.example;
     progressEl.textContent = `${currentFlashcardIndex + 1}/${flashcardList.length}`;
-    
+
     const isBookmarkedWord = isBookmarked(word.id);
     starEl.innerHTML = `<button onclick="event.stopPropagation(); toggleBookmark(${word.id})"><i class="${isBookmarkedWord ? 'fa-solid text-[#d97706]' : 'fa-regular'} fa-star"></i></button>`;
-    
+
     const audioEl = document.getElementById('flashcard-front-audio');
     if (audioEl) {
         audioEl.innerHTML = `<button onclick="playAudio('${word.word}', event)"><i class="fa-solid fa-volume-high"></i></button>`;
@@ -556,7 +590,7 @@ function nextFlashcard() {
     if (flashcardList.length === 0) return;
     const container = document.getElementById('flashcard-container');
     container.classList.remove('flipped');
-    
+
     setTimeout(() => {
         currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardList.length;
         renderFlashcard();
@@ -567,7 +601,7 @@ function prevFlashcard() {
     if (flashcardList.length === 0) return;
     const container = document.getElementById('flashcard-container');
     container.classList.remove('flipped');
-    
+
     setTimeout(() => {
         currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardList.length) % flashcardList.length;
         renderFlashcard();
@@ -599,7 +633,7 @@ function startQuiz() {
         let matchLesson = currentLesson === 'all' ? true : w.lesson == currentLesson;
         return matchBookmark && matchLesson;
     });
-    
+
     if (quizList.length < 4 && quizMode === 'multiple') {
         alert("Cần ít nhất 4 từ vựng để tạo bài Quiz trắc nghiệm. Hãy chọn bài khác hoặc tắt tùy chọn 'Chỉ tạo Quiz từ các từ đã lưu'.");
         return;
@@ -610,7 +644,7 @@ function startQuiz() {
 
     // Shuffle quizList
     quizList.sort(() => Math.random() - 0.5);
-    
+
     // Limit to requested questions if not 'all'
     const questionCountStr = document.getElementById('quiz-question-count') ? document.getElementById('quiz-question-count').value : "10";
     if (questionCountStr !== 'all') {
@@ -651,7 +685,7 @@ function renderQuizQuestion() {
 
     const optionsContainer = document.getElementById('quiz-options');
     const typingArea = document.getElementById('quiz-typing-area');
-    
+
     if (quizMode === 'multiple') {
         optionsContainer.classList.remove('hidden');
         optionsContainer.classList.add('grid');
@@ -678,13 +712,13 @@ function renderQuizQuestion() {
         optionsContainer.classList.remove('grid');
         typingArea.classList.remove('hidden');
         typingArea.classList.add('flex');
-        
+
         const inputEl = document.getElementById('quiz-typing-input');
         inputEl.value = '';
         inputEl.className = 'w-full max-w-md px-6 py-4 border-2 border-[#e8e2db] rounded-xl text-lg text-[#5c544d] focus:outline-none focus:border-[#5f8a8b] transition-colors mb-4 text-center placeholder-gray-400';
         inputEl.disabled = false;
         document.getElementById('quiz-typing-feedback').textContent = '';
-        
+
         // Auto focus
         setTimeout(() => inputEl.focus(), 100);
     }
@@ -729,31 +763,31 @@ function checkAnswer(btn, isCorrect) {
 function checkTypingAnswer() {
     const inputEl = document.getElementById('quiz-typing-input');
     if (inputEl.disabled) return; // Prevent double submit
-    
+
     const userAnswer = inputEl.value.trim().toLowerCase();
     if (!userAnswer) return;
-    
+
     inputEl.disabled = true;
     const word = quizList[currentQuizIndex];
     const correctAnswer = word.meaning.trim().toLowerCase();
-    
+
     // Hàm tính khoảng cách Levenshtein (chấp nhận sai lỗi chính tả nhỏ)
     function getEditDistance(a, b) {
-        if(a.length === 0) return b.length;
-        if(b.length === 0) return a.length;
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
         var matrix = [];
-        for(var i = 0; i <= b.length; i++){
+        for (var i = 0; i <= b.length; i++) {
             matrix[i] = [i];
         }
-        for(var j = 0; j <= a.length; j++){
+        for (var j = 0; j <= a.length; j++) {
             matrix[0][j] = j;
         }
-        for(var i = 1; i <= b.length; i++){
-            for(var j = 1; j <= a.length; j++){
-                if(b.charAt(i-1) === a.charAt(j-1)){
-                    matrix[i][j] = matrix[i-1][j-1];
+        for (var i = 1; i <= b.length; i++) {
+            for (var j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
                 } else {
-                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
+                    matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
                 }
             }
         }
@@ -761,33 +795,33 @@ function checkTypingAnswer() {
     }
 
     let isCorrect = (userAnswer === correctAnswer);
-    
+
     if (!isCorrect) {
         let cleanMeaning = correctAnswer.replace(/\s*\([^)]*\)/g, '').trim();
         let validAnswers = cleanMeaning.split(/\s*[\/,]\s*/);
-        
+
         let extendedAnswers = [];
         validAnswers.forEach(ans => {
             extendedAnswers.push(ans);
             let simplified = ans.replace(/^(quyển|cái|con|chiếc|sự|món|quả|trái|đôi)\s+/g, '').trim();
             if (simplified && simplified !== ans) extendedAnswers.push(simplified);
         });
-        
+
         isCorrect = extendedAnswers.some(ans => {
             if (ans === userAnswer) return true;
-            
+
             // Tính số lỗi chính tả cho phép dựa trên độ dài đáp án
             let allowedTypos = 0;
             if (ans.length > 4 && ans.length <= 8) allowedTypos = 1;
             else if (ans.length > 8) allowedTypos = 2;
-            
+
             let dist = getEditDistance(ans, userAnswer);
             return dist <= allowedTypos;
         });
     }
-    
+
     const feedbackEl = document.getElementById('quiz-typing-feedback');
-    
+
     if (isCorrect) {
         inputEl.classList.remove('border-[#e8e2db]', 'focus:border-[#5f8a8b]');
         inputEl.classList.add('border-[#10b981]', 'bg-[#d1fae5]', 'text-[#065f46]');
@@ -801,9 +835,9 @@ function checkTypingAnswer() {
         feedbackEl.className = 'mt-4 text-lg font-medium h-6 text-[#ef4444]';
         if (!wrongQuestions.find(w => w.id === word.id)) wrongQuestions.push(word);
     }
-    
+
     document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
-    
+
     setTimeout(() => {
         currentQuizIndex++;
         if (currentQuizIndex < quizList.length) {
@@ -818,7 +852,7 @@ function showQuizResult() {
     document.getElementById('quiz-active').classList.add('hidden');
     document.getElementById('quiz-result').classList.remove('hidden');
     document.getElementById('quiz-final-score').innerHTML = `Bạn trả lời đúng <strong class="text-[#5f8a8b]">${quizScore}/${quizList.length}</strong> câu.`;
-    
+
     const redoBtn = document.getElementById('quiz-redo-btn');
     if (wrongQuestions.length > 0) {
         redoBtn.classList.remove('hidden');
@@ -831,7 +865,7 @@ function showQuizResult() {
 function startRedoQuiz() {
     isRedoMode = true;
     quizList = [...wrongQuestions];
-    
+
     // Shuffle quizList
     quizList.sort(() => Math.random() - 0.5);
 
@@ -871,11 +905,11 @@ function showGameSetup() {
 function startGame() {
     const onlyBookmarks = document.getElementById('game-bookmark-only').checked;
     let filteredData = currentLesson === 'all' ? vocabularyData : vocabularyData.filter(w => w.lesson == currentLesson);
-    
+
     if (onlyBookmarks) {
         filteredData = filteredData.filter(w => isBookmarked(w.id));
     }
-    
+
     if (filteredData.length < 2) {
         alert("Cần ít nhất 2 từ vựng để chơi game!");
         return;
@@ -885,31 +919,31 @@ function startGame() {
     filteredData.sort(() => 0.5 - Math.random());
     const selectedWords = filteredData.slice(0, 8);
     totalPairs = selectedWords.length;
-    
+
     // Create 16 cards (8 pairs)
     gameCardsData = [];
     selectedWords.forEach(word => {
         gameCardsData.push({ id: word.id, text: word.word, type: 'jp', matchId: word.id });
         gameCardsData.push({ id: word.id, text: word.meaning, type: 'vn', matchId: word.id });
     });
-    
+
     // Shuffle cards
     gameCardsData.sort(() => 0.5 - Math.random());
-    
+
     // Reset state
     gameMoves = 0;
     gameSeconds = 0;
     matchedPairs = 0;
     flippedCards = [];
     updateGameStatus();
-    
+
     // Render grid
     renderGameGrid();
-    
+
     document.getElementById('game-setup').classList.add('hidden');
     document.getElementById('game-result').classList.add('hidden');
     document.getElementById('game-active').classList.remove('hidden');
-    
+
     // Start timer
     clearInterval(gameTimerInterval);
     gameTimerInterval = setInterval(() => {
@@ -928,7 +962,7 @@ function updateGameStatus() {
 function renderGameGrid() {
     const grid = document.getElementById('game-grid');
     grid.innerHTML = '';
-    
+
     // Adjust columns based on pairs
     if (totalPairs <= 3) {
         grid.className = 'grid grid-cols-2 sm:grid-cols-3 gap-4 perspective-1000 max-w-2xl mx-auto';
@@ -941,7 +975,7 @@ function renderGameGrid() {
         cardEl.className = 'game-card shadow-sm';
         cardEl.dataset.index = index;
         cardEl.onclick = () => handleGameCardClick(index, cardEl);
-        
+
         cardEl.innerHTML = `
             <div class="game-card-inner">
                 <div class="game-card-face game-card-front">
@@ -960,10 +994,10 @@ function handleGameCardClick(index, cardEl) {
     if (flippedCards.length >= 2 || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) {
         return;
     }
-    
+
     cardEl.classList.add('flipped');
     flippedCards.push({ index, el: cardEl, data: gameCardsData[index] });
-    
+
     if (flippedCards.length === 2) {
         gameMoves++;
         updateGameStatus();
@@ -973,7 +1007,7 @@ function handleGameCardClick(index, cardEl) {
 
 function checkGameMatch() {
     const [card1, card2] = flippedCards;
-    
+
     if (card1.data.matchId === card2.data.matchId && card1.data.type !== card2.data.type) {
         // Match
         setTimeout(() => {
@@ -981,7 +1015,7 @@ function checkGameMatch() {
             card2.el.classList.add('matched');
             matchedPairs++;
             flippedCards = [];
-            
+
             if (matchedPairs === totalPairs) {
                 endGame();
             }
@@ -991,7 +1025,7 @@ function checkGameMatch() {
         setTimeout(() => {
             card1.el.classList.add('mismatched');
             card2.el.classList.add('mismatched');
-            
+
             setTimeout(() => {
                 card1.el.classList.remove('flipped', 'mismatched');
                 card2.el.classList.remove('flipped', 'mismatched');
@@ -1010,3 +1044,149 @@ function endGame() {
     const s = (gameSeconds % 60).toString().padStart(2, '0');
     document.getElementById('game-final-time').textContent = `${m}:${s}`;
 }
+// --- BẮT ĐẦU: TỰ ĐỘNG CẤU TRÚC LẠI TỪ VỰNG THÀNH JPD113 ---
+// --- BẮT ĐẦU: TỰ ĐỘNG CẤU TRÚC LẠI TỪ VỰNG VÀ CHIA BÀI ---
+// --- BẮT ĐẦU: TỰ ĐỘNG CẤU TRÚC LẠI TỪ VỰNG VÀ CHIA BÀI ---
+(function () {
+    const unique = [];
+    const seen = new Set();
+    vocabularyData.forEach(item => {
+        const key = item.word + '|' + item.reading;
+        if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(item);
+        }
+    });
+
+    const TOTAL_LESSONS = 10;
+    const baseCount = Math.floor(unique.length / TOTAL_LESSONS);
+    const remainder = unique.length % TOTAL_LESSONS;
+
+    let currentLesson = 1;
+    let countInCurrentLesson = 0;
+    let targetForCurrentLesson = baseCount + (currentLesson <= remainder ? 1 : 0);
+
+    unique.forEach((item) => {
+        item.course = "JPD113"; // Đánh dấu khóa học
+        item.lesson = "JPD113 - Bài " + currentLesson; // Tên bài duy nhất để không trùng với JPD123 sau này
+        countInCurrentLesson++;
+
+        if (countInCurrentLesson >= targetForCurrentLesson && currentLesson < TOTAL_LESSONS) {
+            currentLesson++;
+            countInCurrentLesson = 0;
+            targetForCurrentLesson = baseCount + (currentLesson <= remainder ? 1 : 0);
+        }
+    });
+
+    vocabularyData.length = 0;
+    unique.forEach(item => vocabularyData.push(item));
+})();
+// --- KẾT THÚC ---
+// --- THÊM TỪ VỰNG JPD123 (Bài 5 trạng từ) ---
+const newWordsJPD123 = [
+    { id: 1001, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "今日", reading: "きょう", meaning: "Hôm nay", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1002, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "明日", reading: "あした", meaning: "Ngày mai", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1003, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "あさって", reading: "あさって", meaning: "Ngày kia", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1004, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "昨日", reading: "きのう", meaning: "Hôm qua", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1005, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "おととい", reading: "おととい", meaning: "Hôm kia", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1006, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "先週", reading: "せんしゅう", meaning: "Tuần trước", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1007, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "週末", reading: "しゅうまつ", meaning: "Cuối tuần", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1008, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "家", reading: "いえ", meaning: "Nhà", example: "Phân loại: Danh từ" },
+    { id: 1009, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "へや", reading: "へや", meaning: "Căn phòng", example: "Phân loại: Danh từ" },
+    { id: 1010, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "デパート", reading: "デパート", meaning: "Trung tâm thương mại", example: "Phân loại: Danh từ" },
+    { id: 1011, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "びじゅつかん", reading: "びじゅつかん", meaning: "Bảo tàng mỹ thuật", example: "Phân loại: Danh từ" },
+    { id: 1012, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "ゲーム", reading: "ゲーム", meaning: "Trò chơi", example: "Phân loại: Danh từ" },
+    { id: 1013, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "かぞく", reading: "かぞく", meaning: "Gia đình", example: "Phân loại: Danh từ" },
+    { id: 1014, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "こいびと", reading: "こいびと", meaning: "Người yêu", example: "Phân loại: Danh từ" },
+    { id: 1015, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "ともだち", reading: "ともだち", meaning: "Bạn bè", example: "Phân loại: Danh từ" },
+    { id: 1016, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "ルームメイト", reading: "ルームメイト", meaning: "Bạn cùng phòng", example: "Phân loại: Danh từ" },
+    { id: 1017, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "どこか", reading: "どこか", meaning: "Nơi nào đó", example: "Phân loại: Từ nghi vấn" },
+    { id: 1018, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "会います", reading: "あいます", meaning: "Gặp gỡ", example: "Phân loại: Động từ" },
+    { id: 1019, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "つくります", reading: "つくります", meaning: "Làm, chế tạo", example: "Phân loại: Động từ" },
+    { id: 1020, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "買い物します", reading: "かいものします", meaning: "Mua sắm", example: "Phân loại: Động từ" },
+    { id: 1021, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "食事します", reading: "しょくじします", meaning: "Dùng bữa", example: "Phân loại: Động từ" },
+    { id: 1022, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "洗濯します", reading: "せんたくします", meaning: "Giặt giũ", example: "Phân loại: Động từ" },
+    { id: 1023, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "掃除します", reading: "そうじします", meaning: "Lau dọn", example: "Phân loại: Động từ" },
+    { id: 1024, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "それから", reading: "それから", meaning: "Sau đó", example: "Phân loại: Liên từ" },
+    { id: 1025, course: "JPD123", lesson: "JPD123 - Bài 5 trạng từ", word: "一人で", reading: "ひとりで", meaning: "Một mình", example: "Phân loại: Trạng từ" }
+];
+vocabularyData.push(...newWordsJPD123);
+// --- THÊM TỪ VỰNG JPD123 (Bài 4) ---
+const newWordsJPD123_Bai4 = [
+    { id: 1026, course: "JPD123", lesson: "JPD123 - Bài 4", word: "北", reading: "きた", meaning: "Phía bắc", example: "Phân loại: Danh từ" },
+    { id: 1027, course: "JPD123", lesson: "JPD123 - Bài 4", word: "南", reading: "みなみ", meaning: "Phía nam", example: "Phân loại: Danh từ" },
+    { id: 1028, course: "JPD123", lesson: "JPD123 - Bài 4", word: "東", reading: "ひがし", meaning: "Phía đông", example: "Phân loại: Danh từ" },
+    { id: 1029, course: "JPD123", lesson: "JPD123 - Bài 4", word: "西", reading: "にし", meaning: "Phía tây", example: "Phân loại: Danh từ" },
+    { id: 1030, course: "JPD123", lesson: "JPD123 - Bài 4", word: "真ん中", reading: "まんなか", meaning: "Chính giữa", example: "Phân loại: Danh từ" },
+    { id: 1031, course: "JPD123", lesson: "JPD123 - Bài 4", word: "車", reading: "くるま", meaning: "Ô tô", example: "Phân loại: Danh từ" },
+    { id: 1032, course: "JPD123", lesson: "JPD123 - Bài 4", word: "新幹線", reading: "しんかんせん", meaning: "Tàu cao tốc Shinkansen", example: "Phân loại: Danh từ" },
+    { id: 1033, course: "JPD123", lesson: "JPD123 - Bài 4", word: "電車", reading: "でんしゃ", meaning: "Tàu điện", example: "Phân loại: Danh từ" },
+    { id: 1034, course: "JPD123", lesson: "JPD123 - Bài 4", word: "飛行機", reading: "ひこうき", meaning: "Máy bay", example: "Phân loại: Danh từ" },
+    { id: 1035, course: "JPD123", lesson: "JPD123 - Bài 4", word: "駅", reading: "えき", meaning: "Nhà ga", example: "Phân loại: Danh từ" },
+    { id: 1036, course: "JPD123", lesson: "JPD123 - Bài 4", word: "町", reading: "まち", meaning: "Thành phố, thị trấn", example: "Phân loại: Danh từ" },
+    { id: 1037, course: "JPD123", lesson: "JPD123 - Bài 4", word: "～時間", reading: "～じかん", meaning: "~ tiếng", example: "Phân loại: Lượng từ" },
+    { id: 1038, course: "JPD123", lesson: "JPD123 - Bài 4", word: "～時間半", reading: "～じかんはん", meaning: "~ tiếng rưỡi", example: "Phân loại: Lượng từ" },
+    { id: 1039, course: "JPD123", lesson: "JPD123 - Bài 4", word: "歩いて", reading: "あるいて", meaning: "Đi bộ", example: "Phân loại: Trạng từ" },
+    { id: 1040, course: "JPD123", lesson: "JPD123 - Bài 4", word: "～くらい", reading: "～くらい", meaning: "Khoảng~", example: "Phân loại: Hậu tố" },
+    { id: 1041, course: "JPD123", lesson: "JPD123 - Bài 4", word: "どのくらい", reading: "どのくらい", meaning: "Bao lâu", example: "Phân loại: Từ nghi vấn" }
+];
+vocabularyData.push(...newWordsJPD123_Bai4);
+// --- THÊM TỪ VỰNG JPD123 (Bài 4 phần 2) ---
+const newWordsJPD123_Bai4P2 = [
+    { id: 1042, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "温泉", reading: "おんせん", meaning: "Suối nước nóng", example: "Phân loại: Danh từ" },
+    { id: 1043, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "川", reading: "かわ", meaning: "Sông", example: "Phân loại: Danh từ" },
+    { id: 1044, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "山", reading: "やま", meaning: "Núi", example: "Phân loại: Danh từ" },
+    { id: 1045, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "教会", reading: "きょうかい", meaning: "Nhà thờ", example: "Phân loại: Danh từ" },
+    { id: 1046, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "城", reading: "おしろ", meaning: "Lâu đài", example: "Phân loại: Danh từ" },
+    { id: 1047, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "神社", reading: "じんじゃ", meaning: "Đền", example: "Phân loại: Danh từ" },
+    { id: 1048, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "寺", reading: "おてら", meaning: "Chùa", example: "Phân loại: Danh từ" },
+    { id: 1049, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "ビル", reading: "ビル", meaning: "Tòa nhà", example: "Phân loại: Danh từ" },
+    { id: 1050, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "ところ", reading: "ところ", meaning: "Nơi, chỗ", example: "Phân loại: Danh từ" },
+    { id: 1051, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "人", reading: "ひと", meaning: "Người", example: "Phân loại: Danh từ" },
+    { id: 1052, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "緑", reading: "みどり", meaning: "Màu xanh; cây xanh", example: "Phân loại: Danh từ" },
+    { id: 1053, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "あります", reading: "あります", meaning: "Có", example: "Phân loại: Động từ" },
+    { id: 1054, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "新しい", reading: "あたらしい", meaning: "Mới", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1055, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "古い", reading: "ふるい", meaning: "Cũ", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1056, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "いい", reading: "いい", meaning: "Tốt", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1057, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "多い", reading: "おおい", meaning: "Nhiều", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1058, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "少ない", reading: "すくない", meaning: "Ít", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1059, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "大きい", reading: "おおきい", meaning: "To, lớn", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1060, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "小さい", reading: "ちいさい", meaning: "Nhỏ", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1061, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "高い", reading: "たかい", meaning: "Cao, đắt", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1062, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "低い", reading: "ひくい", meaning: "Thấp", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1063, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "きれい", reading: "きれい", meaning: "Đẹp, sạch sẽ", example: "Phân loại: Tính từ đuôi na" },
+    { id: 1064, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "静か", reading: "しずか", meaning: "Yên tĩnh", example: "Phân loại: Tính từ đuôi na" },
+    { id: 1065, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "にぎやか", reading: "にぎやか", meaning: "Náo nhiệt", example: "Phân loại: Tính từ đuôi na" },
+    { id: 1066, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "有名", reading: "ゆうめい", meaning: "Nổi tiếng", example: "Phân loại: Tính từ đuôi na" },
+    { id: 1067, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "どんな", reading: "どんな", meaning: "Như thế nào", example: "Phân loại: Từ nghi vấn" },
+    { id: 1068, course: "JPD123", lesson: "JPD123 - Bài 4 phần 2", word: "そして", reading: "そして", meaning: "Và", example: "Phân loại: Liên từ" }
+];
+vocabularyData.push(...newWordsJPD123_Bai4P2);
+// --- THÊM TỪ VỰNG JPD123 (Bài 4 phần 3) ---
+const newWordsJPD123_Bai4P3 = [
+    { id: 1069, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "少し", reading: "すこし", meaning: "Một chút", example: "Phân loại: Trạng từ" },
+    { id: 1070, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "とても", reading: "とても", meaning: "Rất", example: "Phân loại: Trạng từ" },
+    { id: 1071, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "どう", reading: "どう", meaning: "Thế nào", example: "Phân loại: Từ nghi vấn" },
+    { id: 1072, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "そうですね", reading: "そうですね", meaning: "Đúng vậy nhỉ", example: "Phân loại: Cụm từ" },
+    { id: 1073, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "雨", reading: "あめ", meaning: "Mưa", example: "Phân loại: Danh từ" },
+    { id: 1074, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "雪", reading: "ゆき", meaning: "Tuyết", example: "Phân loại: Danh từ" },
+    { id: 1075, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "日", reading: "ひ", meaning: "Ngày / mặt trời", example: "Phân loại: Danh từ" },
+    { id: 1076, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "メロン", reading: "メロン", meaning: "Dưa lưới", example: "Phân loại: Danh từ" },
+    { id: 1077, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "暖かい", reading: "あたたかい", meaning: "Ấm áp", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1078, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "涼しい", reading: "すずしい", meaning: "Mát mẻ", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1079, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "暑い", reading: "あつい", meaning: "Nóng bức", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1080, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "寒い", reading: "さむい", meaning: "Lạnh", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1081, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "天気がいい", reading: "てんきがいい", meaning: "Thời tiết đẹp", example: "Phân loại: Cụm từ" },
+    { id: 1082, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "天気がわるい", reading: "てんきがわるい", meaning: "Thời tiết xấu", example: "Phân loại: Cụm từ" },
+    { id: 1083, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "温かい", reading: "あたたかい", meaning: "Ấm", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1084, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "熱い", reading: "あつい", meaning: "Nóng", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1085, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "冷たい", reading: "つめたい", meaning: "Lạnh / mát", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1086, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "おいしい", reading: "おいしい", meaning: "Ngon", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1087, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "甘い", reading: "あまい", meaning: "Ngọt", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1088, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "辛い", reading: "からい", meaning: "Cay", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1089, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "苦い", reading: "にがい", meaning: "Đắng", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1090, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "すっぱい", reading: "すっぱい", meaning: "Chua", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1091, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "一年中", reading: "いちねんじゅう", meaning: "Suốt 1 năm", example: "Phân loại: Trạng từ" },
+    { id: 1092, course: "JPD123", lesson: "JPD123 - Bài 4 phần 3", word: "あまり", reading: "あまり", meaning: "Không ~ lắm", example: "Phân loại: Trạng từ" }
+];
+vocabularyData.push(...newWordsJPD123_Bai4P3);
