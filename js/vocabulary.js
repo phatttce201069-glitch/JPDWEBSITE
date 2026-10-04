@@ -1214,3 +1214,22 @@ const newWordsJPD123_Bai5P2 = [
     { id: 1112, course: "JPD123", lesson: "JPD123 - Bài 5 phần 2", word: "どうして", reading: "どうして", meaning: "Tại sao", example: "Phân loại: Từ nghi vấn" }
 ];
 vocabularyData.push(...newWordsJPD123_Bai5P2);
+
+// --- THÊM TỪ VỰNG JPD123 (Bài 5 phần 3) ---
+const newWordsJPD123_Bai5P3 = [
+    { id: 1113, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "今度", reading: "こんど", meaning: "Lần tới", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1114, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "今晩", reading: "こんばん", meaning: "Tối nay", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1115, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "今年", reading: "ことし", meaning: "Năm nay", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1116, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "来年", reading: "らいねん", meaning: "Sang năm", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1117, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "アニメ", reading: "アニメ", meaning: "Hoạt hình", example: "Phân loại: Danh từ" },
+    { id: 1118, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "え", reading: "え", meaning: "Tranh", example: "Phân loại: Danh từ" },
+    { id: 1119, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "けしき", reading: "けしき", meaning: "Phong cảnh", example: "Phân loại: Danh từ" },
+    { id: 1120, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "じてんしゃ", reading: "じてんしゃ", meaning: "Xe đạp", example: "Phân loại: Danh từ" },
+    { id: 1121, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "しゃしん", reading: "しゃしん", meaning: "Ảnh", example: "Phân loại: Danh từ" },
+    { id: 1122, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "とります", reading: "とります", meaning: "Chụp", example: "Phân loại: Động từ" },
+    { id: 1123, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "借ります", reading: "かります", meaning: "Vay, mượn", example: "Phân loại: Động từ" },
+    { id: 1124, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "ほしい", reading: "ほしい", meaning: "Muốn có", example: "Phân loại: Tính từ đuôi i" },
+    { id: 1125, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "好き", reading: "すき", meaning: "Thích", example: "Phân loại: Tính từ đuôi na" },
+    { id: 1126, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "きらい", reading: "きらい", meaning: "Ghét", example: "Phân loại: Tính từ đuôi na" }
+];
+vocabularyData.push(...newWordsJPD123_Bai5P3);
