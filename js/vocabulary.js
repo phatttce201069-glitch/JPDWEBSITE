@@ -1233,3 +1233,32 @@ const newWordsJPD123_Bai5P3 = [
     { id: 1126, course: "JPD123", lesson: "JPD123 - Bài 5 phần 3", word: "きらい", reading: "きらい", meaning: "Ghét", example: "Phân loại: Tính từ đuôi na" }
 ];
 vocabularyData.push(...newWordsJPD123_Bai5P3);
+
+// --- THÊM TỪ VỰNG JPD123 (Bài 6) ---
+const newWordsJPD123_Bai6 = [
+    { id: 1127, course: "JPD123", lesson: "JPD123 - Bài 6", word: "今週", reading: "こんしゅう", meaning: "Tuần này", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1128, course: "JPD123", lesson: "JPD123 - Bài 6", word: "来週", reading: "らいしゅう", meaning: "Tuần sau", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1129, course: "JPD123", lesson: "JPD123 - Bài 6", word: "今月", reading: "こんげつ", meaning: "Tháng này", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1130, course: "JPD123", lesson: "JPD123 - Bài 6", word: "来月", reading: "らいげつ", meaning: "Tháng sau", example: "Phân loại: Danh từ chỉ thời gian" },
+    { id: 1131, course: "JPD123", lesson: "JPD123 - Bài 6", word: "カラオケ", reading: "カラオケ", meaning: "Hát karaoke", example: "Phân loại: Danh từ" },
+    { id: 1132, course: "JPD123", lesson: "JPD123 - Bài 6", word: "コンサート", reading: "コンサート", meaning: "Buổi hòa nhạc", example: "Phân loại: Danh từ" },
+    { id: 1133, course: "JPD123", lesson: "JPD123 - Bài 6", word: "しあい", reading: "しあい", meaning: "Trận đấu", example: "Phân loại: Danh từ" },
+    { id: 1134, course: "JPD123", lesson: "JPD123 - Bài 6", word: "セール", reading: "セール", meaning: "Giảm giá", example: "Phân loại: Danh từ" },
+    { id: 1135, course: "JPD123", lesson: "JPD123 - Bài 6", word: "チケット", reading: "チケット", meaning: "Vé", example: "Phân loại: Danh từ" },
+    { id: 1136, course: "JPD123", lesson: "JPD123 - Bài 6", word: "ちず", reading: "ちず", meaning: "Bản đồ", example: "Phân loại: Danh từ" },
+    { id: 1137, course: "JPD123", lesson: "JPD123 - Bài 6", word: "ドライブ", reading: "ドライブ", meaning: "Lái xe", example: "Phân loại: Danh từ" },
+    { id: 1138, course: "JPD123", lesson: "JPD123 - Bài 6", word: "みずぎ", reading: "みずぎ", meaning: "Đồ bơi", example: "Phân loại: Danh từ" },
+    { id: 1139, course: "JPD123", lesson: "JPD123 - Bài 6", word: "やきゅう", reading: "やきゅう", meaning: "Bóng chày", example: "Phân loại: Danh từ" },
+    { id: 1140, course: "JPD123", lesson: "JPD123 - Bài 6", word: "やくそく", reading: "やくそく", meaning: "Hứa, hẹn", example: "Phân loại: Danh từ" },
+    { id: 1141, course: "JPD123", lesson: "JPD123 - Bài 6", word: "ようじ", reading: "ようじ", meaning: "Việc bận", example: "Phân loại: Danh từ" },
+    { id: 1142, course: "JPD123", lesson: "JPD123 - Bài 6", word: "～まい", reading: "～まい", meaning: "Cách đếm vật mỏng", example: "Phân loại: Lượng từ" },
+    { id: 1143, course: "JPD123", lesson: "JPD123 - Bài 6", word: "あります", reading: "あります", meaning: "Có", example: "Phân loại: Động từ" },
+    { id: 1144, course: "JPD123", lesson: "JPD123 - Bài 6", word: "ざんねん", reading: "ざんねん", meaning: "Tiếc", example: "Phân loại: Tính từ đuôi na" },
+    { id: 1145, course: "JPD123", lesson: "JPD123 - Bài 6", word: "いっしょに", reading: "いっしょに", meaning: "Cùng với", example: "Phân loại: Trạng từ" },
+    { id: 1146, course: "JPD123", lesson: "JPD123 - Bài 6", word: "いいですね", reading: "いいですね", meaning: "Hay đấy", example: "Phân loại: Cụm từ" },
+    { id: 1147, course: "JPD123", lesson: "JPD123 - Bài 6", word: "ああ", reading: "ああ", meaning: "A", example: "Phân loại: Thán từ" },
+    { id: 1148, course: "JPD123", lesson: "JPD123 - Bài 6", word: "すみません", reading: "すみません", meaning: "Xin lỗi", example: "Phân loại: Cụm từ" },
+    { id: 1149, course: "JPD123", lesson: "JPD123 - Bài 6", word: "また今度", reading: "またこんど", meaning: "Hẹn lần sau", example: "Phân loại: Cụm từ" },
+    { id: 1150, course: "JPD123", lesson: "JPD123 - Bài 6", word: "わあ", reading: "わあ", meaning: "Oa", example: "Phân loại: Thán từ" }
+];
+vocabularyData.push(...newWordsJPD123_Bai6);
