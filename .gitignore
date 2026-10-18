@@ -8,3 +8,5 @@ backend/target/
 .vercel/
 dist/
 .tanstack/
+
+.vercel

@@ -1,0 +1,9 @@
+.tools/
+backend/
+screenshots/
+artifacts/
+attachments/
+.git/
+node_modules/
+dist/
+.vercel/

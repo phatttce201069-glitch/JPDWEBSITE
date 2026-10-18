@@ -12,7 +12,7 @@ import {
   examUnits,
   type ExamQuestion,
 } from "@/lib/study/exam";
-import { vocabulary } from "@/lib/study/content";
+import { findReading, vocabulary } from "@/lib/study/content";
 import { useStudy } from "@/lib/study/store";
 import type { ExamSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
@@ -324,20 +324,34 @@ function ExamPage() {
           <div className="mt-8">
             <h2 className="text-sm font-semibold tracking-wide text-stone uppercase">Các câu cần xem lại ({missed.length})</h2>
             <ul className="mt-2 divide-y divide-line border-y border-line">
-              {missed.map((question) => (
-                <li key={question.id} className="py-3">
-                  <p className="text-sm text-stone">
-                    Câu {question.id} · {question.section}
-                  </p>
-                  <p className="mt-1 text-sm">{question.prompt}</p>
-                  <div className="mt-2">
-                    <Sentence text={question.sentence} compact />
-                  </div>
-                  <p className="mt-1 text-sm">
-                    Đáp án đúng: <span className="font-semibold text-seal">{question.answer}</span>
-                  </p>
-                </li>
-              ))}
+              {missed.map((question) => {
+                const isMissedReadingQ =
+                  question.section === "Kanji" &&
+                  (question.prompt.includes("cách đọc") ||
+                    question.prompt.includes("読み方") ||
+                    question.prompt.includes("âm Hán") ||
+                    question.prompt.includes("âm thuần Nhật"));
+                const answerReading = !isMissedReadingQ ? findReading(question.answer) : null;
+                return (
+                  <li key={question.id} className="py-3">
+                    <p className="text-sm text-stone">
+                      Câu {question.id} · {question.section}
+                    </p>
+                    <p className="mt-1 text-sm">{question.prompt}</p>
+                    <div className="mt-2">
+                      <Sentence text={question.sentence} compact isReadingQuestion={isMissedReadingQ} />
+                    </div>
+                    <p className="mt-1 text-sm">
+                      Đáp án đúng: <span className="font-semibold text-seal">{question.answer}</span>
+                      {answerReading ? (
+                        <span className="text-stone font-normal ml-1.5">
+                          ({answerReading})
+                        </span>
+                      ) : null}
+                    </p>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ) : (
@@ -358,6 +372,15 @@ function ExamPage() {
 
   const current = paper[index];
   if (!current) return null;
+
+  const isReadingQuestion =
+    current.section === "Kanji" &&
+    (current.prompt.includes("cách đọc") ||
+      current.prompt.includes("読み方") ||
+      current.prompt.includes("âm Hán") ||
+      current.prompt.includes("âm thuần Nhật") ||
+      current.prompt.includes("onyomi") ||
+      current.prompt.includes("kunyomi"));
 
   function choose(option: string) {
     if (picked) return;
@@ -380,7 +403,7 @@ function ExamPage() {
       {current.promptJp ? <p className="jp mt-3 text-base leading-relaxed text-ink">{current.promptJp}</p> : null}
       <h1 className="mt-2 text-lg font-medium leading-snug text-ink">{current.prompt}</h1>
       <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
-        <Sentence text={current.sentence} />
+        <Sentence text={current.sentence} isReadingQuestion={isReadingQuestion} />
       </div>
       <div className="mt-3 grid gap-2">
         {current.options.map((option, optionIndex) => {
@@ -390,6 +413,15 @@ function ExamPage() {
           let tone = "border-line bg-sheet text-ink hover:border-stone";
           if (picked && isAnswer) tone = "border-ink bg-ink text-paper";
           else if (selectedOption) tone = "border-seal bg-seal/10 text-seal";
+
+          const reading = !isReadingQuestion ? findReading(option) : null;
+          const readingTone =
+            picked && isAnswer
+              ? "text-paper/80"
+              : selectedOption
+                ? "text-seal"
+                : "text-stone";
+
           return (
             <button
               key={`${option}-${optionIndex}`}
@@ -402,7 +434,21 @@ function ExamPage() {
               )}
             >
               <span className="mt-0.5 w-6 shrink-0 font-medium">{letter}.</span>
-              <span className={cn("break-words", /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg")}>{option}</span>
+              <span className="min-w-0 flex-1">
+                <span
+                  className={cn(
+                    "break-words block font-medium",
+                    /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg leading-tight",
+                  )}
+                >
+                  {option}
+                </span>
+                {reading ? (
+                  <span className={cn("block text-xs mt-0.5 tracking-wide", readingTone)}>
+                    {reading}
+                  </span>
+                ) : null}
+              </span>
             </button>
           );
         })}
@@ -433,23 +479,66 @@ function ExamPage() {
   );
 }
 
-function Sentence({ text, compact = false }: { text: string; compact?: boolean }) {
+function Sentence({
+  text,
+  compact = false,
+  isReadingQuestion = false,
+}: {
+  text: string;
+  compact?: boolean;
+  isReadingQuestion?: boolean;
+}) {
+  const trimmed = text.trim();
+  if (/^〔[^〕]+〕$/.test(trimmed)) {
+    const target = trimmed.slice(1, -1);
+    const reading = !isReadingQuestion ? findReading(target) : null;
+    return (
+      <div className={cn("text-center", compact ? "py-1" : "py-2")}>
+        <span
+          className={cn(
+            "jp block font-medium text-ink break-words",
+            compact ? "text-xl sm:text-2xl" : "text-3xl sm:text-4xl",
+          )}
+        >
+          {target}
+        </span>
+        {reading ? (
+          <span
+            className={cn(
+              "jp block text-stone font-normal tracking-wide break-words",
+              compact ? "text-sm mt-0.5" : "text-base sm:text-lg mt-1.5",
+            )}
+          >
+            {reading}
+          </span>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className={cn("jp leading-loose text-ink", compact ? "text-base leading-relaxed" : "text-xl")}>
       {text.split("\n").map((line, lineIndex) => (
-        <p key={lineIndex}>{renderLine(line)}</p>
+        <p key={lineIndex}>{renderLine(line, isReadingQuestion)}</p>
       ))}
     </div>
   );
 }
 
-function renderLine(line: string) {
+function renderLine(line: string, isReadingQuestion: boolean) {
   const chunks = line.split(/(〔[^〕]*〕)/);
   return chunks.map((chunk, index) => {
     if (!chunk.startsWith("〔")) return <span key={index}>{chunk}</span>;
+    const target = chunk.slice(1, -1);
+    const reading = !isReadingQuestion ? findReading(target) : null;
     return (
-      <span key={index}>
-        （　<span className="underline decoration-seal underline-offset-4">{chunk.slice(1, -1)}</span>　）
+      <span key={index} className="inline-block mx-1">
+        （　
+        <span className="underline decoration-seal underline-offset-4 font-medium text-ink">
+          {target}
+        </span>
+        {reading ? <span className="text-sm font-normal text-stone ml-1">({reading})</span> : null}
+        　）
       </span>
     );
   });

@@ -1,6 +1,7 @@
 import { alphabet } from "@/data/alphabet";
 import { grammar } from "@/data/grammar";
 import { vocabulary } from "@/data/vocabulary";
+import { kanaReading } from "@/lib/study/romaji";
 import type { Glyph, Script, Word } from "@/lib/study/types";
 
 export { alphabet, grammar, vocabulary };
@@ -108,3 +109,37 @@ export function shuffle<T>(items: T[]): T[] {
   }
   return copy;
 }
+
+export function findReading(surface: string): string | null {
+  const clean = surface.replace(/[（(][^）)]*[）)]/g, "").replace(/\s+/g, "").trim();
+  if (!clean || !/[一-龯々]/.test(clean)) return null;
+
+  // Exact match
+  const match = vocabulary.find((w) => {
+    const s = w.word.replace(/[（(][^）)]*[）)]/g, "").replace(/\s+/g, "").trim();
+    return s === clean;
+  });
+  if (match) {
+    const kana = kanaReading(match);
+    if (kana && kana !== clean) return kana;
+    if (match.reading && match.reading !== clean && /[ぁ-んァ-ヶ]/.test(match.reading)) {
+      return match.reading;
+    }
+  }
+
+  // Partial match for inflections
+  const partial = vocabulary.find((w) => {
+    const s = w.word.replace(/[（(][^）)]*[）)]/g, "").replace(/\s+/g, "").trim();
+    return clean.startsWith(s) || s.startsWith(clean);
+  });
+  if (partial) {
+    const kana = kanaReading(partial);
+    if (kana && kana !== clean && /[ぁ-んァ-ヶ]/.test(kana)) return kana;
+    if (partial.reading && partial.reading !== clean && /[ぁ-んァ-ヶ]/.test(partial.reading)) {
+      return partial.reading;
+    }
+  }
+
+  return null;
+}
+
