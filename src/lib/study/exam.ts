@@ -17,7 +17,7 @@ export type ExamQuestion = {
   answer: string;
 };
 
-export type ExamCourse = "JPD113" | "JPD123";
+export type ExamCourse = "JPD113" | "JPD123" | "starred";
 
 const FILL = {
   promptJp: "下記の選択肢から（　　）に最も合う言葉を選びなさい。",
@@ -184,7 +184,28 @@ const PART_DIR = {
   prompt: "Chọn trợ từ chỉ hướng đi.",
 };
 
-export function examUnits(course: ExamCourse) {
+export function examUnits(course: ExamCourse, starredIds: number[] = []) {
+  if (course === "starred") {
+    const counts = new Map<string, number>();
+    for (const word of vocabulary) {
+      if (!starredIds.includes(word.id)) continue;
+      const bai = baiOf(word.lesson) ?? "khac";
+      counts.set(bai, (counts.get(bai) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .sort((left, right) => {
+        const nLeft = Number(left[0]);
+        const nRight = Number(right[0]);
+        if (isNaN(nLeft) || isNaN(nRight)) return left[0].localeCompare(right[0]);
+        return nLeft - nRight;
+      })
+      .map(([bai, count]) => ({
+        bai,
+        label: bai === "khac" ? "Từ vựng khác" : `Bài ${bai}`,
+        count,
+      }));
+  }
+
   const counts = new Map<string, number>();
   for (const word of vocabulary) {
     if (word.course !== course) continue;
@@ -195,6 +216,55 @@ export function examUnits(course: ExamCourse) {
   return [...counts.entries()]
     .sort((left, right) => Number(left[0]) - Number(right[0]))
     .map(([bai, count]) => ({ bai, label: `Bài ${bai}`, count }));
+}
+
+export function buildStarredExam(words: Word[], limit?: number): ExamQuestion[] {
+  const glyphs = alphabet.filter((glyph) => glyph.type === "kanji");
+  const questions: ExamQuestion[] = [];
+  const pool = vocabulary.filter(examWord);
+
+  for (const word of shuffle(words)) {
+    if (!examWord(word)) continue;
+    // 1. Reading question if has kanji
+    if (hasKanji(surfaceOf(word))) {
+      const qRead = wordReading(word, pool, glyphs);
+      if (qRead) questions.push(qRead);
+      const qKanaToKanji = kanaToKanji(word, pool);
+      if (qKanaToKanji) questions.push(qKanaToKanji);
+    }
+    // 2. Meaning question (Kanji / Vocabulary)
+    const qMeaning = meaningOf(word, pool, hasKanji(surfaceOf(word)) ? "Kanji" : "Từ vựng");
+    if (qMeaning) questions.push(qMeaning);
+
+    // 3. Word from Vietnamese meaning
+    const qWord = wordForMeaning(word, words, pool);
+    if (qWord) questions.push(qWord);
+
+    // 4. Usage or reply if available
+    const qUsage = usageOf(word);
+    if (qUsage) questions.push(qUsage);
+
+    const qSentence = sentenceMeaning(word);
+    if (qSentence) questions.push(qSentence);
+  }
+
+  // Deduplicate
+  const unique: ExamQuestion[] = [];
+  const seen = new Set<string>();
+  for (const q of shuffle(questions)) {
+    const key = `${q.prompt}::${q.sentence}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(q);
+  }
+
+  const targetCount = limit && limit > 0 ? Math.min(unique.length, limit) : Math.min(unique.length, 30);
+  const selected = unique.slice(0, targetCount);
+
+  return selected.map((q, idx) => ({
+    ...q,
+    id: String(idx + 1),
+  }));
 }
 
 export function buildExam(course: ExamCourse, baiList: string[]): ExamQuestion[] {
@@ -1448,7 +1518,7 @@ function kunOf(glyph: Glyph) {
   return kataToHira(kun);
 }
 
-function baiOf(value: string) {
+export function baiOf(value: string) {
   return value.match(/Bài\s*(\d+)/)?.[1] ?? null;
 }
 

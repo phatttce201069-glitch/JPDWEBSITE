@@ -1,17 +1,29 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Star } from "lucide-react";
+import { CheckSquare, Play, Sparkles, Square, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressLine } from "@/components/progress-line";
-import { EXAM_SECONDS, EXAM_SIZE, buildExam, examUnits, type ExamQuestion } from "@/lib/study/exam";
+import {
+  EXAM_SECONDS,
+  EXAM_SIZE,
+  baiOf,
+  buildExam,
+  buildStarredExam,
+  examUnits,
+  type ExamQuestion,
+} from "@/lib/study/exam";
+import { vocabulary } from "@/lib/study/content";
 import { useStudy } from "@/lib/study/store";
 import type { ExamSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
 
 export const Route = createFileRoute("/exam")({
   validateSearch: (search: Record<string, unknown>): ExamSearch => ({
-    course: search.course === "JPD113" || search.course === "JPD123" ? search.course : "",
-    bai: typeof search.bai === "string" ? search.bai.split(",").filter((part) => /^\d+$/.test(part)).join(",") : "",
+    course:
+      search.course === "JPD113" || search.course === "JPD123" || search.course === "starred"
+        ? search.course
+        : "",
+    bai: typeof search.bai === "string" ? search.bai : "",
   }),
   component: ExamPage,
 });
@@ -30,16 +42,22 @@ function ExamPage() {
   const [note, setNote] = useState("");
   const nextRef = useRef<HTMLDivElement>(null);
 
-  const selected = search.bai ? search.bai.split(",") : [];
+  const selected = search.bai ? search.bai.split(",").filter(Boolean) : [];
+  const starredWords = vocabulary.filter((word) => starred.includes(word.id));
 
   useEffect(() => {
-    const label = search.course
-      ? selected.length
-        ? `${search.course} · Bài ${selected.join(", ")}`
+    const label =
+      search.course === "starred"
+        ? selected.length
+          ? `Từ đánh dấu · Bài ${selected.join(", ")}`
+          : "Từ vựng đã đánh dấu"
         : search.course
-      : "Kiểm tra";
+          ? selected.length
+            ? `${search.course} · Bài ${selected.join(", ")}`
+            : search.course
+          : "Kiểm tra";
     setLast({ to: "/exam", label, search });
-  }, [search.course, search.bai, setLast]);
+  }, [search.course, search.bai, selected, setLast]);
 
   useEffect(() => {
     if (!paper || closed) return;
@@ -70,7 +88,37 @@ function ExamPage() {
   }
 
   function start() {
-    if (!search.course || selected.length === 0) return;
+    if (!search.course) return;
+
+    if (search.course === "starred") {
+      const allStarredWords = vocabulary.filter((w) => starred.includes(w.id));
+      const targetWords =
+        selected.length === 0
+          ? allStarredWords
+          : allStarredWords.filter((w) => selected.includes(baiOf(w.lesson) ?? "khac"));
+
+      if (targetWords.length === 0) {
+        setNote("Chưa có từ nào được chọn. Hãy chọn bài hoặc đánh dấu thêm từ.");
+        return;
+      }
+
+      const next = buildStarredExam(targetWords);
+      if (next.length === 0) {
+        setNote("Chưa đủ từ để tạo câu hỏi kiểm tra.");
+        return;
+      }
+
+      setNote("");
+      setPaper(next);
+      setIndex(0);
+      setPicked(null);
+      setAnswers(Array(next.length).fill(null));
+      setLeft(Math.max(next.length * 60, 300));
+      setClosed(false);
+      return;
+    }
+
+    if (selected.length === 0) return;
     const next = buildExam(search.course, selected);
     if (next.length < EXAM_SIZE) {
       setNote("Bài này chưa đủ dữ liệu để lập đề 30 câu. Hãy gộp thêm bài.");
@@ -85,12 +133,55 @@ function ExamPage() {
     setClosed(false);
   }
 
+  // --- SCREEN 1: Choose Course or Starred Words Exam ---
   if (!search.course) {
     return (
       <div>
         <p className="text-sm tracking-[0.18em] text-stone uppercase">Kiểm tra</p>
-        <h1 className="display mt-2 text-4xl">Chọn môn.</h1>
-        <p className="mt-2 text-stone">30 câu A–D, 30 phút. Vẫn là kanji, từ vựng và ngữ pháp — cách hỏi đổi mỗi đề: âm on/kun, nghĩa chữ, nhóm từ, nghĩa cả câu, dịch câu, chia động từ, tình huống và câu sai.</p>
+        <h1 className="display mt-2 text-4xl">Chọn nội dung kiểm tra.</h1>
+        <p className="mt-2 text-stone">
+          Đề thi trắc nghiệm A–D. Vẫn là kanji, từ vựng và ngữ pháp — cách hỏi đa dạng: âm on/kun, nghĩa chữ,
+          nhóm từ, dịch câu, điền từ vào chỗ trống và tình huống.
+        </p>
+
+        {/* Highlighted Starred Words Exam Card */}
+        <div className="mt-8">
+          <h2 className="text-sm tracking-wide text-stone uppercase">Kiểm tra chuyên sâu</h2>
+          <div className="mt-2 rounded-xl border border-line bg-sheet p-5 shadow-xs">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <Star
+                  className={cn(
+                    "size-5 mt-0.5 shrink-0",
+                    starred.length ? "fill-amber-500 text-amber-500" : "text-stone",
+                  )}
+                />
+                <div>
+                  <h3 className="font-semibold text-ink text-base">Từ vựng đã đánh dấu</h3>
+                  <p className="mt-0.5 text-sm text-stone">
+                    {starred.length
+                      ? `Tự động tạo bộ đề trắc nghiệm A–D riêng từ ${starred.length} từ bạn đã lưu đánh dấu.`
+                      : "Chưa có từ nào được đánh dấu. Vào phần Từ vựng để bấm biểu tượng ⭐ lưu các từ cần kiểm tra."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+                <Button
+                  tone="seal"
+                  disabled={starred.length === 0}
+                  onClick={() => setSearch({ course: "starred", bai: "" })}
+                  className="flex items-center gap-1.5"
+                >
+                  <Play className="size-4" />
+                  Làm kiểm tra ({starred.length})
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Regular Course Exams */}
         <div className="mt-8">
           <h2 className="text-sm tracking-wide text-stone uppercase">Theo môn học</h2>
           <ul className="mt-2 divide-y divide-line border-y border-line">
@@ -108,78 +199,90 @@ function ExamPage() {
             ))}
           </ul>
         </div>
-
-        <div className="mt-8">
-          <h2 className="text-sm tracking-wide text-stone uppercase">Luyện tập tập trung</h2>
-          <div className="mt-2 rounded-xl border border-line bg-sheet p-5 shadow-xs">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <Star
-                  className={cn(
-                    "size-5 mt-0.5 shrink-0",
-                    starred.length ? "fill-amber-500 text-amber-500" : "text-stone",
-                  )}
-                />
-                <div>
-                  <h3 className="font-semibold text-ink">Kiểm tra từ vựng đã đánh dấu</h3>
-                  <p className="mt-0.5 text-sm text-stone">
-                    {starred.length
-                      ? `Làm bài kiểm tra trắc nghiệm, ghép cặp hoặc gõ từ với ${starred.length} từ bạn đã lưu.`
-                      : "Bạn chưa đánh dấu từ nào. Vào phần Từ vựng để đánh dấu ⭐ các từ cần kiểm tra riêng."}
-                  </p>
-                </div>
-              </div>
-              <Button
-                tone="seal"
-                disabled={starred.length === 0}
-                onClick={() => navigate({ to: "/words", search: { lesson: "starred", mode: "list", at: 0 } })}
-                className="self-start sm:self-center shrink-0"
-              >
-                Làm kiểm tra ({starred.length})
-              </Button>
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
 
+  // --- SCREEN 2: Unit / Lesson selection before starting exam ---
   if (!paper) {
-    const units = examUnits(search.course);
+    const units = examUnits(search.course, starred);
+    const isStarred = search.course === "starred";
+
     return (
       <div>
-        <button type="button" className="text-sm text-stone hover:text-ink" onClick={() => setSearch({ course: "", bai: "" })}>
-          Đổi môn
+        <button
+          type="button"
+          className="text-sm text-stone hover:text-ink"
+          onClick={() => setSearch({ course: "", bai: "" })}
+        >
+          ← Đổi môn
         </button>
-        <h1 className="display mt-2 text-4xl">{search.course}</h1>
-        <p className="mt-2 text-stone">Chọn một bài hoặc gộp nhiều bài. Câu vẫn về từ vựng, kanji và ngữ pháp của các bài đó, nhưng cách hỏi sẽ khác nhau.</p>
-        <ul className="mt-6 divide-y divide-line border-y border-line">
-          {units.map((unit) => {
-            const on = selected.includes(unit.bai);
-            return (
-              <li key={unit.bai}>
-                <button
-                  type="button"
-                  aria-pressed={on}
-                  className="flex min-h-14 w-full items-center justify-between gap-3 py-3 text-left"
-                  onClick={() => toggleBai(unit.bai)}
-                >
-                  <span className={cn("font-medium", on ? "text-ink" : "text-stone")}>{unit.label}</span>
-                  <span className="text-sm text-stone tabular-nums">{on ? "Đã chọn" : `${unit.count} từ`}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        <Button className="mt-4 w-full" tone="seal" disabled={selected.length === 0} onClick={start}>
-          Làm {EXAM_SIZE} câu
-          {selected.length ? ` · Bài ${selected.join(" + ")}` : ""}
-        </Button>
-        {note ? <p className="mt-3 text-sm text-seal">{note}</p> : null}
+        <div className="mt-2 flex items-center gap-2">
+          {isStarred && <Star className="size-6 fill-amber-500 text-amber-500" />}
+          <h1 className="display text-4xl">
+            {isStarred ? "Từ vựng đã đánh dấu" : search.course}
+          </h1>
+        </div>
+
+        <p className="mt-2 text-stone">
+          {isStarred
+            ? "Đề thi trắc nghiệm A–D được lập riêng từ các từ vựng bạn đã đánh dấu. Bạn có thể chọn tất cả hoặc chọn theo từng bài."
+            : "Chọn một bài hoặc gộp nhiều bài. Câu vẫn về từ vựng, kanji và ngữ pháp của các bài đó, nhưng cách hỏi sẽ khác nhau."}
+        </p>
+
+        {isStarred && starredWords.length === 0 ? (
+          <div className="mt-6 rounded-lg border border-line bg-sheet p-6 text-center">
+            <p className="text-stone">Bạn chưa đánh dấu từ nào.</p>
+            <Button
+              className="mt-4"
+              tone="seal"
+              onClick={() => navigate({ to: "/words", search: { lesson: "", mode: "list", at: 0 } })}
+            >
+              Đến phần Từ vựng để đánh dấu ⭐
+            </Button>
+          </div>
+        ) : (
+          <>
+            <ul className="mt-6 divide-y divide-line border-y border-line">
+              {units.map((unit) => {
+                const on = selected.includes(unit.bai);
+                return (
+                  <li key={unit.bai}>
+                    <button
+                      type="button"
+                      aria-pressed={on}
+                      className="flex min-h-14 w-full items-center justify-between gap-3 py-3 text-left transition-colors"
+                      onClick={() => toggleBai(unit.bai)}
+                    >
+                      <span className={cn("font-medium", on ? "text-ink" : "text-stone")}>{unit.label}</span>
+                      <span className="text-sm text-stone tabular-nums">{on ? "Đã chọn" : `${unit.count} từ`}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <Button
+              className="mt-6 w-full"
+              tone="seal"
+              disabled={isStarred ? starredWords.length === 0 : selected.length === 0}
+              onClick={start}
+            >
+              {isStarred
+                ? selected.length
+                  ? `Bắt đầu làm bài · Bài ${selected.join(" + ")}`
+                  : `Bắt đầu làm bài · Tất cả ${starredWords.length} từ`
+                : `Làm ${EXAM_SIZE} câu ${selected.length ? `· Bài ${selected.join(" + ")}` : ""}`}
+            </Button>
+
+            {note ? <p className="mt-3 text-sm text-seal">{note}</p> : null}
+          </>
+        )}
       </div>
     );
   }
 
+  // --- SCREEN 3: Exam in progress or Exam Results ---
   const done = closed || index >= paper.length;
   const correct = answers.filter((answer, answerIndex) => answer === paper[answerIndex]?.answer).length;
 
@@ -187,18 +290,23 @@ function ExamPage() {
     const missed = paper.filter((question, questionIndex) => answers[questionIndex] !== question.answer);
     return (
       <div>
-        <p className="text-sm tracking-wide text-stone uppercase">Kết quả</p>
+        <p className="text-sm tracking-wide text-stone uppercase">Kết quả bài kiểm tra</p>
         <p className="display mt-2 text-5xl tabular-nums">
           {correct}
           <span className="text-2xl text-stone">/{paper.length}</span>
         </p>
         <p className="mt-2 text-stone">
-          {search.course} · Bài {selected.join(", ")}
+          {search.course === "starred"
+            ? `Từ vựng đã đánh dấu${selected.length ? ` · Bài ${selected.join(", ")}` : " · Tất cả"}`
+            : `${search.course} · Bài ${selected.join(", ")}`}
           {left === 0 ? " · Hết giờ" : ""}
         </p>
+
         <ul className="mt-6 divide-y divide-line border-y border-line">
           {(["Kanji", "Từ vựng", "Ngữ pháp"] as const).map((section) => {
-            const rows = paper.map((question, questionIndex) => ({ question, questionIndex })).filter(({ question }) => question.section === section);
+            const rows = paper
+              .map((question, questionIndex) => ({ question, questionIndex }))
+              .filter(({ question }) => question.section === section);
             if (!rows.length) return null;
             const hit = rows.filter(({ question, questionIndex }) => answers[questionIndex] === question.answer).length;
             return (
@@ -211,32 +319,37 @@ function ExamPage() {
             );
           })}
         </ul>
+
         {missed.length ? (
-          <ul className="mt-8 divide-y divide-line border-y border-line">
-            {missed.map((question) => (
-              <li key={question.id} className="py-3">
-                <p className="text-sm text-stone">
-                  Câu {question.id} · {question.section}
-                </p>
-                <p className="mt-1 text-sm">{question.prompt}</p>
-                <div className="mt-2">
-                  <Sentence text={question.sentence} compact />
-                </div>
-                <p className="mt-1 text-sm">
-                  Đáp án: <span className="font-medium">{question.answer}</span>
-                </p>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-8">
+            <h2 className="text-sm font-semibold tracking-wide text-stone uppercase">Các câu cần xem lại ({missed.length})</h2>
+            <ul className="mt-2 divide-y divide-line border-y border-line">
+              {missed.map((question) => (
+                <li key={question.id} className="py-3">
+                  <p className="text-sm text-stone">
+                    Câu {question.id} · {question.section}
+                  </p>
+                  <p className="mt-1 text-sm">{question.prompt}</p>
+                  <div className="mt-2">
+                    <Sentence text={question.sentence} compact />
+                  </div>
+                  <p className="mt-1 text-sm">
+                    Đáp án đúng: <span className="font-semibold text-seal">{question.answer}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
-          <p className="mt-6 text-stone">Đúng hết.</p>
+          <p className="mt-6 text-stone">Xuất sắc! Bạn đã trả lời đúng tất cả các câu.</p>
         )}
+
         <div className="mt-6 flex gap-2">
           <Button tone="ghost" onClick={() => setPaper(null)}>
             Đổi bài
           </Button>
           <Button tone="seal" onClick={start}>
-            Làm đề khác
+            Làm lại đề này
           </Button>
         </div>
       </div>
@@ -249,7 +362,9 @@ function ExamPage() {
   function choose(option: string) {
     if (picked) return;
     setPicked(option);
-    setAnswers((currentAnswers) => currentAnswers.map((answer, answerIndex) => (answerIndex === index ? option : answer)));
+    setAnswers((currentAnswers) =>
+      currentAnswers.map((answer, answerIndex) => (answerIndex === index ? option : answer)),
+    );
   }
 
   return (
@@ -258,12 +373,12 @@ function ExamPage() {
         <span className="tabular-nums">
           Câu {index + 1} / {paper.length}
         </span>
-        <span className={cn("tabular-nums", left < 300 && "text-seal")}>{formatTime(left)}</span>
+        <span className={cn("tabular-nums font-medium", left < 300 && "text-seal")}>{formatTime(left)}</span>
       </div>
       <ProgressLine value={index} max={paper.length} />
-      <p className="mt-5 text-sm text-stone">{current.section}</p>
-      {current.promptJp ? <p className="jp mt-3 text-base leading-relaxed">{current.promptJp}</p> : null}
-      <h1 className="mt-2 text-lg font-medium leading-snug">{current.prompt}</h1>
+      <p className="mt-5 text-sm font-medium text-stone tracking-wide uppercase">{current.section}</p>
+      {current.promptJp ? <p className="jp mt-3 text-base leading-relaxed text-ink">{current.promptJp}</p> : null}
+      <h1 className="mt-2 text-lg font-medium leading-snug text-ink">{current.prompt}</h1>
       <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
         <Sentence text={current.sentence} />
       </div>
@@ -281,7 +396,10 @@ function ExamPage() {
               type="button"
               disabled={picked !== null}
               onClick={() => choose(option)}
-              className={cn("flex min-h-12 items-start gap-3 rounded-md border px-4 py-3 text-left text-base", tone)}
+              className={cn(
+                "flex min-h-12 items-start gap-3 rounded-md border px-4 py-3 text-left text-base transition-colors",
+                tone,
+              )}
             >
               <span className="mt-0.5 w-6 shrink-0 font-medium">{letter}.</span>
               <span className={cn("break-words", /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg")}>{option}</span>
@@ -299,12 +417,16 @@ function ExamPage() {
               setIndex((value) => value + 1);
             }}
           >
-            {index + 1 === paper.length ? "Nộp bài" : "Tiếp"}
+            {index + 1 === paper.length ? "Nộp bài" : "Tiếp theo"}
           </Button>
         </div>
       ) : (
-        <button type="button" className="mt-4 text-sm text-stone hover:text-ink" onClick={() => setClosed(true)}>
-          Nộp bài
+        <button
+          type="button"
+          className="mt-4 text-sm text-stone hover:text-ink"
+          onClick={() => setClosed(true)}
+        >
+          Nộp bài sớm
         </button>
       )}
     </div>

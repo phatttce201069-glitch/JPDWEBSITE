@@ -20,7 +20,7 @@ export type GrammarSearch = {
 };
 
 export type ExamSearch = {
-  course: "" | "JPD113" | "JPD123";
+  course: "" | "JPD113" | "JPD123" | "starred";
   bai: string;
 };
 
