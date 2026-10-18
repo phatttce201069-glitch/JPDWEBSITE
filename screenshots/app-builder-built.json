@@ -1,0 +1,40 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Sumi",
+      "hasCanvas": false,
+      "bodyTextLen": 387,
+      "bodyTextHash": "d83f9131244c4757f6d95fc98604ac1157114ae5b8a9fc45e3613171b1961ca9",
+      "bodyTextPrefix": "Sumi Chữ Từ Ngữ pháp Đề BÀN HỌC TIẾNG NHẬT Một việc mỗi lúc. Chọ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Sumi",
+      "hasCanvas": false,
+      "bodyTextLen": 358,
+      "bodyTextHash": "477d40e6b463b0687eb66aeee095a4a262c18165be095fc154e275fdbb4c583d",
+      "bodyTextPrefix": "Sumi Chữ Từ Ngữ pháp Đề BÀN HỌC TIẾNG NHẬT Một việc mỗi lúc. Chọ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": true,
+  "baselineReasons": [
+    "desktop: body text changed (435 -> 387 chars, hash mismatch)"
+  ]
+}

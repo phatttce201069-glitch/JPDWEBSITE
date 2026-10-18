@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/kana",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Sumi",
+      "hasCanvas": false,
+      "bodyTextLen": 270,
+      "bodyTextHash": "cf2bd4eaf097427acb0de46889d39df8c97831e843914e75c2fd5cc92f0416ce",
+      "bodyTextPrefix": "Sumi Chữ Từ Ngữ pháp BẢNG CHỮ CÁI Hiragana Chữ mềm, dùng để viết",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/kana-check.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Sumi",
+      "hasCanvas": false,
+      "bodyTextLen": 270,
+      "bodyTextHash": "cf2bd4eaf097427acb0de46889d39df8c97831e843914e75c2fd5cc92f0416ce",
+      "bodyTextPrefix": "Sumi Chữ Từ Ngữ pháp BẢNG CHỮ CÁI Hiragana Chữ mềm, dùng để viết",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/kana-check-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/kana-check.json"
+}

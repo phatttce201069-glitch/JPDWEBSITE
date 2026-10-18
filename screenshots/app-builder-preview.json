@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Sumi",
+      "hasCanvas": false,
+      "bodyTextLen": 435,
+      "bodyTextHash": "baad6559f4d4753394c2aeee963f258a3ed626512fd7473c0499ff7a576580c7",
+      "bodyTextPrefix": "Sumi Chữ Từ Ngữ pháp Đề BÀN HỌC TIẾNG NHẬT Một việc mỗi lúc. Chọ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Sumi",
+      "hasCanvas": false,
+      "bodyTextLen": 395,
+      "bodyTextHash": "05ee47fc7eb8f4df02fa7444dc1a8978ae187a27e1547c9ccff6358efb10b4e8",
+      "bodyTextPrefix": "Sumi Chữ Từ Ngữ pháp Đề BÀN HỌC TIẾNG NHẬT Một việc mỗi lúc. Chọ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

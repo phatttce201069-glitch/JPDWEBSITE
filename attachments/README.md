@@ -1,0 +1,66 @@
+# 🌸 Hiragana Mastery
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
+
+[🇺🇸 English](#english) | [🇻🇳 Tiếng Việt](#tiếng-việt)
+
+---
+
+## 🇺🇸 English <a name="english"></a>
+
+Welcome to **Hiragana Mastery**! This project is designed to help beginners learn and master the Japanese Hiragana alphabet quickly, interactively, and effectively. 
+
+### ✨ Features
+- **Interactive Flashcards:** Memorize characters efficiently with a clean UI.
+- **Quiz Mode:** Test your knowledge and track your learning progress.
+- **Writing Practice:** Learn the correct stroke order for each character.
+- **Audio Pronunciation:** Listen to native speaker audio to perfect your accent.
+
+### 🚀 Getting Started
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/hiragana-mastery.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd hiragana-mastery
+   ```
+3. Open the project in your local environment (e.g., open `index.html` in your browser or run `npm start` depending on your stack).
+
+### 🛠️ Technologies Used
+- HTML5 / CSS3 / JavaScript
+- *(Add your specific frameworks here, e.g., React, Vue, TailwindCSS)*
+
+### 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/hiragana-mastery/issues).
+
+---
+
+## 🇻🇳 Tiếng Việt <a name="tiếng-việt"></a>
+
+Chào mừng bạn đến với **Hiragana Mastery**! Dự án này được thiết kế để giúp người mới bắt đầu học và chinh phục bảng chữ cái Hiragana của tiếng Nhật một cách nhanh chóng, trực quan và hiệu quả nhất.
+
+### ✨ Tính Năng Nổi Bật
+- **Thẻ ghi nhớ (Flashcards) Tương Tác:** Ghi nhớ các ký tự dễ dàng với giao diện thân thiện.
+- **Chế độ Kiểm Tra (Quiz):** Đánh giá kiến thức và theo dõi tiến độ học tập của bạn.
+- **Luyện Viết:** Hướng dẫn thứ tự các nét bút để viết đúng chuẩn.
+- **Phát Âm:** Nghe giọng đọc chuẩn của người bản xứ để luyện phát âm.
+
+### 🚀 Hướng Dẫn Cài Đặt
+1. Clone dự án về máy của bạn:
+   ```bash
+   git clone https://github.com/yourusername/hiragana-mastery.git
+   ```
+2. Di chuyển vào thư mục dự án:
+   ```bash
+   cd hiragana-mastery
+   ```
+3. Mở dự án trong môi trường máy tính của bạn (ví dụ: mở file `index.html` bằng trình duyệt hoặc chạy `npm start` tùy thuộc vào công nghệ bạn dùng).
+
+### 🛠️ Công Nghệ Sử Dụng
+- HTML5 / CSS3 / JavaScript
+- *(Thêm các công nghệ bạn sử dụng ở đây, ví dụ: React, Vue, TailwindCSS)*
+
+### 🤝 Đóng Góp
+Mọi đóng góp ý kiến, báo lỗi (issues) và yêu cầu tính năng mới đều luôn được chào đón! Vui lòng ghé thăm [trang issues](https://github.com/yourusername/hiragana-mastery/issues).

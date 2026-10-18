@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ứng dụng Học Tiếng Nhật Tương Tác</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body class="antialiased">
+        <nav
+            class="sticky top-0 z-50 bg-[#fdfbf7]/80 backdrop-blur-md border-b border-[#e8e2db] py-3"
+        >
+            <div
+                class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-4"
+            >
+                <h1
+                    class="text-xl font-semibold text-[#8b7b6c] w-full text-center sm:w-auto sm:text-left hover:text-[#5f8a8b] transition-colors"
+                >
+                    <a href="index.html">
+                        Kana
+                        <span class="font-light italic text-[#a39485]"
+                            >Mastery</span
+                        >
+                    </a>
+                </h1>
+
+                <div
+                    class="flex bg-white rounded-full p-1 shadow-sm border border-[#e8e2db] w-full justify-center order-first sm:order-none sm:w-auto"
+                >
+                    <button
+                        id="btn-hiragana"
+                        onclick="switchAlphabet('hiragana')"
+                        class="px-6 py-1.5 rounded-full bg-[#5f8a8b] text-white text-sm font-medium transition-all w-1/2 sm:w-auto"
+                    >
+                        Hiragana
+                    </button>
+                    <button
+                        id="btn-katakana"
+                        onclick="switchAlphabet('katakana')"
+                        class="px-6 py-1.5 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all w-1/2 sm:w-auto"
+                    >
+                        Katakana
+                    </button>
+                    <button
+                        id="btn-kanji"
+                        onclick="switchAlphabet('kanji')"
+                        class="px-6 py-1.5 rounded-full text-[#8b7b6c] text-sm font-medium hover:bg-[#f4f1ee] transition-all w-1/3 sm:w-auto"
+                    >
+                        Kanji
+                    </button>
+                </div>
+
+                <div
+                    class="flex space-x-6 text-sm w-full justify-center sm:w-auto overflow-x-auto pb-1 sm:pb-0"
+                >
+                    <a
+                        href="#explore"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap transition-colors"
+                        >Khám phá</a
+                    >
+                    <a
+                        href="#rules"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap transition-colors"
+                        >Quy tắc</a
+                    >
+                    <a
+                        href="#practice"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap font-semibold text-[#5f8a8b]"
+                        >✦ Luyện tập</a
+                    >
+                    <a
+                        href="vocabulary.html"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap transition-colors"
+                        >Từ vựng</a
+                    >
+                    <a
+                        href="grammar.html"
+                        class="hover:text-[#5f8a8b] whitespace-nowrap transition-colors"
+                        >Ngữ pháp</a
+                    >
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
+            <section class="mb-12 md:mb-16 text-center">
+                <h2
+                    class="text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-[#5c544d]"
+                    id="main-title"
+                >
+                    Hành trình chinh phục Hiragana
+                </h2>
+                <p
+                    class="max-w-2xl mx-auto text-sm md:text-base text-[#7d746d] leading-relaxed px-2"
+                >
+                    Nắm vững nền tảng bảng chữ cái tiếng Nhật. Bạn có thể chọn
+                    học theo từng hàng và sử dụng Flashcard/Quiz để ghi nhớ hiệu
+                    quả.
+                </p>
+            </section>
+
+            <section id="explore" class="mb-20">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-2">
+                        Thư viện Chữ cái
+                    </h3>
+                    <div
+                        class="flex flex-wrap gap-2 mb-8"
+                        id="filter-buttons"
+                    ></div>
+                </div>
+                <div
+                    id="char-grid"
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
+                ></div>
+            </section>
+
+            <section
+                id="rules"
+                class="mb-20 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
+            >
+                <div
+                    class="bg-white p-8 rounded-3xl card-shadow border border-[#e8e2db] h-full"
+                >
+                    <h3
+                        class="text-2xl font-semibold mb-6 text-[#5c544d] flex items-center gap-2"
+                    >
+                        <span>⚠️</span> Chữ "sinh đôi" dễ nhầm
+                    </h3>
+                    <div class="space-y-4">
+                        <div
+                            class="group flex items-center justify-between p-4 bg-[#fdfbf7] rounded-xl border border-[#e8e2db] hover:border-[#5f8a8b] hover:shadow-md transition-all cursor-default"
+                        >
+                            <div
+                                class="text-4xl jp-font font-bold text-[#4a443f] group-hover:text-[#5f8a8b] transition-colors"
+                            >
+                                あ
+                                <span
+                                    class="text-xl font-sans text-[#a39485] mx-2 font-normal"
+                                    >vs</span
+                                >
+                                お
+                            </div>
+                            <div class="text-sm text-[#7d746d] text-right">
+                                <span class="font-bold text-[#5f8a8b]"
+                                    >あ (a)</span
+                                >
+                                có nét chéo<br />
+                                <span class="font-bold text-[#d97706]"
+                                    >お (o)</span
+                                >
+                                có dấu phẩy trên
+                            </div>
+                        </div>
+                        <div
+                            class="group flex items-center justify-between p-4 bg-[#fdfbf7] rounded-xl border border-[#e8e2db] hover:border-[#5f8a8b] hover:shadow-md transition-all cursor-default"
+                        >
+                            <div
+                                class="text-4xl jp-font font-bold text-[#4a443f] group-hover:text-[#5f8a8b] transition-colors"
+                            >
+                                さ
+                                <span
+                                    class="text-xl font-sans text-[#a39485] mx-2 font-normal"
+                                    >vs</span
+                                >
+                                き
+                            </div>
+                            <div class="text-sm text-[#7d746d] text-right">
+                                <span class="font-bold text-[#5f8a8b]"
+                                    >さ (sa)</span
+                                >
+                                có 1 nét ngang<br />
+                                <span class="font-bold text-[#d97706]"
+                                    >き (ki)</span
+                                >
+                                có 2 nét ngang
+                            </div>
+                        </div>
+                        <div
+                            class="group flex items-center justify-between p-4 bg-[#fdfbf7] rounded-xl border border-[#e8e2db] hover:border-[#5f8a8b] hover:shadow-md transition-all cursor-default"
+                        >
+                            <div
+                                class="text-4xl jp-font font-bold text-[#4a443f] group-hover:text-[#5f8a8b] transition-colors"
+                            >
+                                ツ
+                                <span
+                                    class="text-xl font-sans text-[#a39485] mx-2 font-normal"
+                                    >vs</span
+                                >
+                                シ
+                            </div>
+                            <div class="text-sm text-[#7d746d] text-right">
+                                <span class="font-bold text-[#5f8a8b]"
+                                    >ツ (tsu)</span
+                                >
+                                phẩy hướng xuống<br />
+                                <span class="font-bold text-[#d97706]"
+                                    >シ (shi)</span
+                                >
+                                phẩy hướng ngang
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-[#5f8a8b] to-[#3a5859] p-8 rounded-3xl text-white shadow-xl relative overflow-hidden h-full"
+                >
+                    <div
+                        class="absolute -right-8 -bottom-8 text-[150px] opacity-10 jp-font font-bold select-none pointer-events-none"
+                    >
+                        あ
+                    </div>
+
+                    <h3
+                        class="text-2xl font-semibold mb-6 flex items-center gap-2 relative z-10"
+                    >
+                        <span>💡</span> Mẹo Ghi Nhớ Nhanh
+                    </h3>
+                    <div class="space-y-6 relative z-10">
+                        <div class="flex gap-4 items-start">
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold shrink-0 mt-1"
+                            >
+                                1
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">
+                                    Liên tưởng hình ảnh
+                                </h4>
+                                <p class="text-white/80 text-sm mt-1">
+                                    Ví dụ:
+                                    <span class="jp-font font-bold text-white"
+                                        >く</span
+                                    >
+                                    (ku) trông giống cái mỏ chim,
+                                    <span class="jp-font font-bold text-white"
+                                        >つ</span
+                                    >
+                                    (tsu) giống một cơn sóng thần.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold shrink-0 mt-1"
+                            >
+                                2
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">
+                                    Quy tắc Tenten & Maru
+                                </h4>
+                                <p class="text-white/80 text-sm mt-1">
+                                    Thêm (゛) vào K, S, T, H sẽ thành G, Z, D,
+                                    B. Thêm (゜) vào hàng H sẽ thành hàng P.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold shrink-0 mt-1"
+                            >
+                                3
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">
+                                    Phát âm bẫy
+                                </h4>
+                                <p class="text-white/80 text-sm mt-1">
+                                    <span class="font-bold text-[#ffcd82]"
+                                        >し</span
+                                    >
+                                    đọc là "Shi" (như 's' nặng),
+                                    <span class="font-bold text-[#ffcd82]"
+                                        >ち</span
+                                    >
+                                    đọc là "Chi",
+                                    <span class="font-bold text-[#ffcd82]"
+                                        >つ</span
+                                    >
+                                    đọc là "Tsu" (mím môi đẩy hơi).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <section id="practice" class="bg-[#f4f1ee] py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-10">
+                    <h3 class="text-2xl font-semibold mb-2 text-[#5c544d]">
+                        Luyện tập & Kiểm tra
+                    </h3>
+                </div>
+                <div class="flex justify-center mb-10">
+                    <div
+                        class="bg-white rounded-full p-1.5 flex gap-1 shadow-sm border border-[#e8e2db]"
+                    >
+                        <button
+                            id="tab-flashcard"
+                            onclick="switchTab('flashcard')"
+                            class="practice-tab active px-6 py-2.5 rounded-full text-sm font-medium"
+                        >
+                            ✦ Flashcard
+                        </button>
+                        <button
+                            id="tab-quiz"
+                            onclick="switchTab('quiz')"
+                            class="practice-tab px-6 py-2.5 rounded-full text-sm font-medium text-[#8b7b6c]"
+                        >
+                            ⚑ Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    id="panel-flashcard"
+                    class="panel-animate max-w-md mx-auto"
+                >
+                    <div
+                        class="flex items-center justify-between mb-3 text-xs text-[#7d746d]"
+                    >
+                        <span id="fc-progress-label"></span>
+                        <span
+                            id="fc-known-label"
+                            class="text-[#5f8a8b] font-medium"
+                        ></span>
+                    </div>
+                    <div class="w-full bg-[#e8e2db] rounded-full h-1.5 mb-6">
+                        <div
+                            id="fc-progress-bar"
+                            class="progress-bar bg-[#5f8a8b] h-1.5 rounded-full"
+                            style="width: 0%"
+                        ></div>
+                    </div>
+                    <div
+                        class="flashcard-scene"
+                        id="fc-card"
+                        onclick="flipCard()"
+                    >
+                        <div class="flashcard-inner">
+                            <div class="flashcard-face flashcard-front">
+                                <div
+                                    id="fc-front-char"
+                                    class="text-7xl jp-font font-bold text-[#4a443f] mb-2"
+                                ></div>
+                                <div
+                                    id="fc-front-row-badge"
+                                    class="text-xs px-3 py-1 rounded-full bg-[#f4f1ee] text-[#8b7b6c] mt-2"
+                                ></div>
+                            </div>
+                            <div class="flashcard-face flashcard-back">
+                                <div
+                                    id="fc-back-romaji"
+                                    class="text-4xl font-bold text-white uppercase tracking-widest mb-3"
+                                ></div>
+                                <div
+                                    id="fc-back-example"
+                                    class="text-sm text-white/80 italic text-center"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-4 mt-8">
+                        <button
+                            onclick="fcNavigate(-1)"
+                            class="w-10 h-10 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] shadow-sm"
+                        >
+                            ←
+                        </button>
+                        <button
+                            onclick="markKnown()"
+                            id="fc-known-btn"
+                            class="px-5 py-2 bg-white border border-[#5f8a8b] text-[#5f8a8b] rounded-full text-sm shadow-sm"
+                        >
+                            ✓ Đã nhớ
+                        </button>
+                        <button
+                            onclick="fcNavigate(1)"
+                            class="w-10 h-10 rounded-full bg-white border border-[#e8e2db] text-[#8b7b6c] shadow-sm"
+                        >
+                            →
+                        </button>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button
+                            onclick="shuffleFlashcards()"
+                            class="text-xs text-[#a39485] underline"
+                        >
+                            Xáo trộn
+                        </button>
+                        <span class="text-[#d1c7bd] mx-2">|</span>
+                        <button
+                            onclick="resetFlashcards()"
+                            class="text-xs text-[#a39485] underline"
+                        >
+                            Đặt lại
+                        </button>
+                    </div>
+                </div>
+                <div id="panel-quiz" class="hidden panel-animate">
+                    <div
+                        id="quiz-setup"
+                        class="max-w-md mx-auto text-center bg-white rounded-2xl p-8 card-shadow"
+                    >
+                        <h4 class="text-lg font-semibold mb-4">
+                            Thiết lập Quiz
+                        </h4>
+
+                        <div class="text-left mb-6">
+                            <label
+                                class="text-sm font-semibold text-[#8b7b6c] block mb-3"
+                                >Chọn phần cần ôn:</label
+                            >
+                            <div
+                                class="flex flex-wrap gap-2"
+                                id="quiz-row-filters"
+                            ></div>
+                        </div>
+
+                        <div class="text-left mb-6">
+                            <label
+                                class="text-sm font-semibold text-[#8b7b6c] block mb-3"
+                                >Chế độ hỏi:</label
+                            >
+                            <select
+                                id="q-mode"
+                                class="w-full bg-[#f4f1ee] border border-[#e8e2db] rounded-lg px-4 py-2 text-sm text-[#4a443f] outline-none focus:border-[#5f8a8b]"
+                            >
+                                <option value="random" selected>
+                                    Ngẫu nhiên (Đảo chiều liên tục)
+                                </option>
+                                <option value="kana2romaji">
+                                    Nhìn chữ Nhật → Chọn cách đọc
+                                </option>
+                                <option value="romaji2kana">
+                                    Nhìn cách đọc → Chọn chữ Nhật
+                                </option>
+                                <option value="typing">
+                                    Gõ phiên âm (chỉ Hiragana/Katakana)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="text-left mb-6">
+                            <label
+                                class="text-sm font-semibold text-[#8b7b6c] block mb-3"
+                                >Số lượng câu hỏi:</label
+                            >
+                            <select
+                                id="q-count"
+                                class="w-full bg-[#f4f1ee] border border-[#e8e2db] rounded-lg px-4 py-2 text-sm text-[#4a443f] outline-none focus:border-[#5f8a8b]"
+                            >
+                                <option value="5">5 câu</option>
+                                <option value="10" selected>10 câu</option>
+                                <option value="15">15 câu</option>
+                                <option value="20">20 câu</option>
+                                <option value="all">Tất cả</option>
+                            </select>
+                        </div>
+
+                        <button
+                            onclick="startQuiz()"
+                            class="w-full py-3 bg-[#5f8a8b] text-white rounded-xl font-medium shadow-md"
+                        >
+                            Bắt đầu Quiz →
+                        </button>
+                    </div>
+
+                    <div
+                        id="quiz-question"
+                        class="hidden max-w-md mx-auto panel-animate"
+                    >
+                        <div class="flex justify-end mb-3">
+                            <button
+                                onclick="exitQuiz()"
+                                class="text-sm font-semibold text-red-400 hover:text-red-600 transition-colors"
+                            >
+                                ✕ Thoát thiết lập lại
+                            </button>
+                        </div>
+
+                        <div
+                            class="w-full bg-[#e8e2db] rounded-full h-1.5 mb-6"
+                        >
+                            <div
+                                id="q-progress-bar"
+                                class="bg-[#5f8a8b] h-1.5 rounded-full transition-all duration-500 ease-out"
+                                style="width: 0%"
+                            ></div>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl p-8 text-center mb-5 card-shadow"
+                        >
+                            <div
+                                id="q-prompt"
+                                class="text-6xl jp-font font-bold text-[#4a443f]"
+                            ></div>
+                        </div>
+                        <div
+                            id="q-options"
+                            class="grid grid-cols-2 gap-3 mb-4"
+                        ></div>
+                        <div id="q-typing-area" class="hidden mb-4">
+                            <input
+                                id="q-typing-input"
+                                type="text"
+                                placeholder="Gõ phiên âm romaji..."
+                                class="w-full px-4 py-3 border-2 border-[#e8e2db] rounded-xl focus:border-[#5f8a8b] outline-none text-center text-lg"
+                                onkeypress="
+                                    if (event.key === 'Enter')
+                                        checkTypingAnswer();
+                                "
+                            />
+                            <button
+                                onclick="checkTypingAnswer()"
+                                class="w-full mt-3 py-2.5 bg-[#5f8a8b] text-white rounded-xl text-sm font-medium"
+                            >
+                                Kiểm tra
+                            </button>
+                        </div>
+                        <div
+                            id="q-feedback"
+                            class="hidden text-center py-3 rounded-xl text-sm mb-4"
+                        ></div>
+                    </div>
+
+                    <div
+                        id="quiz-result"
+                        class="hidden max-w-md mx-auto text-center panel-animate bg-white rounded-2xl p-8 card-shadow"
+                    >
+                        <h4 class="text-xl font-bold mb-4">Hoàn thành!</h4>
+                        <div
+                            class="text-4xl font-bold text-[#5f8a8b] mb-6"
+                            id="result-score"
+                        ></div>
+                        <button
+                            onclick="goToSetup()"
+                            class="w-full py-2.5 bg-[#5f8a8b] text-white rounded-xl text-sm"
+                        >
+                            Làm lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="ai-modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeAiModal()">&times;</span>
+                <h3 class="text-xl font-bold mb-4">
+                    Trợ lý AI: <span id="modal-char-title"></span>
+                </h3>
+                <div id="ai-prompt-area" class="flex gap-2">
+                    <button
+                        onclick="askAi('Cho ví dụ')"
+                        class="px-3 py-1 bg-[#f4f1ee] border rounded"
+                    >
+                        Ví dụ
+                    </button>
+                    <button
+                        onclick="askAi('Cách viết')"
+                        class="px-3 py-1 bg-[#f4f1ee] border rounded"
+                    >
+                        Cách viết
+                    </button>
+                </div>
+                <div id="ai-loading" class="hidden text-center py-4">
+                    <div class="loader"></div>
+                </div>
+                <div
+                    id="ai-response-area"
+                    class="hidden mt-4 p-4 bg-[#f4f1ee] rounded-xl"
+                ></div>
+            </div>
+        </div>
+        <div
+            id="fc-review-modal"
+            class="hidden fixed z-[100] inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
+        >
+            <div
+                class="bg-[#fdfbf7] p-8 w-11/12 max-w-md rounded-2xl card-shadow text-center panel-animate"
+            >
+                <div class="text-5xl mb-4">🎯</div>
+                <h3 class="text-xl font-bold mb-2 text-[#4a443f]">
+                    Hoàn thành danh sách!
+                </h3>
+                <p
+                    class="text-[#7d746d] mb-6 leading-relaxed"
+                    id="fc-review-msg"
+                ></p>
+                <div class="flex gap-3 justify-center">
+                    <button
+                        onclick="reviewUnlearned()"
+                        id="btn-review-unlearned"
+                        class="px-5 py-2.5 bg-[#5f8a8b] text-white rounded-xl text-sm font-medium shadow-md transition-transform hover:scale-105"
+                    >
+                        Ôn chữ chưa nhớ
+                    </button>
+                    <button
+                        onclick="restartFlashcards()"
+                        id="btn-restart-fc"
+                        class="px-5 py-2.5 bg-[#f4f1ee] text-[#8b7b6c] rounded-xl text-sm font-medium border border-[#e8e2db] transition-colors hover:bg-[#e8e2db]"
+                    >
+                        Bỏ qua
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/data.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
