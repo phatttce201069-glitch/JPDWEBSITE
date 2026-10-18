@@ -22,6 +22,7 @@ export type GrammarSearch = {
 export type ExamSearch = {
   course: "" | "JPD113" | "JPD123" | "starred";
   bai: string;
+  ai?: boolean;
 };
 
 export type LastPlace =

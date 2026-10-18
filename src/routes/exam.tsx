@@ -1,6 +1,21 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { CheckSquare, Play, Sparkles, Square, Star } from "lucide-react";
+import {
+  AlertCircle,
+  Bot,
+  CheckCircle2,
+  CheckSquare,
+  ChevronRight,
+  Layers,
+  Loader2,
+  Play,
+  RefreshCw,
+  Settings,
+  Sparkles,
+  Square,
+  Star,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressLine } from "@/components/progress-line";
 import {
@@ -16,6 +31,13 @@ import { findReading, vocabulary } from "@/lib/study/content";
 import { useStudy } from "@/lib/study/store";
 import type { ExamSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
+import {
+  generateFptAiExam,
+  getAiSettings,
+  saveAiSettings,
+  type AiProvider,
+  type AiSettings,
+} from "@/lib/study/ai-service";
 
 export const Route = createFileRoute("/exam")({
   validateSearch: (search: Record<string, unknown>): ExamSearch => ({
@@ -24,6 +46,7 @@ export const Route = createFileRoute("/exam")({
         ? search.course
         : "",
     bai: typeof search.bai === "string" ? search.bai : "",
+    ai: search.ai === true || search.ai === "true",
   }),
   component: ExamPage,
 });
@@ -42,8 +65,23 @@ function ExamPage() {
   const [note, setNote] = useState("");
   const nextRef = useRef<HTMLDivElement>(null);
 
+  // AI Exam States
+  const [isAiExam, setIsAiExam] = useState(false);
+  const [isAiModeTab, setIsAiModeTab] = useState(search.ai || search.course === "JPD123");
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [generationStep, setGenerationStep] = useState(0);
+  const [aiProviderName, setAiProviderName] = useState("");
+  const [showAiSettings, setShowAiSettings] = useState(false);
+  const [aiSettings, setAiSettingsState] = useState<AiSettings>(() => getAiSettings());
+
   const selected = search.bai ? search.bai.split(",").filter(Boolean) : [];
   const starredWords = vocabulary.filter((word) => starred.includes(word.id));
+
+  useEffect(() => {
+    if (search.ai) {
+      setIsAiModeTab(true);
+    }
+  }, [search.ai]);
 
   useEffect(() => {
     const label =
@@ -87,7 +125,11 @@ function ExamPage() {
     setSearch({ bai: next.join(",") });
   }
 
-  function start() {
+  function selectAllJpd123() {
+    setSearch({ bai: "4,5,6,7" });
+  }
+
+  function startStandard() {
     if (!search.course) return;
 
     if (search.course === "starred") {
@@ -109,6 +151,7 @@ function ExamPage() {
       }
 
       setNote("");
+      setIsAiExam(false);
       setPaper(next);
       setIndex(0);
       setPicked(null);
@@ -118,13 +161,17 @@ function ExamPage() {
       return;
     }
 
-    if (selected.length === 0) return;
+    if (selected.length === 0) {
+      setNote("Vui lòng chọn ít nhất một bài để tạo đề.");
+      return;
+    }
     const next = buildExam(search.course, selected);
     if (next.length < EXAM_SIZE) {
       setNote("Bài này chưa đủ dữ liệu để lập đề 30 câu. Hãy gộp thêm bài.");
       return;
     }
     setNote("");
+    setIsAiExam(false);
     setPaper(next);
     setIndex(0);
     setPicked(null);
@@ -133,18 +180,126 @@ function ExamPage() {
     setClosed(false);
   }
 
-  // --- SCREEN 1: Choose Course or Starred Words Exam ---
+  async function startAiExam(targetBaiList?: string[]) {
+    setIsGeneratingAi(true);
+    setGenerationStep(0);
+    setNote("");
+
+    // Simulate animated AI drafting progression
+    await new Promise((r) => setTimeout(r, 350));
+    setGenerationStep(1); // Phân tích cấu trúc môn JPD123 FPT
+
+    await new Promise((r) => setTimeout(r, 450));
+    setGenerationStep(2); // Soạn câu hỏi Kanji, Từ vựng, Ngữ pháp
+
+    const target =
+      targetBaiList && targetBaiList.length > 0
+        ? targetBaiList
+        : selected.length > 0
+          ? selected
+          : ["4", "5", "6", "7"];
+
+    const result = await generateFptAiExam(target);
+
+    setGenerationStep(3); // Kiểm định và hoàn thiện bộ đề
+    await new Promise((r) => setTimeout(r, 350));
+
+    setAiProviderName(result.provider);
+    if (result.error) {
+      setNote(result.error);
+    }
+
+    setIsAiExam(true);
+    setPaper(result.questions);
+    setIndex(0);
+    setPicked(null);
+    setAnswers(Array(result.questions.length).fill(null));
+    setLeft(EXAM_SECONDS);
+    setClosed(false);
+    setIsGeneratingAi(false);
+  }
+
+  function handleSaveAiSettings(updated: AiSettings) {
+    saveAiSettings(updated);
+    setAiSettingsState(updated);
+    setShowAiSettings(false);
+  }
+
+  // --- SCREEN 1: Choose Course or Exam Type ---
   if (!search.course) {
     return (
       <div>
         <p className="text-sm tracking-[0.18em] text-stone uppercase">Kiểm tra</p>
         <h1 className="display mt-2 text-4xl">Chọn nội dung kiểm tra.</h1>
         <p className="mt-2 text-stone">
-          Đề thi trắc nghiệm A–D. Vẫn là kanji, từ vựng và ngữ pháp — cách hỏi đa dạng: âm on/kun, nghĩa chữ,
-          nhóm từ, dịch câu, điền từ vào chỗ trống và tình huống.
+          Đề thi trắc nghiệm A–D bám sát đề thi JLPT N5 và chuẩn môn học tiếng Nhật Đại học FPT.
         </p>
 
-        {/* Highlighted Starred Words Exam Card */}
+        {/* Highlight 1: AI EXAM GENERATOR (FPT JPD123 FORM) */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm tracking-wide text-stone uppercase flex items-center gap-1.5">
+              <Sparkles className="size-4 text-amber-500" />
+              Đề thi Thông minh AI · Chuẩn Form FPT University
+            </h2>
+            <button
+              type="button"
+              onClick={() => setShowAiSettings(true)}
+              className="text-xs text-stone hover:text-ink flex items-center gap-1 transition-colors"
+            >
+              <Settings className="size-3.5" />
+              Cấu hình AI
+            </button>
+          </div>
+
+          <div className="mt-2 rounded-xl border-2 border-ink/20 bg-sheet p-5 shadow-xs transition-all hover:border-ink/40">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-500/20">
+                    <Bot className="size-3.5" />
+                    AI POWERED · CHUẨN FORM FPTU
+                  </span>
+                  <span className="text-xs text-stone">30 câu · 30 phút · Bài 4 đến 7</span>
+                </div>
+                <h3 className="font-semibold text-ink text-lg">
+                  JPD123 · Đề thi Thông minh AI
+                </h3>
+                <p className="text-sm text-stone max-w-xl leading-relaxed">
+                  Mô phỏng 100% cấu trúc đề thi kết thúc môn <strong>JPD123 Đại học FPT</strong>:
+                  Đúng <strong>10 câu Kanji</strong> + <strong>10 câu Từ vựng</strong> + <strong>10 câu Ngữ pháp</strong>.
+                  Thuật toán AI tự động làm mới câu hỏi mỗi lượt thi, tạo sự đa dạng và ngữ cảnh thực tế phong phú.
+                </p>
+                <div className="pt-1 flex flex-wrap gap-2 text-xs text-stone">
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Kanji (Đọc / Viết / Âm Hán)</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Từ vựng (Điền từ / Trái nghĩa / Đàm thoại)</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Ngữ pháp (Thể て / So sánh / Mong muốn)</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                <Button
+                  tone="seal"
+                  onClick={() => startAiExam(["4", "5", "6", "7"])}
+                  className="flex items-center justify-center gap-2 font-medium"
+                >
+                  <Sparkles className="size-4" />
+                  Làm đề thi AI ngay
+                </Button>
+                <Button
+                  tone="ghost"
+                  onClick={() => setSearch({ course: "JPD123", bai: "4,5,6,7", ai: true })}
+                  className="flex items-center justify-center gap-1 text-sm"
+                >
+                  Tùy chỉnh bài thi
+                  <ChevronRight className="size-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Highlight 2: Starred Words Exam Card */}
         <div className="mt-8">
           <h2 className="text-sm tracking-wide text-stone uppercase">Kiểm tra chuyên sâu</h2>
           <div className="mt-2 rounded-xl border border-line bg-sheet p-5 shadow-xs">
@@ -183,22 +338,41 @@ function ExamPage() {
 
         {/* Regular Course Exams */}
         <div className="mt-8">
-          <h2 className="text-sm tracking-wide text-stone uppercase">Theo môn học</h2>
+          <h2 className="text-sm tracking-wide text-stone uppercase">Theo môn học Đại học FPT</h2>
           <ul className="mt-2 divide-y divide-line border-y border-line">
             {(["JPD113", "JPD123"] as const).map((course) => (
               <li key={course}>
                 <button
                   type="button"
-                  className="flex min-h-14 w-full flex-col items-start justify-center py-3 text-left transition-colors hover:text-ink"
-                  onClick={() => setSearch({ course, bai: "" })}
+                  className="flex min-h-14 w-full items-center justify-between py-3 text-left transition-colors hover:text-ink"
+                  onClick={() => setSearch({ course, bai: course === "JPD123" ? "4,5,6,7" : "", ai: course === "JPD123" })}
                 >
-                  <span className="font-medium">{course}</span>
-                  <span className="text-sm text-stone">{course === "JPD113" ? "Sơ cấp 1" : "Sơ cấp 2 · bài 4–7"}</span>
+                  <div>
+                    <span className="font-medium text-base">{course}</span>
+                    <span className="block text-sm text-stone">
+                      {course === "JPD113"
+                        ? "Tiếng Nhật 1 · Sơ cấp 1 (Bài 1–3)"
+                        : "Tiếng Nhật 2 · Sơ cấp 2 (Bài 4–7) · Có hỗ trợ AI"}
+                    </span>
+                  </div>
+                  <ChevronRight className="size-4 text-stone" />
                 </button>
               </li>
             ))}
           </ul>
         </div>
+
+        {/* AI Settings Modal */}
+        {showAiSettings && (
+          <AiSettingsModal
+            settings={aiSettings}
+            onClose={() => setShowAiSettings(false)}
+            onSave={handleSaveAiSettings}
+          />
+        )}
+
+        {/* AI Generating Overlay */}
+        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
       </div>
     );
   }
@@ -207,28 +381,105 @@ function ExamPage() {
   if (!paper) {
     const units = examUnits(search.course, starred);
     const isStarred = search.course === "starred";
+    const isJpd123 = search.course === "JPD123";
 
     return (
       <div>
         <button
           type="button"
           className="text-sm text-stone hover:text-ink"
-          onClick={() => setSearch({ course: "", bai: "" })}
+          onClick={() => setSearch({ course: "", bai: "", ai: false })}
         >
           ← Đổi môn
         </button>
-        <div className="mt-2 flex items-center gap-2">
-          {isStarred && <Star className="size-6 fill-amber-500 text-amber-500" />}
-          <h1 className="display text-4xl">
-            {isStarred ? "Từ vựng đã đánh dấu" : search.course}
-          </h1>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {isStarred && <Star className="size-6 fill-amber-500 text-amber-500" />}
+            <h1 className="display text-4xl">
+              {isStarred ? "Từ vựng đã đánh dấu" : search.course}
+            </h1>
+          </div>
+
+          {isJpd123 && (
+            <button
+              type="button"
+              onClick={() => setShowAiSettings(true)}
+              className="text-xs text-stone hover:text-ink flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-line bg-sheet transition-colors"
+            >
+              <Settings className="size-3.5" />
+              Cấu hình AI
+            </button>
+          )}
         </div>
 
         <p className="mt-2 text-stone">
           {isStarred
             ? "Đề thi trắc nghiệm A–D được lập riêng từ các từ vựng bạn đã đánh dấu. Bạn có thể chọn tất cả hoặc chọn theo từng bài."
-            : "Chọn một bài hoặc gộp nhiều bài. Câu vẫn về từ vựng, kanji và ngữ pháp của các bài đó, nhưng cách hỏi sẽ khác nhau."}
+            : isJpd123
+              ? "Chương trình Tiếng Nhật 2 (Bài 4 đến 7). Bạn có thể chọn làm Đề thi AI hoặc Đề thi Tiêu chuẩn."
+              : "Chọn một bài hoặc gộp nhiều bài. Câu vẫn về từ vựng, kanji và ngữ pháp của các bài đó."}
         </p>
+
+        {/* Mode Selector for JPD123 */}
+        {isJpd123 && (
+          <div className="mt-5 flex items-center gap-2 border-b border-line pb-3">
+            <button
+              type="button"
+              onClick={() => {
+                setIsAiModeTab(true);
+                setSearch({ ai: true });
+              }}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors",
+                isAiModeTab
+                  ? "bg-ink text-paper"
+                  : "bg-sheet text-stone hover:text-ink border border-line",
+              )}
+            >
+              <Sparkles className="size-3.5" />
+              Đề thi AI FPT (Đa dạng)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsAiModeTab(false);
+                setSearch({ ai: false });
+              }}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors",
+                !isAiModeTab
+                  ? "bg-ink text-paper"
+                  : "bg-sheet text-stone hover:text-ink border border-line",
+              )}
+            >
+              <Layers className="size-3.5" />
+              Đề thi Tiêu chuẩn
+            </button>
+          </div>
+        )}
+
+        {/* AI Mode Banner for JPD123 */}
+        {isJpd123 && isAiModeTab && (
+          <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-ink space-y-2">
+            <div className="flex items-center gap-2 font-medium text-amber-800">
+              <Bot className="size-4" />
+              Cấu trúc chuẩn Form Đề thi Kết thúc môn JPD123 (Đại học FPT)
+            </div>
+            <p className="text-stone text-xs leading-relaxed">
+              Mỗi đề gồm đúng <strong>30 câu · 30 phút</strong>: 10 câu Chữ Hán + 10 câu Từ vựng + 10 câu Ngữ pháp.
+              Hệ thống tự động xáo trộn và sinh mới câu hỏi theo giáo trình Minna / Marugoto Sơ cấp 2.
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1 text-xs">
+              <button
+                type="button"
+                onClick={selectAllJpd123}
+                className="underline text-ink font-medium hover:text-seal"
+              >
+                Chọn trọn bộ (Bài 4, 5, 6, 7)
+              </button>
+            </div>
+          </div>
+        )}
 
         {isStarred && starredWords.length === 0 ? (
           <div className="mt-6 rounded-lg border border-line bg-sheet p-6 text-center">
@@ -262,22 +513,47 @@ function ExamPage() {
               })}
             </ul>
 
-            <Button
-              className="mt-6 w-full"
-              tone="seal"
-              disabled={isStarred ? starredWords.length === 0 : selected.length === 0}
-              onClick={start}
-            >
-              {isStarred
-                ? selected.length
-                  ? `Bắt đầu làm bài · Bài ${selected.join(" + ")}`
-                  : `Bắt đầu làm bài · Tất cả ${starredWords.length} từ`
-                : `Làm ${EXAM_SIZE} câu ${selected.length ? `· Bài ${selected.join(" + ")}` : ""}`}
-            </Button>
+            <div className="mt-6 space-y-2">
+              {isJpd123 && isAiModeTab ? (
+                <Button
+                  className="w-full flex items-center justify-center gap-2 py-3"
+                  tone="seal"
+                  onClick={() => startAiExam(selected.length ? selected : ["4", "5", "6", "7"])}
+                >
+                  <Sparkles className="size-4" />
+                  Bắt đầu làm đề thi AI (30 câu chuẩn Form FPT)
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  tone="seal"
+                  disabled={isStarred ? starredWords.length === 0 : selected.length === 0}
+                  onClick={startStandard}
+                >
+                  {isStarred
+                    ? selected.length
+                      ? `Bắt đầu làm bài · Bài ${selected.join(" + ")}`
+                      : `Bắt đầu làm bài · Tất cả ${starredWords.length} từ`
+                    : `Làm ${EXAM_SIZE} câu ${selected.length ? `· Bài ${selected.join(" + ")}` : ""}`}
+                </Button>
+              )}
+            </div>
 
             {note ? <p className="mt-3 text-sm text-seal">{note}</p> : null}
           </>
         )}
+
+        {/* AI Settings Modal */}
+        {showAiSettings && (
+          <AiSettingsModal
+            settings={aiSettings}
+            onClose={() => setShowAiSettings(false)}
+            onSave={handleSaveAiSettings}
+          />
+        )}
+
+        {/* AI Generating Overlay */}
+        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
       </div>
     );
   }
@@ -295,12 +571,20 @@ function ExamPage() {
           {correct}
           <span className="text-2xl text-stone">/{paper.length}</span>
         </p>
-        <p className="mt-2 text-stone">
-          {search.course === "starred"
-            ? `Từ vựng đã đánh dấu${selected.length ? ` · Bài ${selected.join(", ")}` : " · Tất cả"}`
-            : `${search.course} · Bài ${selected.join(", ")}`}
-          {left === 0 ? " · Hết giờ" : ""}
-        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-stone text-sm">
+          {isAiExam && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 font-medium text-xs border border-amber-500/20">
+              <Bot className="size-3" />
+              Đề thi AI JPD123 FPT
+            </span>
+          )}
+          <span>
+            {search.course === "starred"
+              ? `Từ vựng đã đánh dấu${selected.length ? ` · Bài ${selected.join(", ")}` : " · Tất cả"}`
+              : `${search.course} · Bài ${selected.join(", ")}`}
+            {left === 0 ? " · Hết giờ" : ""}
+          </span>
+        </div>
 
         <ul className="mt-6 divide-y divide-line border-y border-line">
           {(["Kanji", "Từ vựng", "Ngữ pháp"] as const).map((section) => {
@@ -311,7 +595,7 @@ function ExamPage() {
             const hit = rows.filter(({ question, questionIndex }) => answers[questionIndex] === question.answer).length;
             return (
               <li key={section} className="flex items-center justify-between py-3 text-sm">
-                <span>{section}</span>
+                <span className="font-medium">{section}</span>
                 <span className="tabular-nums text-stone">
                   {hit}/{rows.length}
                 </span>
@@ -358,14 +642,37 @@ function ExamPage() {
           <p className="mt-6 text-stone">Xuất sắc! Bạn đã trả lời đúng tất cả các câu.</p>
         )}
 
-        <div className="mt-6 flex gap-2">
+        <div className="mt-6 flex flex-wrap gap-2">
           <Button tone="ghost" onClick={() => setPaper(null)}>
             Đổi bài
           </Button>
-          <Button tone="seal" onClick={start}>
-            Làm lại đề này
-          </Button>
+          {isAiExam ? (
+            <Button
+              tone="seal"
+              onClick={() => startAiExam(selected.length ? selected : ["4", "5", "6", "7"])}
+              className="flex items-center gap-1.5"
+            >
+              <Sparkles className="size-4" />
+              Tạo đề AI mới (30 câu)
+            </Button>
+          ) : (
+            <Button tone="seal" onClick={startStandard}>
+              Làm lại đề này
+            </Button>
+          )}
         </div>
+
+        {/* AI Settings Modal */}
+        {showAiSettings && (
+          <AiSettingsModal
+            settings={aiSettings}
+            onClose={() => setShowAiSettings(false)}
+            onSave={handleSaveAiSettings}
+          />
+        )}
+
+        {/* AI Generating Overlay */}
+        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
       </div>
     );
   }
@@ -393,13 +700,26 @@ function ExamPage() {
   return (
     <div>
       <div className="mb-3 flex items-center justify-between text-sm text-stone">
-        <span className="tabular-nums">
-          Câu {index + 1} / {paper.length}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="tabular-nums font-medium text-ink">
+            Câu {index + 1} / {paper.length}
+          </span>
+          {isAiExam && (
+            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-amber-500/10 text-amber-700 border border-amber-500/20">
+              <Bot className="size-3" />
+              Đề thi AI JPD123 FPT
+            </span>
+          )}
+        </div>
         <span className={cn("tabular-nums font-medium", left < 300 && "text-seal")}>{formatTime(left)}</span>
       </div>
       <ProgressLine value={index} max={paper.length} />
-      <p className="mt-5 text-sm font-medium text-stone tracking-wide uppercase">{current.section}</p>
+
+      <div className="mt-5 flex items-center justify-between">
+        <p className="text-sm font-medium text-stone tracking-wide uppercase">{current.section}</p>
+        <span className="text-xs text-stone">Chuẩn Form JPD123</span>
+      </div>
+
       {current.promptJp ? <p className="jp mt-3 text-base leading-relaxed text-ink">{current.promptJp}</p> : null}
       <h1 className="mt-2 text-lg font-medium leading-snug text-ink">{current.prompt}</h1>
       <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
@@ -453,28 +773,29 @@ function ExamPage() {
           );
         })}
       </div>
-      {picked ? (
-        <div ref={nextRef} className="mt-4 scroll-mb-36">
+      <div ref={nextRef} className="mt-4 flex min-h-10 items-center justify-between">
+        {picked ? (
+          <p className="text-sm text-stone">
+            {picked === current.answer ? "Chính xác." : `Chưa đúng. Đáp án: ${current.answer}`}
+          </p>
+        ) : (
+          <span />
+        )}
+        {picked ? (
           <Button
-            className="w-full"
             tone="seal"
             onClick={() => {
-              setPicked(null);
               setIndex((value) => value + 1);
+              setPicked(null);
             }}
           >
-            {index + 1 === paper.length ? "Nộp bài" : "Tiếp theo"}
+            {index + 1 >= paper.length ? "Xem kết quả" : "Câu tiếp theo →"}
           </Button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          className="mt-4 text-sm text-stone hover:text-ink"
-          onClick={() => setClosed(true)}
-        >
-          Nộp bài sớm
-        </button>
-      )}
+        ) : null}
+      </div>
+
+      {/* AI Generating Overlay */}
+      {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
     </div>
   );
 }
@@ -545,7 +866,204 @@ function renderLine(line: string, isReadingQuestion: boolean) {
 }
 
 function formatTime(total: number) {
-  const minutes = Math.floor(total / 60);
-  const seconds = total % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+/**
+ * Overlay hiển thị tiến trình AI biên soạn đề thi JPD123 FPT
+ */
+function AiGeneratingOverlay({ step }: { step: number }) {
+  const steps = [
+    "Khởi tạo ma trận đề thi JPD123 Đại học FPT...",
+    "Phân tích chuẩn môn học: 10 Kanji · 10 Từ vựng · 10 Ngữ pháp...",
+    "Soạn câu hỏi & ngữ cảnh Minna / Marugoto Sơ cấp 2 (Bài 4–7)...",
+    "Thẩm định 4 đáp án A–B–C–D và chuẩn hoá Hiragana/Katakana...",
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+      <div className="w-full max-w-md rounded-xl border border-line bg-sheet p-6 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
+            <Bot className="size-6 animate-pulse" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-ink text-base">
+              Trợ lý AI đang tạo đề thi JPD123 FPT
+            </h3>
+            <p className="text-xs text-stone">Mô phỏng 100% đề thi kết thúc môn</p>
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          {steps.map((text, idx) => {
+            const isDone = step > idx;
+            const isCurrent = step === idx;
+            return (
+              <div
+                key={idx}
+                className={cn(
+                  "flex items-center gap-3 text-sm transition-all",
+                  isDone ? "text-ink font-medium" : isCurrent ? "text-amber-700 font-medium" : "text-stone/60",
+                )}
+              >
+                {isDone ? (
+                  <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+                ) : isCurrent ? (
+                  <Loader2 className="size-4 shrink-0 animate-spin text-amber-600" />
+                ) : (
+                  <div className="size-4 shrink-0 rounded-full border border-stone/30" />
+                )}
+                <span className="text-xs leading-normal">{text}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-line text-center">
+          <span className="text-xs text-stone">Chuẩn bị bước vào bài thi 30 câu (30 phút)...</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Modal cấu hình nhà cung cấp AI (Google Gemini, xAI Grok, OpenAI, Groq)
+ */
+function AiSettingsModal({
+  settings,
+  onClose,
+  onSave,
+}: {
+  settings: AiSettings;
+  onClose: () => void;
+  onSave: (settings: AiSettings) => void;
+}) {
+  const [provider, setProvider] = useState<AiProvider>(settings.provider);
+  const [apiKey, setApiKey] = useState(settings.apiKey);
+  const [model, setModel] = useState(settings.model || "");
+
+  function handleSave() {
+    onSave({
+      provider,
+      apiKey: apiKey.trim(),
+      model: model.trim(),
+    });
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+      <div className="w-full max-w-lg rounded-xl border border-line bg-sheet p-6 shadow-2xl space-y-5">
+        <div className="flex items-center justify-between border-b border-line pb-3">
+          <div className="flex items-center gap-2">
+            <Bot className="size-5 text-amber-600" />
+            <h2 className="font-semibold text-ink text-lg">Cấu hình Trợ lý AI (Exam Generator)</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-stone hover:text-ink p-1 rounded-md"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+
+        <div className="space-y-4 text-sm">
+          <div>
+            <label className="block font-medium text-ink mb-1.5">Mô hình AI / Nhà cung cấp</label>
+            <select
+              value={provider}
+              onChange={(e) => setProvider(e.target.value as AiProvider)}
+              className="w-full rounded-md border border-line bg-paper px-3 py-2 text-ink text-sm focus:outline-hidden focus:ring-1 focus:ring-ink"
+            >
+              <option value="built-in">🧠 AI Engine Tích hợp (Mặc định - Miễn phí 100%, không cần API Key)</option>
+              <option value="gemini">⚡ Google Gemini (Khuyên dùng - Hỗ trợ Key miễn phí Google AI Studio)</option>
+              <option value="xai">🚀 xAI Grok (Grok-4.5 / Grok Beta)</option>
+              <option value="openai">🌐 OpenAI (GPT-4o Mini)</option>
+              <option value="groq">⚡ Groq (Llama 3.3 70B Siêu tốc)</option>
+            </select>
+          </div>
+
+          {provider === "built-in" ? (
+            <div className="rounded-md bg-paper border border-line p-3 text-xs text-stone space-y-1">
+              <p className="font-medium text-ink">Chế độ AI Tích hợp sẵn (Sumi FPT Engine):</p>
+              <p>• Hoàn toàn miễn phí, chạy trực tiếp không cần đăng ký tài khoản hay API Key.</p>
+              <p>• Thuật toán sinh đề mô phỏng chuẩn 100% form đề thi kết thúc môn JPD123 Đại học FPT.</p>
+              <p>• Mỗi lượt thi được làm mới câu hỏi, hỗ trợ đầy đủ Furigana và bảng đối chiếu đáp án.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <label className="block font-medium text-ink mb-1">
+                  API Key của bạn ({provider.toUpperCase()})
+                </label>
+                <input
+                  type="password"
+                  placeholder="Dán API Key vào đây..."
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full rounded-md border border-line bg-paper px-3 py-2 text-ink text-sm font-mono placeholder:text-stone/50 focus:outline-hidden focus:ring-1 focus:ring-ink"
+                />
+                <p className="mt-1 text-xs text-stone">
+                  {provider === "gemini" && (
+                    <>
+                      Lấy API key Google Gemini miễn phí tại{" "}
+                      <a
+                        href="https://aistudio.google.com/app/apikey"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline text-ink font-medium"
+                      >
+                        Google AI Studio
+                      </a>
+                    </>
+                  )}
+                  {provider === "xai" && "Lấy API key tại console.x.ai."}
+                  {provider === "openai" && "Lấy API key tại platform.openai.com."}
+                  {provider === "groq" && "Lấy API key tại console.groq.com."}
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-medium text-ink mb-1">
+                  Model (Tuỳ chọn - để trống sẽ dùng model mặc định)
+                </label>
+                <input
+                  type="text"
+                  placeholder={
+                    provider === "gemini"
+                      ? "gemini-1.5-flash"
+                      : provider === "xai"
+                        ? "grok-4.5"
+                        : provider === "openai"
+                          ? "gpt-4o-mini"
+                          : "llama-3.3-70b-versatile"
+                  }
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="w-full rounded-md border border-line bg-paper px-3 py-2 text-ink text-sm placeholder:text-stone/50 focus:outline-hidden focus:ring-1 focus:ring-ink"
+                />
+              </div>
+
+              <div className="rounded-md bg-paper border border-line p-3 text-xs text-stone">
+                🔒 API Key được lưu an toàn trực tiếp trên trình duyệt máy bạn (localStorage), không gửi về máy chủ thứ ba nào khác.
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-2 border-t border-line pt-4">
+          <Button tone="ghost" onClick={onClose}>
+            Hủy
+          </Button>
+          <Button tone="seal" onClick={handleSave}>
+            Lưu cấu hình
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
