@@ -38,6 +38,7 @@ import {
   type AiProvider,
   type AiSettings,
 } from "@/lib/study/ai-service";
+import { QuestionExplanationPanel } from "@/components/question-explanation";
 
 export const Route = createFileRoute("/exam")({
   validateSearch: (search: Record<string, unknown>): ExamSearch => ({
@@ -73,6 +74,7 @@ function ExamPage() {
   const [aiProviderName, setAiProviderName] = useState("");
   const [showAiSettings, setShowAiSettings] = useState(false);
   const [aiSettings, setAiSettingsState] = useState<AiSettings>(() => getAiSettings());
+  const [reviewFilter, setReviewFilter] = useState<"missed" | "all">("missed");
 
   const selected = search.bai ? search.bai.split(",").filter(Boolean) : [];
   const starredWords = vocabulary.filter((word) => starred.includes(word.id));
@@ -604,11 +606,60 @@ function ExamPage() {
           })}
         </ul>
 
-        {missed.length ? (
-          <div className="mt-8">
-            <h2 className="text-sm font-semibold tracking-wide text-stone uppercase">Các câu cần xem lại ({missed.length})</h2>
-            <ul className="mt-2 divide-y divide-line border-y border-line">
-              {missed.map((question) => {
+        {/* Chuyển đổi bộ lọc: Các câu sai hoặc Toàn bộ đề thi */}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setReviewFilter("missed")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer",
+                reviewFilter === "missed"
+                  ? "bg-ink text-paper"
+                  : "bg-sheet text-stone hover:text-ink border border-line",
+              )}
+            >
+              Các câu cần xem lại ({missed.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setReviewFilter("all")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer",
+                reviewFilter === "all"
+                  ? "bg-ink text-paper"
+                  : "bg-sheet text-stone hover:text-ink border border-line",
+              )}
+            >
+              Toàn bộ đề thi ({paper.length} câu)
+            </button>
+          </div>
+          <span className="text-xs text-stone">
+            💡 Có đầy đủ: nghĩa, ngữ pháp, bài học, mẹo giải & lý do chọn
+          </span>
+        </div>
+
+        {/* Danh sách câu hỏi kèm lời giải chi tiết */}
+        {reviewFilter === "missed" && missed.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-line bg-sheet p-6 text-center space-y-2">
+            <p className="font-medium text-ink">Xuất sắc! Bạn đã trả lời đúng tất cả các câu hỏi.</p>
+            <p className="text-stone text-xs">
+              Bạn có thể bấm vào nút &quot;Toàn bộ đề thi ({paper.length} câu)&quot; ở trên để đọc lại lời giải chi tiết và ôn tập thêm mẹo làm bài.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4">
+            <h2 className="text-sm font-semibold tracking-wide text-stone uppercase">
+              {reviewFilter === "all"
+                ? `Toàn bộ ${paper.length} câu hỏi kèm lời giải chi tiết`
+                : `Các câu cần xem lại (${missed.length})`}
+            </h2>
+            <ul className="mt-3 divide-y divide-line border-y border-line">
+              {(reviewFilter === "all" ? paper : missed).map((question) => {
+                const qIndex = paper.findIndex((p) => p.id === question.id);
+                const userAnswer = qIndex >= 0 ? answers[qIndex] : null;
+                const isCorrect = userAnswer === question.answer;
+
                 const isMissedReadingQ =
                   question.section === "Kanji" &&
                   (question.prompt.includes("cách đọc") ||
@@ -616,30 +667,60 @@ function ExamPage() {
                     question.prompt.includes("âm Hán") ||
                     question.prompt.includes("âm thuần Nhật"));
                 const answerReading = !isMissedReadingQ ? findReading(question.answer) : null;
+                const userReading = userAnswer && !isMissedReadingQ ? findReading(userAnswer) : null;
+
                 return (
-                  <li key={question.id} className="py-3">
-                    <p className="text-sm text-stone">
-                      Câu {question.id} · {question.section}
-                    </p>
-                    <p className="mt-1 text-sm">{question.prompt}</p>
-                    <div className="mt-2">
+                  <li key={question.id} className="py-4 space-y-2">
+                    <div className="flex items-center justify-between text-sm text-stone">
+                      <span className="font-medium">
+                        Câu {question.id} · {question.section}
+                      </span>
+                      {userAnswer && (
+                        <span
+                          className={cn(
+                            "text-xs px-2 py-0.5 rounded font-medium",
+                            isCorrect
+                              ? "bg-emerald-500/10 text-emerald-700 border border-emerald-500/20"
+                              : "bg-seal/10 text-seal border border-seal/20",
+                          )}
+                        >
+                          {isCorrect ? "✓ Trả lời đúng" : "✗ Trả lời chưa đúng"}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-sm text-ink font-medium">{question.prompt}</p>
+
+                    <div className="rounded-md border border-line bg-sheet px-4 py-3">
                       <Sentence text={question.sentence} compact isReadingQuestion={isMissedReadingQ} />
                     </div>
-                    <p className="mt-1 text-sm">
-                      Đáp án đúng: <span className="font-semibold text-seal">{question.answer}</span>
-                      {answerReading ? (
-                        <span className="text-stone font-normal ml-1.5">
-                          ({answerReading})
-                        </span>
-                      ) : null}
-                    </p>
+
+                    <div className="text-sm space-y-1 pt-1">
+                      {!isCorrect && userAnswer && (
+                        <p className="text-xs text-stone">
+                          Bạn đã chọn:{" "}
+                          <span className="font-semibold text-seal line-through">{userAnswer}</span>
+                          {userReading ? <span className="ml-1 text-stone">({userReading})</span> : null}
+                        </p>
+                      )}
+                      <p className="text-sm">
+                        Đáp án đúng:{" "}
+                        <span className="font-semibold text-emerald-700">{question.answer}</span>
+                        {answerReading ? (
+                          <span className="text-stone font-normal ml-1.5">
+                            ({answerReading})
+                          </span>
+                        ) : null}
+                      </p>
+                    </div>
+
+                    {/* Component Lời giải chi tiết */}
+                    <QuestionExplanationPanel question={question} />
                   </li>
                 );
               })}
             </ul>
           </div>
-        ) : (
-          <p className="mt-6 text-stone">Xuất sắc! Bạn đã trả lời đúng tất cả các câu.</p>
         )}
 
         <div className="mt-6 flex flex-wrap gap-2">
@@ -793,6 +874,13 @@ function ExamPage() {
           </Button>
         ) : null}
       </div>
+
+      {/* Lời giải chi tiết hiện lên ngay khi người dùng chọn đáp án */}
+      {picked && (
+        <div className="mt-4 pt-3 border-t border-line">
+          <QuestionExplanationPanel question={current} />
+        </div>
+      )}
 
       {/* AI Generating Overlay */}
       {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}

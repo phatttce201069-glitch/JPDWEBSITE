@@ -15,6 +15,13 @@ export type ExamQuestion = {
   sentence: string;
   options: string[];
   answer: string;
+  explanation?: {
+    meaning: string;
+    grammar?: string;
+    lesson?: string;
+    tips?: string;
+    reason: string;
+  };
 };
 
 export type ExamCourse = "JPD113" | "JPD123" | "starred";

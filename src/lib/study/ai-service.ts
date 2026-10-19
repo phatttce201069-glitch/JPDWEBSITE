@@ -68,12 +68,20 @@ Chỉ trả về duy nhất một chuỗi JSON hợp lệ (không kèm markdown 
     "prompt": "Chỉ dẫn bằng tiếng Việt",
     "sentence": "Câu tiếng Nhật ngữ cảnh",
     "options": ["Đáp án 1", "Đáp án 2", "Đáp án 3", "Đáp án 4"],
-    "answer": "Đáp án đúng (phải trùng khớp chính xác 100% với 1 trong 4 lựa chọn trong options)"
+    "answer": "Đáp án đúng (phải trùng khớp chính xác 100% với 1 trong 4 lựa chọn trong options)",
+    "explanation": {
+      "meaning": "Dịch nghĩa câu tiếng Nhật sang tiếng Việt",
+      "grammar": "Cấu trúc ngữ pháp áp dụng",
+      "lesson": "Thuộc bài nào (Ví dụ: JPD123 - Bài 5)",
+      "tips": "Mẹo giải nhanh hoặc dấu hiệu nhận biết từ khóa",
+      "reason": "Lý do chọn đáp án này và giải thích vì sao các đáp án khác sai"
+    }
   }
 ]
 Chú ý:
 - Mỗi câu phải có chính xác 4 options phân biệt.
-- Đáp án answer phải chính xác, không nhầm lẫn.`;
+- Đáp án answer phải chính xác, không nhầm lẫn.
+- Phần explanation cung cấp đầy đủ: nghĩa, ngữ pháp, bài học, mẹo giải, lý do chọn.`;
 
 /**
  * Gọi AI LLM trực tiếp hoặc fallback sang bộ Engine JPD123 FPT
@@ -223,6 +231,21 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
         raw.options.length === 4 &&
         raw.options.includes(raw.answer)
       ) {
+        const expRaw =
+          "explanation" in raw && typeof raw.explanation === "object" && raw.explanation !== null
+            ? (raw.explanation as Record<string, unknown>)
+            : null;
+
+        const explanation = expRaw
+          ? {
+              meaning: String(expRaw.meaning || ""),
+              grammar: expRaw.grammar ? String(expRaw.grammar) : undefined,
+              lesson: expRaw.lesson ? String(expRaw.lesson) : undefined,
+              tips: expRaw.tips ? String(expRaw.tips) : undefined,
+              reason: String(expRaw.reason || ""),
+            }
+          : undefined;
+
         validQuestions.push({
           id: String(validQuestions.length + 1),
           section:
@@ -232,6 +255,7 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
           sentence: raw.sentence,
           options: raw.options,
           answer: raw.answer,
+          explanation,
         });
       }
     }

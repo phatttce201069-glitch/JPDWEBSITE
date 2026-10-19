@@ -8,6 +8,13 @@ export type ExamQuestion = {
   sentence: string;
   options: string[];
   answer: string;
+  explanation?: {
+    meaning: string;
+    grammar?: string;
+    lesson?: string;
+    tips?: string;
+    reason: string;
+  };
 };
 
 function shuffle<T>(items: T[]): T[] {
@@ -79,6 +86,13 @@ type QuestionSeed = {
   answer: string;
   wrongs: string[];
   bai?: number; // 4, 5, 6, 7
+  explanation?: {
+    meaning: string;
+    grammar?: string;
+    lesson?: string;
+    tips?: string;
+    reason: string;
+  };
 };
 
 // =========================================================================
@@ -283,7 +297,7 @@ const KANJI_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.KAKI.prompt,
     sentence: "母とデパートへ（かいもの）に行きました。",
     answer: "買い物",
-    wrongs: ["買い者", "買い物", "買い方"],
+    wrongs: ["買い者", "買い所", "買い方"],
     bai: 5,
   },
   {
@@ -928,7 +942,8 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
 
     const selectedSeeds = ordered.slice(0, targetCount);
     return selectedSeeds.map((seed, idx) => {
-      const options = shuffle([seed.answer, ...shuffle(seed.wrongs).slice(0, 3)]);
+      const uniqueWrongs = [...new Set(seed.wrongs.filter((w) => w !== seed.answer))];
+      const options = shuffle([seed.answer, ...shuffle(uniqueWrongs).slice(0, 3)]);
       return {
         id: `${prefix}-${idx + 1}`,
         section: seed.section,
@@ -937,6 +952,7 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
         sentence: seed.sentence,
         options,
         answer: seed.answer,
+        explanation: seed.explanation,
       };
     });
   }
