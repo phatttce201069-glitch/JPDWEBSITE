@@ -75,6 +75,7 @@ function ExamPage() {
   const [showAiSettings, setShowAiSettings] = useState(false);
   const [aiSettings, setAiSettingsState] = useState<AiSettings>(() => getAiSettings());
   const [reviewFilter, setReviewFilter] = useState<"missed" | "all">("missed");
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const selected = search.bai ? search.bai.split(",").filter(Boolean) : [];
   const starredWords = vocabulary.filter((word) => starred.includes(word.id));
@@ -100,12 +101,12 @@ function ExamPage() {
   }, [search.course, search.bai, selected, setLast]);
 
   useEffect(() => {
-    if (!paper || closed) return;
+    if (!paper || closed || showCancelModal) return;
     const timer = window.setInterval(() => {
       setLeft((value) => (value > 0 ? value - 1 : 0));
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [paper, closed]);
+  }, [paper, closed, showCancelModal]);
 
   useEffect(() => {
     if (paper && left === 0) setClosed(true);
@@ -225,6 +226,22 @@ function ExamPage() {
     saveAiSettings(updated);
     setAiSettingsState(updated);
     setShowAiSettings(false);
+  }
+
+  function handleCancelExam() {
+    setPaper(null);
+    setIndex(0);
+    setPicked(null);
+    setAnswers([]);
+    setLeft(EXAM_SECONDS);
+    setClosed(false);
+    setIsAiExam(false);
+    setShowCancelModal(false);
+  }
+
+  function handleFinishEarly() {
+    setShowCancelModal(false);
+    setClosed(true);
   }
 
   // --- SCREEN 1: Choose Course or Exam Type ---
@@ -792,7 +809,18 @@ function ExamPage() {
             </span>
           )}
         </div>
-        <span className={cn("tabular-nums font-medium", left < 300 && "text-seal")}>{formatTime(left)}</span>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className={cn("tabular-nums font-medium", left < 300 && "text-seal")}>{formatTime(left)}</span>
+          <button
+            type="button"
+            onClick={() => setShowCancelModal(true)}
+            className="inline-flex items-center gap-1 text-xs text-stone hover:text-seal px-2 py-1 rounded hover:bg-seal/10 transition-colors cursor-pointer border border-line/60 hover:border-seal/30"
+            title="Hủy bài kiểm tra và quay lại"
+          >
+            <X className="size-3.5" />
+            <span className="hidden xs:inline font-medium">Hủy kiểm tra</span>
+          </button>
+        </div>
       </div>
       <ProgressLine value={index} max={paper.length} />
 
@@ -854,24 +882,39 @@ function ExamPage() {
           );
         })}
       </div>
-      <div ref={nextRef} className="mt-4 flex min-h-10 items-center justify-between">
+      <div ref={nextRef} className="mt-4 flex min-h-10 items-center justify-between gap-2">
         {picked ? (
           <p className="text-sm text-stone">
             {picked === current.answer ? "Chính xác." : `Chưa đúng. Đáp án: ${current.answer}`}
           </p>
         ) : (
-          <span />
+          <button
+            type="button"
+            onClick={() => setShowCancelModal(true)}
+            className="text-xs text-stone hover:text-seal underline underline-offset-4 decoration-line/70 hover:decoration-seal transition-colors cursor-pointer"
+          >
+            Hủy bài thi
+          </button>
         )}
         {picked ? (
-          <Button
-            tone="seal"
-            onClick={() => {
-              setIndex((value) => value + 1);
-              setPicked(null);
-            }}
-          >
-            {index + 1 >= paper.length ? "Xem kết quả" : "Câu tiếp theo →"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              tone="ghost"
+              onClick={() => setShowCancelModal(true)}
+              className="text-xs text-stone hover:text-seal"
+            >
+              Hủy bài thi
+            </Button>
+            <Button
+              tone="seal"
+              onClick={() => {
+                setIndex((value) => value + 1);
+                setPicked(null);
+              }}
+            >
+              {index + 1 >= paper.length ? "Xem kết quả" : "Câu tiếp theo →"}
+            </Button>
+          </div>
         ) : null}
       </div>
 
@@ -880,6 +923,17 @@ function ExamPage() {
         <div className="mt-4 pt-3 border-t border-line">
           <QuestionExplanationPanel question={current} />
         </div>
+      )}
+
+      {/* Modal xác nhận hủy bài kiểm tra */}
+      {showCancelModal && (
+        <CancelExamModal
+          answeredCount={answers.filter((a) => a !== null).length}
+          totalCount={paper.length}
+          onClose={() => setShowCancelModal(false)}
+          onConfirmCancel={handleCancelExam}
+          onFinishEarly={handleFinishEarly}
+        />
       )}
 
       {/* AI Generating Overlay */}
@@ -1155,3 +1209,79 @@ function AiSettingsModal({
     </div>
   );
 }
+
+function CancelExamModal({
+  answeredCount,
+  totalCount,
+  onClose,
+  onConfirmCancel,
+  onFinishEarly,
+}: {
+  answeredCount: number;
+  totalCount: number;
+  onClose: () => void;
+  onConfirmCancel: () => void;
+  onFinishEarly?: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+      <div className="w-full max-w-md rounded-2xl border border-line bg-paper p-5 sm:p-6 shadow-2xl space-y-4">
+        <div className="flex items-start gap-3">
+          <div className="rounded-full bg-seal/10 p-2.5 text-seal shrink-0">
+            <AlertCircle className="size-6" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base font-semibold text-ink">
+              Xác nhận hủy bài kiểm tra?
+            </h3>
+            <p className="text-xs sm:text-sm text-stone leading-relaxed">
+              Bạn đang làm bài kiểm tra ({answeredCount}/{totalCount} câu đã trả lời). Nếu hủy ngay bây giờ, tiến trình làm bài sẽ không được lưu.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-sheet p-3.5 border border-line text-xs text-stone space-y-2">
+          <div className="flex justify-between items-center">
+            <span>Tiến độ đã làm:</span>
+            <span className="font-semibold text-ink">{answeredCount} / {totalCount} câu</span>
+          </div>
+          <div className="w-full bg-paper rounded-full h-1.5 overflow-hidden border border-line">
+            <div
+              className="bg-seal h-full transition-all duration-300"
+              style={{ width: `${Math.round((answeredCount / totalCount) * 100)}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row-reverse gap-2 pt-2">
+          <Button
+            tone="seal"
+            onClick={onConfirmCancel}
+            className="w-full text-xs font-semibold"
+          >
+            Đồng ý hủy bài
+          </Button>
+
+          {answeredCount > 0 && onFinishEarly && (
+            <Button
+              tone="ghost"
+              onClick={onFinishEarly}
+              className="w-full text-xs"
+            >
+              Nộp bài sớm & Xem điểm
+            </Button>
+          )}
+
+          <Button
+            tone="ghost"
+            onClick={onClose}
+            className="w-full text-xs"
+          >
+            Tiếp tục làm bài
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
