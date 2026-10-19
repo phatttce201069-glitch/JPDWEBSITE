@@ -1,3 +1,5 @@
+import { getQuestionExplanation } from "./explanation.ts";
+
 export type ExamSection = "Kanji" | "Từ vựng" | "Ngữ pháp";
 
 export type ExamQuestion = {
@@ -944,7 +946,7 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
     return selectedSeeds.map((seed, idx) => {
       const uniqueWrongs = [...new Set(seed.wrongs.filter((w) => w !== seed.answer))];
       const options = shuffle([seed.answer, ...shuffle(uniqueWrongs).slice(0, 3)]);
-      return {
+      const q: ExamQuestion = {
         id: `${prefix}-${idx + 1}`,
         section: seed.section,
         promptJp: seed.promptJp,
@@ -952,8 +954,9 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
         sentence: seed.sentence,
         options,
         answer: seed.answer,
-        explanation: seed.explanation,
       };
+      q.explanation = seed.explanation || getQuestionExplanation(q as any);
+      return q;
     });
   }
 

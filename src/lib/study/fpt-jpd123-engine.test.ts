@@ -35,3 +35,27 @@ test("buildFptJpd123Exam with filtered lessons generates diverse questions", () 
   assert.equal(paper1.length, 30);
   assert.equal(paper2.length, 30);
 });
+
+test("getQuestionExplanation correctly explains specific Kanji question without mismatch", async () => {
+  const { getQuestionExplanation, getCompletedSentence } = await import("./explanation.ts");
+  const q = {
+    id: "test-kaimono",
+    section: "Kanji" as const,
+    promptJp: "下線のひらがなの正しい漢字を選びなさい。",
+    prompt: "Chọn chữ Hán tự đúng của chữ Hiragana trong ( ) .",
+    sentence: "母とデパートへ（かいもの）に行きました。",
+    options: ["買い者", "買い物", "買い方", "買い所"],
+    answer: "買い物",
+  };
+
+  const exp = getQuestionExplanation(q);
+  assert.ok(exp, "Lời giải không được undefined");
+  assert.ok(exp.meaning.includes("mua sắm"), "Dịch nghĩa phải chứa từ mua sắm");
+  assert.ok(!exp.meaning.includes("Căn phòng này nhỏ"), "Không được nhầm sang bài liên từ căn phòng");
+  assert.ok(exp.reason.includes("買い物"), "Lý do chọn phải nhắc đến 買い物");
+  assert.ok(exp.lesson?.includes("Bài 5"), "Phải thuộc Bài 5");
+
+  const completed = getCompletedSentence(q);
+  assert.equal(completed, "母とデパートへ【買い物】に行きました。");
+});
+

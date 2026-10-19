@@ -1,8 +1,10 @@
 import { useState } from "react";
 import {
   BookOpen,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
+  FileQuestion,
   HelpCircle,
   Lightbulb,
   Sparkles,
@@ -11,7 +13,11 @@ import {
   Zap,
 } from "lucide-react";
 import type { ExamQuestion } from "@/lib/study/exam";
-import { getQuestionExplanation, type QuestionExplanation } from "@/lib/study/explanation";
+import {
+  getCompletedSentence,
+  getQuestionExplanation,
+  type QuestionExplanation,
+} from "@/lib/study/explanation";
 import { cn } from "@/lib/cn";
 
 export function QuestionExplanationPanel({
@@ -25,6 +31,7 @@ export function QuestionExplanationPanel({
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const explanation: QuestionExplanation = getQuestionExplanation(question);
+  const completedSentence = getCompletedSentence(question);
 
   return (
     <div className="mt-3 w-full">
@@ -44,7 +51,7 @@ export function QuestionExplanationPanel({
       </button>
 
       {isOpen && (
-        <div className="mt-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs leading-relaxed space-y-3 shadow-xs animate-in fade-in-50 duration-200">
+        <div className="mt-2.5 rounded-xl border border-amber-500/25 bg-amber-500/5 p-4 text-xs leading-relaxed space-y-3.5 shadow-xs animate-in fade-in-50 duration-200">
           {/* Header Badge */}
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-500/15 pb-2 text-ink">
             <div className="flex items-center gap-1.5 font-semibold text-amber-900">
@@ -57,6 +64,50 @@ export function QuestionExplanationPanel({
                 {explanation.lesson}
               </span>
             )}
+          </div>
+
+          {/* Hộp hiển thị câu hỏi & câu hoàn chỉnh (User request: có cả câu hỏi để dễ hình dung) */}
+          <div className="rounded-lg bg-paper p-3 border border-amber-500/20 space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 font-semibold text-amber-950 text-xs">
+                <FileQuestion className="size-3.5 text-amber-600" />
+                <span>Nội dung câu hỏi:</span>
+              </div>
+              {question.section && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                  Phần {question.section}
+                </span>
+              )}
+            </div>
+
+            {/* Yêu cầu đề bài */}
+            {question.prompt && (
+              <p className="text-stone text-[11px] leading-relaxed italic">
+                {question.prompt}
+              </p>
+            )}
+
+            {/* Đề bài & Câu đúng */}
+            <div className="rounded bg-sheet/80 p-2.5 border border-line space-y-1.5 text-xs">
+              <div className="text-stone">
+                <span className="font-semibold text-stone">Đề bài: </span>
+                <span className="jp font-medium text-ink">{question.sentence}</span>
+              </div>
+              <div className="text-ink">
+                <span className="font-semibold text-emerald-800">Câu hoàn chỉnh: </span>
+                <span className="jp font-semibold text-emerald-950 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">
+                  {completedSentence}
+                </span>
+              </div>
+            </div>
+
+            {/* Badge đáp án đúng */}
+            <div className="pt-0.5 flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-900 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded text-xs">
+                <CheckCircle2 className="size-3.5 text-emerald-600" />
+                <span>Đáp án đúng: <strong>{question.answer}</strong></span>
+              </span>
+            </div>
           </div>
 
           {/* 1. Dịch nghĩa */}
@@ -87,7 +138,7 @@ export function QuestionExplanationPanel({
 
           {/* 3. Mẹo giải nhanh */}
           {explanation.tips && (
-            <div className="rounded-lg bg-paper/80 border border-amber-500/20 p-2.5 space-y-1">
+            <div className="rounded-lg bg-paper/90 border border-amber-500/20 p-2.5 space-y-1">
               <div className="flex items-center gap-1.5 font-medium text-amber-800">
                 <Zap className="size-3.5 fill-amber-500 text-amber-500" />
                 <span>Mẹo giải nhanh & Dấu hiệu nhận biết:</span>
