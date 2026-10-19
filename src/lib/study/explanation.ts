@@ -688,6 +688,18 @@ export function getQuestionExplanation(question: ExamQuestion): QuestionExplanat
     // Đảm bảo không bị lọt template cũ của "Căn phòng này nhỏ"
     !question.explanation.meaning.includes("Căn phòng này nhỏ, nhưng sạch sẽ.")
   ) {
+    // Nếu lesson chứa dải bài chung chung như "Bài 4 đến 7" hoặc "Bài 4 đến Bài 7", làm sạch về bài cụ thể
+    if (
+      question.explanation.lesson &&
+      (question.explanation.lesson.includes("đến") ||
+        question.explanation.lesson.includes("4 đến 7") ||
+        question.explanation.lesson.includes("4-7"))
+    ) {
+      return {
+        ...question.explanation,
+        lesson: determineLesson(question),
+      };
+    }
     return question.explanation;
   }
 
@@ -740,13 +752,13 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
     q.prompt.includes("Hán Việt") ||
     q.prompt.includes("ý nghĩa");
 
-  const lessonInfo = "JPD123 - Bài 4 đến Bài 7 (Chữ Hán N5 FPT)";
+  const lesson = determineLesson(q);
 
   if (isReading) {
     return {
       meaning: `Cách đọc Hiragana đúng trong câu: ${getCompletedSentence(q)}`,
       grammar: "Chữ Hán sơ cấp N5 - Cách đọc Hiragana theo âm On/Kun",
-      lesson: lessonInfo,
+      lesson,
       tips: `Chú ý nhận diện trường âm (âm dài おう, えい), âm đục (tenten) và âm ngắt (xúc âm) của chữ.`,
       reason: `Đáp án đúng là "${q.answer}". Chữ Hán trong ngoặc có cách đọc chuẩn xác trong ngữ cảnh này là "${q.answer}". Các phương án còn lại là bẫy sai trường âm hoặc cố ý đổi phụ âm gây nhầm lẫn.`,
     };
@@ -756,7 +768,7 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
     return {
       meaning: `Chữ Hán chuẩn xác tương ứng: ${getCompletedSentence(q)}`,
       grammar: "Chữ Hán sơ cấp N5 - Nhận diện mặt chữ Hán tương ứng với Hiragana",
-      lesson: lessonInfo,
+      lesson,
       tips: "Quan sát kỹ các bộ thủ đặc trưng (bộ Mộc 木, Thủy 水, Kim 金, Môn 門, Nhật 日) để tránh chọn nhầm chữ gần giống.",
       reason: `Đáp án đúng là "${q.answer}". Đây là chữ Hán tương ứng chính xác với âm Hiragana được cho. Các lựa chọn khác là những chữ Hán có nét tương tự hoặc mang ý nghĩa khác hoàn toàn.`,
     };
@@ -765,7 +777,7 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
   return {
     meaning: `Âm Hán Việt / Ý nghĩa chữ Hán: ${getCompletedSentence(q)}`,
     grammar: "Âm Hán Việt và cấu tạo chữ Hán N5",
-    lesson: lessonInfo,
+    lesson,
     tips: "Âm Hán Việt là cầu nối tuyệt vời giúp sinh viên Việt Nam nhớ nhanh nghĩa của chữ Hán.",
     reason: `Đáp án đúng là "${q.answer}". Đây là âm Hán Việt chuẩn xác của chữ Hán được cho, giúp người học dễ dàng liên tưởng đến nghĩa của từ trong tiếng Việt.`,
   };
@@ -814,15 +826,64 @@ function buildVocabExplanation(q: ExamQuestion): QuestionExplanation {
 }
 
 function determineLesson(q: ExamQuestion): string {
-  if (q.explanation?.lesson && q.explanation.lesson.includes("Bài")) {
+  // If lesson is already provided on question and is a specific single lesson (not a generic range like "Bài 4 đến 7")
+  if (
+    q.explanation?.lesson &&
+    q.explanation.lesson.includes("Bài") &&
+    !q.explanation.lesson.includes("đến") &&
+    !q.explanation.lesson.includes("4 đến 7") &&
+    !q.explanation.lesson.includes("4-7")
+  ) {
     return q.explanation.lesson;
   }
-  if (q.sentence.includes("より") || q.sentence.includes("ほど") || q.sentence.includes("どちら") || q.sentence.includes("いちばん")) {
-    return "JPD123 - Bài 6 (So sánh và Lượng từ)";
+
+  const fullText = `${q.sentence || ""} ${q.prompt || ""} ${q.answer || ""}`;
+
+  // 1. Phân loại câu hỏi Kanji theo bộ chữ Hán đặc trưng của từng bài JPD123 FPT
+  if (q.section === "Kanji") {
+    if (/[意味書言話読見聞食飲待立座使]/.test(fullText)) {
+      return "JPD123 - Bài 7 (Chữ Hán N5 FPT)";
+    }
+    if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜]/.test(fullText)) {
+      return "JPD123 - Bài 6 (Chữ Hán N5 FPT)";
+    }
+    if (/[家本水友会私休時間散歩写真手紙音楽族病院車転自]/.test(fullText)) {
+      return "JPD123 - Bài 5 (Chữ Hán N5 FPT)";
+    }
+    if (/[東京名前国男女区市料理映画暑新広狭近遠古買難]/.test(fullText)) {
+      return "JPD123 - Bài 4 (Chữ Hán N5 FPT)";
+    }
   }
-  if (q.sentence.includes("てください") || q.sentence.includes("ています") || q.sentence.includes("かた") || q.sentence.includes("スプーン")) {
+
+  // 2. Phân loại theo cấu trúc ngữ pháp và từ vựng đặc trưng
+  // Bài 7: Thể て, cách làm かた, dụng cụ ăn uống
+  if (
+    q.sentence.includes("てください") ||
+    q.sentence.includes("ています") ||
+    q.sentence.includes("かた") ||
+    q.sentence.includes("スプーン") ||
+    q.sentence.includes("フォーク") ||
+    q.sentence.includes("ナイフ") ||
+    q.sentence.includes("電子レンジ") ||
+    q.prompt.includes("thể て") ||
+    q.prompt.includes("Thể て")
+  ) {
     return "JPD123 - Bài 7 (Động từ thể て và Mẫu câu giao tiếp)";
   }
+
+  // Bài 6: So sánh hơn (より), so sánh kém (ほど), so sánh lựa chọn (どちらが), so sánh nhất (いちばん)
+  if (
+    q.sentence.includes("より") ||
+    q.sentence.includes("ほど") ||
+    q.sentence.includes("どちらが") ||
+    q.sentence.includes("いちばん") ||
+    q.prompt.includes("So sánh") ||
+    q.prompt.includes("so sánh")
+  ) {
+    return "JPD123 - Bài 6 (So sánh và Lượng từ)";
+  }
+
+  // Bài 5: Quá khứ động từ (ました), mong muốn (たい / ほしい), nguyên nhân (から / どうして)
   if (
     q.sentence.includes("ほしい") ||
     q.sentence.includes("たい") ||
@@ -832,10 +893,15 @@ function determineLesson(q: ExamQuestion): string {
     q.sentence.includes("先週") ||
     q.sentence.includes("おととい") ||
     q.sentence.includes("散歩") ||
-    q.sentence.includes("手紙")
+    q.sentence.includes("手紙") ||
+    q.sentence.includes("家族") ||
+    q.sentence.includes("病院") ||
+    q.sentence.includes("自転車")
   ) {
     return "JPD123 - Bài 5 (Quá khứ, Mong muốn và Mục đích)";
   }
+
+  // Bài 4: Tính từ đuôi い / な, thời tiết, vị trí, phương hướng, hỏi khoảng cách (どのくらい)
   if (
     q.sentence.includes("おいしい") ||
     q.sentence.includes("さむい") ||
@@ -853,11 +919,29 @@ function determineLesson(q: ExamQuestion): string {
     q.sentence.includes("どのくらい") ||
     q.sentence.includes("東") ||
     q.sentence.includes("前") ||
-    q.sentence.includes("国")
+    q.sentence.includes("国") ||
+    q.sentence.includes("料理") ||
+    q.sentence.includes("映画") ||
+    q.sentence.includes("どちら")
   ) {
     return "JPD123 - Bài 4 (Tính từ và Liên từ)";
   }
-  return "JPD123 - Giáo trình Sơ cấp 2 (Bài 4 đến 7)";
+
+  // 3. Fallback theo chữ Hán nếu câu hỏi không đánh dấu section
+  if (/[意味書言話読見聞食飲待立座使]/.test(fullText)) {
+    return "JPD123 - Bài 7 (Chữ Hán & Từ vựng N5)";
+  }
+  if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜]/.test(fullText)) {
+    return "JPD123 - Bài 6 (Chữ Hán & Từ vựng N5)";
+  }
+  if (/[家本水友会私休時間散歩写真手紙音楽族病院車転自]/.test(fullText)) {
+    return "JPD123 - Bài 5 (Chữ Hán & Từ vựng N5)";
+  }
+  if (/[東京名前国男女区市料理映画暑新広狭近遠古買難]/.test(fullText)) {
+    return "JPD123 - Bài 4 (Chữ Hán & Từ vựng N5)";
+  }
+
+  return "JPD123 - Giáo trình Sơ cấp 2 (FPT University)";
 }
 
 function determineGrammarPoint(q: ExamQuestion): string {

@@ -2125,10 +2125,16 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
         answer: seed.answer,
       };
       const exp = seed.explanation || getQuestionExplanation(q as any);
-      const lesson =
-        seed.bai && (!exp.lesson || !exp.lesson.includes(`Bài ${seed.bai}`))
-          ? `JPD123 - Bài ${seed.bai} (${q.section})`
-          : exp.lesson;
+      let lesson = `JPD123 - Bài ${seed.bai} (${q.section})`;
+      if (
+        exp.lesson &&
+        exp.lesson.includes(`Bài ${seed.bai}`) &&
+        !exp.lesson.includes("đến") &&
+        !exp.lesson.includes("4 đến 7") &&
+        !exp.lesson.includes("4-7")
+      ) {
+        lesson = exp.lesson;
+      }
       q.explanation = {
         ...exp,
         lesson,

@@ -168,6 +168,13 @@ BẮT BUỘC: 100% nội dung (10 Kanji, 10 Từ vựng, 10 Ngữ pháp) CHỈ L
 function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boolean {
   // 1. Kiểm tra lesson trong explanation nếu có
   if (q.explanation?.lesson) {
+    if (
+      q.explanation.lesson.includes("đến") ||
+      q.explanation.lesson.includes("4 đến 7") ||
+      q.explanation.lesson.includes("4-7")
+    ) {
+      return false;
+    }
     for (let b = 1; b <= 7; b++) {
       if (!allowedBai.includes(b) && q.explanation.lesson.includes(`Bài ${b}`)) {
         return false;
@@ -364,11 +371,18 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
             ? (raw.explanation as Record<string, unknown>)
             : null;
 
+        const rawLesson = expRaw && expRaw.lesson ? String(expRaw.lesson) : undefined;
+        const cleanedLesson =
+          rawLesson &&
+          (rawLesson.includes("đến") || rawLesson.includes("4 đến 7") || rawLesson.includes("4-7"))
+            ? undefined
+            : rawLesson;
+
         const explanation = expRaw
           ? {
               meaning: String(expRaw.meaning || ""),
               grammar: expRaw.grammar ? String(expRaw.grammar) : undefined,
-              lesson: expRaw.lesson ? String(expRaw.lesson) : undefined,
+              lesson: cleanedLesson,
               tips: expRaw.tips ? String(expRaw.tips) : undefined,
               reason: String(expRaw.reason || ""),
             }

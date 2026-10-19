@@ -435,7 +435,7 @@ function ExamPage() {
           {isStarred
             ? "Đề thi trắc nghiệm A–D được lập riêng từ các từ vựng bạn đã đánh dấu. Bạn có thể chọn tất cả hoặc chọn theo từng bài."
             : isJpd123
-              ? "Chương trình Tiếng Nhật 2 (Bài 4 đến 7). Bạn có thể chọn làm Đề thi AI hoặc Đề thi Tiêu chuẩn."
+              ? `Chương trình Tiếng Nhật 2${selected.length ? ` (Đã chọn: Bài ${selected.join(" + ")})` : ""}. Bạn có thể chọn làm Đề thi AI hoặc Đề thi Tiêu chuẩn.`
               : "Chọn một bài hoặc gộp nhiều bài. Câu vẫn về từ vựng, kanji và ngữ pháp của các bài đó."}
         </p>
 
@@ -1023,7 +1023,7 @@ function AiGeneratingOverlay({ step }: { step: number }) {
   const steps = [
     "Khởi tạo ma trận đề thi JPD123 Đại học FPT...",
     "Phân tích chuẩn môn học: 10 Kanji · 10 Từ vựng · 10 Ngữ pháp...",
-    "Soạn câu hỏi & ngữ cảnh Minna / Marugoto Sơ cấp 2 (Bài 4–7)...",
+    "Soạn câu hỏi & ngữ cảnh Minna / Marugoto Sơ cấp 2...",
     "Thẩm định 4 đáp án A–B–C–D và chuẩn hoá Hiragana/Katakana...",
   ];
 
