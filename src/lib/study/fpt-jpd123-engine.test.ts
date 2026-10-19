@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildFptJpd123Exam } from "./fpt-jpd123-engine.ts";
+import { buildAiPrompt } from "./ai-service.ts";
 
 test("buildFptJpd123Exam generates a valid FPT JPD123 exam", () => {
   const paper = buildFptJpd123Exam();
@@ -28,12 +29,70 @@ test("buildFptJpd123Exam generates a valid FPT JPD123 exam", () => {
   }
 });
 
-test("buildFptJpd123Exam with filtered lessons generates diverse questions", () => {
-  const paper1 = buildFptJpd123Exam(["4", "5"]);
-  const paper2 = buildFptJpd123Exam(["6", "7"]);
+test("buildFptJpd123Exam with filtered lessons 4 & 5 strictly isolates lessons", () => {
+  const paper = buildFptJpd123Exam(["4", "5"]);
 
-  assert.equal(paper1.length, 30);
-  assert.equal(paper2.length, 30);
+  assert.equal(paper.length, 30, "Đề thi phải có đúng 30 câu");
+  assert.equal(paper.filter((q) => q.section === "Kanji").length, 10, "10 câu Kanji");
+  assert.equal(paper.filter((q) => q.section === "Từ vựng").length, 10, "10 câu Từ vựng");
+  assert.equal(paper.filter((q) => q.section === "Ngữ pháp").length, 10, "10 câu Ngữ pháp");
+
+  // 100% câu hỏi không trùng lặp
+  const uniqueSentences = new Set(paper.map((q) => q.sentence));
+  assert.equal(uniqueSentences.size, 30, "Tất cả 30 câu hỏi phải không trùng lặp câu văn");
+
+  // 100% câu hỏi thuộc Bài 4 hoặc Bài 5, TUYỆT ĐỐI không có Bài 6 hay Bài 7
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    const isBai4Or5 = lesson.includes("Bài 4") || lesson.includes("Bài 5");
+    assert.ok(
+      isBai4Or5,
+      `Câu ${q.id} (${q.sentence}) có lesson là "${lesson}", không thuộc Bài 4 hoặc Bài 5!`,
+    );
+
+    // Không chứa kiến thức đặc trưng Bài 6 (so sánh)
+    assert.ok(!q.sentence.includes("より"), `Câu ${q.id} chứa 'より' của Bài 6`);
+    assert.ok(!q.sentence.includes("ほど"), `Câu ${q.id} chứa 'ほど' của Bài 6`);
+
+    // Không chứa kiến thức đặc trưng Bài 7 (thể て, dụng cụ ăn uống)
+    assert.ok(!q.sentence.includes("てください"), `Câu ${q.id} chứa 'てください' của Bài 7`);
+    assert.ok(!q.sentence.includes("スプーン"), `Câu ${q.id} chứa 'スプーン' của Bài 7`);
+    assert.ok(!q.sentence.includes("フォーク"), `Câu ${q.id} chứa 'フォーク' của Bài 7`);
+  }
+});
+
+test("buildFptJpd123Exam with single lesson 4 produces 30 non-repeating questions solely from Bài 4", () => {
+  const paper = buildFptJpd123Exam(["4"]);
+
+  assert.equal(paper.length, 30);
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30, "30 câu không trùng lặp");
+
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(lesson.includes("Bài 4"), `Câu ${q.id} phải thuộc Bài 4 nhưng lại là ${lesson}`);
+  }
+});
+
+test("buildFptJpd123Exam with single lesson 5 produces 30 non-repeating questions solely from Bài 5", () => {
+  const paper = buildFptJpd123Exam(["5"]);
+
+  assert.equal(paper.length, 30);
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30, "30 câu không trùng lặp");
+
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(lesson.includes("Bài 5"), `Câu ${q.id} phải thuộc Bài 5 nhưng lại là ${lesson}`);
+  }
+});
+
+test("buildAiPrompt dynamically scopes to selected lessons and excludes unselected lessons", () => {
+  const { systemPrompt, userPrompt, allowedBai } = buildAiPrompt(["4", "5"]);
+
+  assert.deepEqual(allowedBai, [4, 5]);
+  assert.ok(systemPrompt.includes("Bài 4, Bài 5"), "Prompt phải nêu rõ Bài 4, Bài 5");
+  assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi hay cấu trúc so sánh nào của Bài 6"));
+  assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về Thể て"));
+  assert.ok(userPrompt.includes("Bài 4, Bài 5"));
 });
 
 test("getQuestionExplanation correctly explains specific Kanji question without mismatch", async () => {
@@ -58,4 +117,3 @@ test("getQuestionExplanation correctly explains specific Kanji question without 
   const completed = getCompletedSentence(q);
   assert.equal(completed, "母とデパートへ【買い物】に行きました。");
 });
-

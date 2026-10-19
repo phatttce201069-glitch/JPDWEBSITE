@@ -537,10 +537,13 @@ function ExamPage() {
                 <Button
                   className="w-full flex items-center justify-center gap-2 py-3"
                   tone="seal"
-                  onClick={() => startAiExam(selected.length ? selected : ["4", "5", "6", "7"])}
+                  disabled={selected.length === 0}
+                  onClick={() => startAiExam(selected)}
                 >
                   <Sparkles className="size-4" />
-                  Bắt đầu làm đề thi AI (30 câu chuẩn Form FPT)
+                  {selected.length
+                    ? `Bắt đầu làm đề thi AI · Bài ${selected.join(" + ")} (30 câu chuẩn FPT)`
+                    : "Chọn ít nhất 1 bài để làm đề thi AI"}
                 </Button>
               ) : (
                 <Button

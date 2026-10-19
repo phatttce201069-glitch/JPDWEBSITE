@@ -814,16 +814,47 @@ function buildVocabExplanation(q: ExamQuestion): QuestionExplanation {
 }
 
 function determineLesson(q: ExamQuestion): string {
+  if (q.explanation?.lesson && q.explanation.lesson.includes("Bài")) {
+    return q.explanation.lesson;
+  }
   if (q.sentence.includes("より") || q.sentence.includes("ほど") || q.sentence.includes("どちら") || q.sentence.includes("いちばん")) {
     return "JPD123 - Bài 6 (So sánh và Lượng từ)";
   }
   if (q.sentence.includes("てください") || q.sentence.includes("ています") || q.sentence.includes("かた") || q.sentence.includes("スプーン")) {
     return "JPD123 - Bài 7 (Động từ thể て và Mẫu câu giao tiếp)";
   }
-  if (q.sentence.includes("ほしい") || q.sentence.includes("たい") || q.sentence.includes("から") || q.sentence.includes("どうして")) {
+  if (
+    q.sentence.includes("ほしい") ||
+    q.sentence.includes("たい") ||
+    q.sentence.includes("から") ||
+    q.sentence.includes("どうして") ||
+    q.sentence.includes("ました") ||
+    q.sentence.includes("先週") ||
+    q.sentence.includes("おととい") ||
+    q.sentence.includes("散歩") ||
+    q.sentence.includes("手紙")
+  ) {
     return "JPD123 - Bài 5 (Quá khứ, Mong muốn và Mục đích)";
   }
-  if (q.sentence.includes("おいしい") || q.sentence.includes("さむい") || q.sentence.includes("とても") || q.sentence.includes("あまり")) {
+  if (
+    q.sentence.includes("おいしい") ||
+    q.sentence.includes("さむい") ||
+    q.sentence.includes("あつい") ||
+    q.sentence.includes("とても") ||
+    q.sentence.includes("あまり") ||
+    q.sentence.includes("静か") ||
+    q.sentence.includes("きれい") ||
+    q.sentence.includes("新しい") ||
+    q.sentence.includes("古い") ||
+    q.sentence.includes("広い") ||
+    q.sentence.includes("狭い") ||
+    q.sentence.includes("しかし") ||
+    q.sentence.includes("そして") ||
+    q.sentence.includes("どのくらい") ||
+    q.sentence.includes("東") ||
+    q.sentence.includes("前") ||
+    q.sentence.includes("国")
+  ) {
     return "JPD123 - Bài 4 (Tính từ và Liên từ)";
   }
   return "JPD123 - Giáo trình Sơ cấp 2 (Bài 4 đến 7)";
