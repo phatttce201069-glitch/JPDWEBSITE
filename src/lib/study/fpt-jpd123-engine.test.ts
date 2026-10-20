@@ -229,3 +229,19 @@ test("Explanation accurately identifies new Bài 6 grammar points (refusal, even
   assert.ok(exp3.lesson?.includes("Bài 6"), `Phải là Bài 6: ${exp3.lesson}`);
 });
 
+test("alphabet data contains valid hiragana and katakana sets", async () => {
+  const { alphabet } = await import("../../data/alphabet.ts");
+
+  const hiragana = alphabet.filter((a) => a.type === "hiragana");
+  const katakana = alphabet.filter((a) => a.type === "katakana");
+
+  assert.ok(hiragana.length >= 46, "Hiragana phải có ít nhất 46 ký tự cơ bản");
+  assert.ok(katakana.length >= 46, "Katakana phải có ít nhất 46 ký tự cơ bản");
+
+  for (const item of hiragana) {
+    assert.ok(item.char.trim().length > 0, "Ký tự Kana không được rỗng");
+    assert.ok((item.romaji || "").trim().length > 0, "Phiên âm Romaji không được rỗng");
+  }
+});
+
+
