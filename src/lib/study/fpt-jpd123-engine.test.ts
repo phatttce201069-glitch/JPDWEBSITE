@@ -244,4 +244,20 @@ test("alphabet data contains valid hiragana and katakana sets", async () => {
   }
 });
 
+test("all exam seeds in KANJI_SEEDS, VOCAB_SEEDS, GRAMMAR_SEEDS have valid structures", async () => {
+  const { KANJI_SEEDS, VOCAB_SEEDS, GRAMMAR_SEEDS } = await import("./fpt-jpd123-engine.ts");
+
+  const allSeeds = [...KANJI_SEEDS, ...VOCAB_SEEDS, ...GRAMMAR_SEEDS];
+  assert.ok(allSeeds.length > 100, "Tổng số câu hỏi hạt giống phải phong phú (> 100 câu)");
+
+  for (const seed of allSeeds) {
+    assert.ok(seed.prompt.trim().length > 0, "Yêu cầu câu hỏi không được để trống");
+    assert.ok(seed.sentence.trim().length > 0, "Câu tiếng Nhật không được để trống");
+    assert.ok(seed.answer.trim().length > 0, "Đáp án đúng không được để trống");
+    assert.ok(seed.wrongs.length >= 3, "Phải có ít nhất 3 phương án sai gây nhiễu");
+    assert.ok(!seed.wrongs.includes(seed.answer), "Phương án sai không được trùng với đáp án đúng");
+  }
+});
+
+
 
