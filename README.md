@@ -61,5 +61,19 @@
 
 ---
 
+## 🗺️ Lộ Trình Phát Triển (Roadmap)
+
+- [x] Hệ thống tra cứu từ vựng và bảng chữ cái Kana
+- [x] Ngữ pháp bài 4 đến bài 7 chuẩn giáo trình FPT JPD123
+- [x] Tạo đề thi trắc nghiệm 30 câu tự động với tính năng chọn bài linh hoạt
+- [x] Tích hợp AI sinh đề thi phong phú, không trùng lặp
+- [x] Hộp lời giải chi tiết (Dịch câu, Ngữ pháp, Mẹo giải, Bài học)
+- [x] Đánh dấu từ vựng và làm đề thi riêng cho từ đã bookmark
+- [ ] Thêm tính năng bấm giờ đếm ngược 30 phút mô phỏng phòng thi thật
+- [ ] Thống kê lịch sử điểm số và biểu đồ phân tích kỹ năng theo thời gian
+- [ ] Mở rộng ngân hàng câu hỏi nghe hiểu (Listening Comprehension)
+
+---
+
 ## 📄 Bản Quyền
 Dự án được phát triển phục vụ mục đích học tập và ôn thi môn Tiếng Nhật JPD123 Đại học FPT.
