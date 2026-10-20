@@ -21,6 +21,11 @@ export type ExamQuestion = {
   };
 };
 
+/**
+ * Thuật toán xáo trộn mảng ngẫu nhiên Fisher-Yates không làm biến đổi mảng gốc.
+ * @param items Mảng đầu vào cần xáo trộn
+ * @returns Mảng mới đã được hoán vị ngẫu nhiên
+ */
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
