@@ -52,9 +52,13 @@ test("buildFptJpd123Exam with filtered lessons 4 & 5 strictly isolates lessons",
     assert.ok(!lesson.includes("Bài 6"), `Câu ${q.id} lesson không được chứa Bài 6: ${lesson}`);
     assert.ok(!lesson.includes("Bài 7"), `Câu ${q.id} lesson không được chứa Bài 7: ${lesson}`);
 
-    // Không chứa kiến thức đặc trưng Bài 6 (so sánh)
+    // Không chứa kiến thức đặc trưng Bài 6 (so sánh, từ chối, sự kiện, đếm vật mỏng)
     assert.ok(!q.sentence.includes("より"), `Câu ${q.id} chứa 'より' của Bài 6`);
     assert.ok(!q.sentence.includes("ほど"), `Câu ${q.id} chứa 'ほど' của Bài 6`);
+    assert.ok(!q.sentence.includes("ちょっと"), `Câu ${q.id} chứa 'ちょっと' của Bài 6`);
+    assert.ok(!q.sentence.includes("やくそく"), `Câu ${q.id} chứa 'やくそく' của Bài 6`);
+    assert.ok(!q.sentence.includes("お祭り"), `Câu ${q.id} chứa 'お祭り' của Bài 6`);
+    assert.ok(!q.sentence.includes("まい"), `Câu ${q.id} chứa 'まい' của Bài 6`);
 
     // Không chứa kiến thức đặc trưng Bài 7 (thể て, dụng cụ ăn uống)
     assert.ok(!q.sentence.includes("てください"), `Câu ${q.id} chứa 'てください' của Bài 7`);
@@ -92,7 +96,8 @@ test("buildAiPrompt dynamically scopes to selected lessons and excludes unselect
 
   assert.deepEqual(allowedBai, [4, 5]);
   assert.ok(systemPrompt.includes("Bài 4, Bài 5"), "Prompt phải nêu rõ Bài 4, Bài 5");
-  assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi hay cấu trúc so sánh nào của Bài 6"));
+  assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về So sánh"), "Phải cấm so sánh Bài 6");
+  assert.ok(systemPrompt.includes("Rủ rê & Từ chối khéo"), "Phải cấm rủ rê từ chối Bài 6");
   assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về Thể て"));
   assert.ok(userPrompt.includes("Bài 4, Bài 5"));
 });
@@ -138,3 +143,89 @@ test("Kanji question for 国 strictly maps to Bài 4 and never contains generic 
   assert.ok(!exp.lesson?.includes("đến"), `Không được chứa từ 'đến' trong lesson: ${exp.lesson}`);
   assert.ok(!exp.lesson?.includes("Bài 7"), `Không được chứa 'Bài 7' khi câu là Bài 4: ${exp.lesson}`);
 });
+
+test("buildFptJpd123Exam with single lesson 6 includes new grammar patterns (chotto, de event, mai counter)", () => {
+  const paper = buildFptJpd123Exam(["6"]);
+
+  assert.equal(paper.length, 30);
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30, "30 câu không trùng lặp");
+
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(lesson.includes("Bài 6"), `Câu ${q.id} phải thuộc Bài 6 nhưng lại là ${lesson}`);
+  }
+
+  // Check that new patterns exist in the Bài 6 exam pool
+  const fullExamText = paper.map((q) => `${q.sentence} ${q.prompt} ${q.answer}`).join(" ");
+  assert.ok(
+    fullExamText.includes("ちょっと") ||
+      fullExamText.includes("やくそく") ||
+      fullExamText.includes("約束") ||
+      fullExamText.includes("ましょう") ||
+      fullExamText.includes("いっしょに") ||
+      fullExamText.includes("rủ rê") ||
+      fullExamText.includes("từ chối"),
+    "Đề thi Bài 6 phải chứa câu hỏi rủ rê / từ chối khéo",
+  );
+  assert.ok(
+    fullExamText.includes("お祭り") ||
+      fullExamText.includes("おまつり") ||
+      fullExamText.includes("試験") ||
+      fullExamText.includes("パーティー") ||
+      fullExamText.includes("試合") ||
+      fullExamText.includes("sự kiện"),
+    "Đề thi Bài 6 phải chứa câu hỏi địa điểm diễn ra sự kiện (で)",
+  );
+  assert.ok(
+    fullExamText.includes("まい") ||
+      fullExamText.includes("CD") ||
+      fullExamText.includes("シャツ") ||
+      fullExamText.includes("チケット") ||
+      fullExamText.includes("vật mỏng"),
+    "Đề thi Bài 6 phải chứa câu hỏi đếm vật mỏng (まい)",
+  );
+});
+
+test("Explanation accurately identifies new Bài 6 grammar points (refusal, event de, flat counter mai)", async () => {
+  const { getQuestionExplanation } = await import("./explanation.ts");
+
+  const q1 = {
+    id: "test-refusal",
+    section: "Ngữ pháp" as const,
+    promptJp: "（　　）に入れるのに最もよいものを一つ選びなさい。",
+    prompt: "Chọn từ thích hợp nhất điền vào chỗ trống.",
+    sentence: "土曜日は（　　）…用事がありますから。",
+    options: ["ちょっと", "もっと", "ずっと", "きっと"],
+    answer: "ちょっと",
+  };
+  const exp1 = getQuestionExplanation(q1);
+  assert.ok(exp1.grammar?.includes("〜はちょっと…"), `Ngữ pháp phải chứa từ chối khéo: ${exp1.grammar}`);
+  assert.ok(exp1.lesson?.includes("Bài 6"), `Phải là Bài 6: ${exp1.lesson}`);
+
+  const q2 = {
+    id: "test-event-de",
+    section: "Ngữ pháp" as const,
+    promptJp: "（　　）に入れるのに最もよいものを一つ選びなさい。",
+    prompt: "Chọn trợ từ thích hợp nhất.",
+    sentence: "あした、FPT大学（　　）お祭りがあります。",
+    options: ["で", "に", "へ", "を"],
+    answer: "で",
+  };
+  const exp2 = getQuestionExplanation(q2);
+  assert.ok(exp2.grammar?.includes("Địa điểm + で"), `Ngữ pháp phải là nơi diễn ra sự kiện: ${exp2.grammar}`);
+  assert.ok(exp2.lesson?.includes("Bài 6"), `Phải là Bài 6: ${exp2.lesson}`);
+
+  const q3 = {
+    id: "test-counter-mai",
+    section: "Ngữ pháp" as const,
+    promptJp: "（　　）に入れるのに最もよいものを一つ選びなさい。",
+    prompt: "Chọn lượng từ thích hợp.",
+    sentence: "机の上に CD が 1（　　）あります。",
+    options: ["まい", "だい", "さつ", "ほん"],
+    answer: "まい",
+  };
+  const exp3 = getQuestionExplanation(q3);
+  assert.ok(exp3.grammar?.includes("まい"), `Ngữ pháp phải là đếm vật mỏng: ${exp3.grammar}`);
+  assert.ok(exp3.lesson?.includes("Bài 6"), `Phải là Bài 6: ${exp3.lesson}`);
+});
+

@@ -53,9 +53,9 @@ const LESSON_OUTLINES: Record<number, { kanji: string; vocab: string; grammar: s
     grammar: "Động từ quá khứ (Vました / Vませんでした), tính từ quá khứ (Aかったです / Aでした), mong muốn sở hữu (N が ほしいです / ほしくないです), mong muốn làm việc (Vたいです / Vたくないです), mục đích di chuyển (V/N に 行きます/来ます/帰ります), trợ từ と (cùng với ai), trợ từ から (chỉ nguyên nhân: 〜から、〜), câu hỏi trải nghiệm quá khứ (どうでしたか)",
   },
   6: {
-    kanji: "今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門",
-    vocab: "Thời tiết & các mùa (春, 夏, 秋, 冬, 雨, 雪, 風, くもり, きり, 季節), so sánh & lựa chọn (どちら, ずっと)",
-    grammar: "Cấu trúc so sánh hơn (A は B より Adj です), so sánh lựa chọn (A と B と どちらが...), trả lời so sánh (A のほうが...), so sánh nhất (N の中で A が いちばん...), so sánh không bằng (A は B ほど...くない)",
+    kanji: "今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門, 枚, 約, 束, 祭",
+    vocab: "Thời tiết & các mùa (春, 夏, 秋, 冬, 雨, 雪, 風, くもり, 季節), sự kiện & hoạt động (お祭り, パーティー, 試験, コンサート, 試合, 約束 - やくそく, 用事 - ようじ, アルバイト), vật mỏng đếm 枚 (CD, シャツ, チケット, 切手), so sánh & lựa chọn (どちら, ずっと, ほう, いちばん)",
+    grammar: "1. So sánh hơn (A は B より Adj です), so sánh lựa chọn (A と B と どちらが...), trả lời so sánh (A のほうが...), so sánh nhất (N の中で A が いちばん...), so sánh không bằng (A は B ほど...くない). 2. Rủ rê & Đáp lại / Từ chối khéo: rủ rê (いっしょに Vませんか), đồng ý (Vましょう), từ chối khéo (すみません。〜はちょっと…), đưa ra lý do từ chối (N がありますから / やくそくがありますから). 3. Nơi diễn ra sự kiện: [Địa điểm] で [Sự kiện: お祭り/パーティー/試験] があります. 4. Đếm số lượng vật mỏng: Lượng từ 枚 (まい) - N が/を 〜まい あります/買いました (CDが1まいあります, シャツを2枚買いました).",
   },
   7: {
     kanji: "肉, 料, 理, 野, 半, 大, 小, 病, 院, 電, 気, 開, 閉",
@@ -94,7 +94,7 @@ export function buildAiPrompt(selectedBai?: string[]): {
 
   let negativeConstraints = "";
   if (!allowedBai.includes(6)) {
-    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi hay cấu trúc so sánh nào của Bài 6 (như より, ほど, どちら, 一番).\n";
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về So sánh (より, ほど, どちら, 一番), Rủ rê & Từ chối khéo (〜はちょっと…, やくそくがありますから), Nơi diễn ra sự kiện (Địa điểm で Sự kiện があります), hay Đếm vật mỏng (枚 - まい) của Bài 6.\n";
   }
   if (!allowedBai.includes(7)) {
     negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về Thể て (Vてください, Vています, Cách làm 〜かた) hay dụng cụ ăn uống (スプーン, フォーク, ナイフ, 電子レンジ) của Bài 7.\n";
@@ -182,15 +182,23 @@ function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boo
     }
   }
 
-  // 2. Nếu Bài 6 không được chọn: loại bỏ từ khóa so sánh
+  // 2. Nếu Bài 6 không được chọn: loại bỏ từ khóa so sánh, rủ rê/từ chối khéo, sự kiện, đếm vật mỏng
   if (!allowedBai.includes(6)) {
     if (
       q.sentence.includes("より") ||
       q.sentence.includes("ほど") ||
       q.sentence.includes("どちらが") ||
       q.sentence.includes("いちばん") ||
+      q.sentence.includes("ちょっと…") ||
+      q.sentence.includes("やくそくがあります") ||
+      q.sentence.includes("約束があります") ||
+      q.sentence.includes("お祭りがあります") ||
+      q.sentence.includes("まいあります") ||
+      q.sentence.includes("枚あります") ||
       q.prompt.includes("So sánh") ||
-      q.prompt.includes("so sánh")
+      q.prompt.includes("so sánh") ||
+      q.prompt.includes("từ chối khéo") ||
+      q.prompt.includes("vật mỏng")
     ) {
       return false;
     }

@@ -610,6 +610,90 @@ const EXACT_EXPLANATIONS: Record<string, QuestionExplanation> = {
     tips: "Tem thư (切手) là vật mỏng dẹt ➔ Đếm bằng「まい (枚)」.",
     reason: "Đáp án đúng là「まい」. 'ほん' dùng đếm vật thon dài (bút, chai), 'だい' dùng đếm máy móc xe cộ, 'つ' là đếm đồ vật chung.",
   },
+  "A：「いっしょにお茶を飲みませんか。」\nB：「すみません。きょうは（　　）… 約束がありますから。」___ちょっと": {
+    meaning: "A: Cùng đi uống trà với tôi nhé?\nB: Xin lỗi. Hôm nay thì hơi... vì tôi có hẹn rồi.",
+    grammar: "Mở rộng rủ rê và từ chối khéo: すみません、〜はちょっと… + N がありますから (nêu lý do).",
+    lesson: "JPD123 - Bài 6 (Rủ rê & Từ chối khéo léo)",
+    tips: "Từ chối khéo lời mời: người Nhật dùng「ちょっと…」(hơi kẹt/hơi khó) thay vì nói thẳng 'không'.",
+    reason: "Đáp án đúng là「ちょっと」. Cụm từ「〜はちょっと…」dùng để từ chối tế nhị. 'だめ' hay 'いいえ' quá thẳng thừng và thiếu lịch sự trong văn hóa Nhật.",
+  },
+  "A：「あした、いっしょに映画を見に行きませんか。」\nB：「すみません。あしたはちょっと… （　　）がありますから。」___やくそく": {
+    meaning: "A: Ngày mai cùng đi xem phim với tôi không?\nB: Xin lỗi. Ngày mai thì hơi... vì tôi có hẹn rồi.",
+    grammar: "Đưa ra lý do từ chối lời mời: N (lý do) + がありますから.",
+    lesson: "JPD123 - Bài 6 (Rủ rê & Lý do từ chối)",
+    tips: "Có hẹn / có cuộc hẹn dùng cụm cố định「約束 (やくそく) があります」.",
+    reason: "Đáp án đúng là「やくそく」(Cuộc hẹn). 'きっぷ' là vé, 'カメラ' là máy ảnh, 'てがみ' là thư từ không phù hợp ngữ cảnh.",
+  },
+  "A：「日曜日、いっしょに買い物に行きませんか。」\nB：「すみません。アルバイトがあります（　　）。」___から": {
+    meaning: "A: Chủ nhật cùng đi mua sắm với tôi không?\nB: Xin lỗi. Bởi vì tôi có lịch làm thêm rồi.",
+    grammar: "Trợ từ から đứng cuối câu giải thích nguyên nhân/lý do: 〜から (bởi vì...).",
+    lesson: "JPD123 - Bài 6 (Nguyên nhân từ chối から)",
+    tips: "Đứng sau câu giải thích lý do cho lời từ chối luôn là trợ từ「から」.",
+    reason: "Đáp án đúng là「から」. Dùng giải thích lý do (vì có làm thêm). 'まで' là đến, 'より' là so với, 'ほど' là bằng.",
+  },
+  "A：「いっしょに昼ごはんを食べませんか。」\nB：「ええ、（　　）。」___食べましょう": {
+    meaning: "A: Cùng ăn trưa với tôi không?\nB: Vâng, chúng ta cùng ăn nhé.",
+    grammar: "Đồng ý nhiệt tình với lời mời「〜ませんか」bằng mẫu「〜ましょう」(cùng làm nhé).",
+    lesson: "JPD123 - Bài 6 (Rủ rê & Đồng ý Vましょう)",
+    tips: "Hỏi rủ rê「〜ませんか」➔ Đồng ý đáp lại là「ええ、〜ましょう」.",
+    reason: "Đáp án đúng là「食べましょう」. '食べますか' là câu hỏi, '食べませんでした' là quá khứ phủ định, '食べたいです' là mong muốn cá nhân.",
+  },
+  "A：「土曜日、いっしょにテニスをしませんか。」\nB：「すみません。土曜日は（　　）… 用事がありますから。」___ちょっと": {
+    meaning: "A: Thứ bảy cùng chơi tennis với tôi không?\nB: Xin lỗi. Thứ bảy thì hơi... vì tôi có việc bận rồi.",
+    grammar: "Từ chối khéo léo kèm lý do: 〜はちょっと… 用事がありますから.",
+    lesson: "JPD123 - Bài 6 (Rủ rê & Từ chối khéo léo)",
+    tips: "Khi từ chối lịch sự, dùng「〜はちょっと…」(nghĩa là 'thì hơi khó...').",
+    reason: "Đáp án đúng là「ちょっと」. Các phó từ 'ぜんぜん', 'たくさん', 'ゆっくり' không có nghĩa từ chối.",
+  },
+  "来週、FPT大学（　　）お祭りがあります。___で": {
+    meaning: "Tuần sau, ở trường Đại học FPT sẽ có lễ hội.",
+    grammar: "Nơi diễn ra sự kiện/hoạt động: Địa điểm + で + N(sự kiện: お祭り, パーティー, 試験) + があります.",
+    lesson: "JPD123 - Bài 6 (Nơi diễn ra sự kiện で)",
+    tips: "Sự kiện, lễ hội (お祭り) là hoạt động diễn ra ➔ Dùng trợ từ「で」, KHÔNG dùng「に」.",
+    reason: "Đáp án đúng là「で」. 'に' chỉ nơi tồn tại vật tĩnh, 'へ' chỉ hướng đi. Với sự kiện/hoạt động 'お祭り' phải đi với trợ từ で.",
+  },
+  "あした、教室（　　）日本語の試験があります。___で": {
+    meaning: "Ngày mai sẽ có kỳ thi tiếng Nhật diễn ra ở phòng học.",
+    grammar: "Địa điểm diễn ra sự kiện: [Địa điểm] で [Sự kiện: 試験] があります.",
+    lesson: "JPD123 - Bài 6 (Nơi diễn ra sự kiện で)",
+    tips: "Kỳ thi (試験 - しけん) là một sự kiện tổ chức ➔ Dùng trợ từ「で」.",
+    reason: "Đáp án đúng là「đáp án đúng là で」. Địa điểm tổ chức kỳ thi, hội họp luôn đi với で.",
+  },
+  "日曜日、公園で楽しい（　　）があります。___パーティー": {
+    meaning: "Chủ nhật sẽ có một bữa tiệc vui vẻ diễn ra ở công viên.",
+    grammar: "Cấu trúc「Địa điểm で Sự kiện があります」: Nơi chốn + で + Danh từ sự kiện + があります.",
+    lesson: "JPD123 - Bài 6 (Sự kiện diễn ra ở địa điểm)",
+    tips: "Đi với trợ từ「で... があります」phải là danh từ chỉ sự kiện, hoạt động (パーティー, お祭り).",
+    reason: "Đáp án đúng là「パーティー」. 'いぬ', 'つくえ', 'じてんしゃ' là đồ vật/động vật cụ thể, nếu tồn tại ở công viên thì phải đi với trợ từ に (公園に犬がいます). Ở đây dùng trợ từ で nên bắt buộc phải là sự kiện.",
+  },
+  "今晩、スタジアム（　　）サッカーの試合があります。___で": {
+    meaning: "Tối nay tại sân vận động sẽ diễn ra trận thi đấu bóng đá.",
+    grammar: "Địa điểm tổ chức trận đấu/sự kiện: [Địa điểm] で [試合] があります.",
+    lesson: "JPD123 - Bài 6 (Nơi diễn ra sự kiện で)",
+    tips: "Trận đấu thể thao (試合 - しあい) là sự kiện ➔ Nơi chốn đi với「で」.",
+    reason: "Đáp án đúng là「で」. Trận đấu bóng đá là sự kiện tổ chức nên dùng trợ từ で.",
+  },
+  "私の部屋に日本の音楽のCDが1（　　）あります。___まい": {
+    meaning: "Trong phòng của tôi có 1 chiếc đĩa CD âm nhạc Nhật Bản.",
+    grammar: "Lượng từ đếm vật mỏng, phẳng dẹt (đĩa CD, áo sơ mi, tờ giấy, tem thư, vé): Số từ + 枚 (まい).",
+    lesson: "JPD123 - Bài 6 (Đếm vật mỏng dẹt 枚 - まい)",
+    tips: "Đĩa CD là vật mỏng dẹt ➔ Luôn đếm bằng「まい (枚)」.",
+    reason: "Đáp án đúng là「まい」. 'だい' dùng đếm máy móc xe cộ, 'ほん' đếm vật dài, 'さつ' đếm sách vở.",
+  },
+  "きのう、デパートで白いシャツを2（　　）買いました。___まい": {
+    meaning: "Hôm qua tôi đã mua 2 chiếc áo sơ mi trắng ở trung tâm thương mại.",
+    grammar: "Lượng từ đếm áo quần mỏng (áo sơ mi, áo phông): Số từ + 枚 (まい).",
+    lesson: "JPD123 - Bài 6 (Đếm vật mỏng dẹt 枚 - まい)",
+    tips: "Áo sơ mi (シャツ) là vật mỏng dẹt ➔ Đếm bằng「まい (枚)」.",
+    reason: "Đáp án đúng là「まい」. 'だい' dùng cho thiết bị máy móc, 'こ' đếm đồ vật nhỏ tròn, 'ほん' đếm vật thon dài.",
+  },
+  "映画のチケットが2（　　）ありますから、いっしょに見に行きませんか。___まい": {
+    meaning: "Tôi có 2 vé xem phim rồi, cùng đi xem với tôi nhé?",
+    grammar: "Lượng từ đếm vé xem phim (vật mỏng dẹt): Số từ + 枚 (まい).",
+    lesson: "JPD123 - Bài 6 (Đếm vật mỏng dẹt 枚 - まい)",
+    tips: "Vé xem phim, vé tàu (チケット, 切符) là vật mỏng phẳng ➔ Đếm bằng「まい (枚)」.",
+    reason: "Đáp án đúng là「まい」. 'だい' đếm xe cộ/máy móc, 'かい' đếm số lần, 'ばん' chỉ số thứ tự.",
+  },
   "研究室にパソコンが10（　　）あります。___だい": {
     meaning: "Trong phòng nghiên cứu có 10 chiếc máy tính.",
     grammar: "Lượng từ đếm máy móc, xe cộ, thiết bị cơ giới: Số từ + 台 (だい).",
@@ -799,6 +883,12 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
     tips = "Động từ đi trước ください luôn chia ở THỂ て (Vてください).";
   } else if (q.sentence.includes("あまり") || q.sentence.includes("ぜんぜん")) {
     tips = "Phó từ あまり / ぜんぜん bắt buộc phải đi với thể phủ định (〜くない / 〜じゃありません).";
+  } else if (q.sentence.includes("ちょっと") || q.sentence.includes("やくそく") || q.sentence.includes("約束") || q.sentence.includes("用事")) {
+    tips = "Khi từ chối lời mời rủ rê, người Nhật nói khéo「〜はちょっと…」và nêu lý do bằng「N がありますから」(Vì tôi có hẹn/việc bận).";
+  } else if ((q.sentence.includes("お祭り") || q.sentence.includes("おまつり") || q.sentence.includes("試験") || q.sentence.includes("パーティー")) && q.sentence.includes("あります")) {
+    tips = "Địa điểm diễn ra sự kiện/hoạt động (lễ hội, kỳ thi, bữa tiệc) đi với trợ từ「で」, không dùng trợ từ「に」.";
+  } else if (q.sentence.includes("まい") || q.sentence.includes("枚") || q.sentence.includes("CD") || q.sentence.includes("シャツ")) {
+    tips = "Lượng từ đếm vật mỏng phẳng (đĩa CD, áo sơ mi, tờ giấy, vé, tem) luôn dùng「枚 (まい)」.";
   }
 
   return {
@@ -844,7 +934,7 @@ function determineLesson(q: ExamQuestion): string {
     if (/[意味書言話読見聞食飲待立座使]/.test(fullText)) {
       return "JPD123 - Bài 7 (Chữ Hán N5 FPT)";
     }
-    if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜]/.test(fullText)) {
+    if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(fullText)) {
       return "JPD123 - Bài 6 (Chữ Hán N5 FPT)";
     }
     if (/[家本水友会私休時間散歩写真手紙音楽族病院車転自]/.test(fullText)) {
@@ -871,16 +961,33 @@ function determineLesson(q: ExamQuestion): string {
     return "JPD123 - Bài 7 (Động từ thể て và Mẫu câu giao tiếp)";
   }
 
-  // Bài 6: So sánh hơn (より), so sánh kém (ほど), so sánh lựa chọn (どちらが), so sánh nhất (いちばん)
+  // Bài 6: So sánh hơn (より), so sánh kém (ほど), so sánh lựa chọn (どちらが), so sánh nhất (いちばん), Rủ rê / Từ chối khéo (ちょっと / やくそく), Nơi diễn ra sự kiện (で...あります), Đếm vật mỏng (まい)
   if (
-    q.sentence.includes("より") ||
-    q.sentence.includes("ほど") ||
-    q.sentence.includes("どちらが") ||
-    q.sentence.includes("いちばん") ||
-    q.prompt.includes("So sánh") ||
-    q.prompt.includes("so sánh")
+    fullText.includes("より") ||
+    fullText.includes("ほど") ||
+    fullText.includes("どちらが") ||
+    fullText.includes("いちばん") ||
+    fullText.includes("ちょっと") ||
+    fullText.includes("やくそく") ||
+    fullText.includes("約束") ||
+    fullText.includes("お祭り") ||
+    fullText.includes("おまつり") ||
+    fullText.includes("パーティー") ||
+    fullText.includes("まい") ||
+    fullText.includes("枚") ||
+    fullText.includes("CD") ||
+    fullText.includes("シャツ") ||
+    fullText.includes("チケット") ||
+    fullText.includes("ましょう") ||
+    fullText.includes("So sánh") ||
+    fullText.includes("so sánh") ||
+    fullText.includes("rủ rê") ||
+    fullText.includes("Rủ rê") ||
+    fullText.includes("từ chối") ||
+    fullText.includes("vật mỏng") ||
+    fullText.includes("sự kiện")
   ) {
-    return "JPD123 - Bài 6 (So sánh và Lượng từ)";
+    return "JPD123 - Bài 6 (So sánh, Rủ rê & Lượng từ)";
   }
 
   // Bài 5: Quá khứ động từ (ました), mong muốn (たい / ほしい), nguyên nhân (から / どうして)
@@ -931,7 +1038,7 @@ function determineLesson(q: ExamQuestion): string {
   if (/[意味書言話読見聞食飲待立座使]/.test(fullText)) {
     return "JPD123 - Bài 7 (Chữ Hán & Từ vựng N5)";
   }
-  if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜]/.test(fullText)) {
+  if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(fullText)) {
     return "JPD123 - Bài 6 (Chữ Hán & Từ vựng N5)";
   }
   if (/[家本水友会私休時間散歩写真手紙音楽族病院車転自]/.test(fullText)) {
@@ -945,17 +1052,39 @@ function determineLesson(q: ExamQuestion): string {
 }
 
 function determineGrammarPoint(q: ExamQuestion): string {
-  if (q.sentence.includes("ほしい")) return "Mẫu câu mong muốn sở hữu: Danh từ + が + ほしいです";
-  if (q.sentence.includes("たい")) return "Mẫu câu muốn thực hiện hành động: V[bỏ ます] + たいです";
-  if (q.sentence.includes("より")) return "Cấu trúc so sánh hơn: A は B より Tính từ です";
-  if (q.sentence.includes("ほど")) return "Cấu trúc so sánh kém (không bằng): A は B ほど Tính từ [phủ định]";
-  if (q.sentence.includes("どちら")) return "So sánh lựa chọn: A と B と どちらが Tính từ ですか";
-  if (q.sentence.includes("いちばん")) return "So sánh nhất: [Phạm vi] の中で [Chủ ngữ] が いちばん [Tính từ] です";
-  if (q.sentence.includes("ください")) return "Mẫu câu yêu cầu, nhờ vả lịch sự: Vてください";
-  if (q.sentence.includes("かた")) return "Mẫu câu cách thức làm: V[bỏ ます] + 方 (かた)";
-  if (q.sentence.includes("すき")) return "Mẫu câu nói về sở thích: Danh từ + が + すきです";
-  if (q.sentence.includes("ました")) return "Thì quá khứ của động từ: Vました / Vませんでした";
-  if (q.sentence.includes("かった") || q.sentence.includes("くない")) return "Chia tính từ đuôi い: Quá khứ かったです, Phủ định くないです";
-  if (q.sentence.includes("でした") || q.sentence.includes("じゃありません")) return "Chia tính từ đuôi な: Quá khứ でした, Phủ định じゃありません";
+  const fullText = `${q.sentence || ""} ${q.prompt || ""} ${q.answer || ""}`;
+
+  if (fullText.includes("ちょっと") || fullText.includes("từ chối") || fullText.includes("Từ chối")) {
+    return "Rủ rê, Đồng ý và Từ chối khéo: 〜はちょっと… / 〜がありますから";
+  }
+  if (fullText.includes("ましょう") || fullText.includes("ませんか") || fullText.includes("rủ rê") || fullText.includes("Rủ rê")) {
+    return "Mẫu câu rủ rê và đề nghị cùng làm: 〜ませんか / 〜ましょう";
+  }
+  if (
+    (fullText.includes("で") && (fullText.includes("あります") || fullText.includes("ある"))) ||
+    fullText.includes("sự kiện") ||
+    fullText.includes("Sự kiện") ||
+    fullText.includes("お祭り") ||
+    fullText.includes("おまつり") ||
+    fullText.includes("パーティー") ||
+    fullText.includes("試合")
+  ) {
+    return "Nơi diễn ra sự kiện, hoạt động: Địa điểm + で + N(sự kiện) + があります";
+  }
+  if (fullText.includes("まい") || fullText.includes("枚") || fullText.includes("vật mỏng")) {
+    return "Đếm số lượng vật mỏng, phẳng: N が / を 〜まい (枚) あります / 買いました";
+  }
+  if (fullText.includes("ほしい")) return "Mẫu câu mong muốn sở hữu: Danh từ + が + ほしいです";
+  if (fullText.includes("たい")) return "Mẫu câu muốn thực hiện hành động: V[bỏ ます] + たいです";
+  if (fullText.includes("より")) return "Cấu trúc so sánh hơn: A は B より Tính từ です";
+  if (fullText.includes("ほど")) return "Cấu trúc so sánh kém (không bằng): A は B ほど Tính từ [phủ định]";
+  if (fullText.includes("どちら")) return "So sánh lựa chọn: A と B と どちらが Tính từ ですか";
+  if (fullText.includes("いちばん")) return "So sánh nhất: [Phạm vi] の中で [Chủ ngữ] が いちばん [Tính từ] です";
+  if (fullText.includes("ください")) return "Mẫu câu yêu cầu, nhờ vả lịch sự: Vてください";
+  if (fullText.includes("かた")) return "Mẫu câu cách thức làm: V[bỏ ます] + 方 (かた)";
+  if (fullText.includes("すき")) return "Mẫu câu nói về sở thích: Danh từ + が + すきです";
+  if (fullText.includes("ました")) return "Thì quá khứ của động từ: Vました / Vませんでした";
+  if (fullText.includes("かった") || fullText.includes("くない")) return "Chia tính từ đuôi い: Quá khứ かったです, Phủ định くないです";
+  if (fullText.includes("でした") || fullText.includes("じゃありません")) return "Chia tính từ đuôi な: Quá khứ でした, Phủ định じゃありません";
   return "Cấu trúc câu ngữ pháp tiếng Nhật sơ cấp";
 }
