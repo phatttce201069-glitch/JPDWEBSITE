@@ -915,6 +915,11 @@ function buildVocabExplanation(q: ExamQuestion): QuestionExplanation {
   };
 }
 
+/**
+ * Tự động phân loại câu hỏi thuộc Bài học nào (Bài 4 - 7) dựa trên chữ Hán, cấu trúc ngữ pháp và từ vựng.
+ * @param q Câu hỏi trắc nghiệm cần phân loại
+ * @returns Tên bài học kèm chủ đề cụ thể (Ví dụ: 'JPD123 - Bài 6 (So sánh, Rủ rê & Lượng từ)')
+ */
 function determineLesson(q: ExamQuestion): string {
   // If lesson is already provided on question and is a specific single lesson (not a generic range like "Bài 4 đến 7")
   if (
