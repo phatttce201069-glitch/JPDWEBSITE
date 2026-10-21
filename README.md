@@ -75,5 +75,18 @@
 
 ---
 
+## ❓ Câu Hỏi Thường Gặp (FAQ)
+
+**Q1: Đề thi tạo bởi AI có bị rò rỉ kiến thức bài chưa học không?**  
+A: Không. Hệ thống áp dụng quy chuẩn *Lesson Isolation Rule* với các ràng buộc âm bản nghiêm ngặt. Nếu bạn chọn Bài 4 và Bài 5, AI sẽ tuyệt đối không đưa vào cấu trúc ngữ pháp hay từ vựng của Bài 6 và Bài 7.
+
+**Q2: Dữ liệu từ vựng đã đánh dấu (Bookmark) được lưu ở đâu?**  
+A: Dữ liệu bookmark được lưu trữ cục bộ trên trình duyệt thông qua Zustand Store và LocalStorage, giúp lưu lại trạng thái học tập ngay cả khi bạn tải lại trang hoặc mất mạng.
+
+**Q3: Ứng dụng có thể chạy offline khi không có internet không?**  
+A: Có. Toàn bộ tính năng học từ vựng, ngữ pháp, bảng chữ cái và tạo đề thi bằng High-Diversity Seed Engine đều hoạt động hoàn toàn offline trên trình duyệt.
+
+---
+
 ## 📄 Bản Quyền
 Dự án được phát triển phục vụ mục đích học tập và ôn thi môn Tiếng Nhật JPD123 Đại học FPT.
