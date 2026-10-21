@@ -281,6 +281,26 @@ test("vocabulary dataset has valid structure across all lessons", async () => {
   }
 });
 
+test("grammar dataset contains complete lessons and structured grammar points", async () => {
+  const { grammar } = await import("../../data/grammar.ts");
+
+  assert.ok(grammar.length >= 7, "Dữ liệu ngữ pháp phải bao gồm ít nhất 7 bài học");
+
+  for (const lesson of grammar) {
+    assert.ok(lesson.id.trim().length > 0, "ID bài học không được rỗng");
+    assert.ok(lesson.title.trim().length > 0, "Tiêu đề bài học không được rỗng");
+    assert.ok(lesson.points.length > 0, `Bài ${lesson.id} phải có ít nhất 1 điểm ngữ pháp`);
+
+    for (const point of lesson.points) {
+      assert.ok(point.id.trim().length > 0, "ID điểm ngữ pháp không được rỗng");
+      assert.ok(point.structure_jp.trim().length > 0, "Cấu trúc tiếng Nhật không được rỗng");
+      assert.ok(point.structure_vi.trim().length > 0, "Cấu trúc tiếng Việt không được rỗng");
+      assert.ok(Array.isArray(point.examples), `Điểm ngữ pháp ${point.id} phải có mảng ví dụ`);
+    }
+  }
+});
+
+
 
 
 
