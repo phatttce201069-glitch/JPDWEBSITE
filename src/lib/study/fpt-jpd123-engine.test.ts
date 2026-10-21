@@ -259,5 +259,16 @@ test("all exam seeds in KANJI_SEEDS, VOCAB_SEEDS, GRAMMAR_SEEDS have valid struc
   }
 });
 
+test("romaji utilities correctly normalize vietnamese and map kana", async () => {
+  const { toRomaji, foldVi, sameMeaning } = await import("./romaji.ts");
+
+  assert.equal(toRomaji("あさ"), "asa");
+  assert.equal(toRomaji("やま"), "yama");
+  assert.equal(foldVi("Tiếng Nhật 2"), "Tieng Nhat 2");
+  assert.ok(sameMeaning("nhà", "ngôi nhà"));
+  assert.ok(sameMeaning("học sinh", "học sinh / sinh viên"));
+});
+
+
 
 
