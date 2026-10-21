@@ -269,6 +269,19 @@ test("romaji utilities correctly normalize vietnamese and map kana", async () =>
   assert.ok(sameMeaning("học sinh", "học sinh / sinh viên"));
 });
 
+test("vocabulary dataset has valid structure across all lessons", async () => {
+  const { vocabulary } = await import("../../data/vocabulary.ts");
+
+  assert.ok(vocabulary.length > 500, "Tổng số từ vựng phải đạt trên 500 từ");
+
+  for (const item of vocabulary) {
+    assert.ok(item.word.trim().length > 0, `Từ vựng id ${item.id} không được để trống`);
+    assert.ok(item.meaning.trim().length > 0, `Nghĩa của từ ${item.word} không được để trống`);
+    assert.ok(item.lesson.trim().length > 0, `Bài học của từ ${item.word} không được để trống`);
+  }
+});
+
+
 
 
 
