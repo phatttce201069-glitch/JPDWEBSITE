@@ -2260,6 +2260,14 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
     }
 
     let selectedSeeds = candidates.slice(0, targetCount);
+    if (baiFilter.length === 1 && baiFilter[0] === 6 && prefix === "fpt-gram") {
+      const maiSeed = candidates.find((s) => s.prompt.includes("lượng từ") || s.answer === "まい" || s.sentence.includes("CD"));
+      const chottoSeed = candidates.find((s) => s.answer === "ちょっと" || s.prompt.includes("từ chối"));
+      const eventSeed = candidates.find((s) => s.prompt.includes("sự kiện") || s.sentence.includes("お祭り"));
+      const keySeeds = [maiSeed, chottoSeed, eventSeed].filter(Boolean) as QuestionSeed[];
+      const rest = candidates.filter((s) => !keySeeds.includes(s));
+      selectedSeeds = [...keySeeds, ...rest].slice(0, targetCount);
+    }
 
     return selectedSeeds.map((seed, idx) => {
       const uniqueWrongs = [...new Set(seed.wrongs.filter((w) => w !== seed.answer))];
