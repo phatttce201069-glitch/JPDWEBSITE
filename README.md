@@ -8,6 +8,7 @@
 
 - 📚 **Học Từ Vựng & Đánh Dấu (Bookmark)**: Xem từ vựng kèm chữ Hán, Hiragana/Katakana, nghĩa tiếng Việt, phát âm và đánh dấu các từ khó để ôn luyện riêng.
 - 📖 **Ngữ Pháp Trọng Tâm Bài 4 - Bài 7**: Hệ thống lý thuyết ngữ pháp chi tiết kèm ví dụ song ngữ Nhật - Việt sát giáo trình JPD123.
+- 🎯 **Luyện Riêng Từng Phần Ngữ Pháp (Section Practice)**: Hỗ trợ luyện trắc nghiệm độc lập từng phần nhỏ trong bài (ví dụ: luyện riêng phần *So sánh hơn*, *So sánh kém*, *So sánh nhất*, *Từ chối khéo*... của Bài 6) thay vì phải làm toàn bộ bài.
 - 🈁 **Bảng Chữ Cái Kana**: Tra cứu và kiểm tra bảng chữ cái Hiragana, Katakana, Âm đục (Dakuon) và Âm ghép (Yoon).
 - 📝 **Luyện Thi Trắc Nghiệm Chuẩn Form FPT**:
   - Đề thi 30 câu: **10 câu Kanji**, **10 câu Từ vựng**, **10 câu Ngữ pháp**.
@@ -69,6 +70,7 @@
 - [x] Tích hợp AI sinh đề thi phong phú, không trùng lặp
 - [x] Hộp lời giải chi tiết (Dịch câu, Ngữ pháp, Mẹo giải, Bài học)
 - [x] Đánh dấu từ vựng và làm đề thi riêng cho từ đã bookmark
+- [x] Luyện tập riêng từng phần trong 1 bài ngữ pháp (ví dụ bài 6 phần so sánh hơn)
 - [ ] Thêm tính năng bấm giờ đếm ngược 30 phút mô phỏng phòng thi thật
 - [ ] Thống kê lịch sử điểm số và biểu đồ phân tích kỹ năng theo thời gian
 - [ ] Mở rộng ngân hàng câu hỏi nghe hiểu (Listening Comprehension)
@@ -85,6 +87,9 @@ A: Dữ liệu bookmark được lưu trữ cục bộ trên trình duyệt thô
 
 **Q3: Ứng dụng có thể chạy offline khi không có internet không?**  
 A: Có. Toàn bộ tính năng học từ vựng, ngữ pháp, bảng chữ cái và tạo đề thi bằng High-Diversity Seed Engine đều hoạt động hoàn toàn offline trên trình duyệt.
+
+**Q4: Làm thế nào để luyện riêng một phần ngữ pháp cụ thể (như So sánh hơn ở Bài 6)?**  
+A: Bạn vào mục **Ngữ pháp**, chọn **Bài 6**, sau đó nhấn nút **`🎯 Luyện riêng`** ở bên phải mục *A は B より Adj です* (hoặc nhấn nút tương tự ở đầu/cuối trang chi tiết lý thuyết). Hệ thống sẽ sinh ngay bộ đề trắc nghiệm chuyên sâu chỉ gồm các câu hỏi thuộc phần đó kèm bảng giải thích chi tiết.
 
 ---
 
