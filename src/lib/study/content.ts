@@ -1,8 +1,8 @@
-import { alphabet } from "@/data/alphabet";
-import { grammar } from "@/data/grammar";
-import { vocabulary } from "@/data/vocabulary";
-import { kanaReading } from "@/lib/study/romaji";
-import type { Glyph, Script, Word } from "@/lib/study/types";
+import { alphabet } from "../../data/alphabet.ts";
+import { grammar } from "../../data/grammar.ts";
+import { vocabulary } from "../../data/vocabulary.ts";
+import { kanaReading } from "./romaji.ts";
+import type { Glyph, Script, Word } from "./types.ts";
 
 export { alphabet, grammar, vocabulary };
 
