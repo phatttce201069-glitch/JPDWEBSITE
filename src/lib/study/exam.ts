@@ -1,6 +1,6 @@
-import { alphabet, shuffle, vocabulary } from "@/lib/study/content";
-import { kanaReading } from "@/lib/study/romaji";
-import type { Glyph, Word } from "@/lib/study/types";
+import { alphabet, grammar, shuffle, vocabulary } from "./content.ts";
+import { kanaReading } from "./romaji.ts";
+import type { Glyph, GrammarLesson, GrammarPoint, Word } from "./types.ts";
 
 export const EXAM_SIZE = 30;
 export const EXAM_SECONDS = 30 * 60;
@@ -318,14 +318,279 @@ export function buildExam(course: ExamCourse, baiList: string[]): ExamQuestion[]
   return balance(kanji, vocab, grammarBank);
 }
 
-export function buildGrammarDrill(bai: string): ExamQuestion[] {
+const POINT_KEY_MAPPINGS: Record<string, string[]> = {
+  // Bài 1
+  "1_1": ["wa", "ok-wa", "sit-student", "bad-wa", "part-topic"],
+  "1_2": ["no"],
+  "1_3": ["no"],
+  "1_4": ["mo", "order-mo", "sit-also"],
+  "1_5": ["janai"],
+  "1_6": ["to"],
+  "1_7": ["ask-job"],
+  "1_8": ["wa"],
+
+  // Bài 2
+  "2_1": ["doko", "ask-where", "sit-where"],
+  "2_2": ["kai", "ok-kai"],
+  "2_3": ["nan"],
+  "2_4": ["ikura", "ask-price", "sit-price", "bad-price"],
+  "2_5": ["doko", "sit-what"],
+  "2_6": ["nan", "sit-what"],
+
+  // Bài 3
+  "3_1": ["reply"],
+  "3_2": ["e", "ok-e", "part-dir", "sit-go", "bad-e"],
+  "3_3": ["o", "ok-o", "part-obj"],
+  "3_4": ["de", "order-de", "part-place", "pen"],
+  "3_5": ["ni", "part-time"],
+  "3_6": ["kara"],
+  "3_7": ["nanimo"],
+
+  // Bài 4
+  "4_1": ["ok-i", "bad-amari"],
+  "4_2": ["ok-na"],
+  "4_3": ["ok-i", "ok-na"],
+  "4_4": ["ok-i"],
+  "4_5": ["totemo", "amari", "ok-degree", "sit-totemo"],
+  "4_6": ["ga", "soshite", "order-ga", "sit-ga"],
+  "4_7": ["niaru", "dearu", "event"],
+  "4_8": ["kara"],
+  "4_9": ["soshite"],
+
+  // Bài 5
+  "5_1": ["hoshii", "ok-hoshii", "sit-hoshii", "bad-hoshii"],
+  "5_2": ["tai", "ok-tai"],
+  "5_3": ["purpose"],
+  "5_4": ["mashita", "ok-past", "sit-past"],
+  "5_5": ["ne", "ok-past"],
+  "5_6": ["kara", "ask-why"],
+  "5_7": ["to", "order-to"],
+
+  // Bài 6
+  "6_1": ["yori", "same-yori", "ok-yori", "order-yori", "sit-yori"],
+  "6_2": ["hodo", "bad-hodo", "same-yori"],
+  "6_3": ["ichiban", "naka", "nan", "ok-ban"],
+  "6_4": ["dochira", "hou", "ask-hot", "sit-dochira"],
+  "6_5": ["chotto", "yakusoku", "kara-reason", "mashou"],
+  "6_6": ["event-de", "shiken-de", "event-nani"],
+  "6_7": ["mai", "mai-cd", "mai-shatsu"],
+
+  // Bài 7
+  "7_1": ["te", "ok-te", "order-te", "sit-te", "dono", "teiru", "iru"],
+  "7_2": ["suki", "ask-suki", "ok-suki", "sit-suki", "bad-suki"],
+  "7_3": ["zehi"],
+  "7_4": ["mou", "mada", "ok-mou", "sit-mou"],
+  "7_5": ["kata1", "kata2", "kata3"],
+};
+
+function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoint): ExamQuestion[] {
+  const list: ExamQuestion[] = [];
+  if (!point.examples || point.examples.length === 0) return list;
+
+  const KEYWORD_DISTRACTORS: Record<string, string[]> = {
+    より: ["ほど", "から", "まで", "ほう", "だけ"],
+    ほど: ["より", "ほう", "から", "だけ"],
+    いちばん: ["とても", "あまり", "すこし", "もっと", "ずっと"],
+    なかで: ["まえに", "うえで", "そとで", "あいだで"],
+    どちら: ["どれ", "だれ", "どこ", "なに"],
+    のほうが: ["より", "ほど", "がいちばん", "から"],
+    ほう: ["より", "ほど", "いちばん", "から"],
+    ちょっと: ["だめ", "いいえ", "あまり", "ぜんぜん"],
+    やくそく: ["きっぷ", "カメラ", "てがみ", "ノート"],
+    から: ["まで", "より", "ほど", "ので"],
+    食べましょう: ["食べますか", "食べました", "食べたいです", "食べません"],
+    ましょう: ["ますか", "ました", "ません", "たいです"],
+    まい: ["だい", "ほん", "さつ", "こ"],
+    枚: ["台", "本", "冊", "個"],
+    で: ["に", "へ", "を", "が"],
+    に: ["で", "へ", "を", "が"],
+    へ: ["を", "で", "に", "が"],
+    を: ["へ", "で", "に", "が"],
+    は: ["が", "を", "の", "も"],
+    も: ["は", "の", "を", "が"],
+    の: ["は", "も", "を", "に"],
+    じゃありません: ["です", "でした", "ません", "ます"],
+    ほしい: ["すき", "たい", "いい", "ある"],
+    たい: ["ほしい", "ます", "て", "ない"],
+    ました: ["ます", "ません", "たい", "て"],
+    て: ["た", "ます", "ない", "る"],
+    すき: ["きらい", "ほしい", "いい", "じょうず"],
+    方: ["かた", "ほう", "まえ", "あと"],
+    どこ: ["だれ", "なに", "いつ", "いくら"],
+    いくら: ["どこ", "なんがい", "だれ", "いつ"],
+    何階: ["どこ", "いくら", "なんさい", "だれ"],
+  };
+
+  const targetKeywords: string[] = [];
+  if (point.id === "6_1") targetKeywords.push("より");
+  else if (point.id === "6_2") targetKeywords.push("ほど");
+  else if (point.id === "6_3") targetKeywords.push("いちばん", "なかで");
+  else if (point.id === "6_4") targetKeywords.push("どちら", "のほうが", "ほう");
+  else if (point.id === "6_5") targetKeywords.push("ちょっと", "やくそく", "から", "ましょう");
+  else if (point.id === "6_6") targetKeywords.push("で");
+  else if (point.id === "6_7") targetKeywords.push("まい", "枚");
+  else if (point.id === "1_1") targetKeywords.push("は", "です");
+  else if (point.id === "1_4") targetKeywords.push("も");
+  else if (point.id === "1_5") targetKeywords.push("じゃありません");
+  else if (point.id === "2_1") targetKeywords.push("どこ");
+  else if (point.id === "2_2") targetKeywords.push("何階");
+  else if (point.id === "2_4") targetKeywords.push("いくら");
+  else if (point.id === "3_2") targetKeywords.push("へ");
+  else if (point.id === "3_3") targetKeywords.push("を");
+  else if (point.id === "3_4") targetKeywords.push("で");
+  else if (point.id === "3_5") targetKeywords.push("に");
+  else if (point.id === "3_6") targetKeywords.push("から");
+  else if (point.id === "5_1") targetKeywords.push("ほしい");
+  else if (point.id === "5_2") targetKeywords.push("たい");
+  else if (point.id === "5_3") targetKeywords.push("に");
+  else if (point.id === "5_4") targetKeywords.push("ました");
+  else if (point.id === "5_6") targetKeywords.push("から");
+  else if (point.id === "5_7") targetKeywords.push("と");
+  else if (point.id === "7_2") targetKeywords.push("すき");
+  else if (point.id === "7_4") targetKeywords.push("もう");
+  else if (point.id === "7_5") targetKeywords.push("方");
+
+  const allLessonExamples = lesson.points.flatMap((p) => p.examples);
+
+  point.examples.forEach((ex, idx) => {
+    // 1. Điền từ vào chỗ trống
+    for (const kw of targetKeywords) {
+      if (ex.jp.includes(kw)) {
+        const wrongs = KEYWORD_DISTRACTORS[kw] || ["は", "が", "を", "に"];
+        const sentence = ex.jp.replace(kw, "（　　）");
+        const question = make(
+          `pt-${point.id}-fill-${idx}-${kw}`,
+          "Ngữ pháp",
+          {
+            promptJp: "（　　）に最も合う言葉を選びなさい。",
+            prompt: `Chọn từ/trợ từ thích hợp điền vào（　　）[${point.structure_vi}]:`,
+          },
+          sentence,
+          kw,
+          wrongs,
+        );
+        if (question) {
+          question.explanation = {
+            meaning: ex.vi,
+            grammar: point.structure_jp,
+            lesson: lesson.title,
+            tips: point.note || point.formula,
+            reason: `Điền「${kw}」theo cấu trúc「${point.structure_jp}」(${point.structure_vi}). ${point.explanation}`,
+          };
+          add(list, question);
+          break;
+        }
+      }
+    }
+
+    // 2. Chọn câu tiếng Nhật đúng theo nghĩa tiếng Việt
+    const otherJpWrongs = allLessonExamples
+      .filter((other) => other.jp !== ex.jp)
+      .map((other) => other.jp);
+    if (otherJpWrongs.length >= 3) {
+      const qTrans = make(
+        `pt-${point.id}-trans-${idx}`,
+        "Ngữ pháp",
+        {
+          promptJp: "意味に合う正しい日本語を選びなさい。",
+          prompt: `Chọn câu tiếng Nhật đúng nhất cho nghĩa: "${ex.vi}"`,
+        },
+        `Dịch sang tiếng Nhật: ${ex.vi}`,
+        ex.jp,
+        otherJpWrongs,
+      );
+      if (qTrans) {
+        qTrans.explanation = {
+          meaning: ex.vi,
+          grammar: point.structure_jp,
+          lesson: lesson.title,
+          tips: point.formula,
+          reason: `Câu「${ex.jp}」diễn đạt đúng nghĩa "${ex.vi}" theo cấu trúc「${point.structure_jp}」.`,
+        };
+        add(list, qTrans);
+      }
+    }
+
+    // 3. Chọn nghĩa tiếng Việt đúng cho câu tiếng Nhật
+    const otherViWrongs = allLessonExamples
+      .filter((other) => other.vi !== ex.vi)
+      .map((other) => other.vi);
+    if (otherViWrongs.length >= 3) {
+      const qMean = make(
+        `pt-${point.id}-mean-${idx}`,
+        "Ngữ pháp",
+        {
+          promptJp: "文の正しいベトナム語の意味を選びなさい。",
+          prompt: `Chọn nghĩa tiếng Việt chính xác của câu sau:`,
+        },
+        ex.jp,
+        ex.vi,
+        otherViWrongs,
+      );
+      if (qMean) {
+        qMean.explanation = {
+          meaning: ex.vi,
+          grammar: point.structure_jp,
+          lesson: lesson.title,
+          tips: point.formula,
+          reason: `Câu「${ex.jp}」có nghĩa là: "${ex.vi}".`,
+        };
+        add(list, qMean);
+      }
+    }
+  });
+
+  return list;
+}
+
+export function buildGrammarDrill(bai: string, pointId?: string): ExamQuestion[] {
   const number = Number(bai);
   if (!Number.isInteger(number) || number < 1 || number > 7) return [];
   const course: ExamCourse = number <= 3 ? "JPD113" : "JPD123";
   const courseWords = vocabulary.filter((word) => word.course === course && examWord(word));
   const words = courseWords.filter((word) => baiOf(word.lesson) === String(number));
+
+  const allPatternQuestions = patternQuestions(course, String(number), words);
+  const targetLesson = grammar.find((item) => item.id === String(number));
+
+  // Case 1: Luyện riêng một phần hoặc nhiều phần cụ thể
+  if (pointId && pointId.trim()) {
+    const requestedIds = pointId.split(",").map((s) => s.trim()).filter(Boolean);
+    const bank: ExamQuestion[] = [];
+
+    for (const pid of requestedIds) {
+      const point = targetLesson?.points.find((p) => p.id === pid);
+      const allowedKeys = POINT_KEY_MAPPINGS[pid] || [];
+
+      // 1. Lọc các câu từ patternQuestions
+      for (const q of allPatternQuestions) {
+        const matchesKey = allowedKeys.some((k) => q.id === `g-${number}-${k}`);
+        const matchesSpecial =
+          (pid === "4_1" && q.id.startsWith("g-4-i-")) ||
+          (pid === "4_2" && q.id.startsWith("g-4-na-"));
+        if (matchesKey || matchesSpecial) {
+          add(bank, q);
+        }
+      }
+
+      // 2. Bổ sung các câu sinh từ examples của point
+      if (targetLesson && point) {
+        for (const exQ of generateQuestionsFromExamples(targetLesson, point)) {
+          add(bank, exQ);
+        }
+      }
+    }
+
+    if (bank.length > 0) {
+      const targetCount = requestedIds.length === 1 ? Math.min(10, bank.length) : Math.min(15, bank.length);
+      const picked = takeDiverse(bank, targetCount);
+      return shuffle(picked).map((question, index) => ({ ...question, id: String(index + 1) }));
+    }
+  }
+
+  // Case 2: Luyện toàn bộ bài (tất cả các phần)
   const bank: ExamQuestion[] = [];
-  for (const question of patternQuestions(course, String(number), words)) add(bank, question);
+  for (const question of allPatternQuestions) add(bank, question);
   const picked = takeDiverse(bank, Math.min(10, bank.length));
   return shuffle(picked).map((question, index) => ({ ...question, id: String(index + 1) }));
 }
