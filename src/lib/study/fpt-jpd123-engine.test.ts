@@ -300,6 +300,40 @@ test("grammar dataset contains complete lessons and structured grammar points", 
   }
 });
 
+test("buildGrammarDrill supports practicing single grammar sections (vd: Bài 6 phần 6_1 So sánh hơn)", async () => {
+  const { buildGrammarDrill } = await import("./exam.ts");
+
+  // 1. Luyện toàn bộ Bài 6
+  const allPaper = buildGrammarDrill("6");
+  assert.equal(allPaper.length, 10, "Luyện toàn bộ bài 6 phải có 10 câu");
+
+  // 2. Luyện riêng phần 6_1 (So sánh hơn: A は B より Adj です)
+  const paper61 = buildGrammarDrill("6", "6_1");
+  assert.ok(paper61.length >= 5, `Phần 6_1 phải tạo được ít nhất 5 câu hỏi, nhận được ${paper61.length}`);
+  for (const q of paper61) {
+    assert.equal(q.options.length, 4, `Câu ${q.id} phải có đúng 4 lựa chọn`);
+    assert.ok(q.options.includes(q.answer), `Câu ${q.id} phải có đáp án trong các lựa chọn`);
+    // Câu hỏi phải liên quan tới so sánh hơn (より hoặc cấu trúc A hơn B)
+    const content = `${q.prompt} ${q.sentence} ${q.answer} ${q.explanation?.grammar || ""}`;
+    assert.ok(
+      content.includes("より") || content.includes("hơn") || content.includes("so sánh") || content.includes("So sánh"),
+      `Câu ${q.id} phải thuộc phần so sánh hơn: ${content}`,
+    );
+  }
+
+  // 3. Luyện riêng phần 6_2 (So sánh kém: A は B ほど...ない)
+  const paper62 = buildGrammarDrill("6", "6_2");
+  assert.ok(paper62.length >= 4, `Phần 6_2 phải tạo được ít nhất 4 câu hỏi, nhận được ${paper62.length}`);
+  for (const q of paper62) {
+    assert.equal(q.options.length, 4);
+    assert.ok(q.options.includes(q.answer));
+  }
+
+  // 4. Luyện riêng phần 6_5 (Rủ rê & Từ chối khéo: 〜はちょっと…)
+  const paper65 = buildGrammarDrill("6", "6_5");
+  assert.ok(paper65.length >= 4, `Phần 6_5 phải tạo được ít nhất 4 câu hỏi, nhận được ${paper65.length}`);
+});
+
 
 
 
