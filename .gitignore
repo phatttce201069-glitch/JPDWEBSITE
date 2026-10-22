@@ -1,12 +1,31 @@
+# Dependency & build directories
 node_modules/
-.project_id
-.github_repo
+dist/
+.vercel/
+.tanstack/
+backend/target/
+
+# Environment and sensitive keys
 .env
 .env.*
-.tools/
-backend/target/
-.vercel/
-dist/
-.tanstack/
+.project_id
+.github_repo
 
-.vercel
+# Tooling, logs & runtime data
+.tools/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local OS & editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Large temporary assets / screenshots
+screenshots/*.png
+screenshots/*.jpg
+screenshots/*.jpeg
+!screenshots/.gitkeep
