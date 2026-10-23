@@ -68,7 +68,7 @@ function Home() {
         </li>
         <li>
           <Link to="/grammar" search={{ lesson: "", point: "", drill: false }} className="group flex items-center gap-4 py-5">
-            <Door kicker="03" title="Ngữ pháp" detail="Mẫu câu, ví dụ, rồi luyện trắc nghiệm A–D." meta={`${grammarCount} mẫu`} />
+            <Door kicker="03" title="Ngữ pháp" detail="Mẫu câu, ví dụ, luyện riêng từng phần hoặc cả bài." meta={`${grammarCount} mẫu`} />
           </Link>
         </li>
         <li>

@@ -35,8 +35,8 @@ function GrammarPage() {
   const setLast = useStudy((state) => state.setLast);
   const [showReading, setShowReading] = useState(false);
 
-  const lesson = grammar.find((item) => item.id === search.lesson) ?? null;
   const found = search.point ? pointById(search.point) : null;
+  const lesson = (search.lesson ? grammar.find((item) => item.id === search.lesson) : null) ?? found?.lesson ?? null;
 
   useEffect(() => {
     let label = "Ngữ pháp";
@@ -301,30 +301,113 @@ function GrammarPage() {
   // 4. Màn hình mặc định: Danh sách tất cả bài ngữ pháp
   return (
     <div>
-      <p className="text-sm tracking-[0.18em] text-stone uppercase font-medium">Ngữ pháp</p>
-      <h1 className="display mt-2 text-4xl">Học mẫu câu, luyện riêng từng phần.</h1>
-      <p className="mt-2 max-w-md text-stone">
-        Mỗi bài học bao gồm cấu trúc, ví dụ minh họa và tính năng luyện trắc nghiệm riêng từng phần hoặc cả bài.
-      </p>
-      <ul className="mt-8 divide-y divide-line border-y border-line">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <p className="text-sm tracking-[0.18em] text-stone uppercase font-medium">Ngữ pháp</p>
+          <h1 className="display mt-2 text-4xl">Học mẫu câu, luyện riêng từng phần.</h1>
+          <p className="mt-2 max-w-lg text-stone">
+            Chọn một bài học để xem toàn bộ lý thuyết, hoặc bấm nút <strong className="text-seal font-medium">🎯 Luyện riêng</strong> ở từng phần bên dưới để vào luyện tập ngay.
+          </p>
+        </div>
+      </div>
+
+      {/* Thông báo hướng dẫn nhanh */}
+      <div className="mt-6 rounded-xl border border-seal/30 bg-seal/5 p-4 flex items-start gap-3">
+        <Target className="size-5 text-seal shrink-0 mt-0.5" />
+        <div className="text-sm">
+          <p className="font-semibold text-seal">Tính năng Luyện riêng từng phần ngữ pháp đã sẵn sàng!</p>
+          <p className="text-stone mt-0.5">
+            Bạn có thể bấm vào bất kỳ ô phần ngữ pháp nào bên dưới (ví dụ ở <strong>Bài 6</strong>: <span className="underline decoration-seal font-medium text-ink">Phần 1: A hơn B</span>) để luyện tập riêng dạng câu hỏi của phần đó mà không phải làm cả bài.
+          </p>
+        </div>
+      </div>
+
+      <ul className="mt-8 space-y-5">
         {grammar.map((item) => (
-          <li key={item.id} className="flex items-stretch gap-2">
-            <button
-              type="button"
-              className="min-w-0 flex-1 py-5 text-left cursor-pointer"
-              onClick={() => setSearch({ lesson: item.id, point: "", drill: false })}
-            >
-              <span className="jp text-sm text-stone">{item.subtitle}</span>
-              <span className="mt-1 block text-xl font-medium">{item.title}</span>
-              <span className="mt-1 block text-sm text-stone">{item.points.length} phần ngữ pháp</span>
-            </button>
-            <button
-              type="button"
-              className="min-h-11 shrink-0 self-center rounded-md px-3 text-sm text-seal hover:bg-seal/10 cursor-pointer"
-              onClick={() => setSearch({ lesson: item.id, point: "", drill: true })}
-            >
-              Luyện cả bài
-            </button>
+          <li
+            key={item.id}
+            className="rounded-xl border border-line bg-sheet/40 p-5 sm:p-6 transition-all hover:border-stone/40 shadow-2xs"
+          >
+            {/* Header bài học */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="rounded bg-paper px-2 py-0.5 text-xs font-mono font-medium text-stone border border-line">
+                    {item.subtitle}
+                  </span>
+                  <span className="text-xs text-stone">
+                    {item.points.length} phần ngữ pháp
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="mt-2 text-left cursor-pointer group"
+                  onClick={() => setSearch({ lesson: item.id, point: "", drill: false })}
+                >
+                  <h2 className="text-2xl font-medium text-ink group-hover:text-seal transition-colors">
+                    {item.title}
+                  </h2>
+                </button>
+                <p className="mt-1 text-sm text-stone leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+
+              {/* Các nút hành động chính của bài */}
+              <div className="flex items-center gap-2 shrink-0 sm:self-start">
+                <Button
+                  tone="ghost"
+                  className="text-xs px-3 py-1.5 min-h-9"
+                  onClick={() => setSearch({ lesson: item.id, point: "", drill: false })}
+                >
+                  Chi tiết lý thuyết →
+                </Button>
+                <Button
+                  tone="ghost"
+                  className="text-xs px-3 py-1.5 min-h-9"
+                  onClick={() => setSearch({ lesson: item.id, point: "", drill: true })}
+                >
+                  Luyện cả bài
+                </Button>
+              </div>
+            </div>
+
+            {/* Danh sách các phần với nút bấm Luyện riêng trực tiếp */}
+            <div className="mt-5 pt-4 border-t border-line/60">
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="text-xs font-semibold text-stone uppercase tracking-wider inline-flex items-center gap-1.5">
+                  <Target className="size-3.5 text-seal" />
+                  Luyện riêng từng phần:
+                </span>
+                <span className="text-[11px] text-stone hidden sm:inline">
+                  Bấm vào phần bạn muốn luyện
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {item.points.map((p, pIdx) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    title={`Luyện riêng phần ${pIdx + 1}: ${p.structure_vi} - ${p.structure_jp}`}
+                    className="flex flex-col items-start gap-1 rounded-lg border border-line bg-paper p-2.5 text-left text-xs transition-all hover:border-seal hover:bg-seal/10 hover:shadow-2xs cursor-pointer group"
+                    onClick={() => setSearch({ lesson: item.id, point: p.id, drill: true })}
+                  >
+                    <div className="flex items-center justify-between w-full gap-1">
+                      <span className="font-semibold text-seal group-hover:text-seal">
+                        Phần {pIdx + 1}: {p.structure_vi}
+                      </span>
+                      <span className="shrink-0 rounded bg-seal/10 px-1.5 py-0.5 text-[10px] font-medium text-seal opacity-80 group-hover:opacity-100 group-hover:bg-seal group-hover:text-paper transition-colors">
+                        🎯 Luyện riêng
+                      </span>
+                    </div>
+                    <span className="jp text-[11px] text-stone group-hover:text-ink truncate max-w-full">
+                      {p.structure_jp}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </li>
         ))}
       </ul>
