@@ -20,17 +20,45 @@ import type { GrammarLesson, GrammarPoint, GrammarSearch } from "@/lib/study/typ
 import { cn } from "@/lib/cn";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
 
+/**
+ * Chuẩn hóa tham số query từ URL: loại bỏ các ký tự bọc ngoặc kép (%22 hoặc '"')
+ * do URL encoding hoặc định dạng search serializer của TanStack Router.
+ */
+function cleanParam(value: unknown): string {
+  if (typeof value !== "string") return "";
+  let str = value.trim();
+  if (str.includes("%22") || str.includes("%27")) {
+    try {
+      str = decodeURIComponent(str).trim();
+    } catch {
+      // bỏ qua nếu không decode được
+    }
+  }
+  while (
+    (str.startsWith('"') && str.endsWith('"')) ||
+    (str.startsWith("'") && str.endsWith("'"))
+  ) {
+    str = str.slice(1, -1).trim();
+  }
+  return str;
+}
+
 export const Route = createFileRoute("/grammar")({
   validateSearch: (search: Record<string, unknown>): GrammarSearch => ({
-    lesson: typeof search.lesson === "string" ? search.lesson : "",
-    point: typeof search.point === "string" ? search.point : "",
+    lesson: cleanParam(search.lesson),
+    point: cleanParam(search.point),
     drill: search.drill === true || search.drill === "true" || search.drill === "1",
   }),
   component: GrammarPage,
 });
 
 function GrammarPage() {
-  const search = Route.useSearch();
+  const rawSearch = Route.useSearch();
+  const search: GrammarSearch = {
+    ...rawSearch,
+    lesson: cleanParam(rawSearch.lesson),
+    point: cleanParam(rawSearch.point),
+  };
   const navigate = useNavigate({ from: "/grammar" });
   const setLast = useStudy((state) => state.setLast);
   const [showReading, setShowReading] = useState(false);
