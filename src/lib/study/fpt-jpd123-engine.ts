@@ -10,6 +10,7 @@ export type ExamQuestion = {
   promptJp: string;
   prompt: string;
   sentence: string;
+  reading?: string;
   options: string[];
   answer: string;
   explanation?: {

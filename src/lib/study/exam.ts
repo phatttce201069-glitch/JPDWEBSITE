@@ -13,6 +13,7 @@ export type ExamQuestion = {
   promptJp: string;
   prompt: string;
   sentence: string;
+  reading?: string;
   options: string[];
   answer: string;
   explanation?: {
@@ -470,6 +471,9 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
           wrongs,
         );
         if (question) {
+          if (ex.reading) {
+            question.reading = ex.reading.replace(kw, "（　　）");
+          }
           question.explanation = {
             meaning: ex.vi,
             grammar: point.structure_jp,
@@ -500,6 +504,9 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
         otherJpWrongs,
       );
       if (qTrans) {
+        if (ex.reading) {
+          qTrans.reading = ex.reading;
+        }
         qTrans.explanation = {
           meaning: ex.vi,
           grammar: point.structure_jp,
@@ -528,6 +535,9 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
         otherViWrongs,
       );
       if (qMean) {
+        if (ex.reading) {
+          qMean.reading = ex.reading;
+        }
         qMean.explanation = {
           meaning: ex.vi,
           grammar: point.structure_jp,

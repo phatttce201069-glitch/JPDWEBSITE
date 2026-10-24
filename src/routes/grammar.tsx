@@ -5,6 +5,7 @@ import {
   BookOpen,
   CheckCircle2,
   ChevronRight,
+  Languages,
   RotateCcw,
   Sparkles,
   Target,
@@ -16,6 +17,7 @@ import { grammar, pointById } from "@/lib/study/content";
 import { buildGrammarDrill, type ExamQuestion } from "@/lib/study/exam";
 import { useStudy } from "@/lib/study/store";
 import { speakJapanese } from "@/lib/study/speech";
+import { getOptionReading, getSentenceReading, hasKanji } from "@/lib/study/kana-reading";
 import type { GrammarLesson, GrammarPoint, GrammarSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
@@ -467,6 +469,7 @@ function GrammarDrill({
   const [picked, setPicked] = useState<string | null>(null);
   const [answers, setAnswers] = useState<(string | null)[]>(() => Array(paper.length).fill(null));
   const [closed, setClosed] = useState(false);
+  const [showKana, setShowKana] = useState(true);
   const nextRef = useRef<HTMLDivElement>(null);
 
   const pointIdx = point ? lesson.points.findIndex((p) => p.id === point.id) : -1;
@@ -556,16 +559,31 @@ function GrammarDrill({
         {/* Danh sách câu làm sai kèm lời giải chi tiết */}
         {missed.length > 0 ? (
           <div className="mt-8">
-            <h3 className="text-xs font-semibold tracking-wider text-stone uppercase">
-              Các câu cần lưu ý ({missed.length} câu)
-            </h3>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-xs font-semibold tracking-wider text-stone uppercase">
+                Các câu cần lưu ý ({missed.length} câu)
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowKana((v) => !v)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-sheet px-2.5 py-1 text-xs font-medium text-stone hover:text-ink hover:border-stone cursor-pointer transition-colors"
+                title="Bật/tắt hiển thị chữ Hiragana / Katakana bên dưới câu hỏi"
+              >
+                <Languages className="size-3 text-seal" />
+                <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
+              </button>
+            </div>
             <ul className="mt-3 divide-y divide-line border-y border-line">
               {missed.map((question) => (
                 <li key={question.id} className="py-4">
                   <p className="text-xs font-mono text-stone">Câu {question.id}</p>
                   <p className="mt-1 text-sm font-medium">{question.prompt}</p>
                   <div className="mt-2">
-                    <Sentence text={question.sentence} compact />
+                    <Sentence
+                      text={question.sentence}
+                      reading={showKana ? getSentenceReading(question.sentence, question) : null}
+                      compact
+                    />
                   </div>
                   <p className="mt-2 text-sm text-emerald-700">
                     Đáp án đúng: <span className="font-semibold">{question.answer}</span>
@@ -668,18 +686,39 @@ function GrammarDrill({
         <span className="tabular-nums font-medium">
           Câu {index + 1} / {paper.length}
         </span>
-        <span className="text-xs">
-          {point ? point.structure_jp : "Toàn bộ bài"}
-        </span>
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setShowKana((v) => !v)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-sheet px-2.5 py-1 text-xs font-medium text-stone hover:text-ink hover:border-stone cursor-pointer transition-colors"
+            title="Bật/tắt hiển thị chữ Hiragana / Katakana bên dưới câu hỏi"
+          >
+            <Languages className="size-3.5 text-seal" />
+            <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
+          </button>
+          <span className="text-xs">
+            {point ? point.structure_jp : "Toàn bộ bài"}
+          </span>
+        </div>
       </div>
 
       <ProgressLine value={index} max={paper.length} />
 
-      {current.promptJp ? <p className="jp mt-5 text-base leading-relaxed">{current.promptJp}</p> : null}
+      {current.promptJp ? (
+        <div className="mt-5">
+          <p className="jp text-base leading-relaxed text-ink">{current.promptJp}</p>
+          {showKana && hasKanji(current.promptJp) ? (
+            <p className="jp text-xs text-stone mt-0.5">{getSentenceReading(current.promptJp)}</p>
+          ) : null}
+        </div>
+      ) : null}
       <h1 className="mt-2 text-lg font-medium leading-snug">{current.prompt}</h1>
 
       <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
-        <Sentence text={current.sentence} />
+        <Sentence
+          text={current.sentence}
+          reading={showKana ? getSentenceReading(current.sentence, current) : null}
+        />
       </div>
 
       <div className="mt-3 grid gap-2">
@@ -687,6 +726,7 @@ function GrammarDrill({
           const letter = String.fromCharCode(65 + optionIndex);
           const isAnswer = option === current.answer;
           const selectedOption = picked === option;
+          const optReading = showKana ? getOptionReading(option) : null;
           let tone = "border-line bg-sheet text-ink hover:border-stone cursor-pointer";
           if (picked && isAnswer) tone = "border-emerald-600 bg-emerald-600 text-white font-medium";
           else if (selectedOption) tone = "border-seal bg-seal/10 text-seal";
@@ -699,7 +739,16 @@ function GrammarDrill({
               className={cn("flex min-h-12 items-start gap-3 rounded-md border px-4 py-3 text-left text-base transition-colors", tone)}
             >
               <span className="mt-0.5 w-6 shrink-0 font-medium">{letter}.</span>
-              <span className={cn("break-words", /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg")}>{option}</span>
+              <div className="min-w-0 flex-1">
+                <span className={cn("block break-words", /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg")}>
+                  {option}
+                </span>
+                {optReading && optReading !== option ? (
+                  <span className={cn("jp block text-xs mt-0.5 font-normal", picked && isAnswer ? "text-white/90" : "text-stone")}>
+                    {optReading}
+                  </span>
+                ) : null}
+              </div>
             </button>
           );
         })}
@@ -738,12 +787,36 @@ function GrammarDrill({
   );
 }
 
-function Sentence({ text, compact = false }: { text: string; compact?: boolean }) {
+function Sentence({
+  text,
+  reading,
+  compact = false,
+}: {
+  text: string;
+  reading?: string | null;
+  compact?: boolean;
+}) {
   return (
-    <div className={cn("jp leading-loose text-ink", compact ? "text-base leading-relaxed" : "text-xl")}>
-      {text.split("\n").map((line, lineIndex) => (
-        <p key={lineIndex}>{renderLine(line)}</p>
-      ))}
+    <div>
+      <div className={cn("jp leading-loose text-ink", compact ? "text-base leading-relaxed" : "text-xl")}>
+        {text.split("\n").map((line, lineIndex) => (
+          <p key={lineIndex}>{renderLine(line)}</p>
+        ))}
+      </div>
+
+      {reading && reading !== text ? (
+        <div className="mt-3 pt-3 border-t border-line/60">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-seal uppercase tracking-wider mb-1">
+            <Languages className="size-3" />
+            <span>Cách đọc (Hiragana / Katakana):</span>
+          </div>
+          <div className={cn("jp leading-loose text-stone font-normal", compact ? "text-sm leading-relaxed" : "text-base")}>
+            {reading.split("\n").map((line, lineIndex) => (
+              <p key={lineIndex}>{renderLine(line)}</p>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
