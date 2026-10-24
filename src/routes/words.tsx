@@ -40,6 +40,7 @@ function WordsPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>(() => starred);
   const [lessonFilter, setLessonFilter] = useState<string>("all");
   const [onlyStarredInLesson, setOnlyStarredInLesson] = useState(false);
+  const [includeAllSubLessons, setIncludeAllSubLessons] = useState(false);
 
   // Keep selectedIds in sync whenever starred items change
   useEffect(() => {
@@ -73,8 +74,25 @@ function WordsPage() {
     return starredWords.filter((w) => selectedIds.includes(w.id));
   }, [starredWords, selectedIds]);
 
+  // Parent lesson prefix for JPD123 multi-section lessons (e.g. "JPD123 - Bài 4")
+  const parentLessonPrefix = useMemo(() => {
+    if (!search.lesson.includes(" · ")) return "";
+    return search.lesson.split(" · ")[0] ?? "";
+  }, [search.lesson]);
+
+  const allSubWords = useMemo(() => {
+    if (!parentLessonPrefix) return [];
+    return vocabulary.filter((w) => w.lesson.startsWith(parentLessonPrefix));
+  }, [parentLessonPrefix]);
+
   // Words for the current view
-  const baseLessonWords = !search.lesson ? [] : isStarredView ? displayedStarredWords : wordsIn(search.lesson);
+  const baseLessonWords = !search.lesson
+    ? []
+    : isStarredView
+      ? displayedStarredWords
+      : includeAllSubLessons && allSubWords.length > 0
+        ? allSubWords
+        : wordsIn(search.lesson);
   const words = !search.lesson
     ? []
     : isStarredView
@@ -90,7 +108,13 @@ function WordsPage() {
       : starredWords
     : words;
 
-  const title = isStarredView ? "Từ vựng đã đánh dấu" : search.lesson ? lessonTitle(search.lesson) : "Từ vựng";
+  const title = isStarredView
+    ? "Từ vựng đã đánh dấu"
+    : search.lesson
+      ? includeAllSubLessons && parentLessonPrefix
+        ? `Toàn bộ ${lessonTitle(parentLessonPrefix)}`
+        : lessonTitle(search.lesson)
+      : "Từ vựng";
   const index = Math.min(search.at, Math.max(practiceWords.length - 1, 0));
   const current = practiceWords[index];
 
@@ -301,17 +325,32 @@ function WordsPage() {
               ))}
             </div>
 
-            {/* In regular lesson: quick toggle for starred words */}
+            {/* In regular lesson: quick toggle for starred words & multi-part lesson expansion */}
             {!isStarredView && (
-              <Toggle
-                on={onlyStarredInLesson}
-                onClick={() => {
-                  setOnlyStarredInLesson((prev) => !prev);
-                  setSearch({ at: 0 });
-                }}
-              >
-                {`⭐ Chỉ từ đã lưu (${starredInCurrentLesson.length})`}
-              </Toggle>
+              <div className="flex flex-wrap items-center gap-2">
+                {parentLessonPrefix && allSubWords.length > wordsIn(search.lesson).length ? (
+                  <Toggle
+                    on={includeAllSubLessons}
+                    onClick={() => {
+                      setIncludeAllSubLessons((prev) => !prev);
+                      setSearch({ at: 0 });
+                    }}
+                  >
+                    {includeAllSubLessons
+                      ? `Đang gộp cả ${lessonTitle(parentLessonPrefix)} (${allSubWords.length} từ)`
+                      : `Gộp cả ${lessonTitle(parentLessonPrefix)} (${allSubWords.length} từ)`}
+                  </Toggle>
+                ) : null}
+                <Toggle
+                  on={onlyStarredInLesson}
+                  onClick={() => {
+                    setOnlyStarredInLesson((prev) => !prev);
+                    setSearch({ at: 0 });
+                  }}
+                >
+                  {`⭐ Chỉ từ đã lưu (${starredInCurrentLesson.length})`}
+                </Toggle>
+              </div>
             )}
           </div>
 
