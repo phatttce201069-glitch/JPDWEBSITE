@@ -17,7 +17,7 @@ import { grammar, pointById } from "@/lib/study/content";
 import { buildGrammarDrill, type ExamQuestion } from "@/lib/study/exam";
 import { useStudy } from "@/lib/study/store";
 import { speakJapanese } from "@/lib/study/speech";
-import { getOptionReading, getSentenceReading, hasKanji } from "@/lib/study/kana-reading";
+import { getOptionReading, getSentenceReading, hasKanji, isViToJpQuestion } from "@/lib/study/kana-reading";
 import type { GrammarLesson, GrammarPoint, GrammarSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
@@ -574,23 +574,26 @@ function GrammarDrill({
               </button>
             </div>
             <ul className="mt-3 divide-y divide-line border-y border-line">
-              {missed.map((question) => (
-                <li key={question.id} className="py-4">
-                  <p className="text-xs font-mono text-stone">Câu {question.id}</p>
-                  <p className="mt-1 text-sm font-medium">{question.prompt}</p>
-                  <div className="mt-2">
-                    <Sentence
-                      text={question.sentence}
-                      reading={showKana ? getSentenceReading(question.sentence, question) : null}
-                      compact
-                    />
-                  </div>
-                  <p className="mt-2 text-sm text-emerald-700">
-                    Đáp án đúng: <span className="font-semibold">{question.answer}</span>
-                  </p>
-                  <QuestionExplanationPanel question={question} defaultOpen={true} compact />
-                </li>
-              ))}
+              {missed.map((question) => {
+                const isMissedViToJp = isViToJpQuestion(question.sentence, question);
+                return (
+                  <li key={question.id} className="py-4">
+                    <p className="text-xs font-mono text-stone">Câu {question.id}</p>
+                    <p className="mt-1 text-sm font-medium">{question.prompt}</p>
+                    <div className="mt-2">
+                      <Sentence
+                        text={question.sentence}
+                        reading={!isMissedViToJp && showKana ? getSentenceReading(question.sentence, question) : null}
+                        compact
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-emerald-700">
+                      Đáp án đúng: <span className="font-semibold">{question.answer}</span>
+                    </p>
+                    <QuestionExplanationPanel question={question} defaultOpen={true} compact />
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ) : (
@@ -682,77 +685,96 @@ function GrammarDrill({
         )}
       </div>
 
-      <div className="mt-4 mb-3 flex items-center justify-between text-sm text-stone">
-        <span className="tabular-nums font-medium">
-          Câu {index + 1} / {paper.length}
-        </span>
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => setShowKana((v) => !v)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-sheet px-2.5 py-1 text-xs font-medium text-stone hover:text-ink hover:border-stone cursor-pointer transition-colors"
-            title="Bật/tắt hiển thị chữ Hiragana / Katakana bên dưới câu hỏi"
-          >
-            <Languages className="size-3.5 text-seal" />
-            <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
-          </button>
-          <span className="text-xs">
-            {point ? point.structure_jp : "Toàn bộ bài"}
-          </span>
-        </div>
-      </div>
-
-      <ProgressLine value={index} max={paper.length} />
-
-      {current.promptJp ? (
-        <div className="mt-5">
-          <p className="jp text-base leading-relaxed text-ink">{current.promptJp}</p>
-          {showKana && hasKanji(current.promptJp) ? (
-            <p className="jp text-xs text-stone mt-0.5">{getSentenceReading(current.promptJp)}</p>
-          ) : null}
-        </div>
-      ) : null}
-      <h1 className="mt-2 text-lg font-medium leading-snug">{current.prompt}</h1>
-
-      <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
-        <Sentence
-          text={current.sentence}
-          reading={showKana ? getSentenceReading(current.sentence, current) : null}
-        />
-      </div>
-
-      <div className="mt-3 grid gap-2">
-        {current.options.map((option, optionIndex) => {
-          const letter = String.fromCharCode(65 + optionIndex);
-          const isAnswer = option === current.answer;
-          const selectedOption = picked === option;
-          const optReading = showKana ? getOptionReading(option) : null;
-          let tone = "border-line bg-sheet text-ink hover:border-stone cursor-pointer";
-          if (picked && isAnswer) tone = "border-emerald-600 bg-emerald-600 text-white font-medium";
-          else if (selectedOption) tone = "border-seal bg-seal/10 text-seal";
-          return (
-            <button
-              key={`${option}-${optionIndex}`}
-              type="button"
-              disabled={picked !== null}
-              onClick={() => choose(option)}
-              className={cn("flex min-h-12 items-start gap-3 rounded-md border px-4 py-3 text-left text-base transition-colors", tone)}
-            >
-              <span className="mt-0.5 w-6 shrink-0 font-medium">{letter}.</span>
-              <div className="min-w-0 flex-1">
-                <span className={cn("block break-words", /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg")}>
-                  {option}
-                </span>
-                {optReading && optReading !== option ? (
-                  <span className={cn("jp block text-xs mt-0.5 font-normal", picked && isAnswer ? "text-white/90" : "text-stone")}>
-                    {optReading}
+      {/* Cờ kiểm tra câu hỏi dạng dịch tiếng Việt -> tiếng Nhật */}
+      {(() => {
+        const isViToJp = isViToJpQuestion(current.sentence, current);
+        return (
+          <>
+            <div className="mt-4 mb-3 flex items-center justify-between text-sm text-stone">
+              <span className="tabular-nums font-medium">
+                Câu {index + 1} / {paper.length}
+              </span>
+              <div className="flex items-center gap-2.5">
+                {!isViToJp ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowKana((v) => !v)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-line bg-sheet px-2.5 py-1 text-xs font-medium text-stone hover:text-ink hover:border-stone cursor-pointer transition-colors"
+                    title="Bật/tắt hiển thị chữ Hiragana / Katakana bên dưới câu hỏi"
+                  >
+                    <Languages className="size-3.5 text-seal" />
+                    <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
+                  </button>
+                ) : (
+                  <span
+                    className="inline-flex items-center gap-1.5 rounded-full border border-line/60 bg-sheet/60 px-2.5 py-1 text-[11px] font-medium text-stone"
+                    title="Câu hỏi từ tiếng Việt sang tiếng Nhật không hiển thị Hiragana để tránh làm lộ đáp án"
+                  >
+                    <Languages className="size-3 text-stone/70" />
+                    <span>Ẩn Hiragana (tránh lộ đáp án)</span>
                   </span>
+                )}
+                <span className="text-xs">
+                  {point ? point.structure_jp : "Toàn bộ bài"}
+                </span>
+              </div>
+            </div>
+
+            <ProgressLine value={index} max={paper.length} />
+
+            {current.promptJp ? (
+              <div className="mt-5">
+                <p className="jp text-base leading-relaxed text-ink">{current.promptJp}</p>
+                {!isViToJp && showKana && hasKanji(current.promptJp) ? (
+                  <p className="jp text-xs text-stone mt-0.5">{getSentenceReading(current.promptJp)}</p>
                 ) : null}
               </div>
-            </button>
-          );
-        })}
-      </div>
+            ) : null}
+            <h1 className="mt-2 text-lg font-medium leading-snug">{current.prompt}</h1>
+
+            <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
+              <Sentence
+                text={current.sentence}
+                reading={!isViToJp && showKana ? getSentenceReading(current.sentence, current) : null}
+              />
+            </div>
+
+            <div className="mt-3 grid gap-2">
+              {current.options.map((option, optionIndex) => {
+                const letter = String.fromCharCode(65 + optionIndex);
+                const isAnswer = option === current.answer;
+                const selectedOption = picked === option;
+                // Tuyệt đối không hiển thị reading của đáp án cho câu hỏi dịch tiếng Việt sang tiếng Nhật
+                const optReading = !isViToJp && showKana ? getOptionReading(option) : null;
+                let tone = "border-line bg-sheet text-ink hover:border-stone cursor-pointer";
+                if (picked && isAnswer) tone = "border-emerald-600 bg-emerald-600 text-white font-medium";
+                else if (selectedOption) tone = "border-seal bg-seal/10 text-seal";
+                return (
+                  <button
+                    key={`${option}-${optionIndex}`}
+                    type="button"
+                    disabled={picked !== null}
+                    onClick={() => choose(option)}
+                    className={cn("flex min-h-12 items-start gap-3 rounded-md border px-4 py-3 text-left text-base transition-colors", tone)}
+                  >
+                    <span className="mt-0.5 w-6 shrink-0 font-medium">{letter}.</span>
+                    <div className="min-w-0 flex-1">
+                      <span className={cn("block break-words", /[ぁ-んァ-ヶ一-龯]/.test(option) && "jp text-lg")}>
+                        {option}
+                      </span>
+                      {optReading && optReading !== option ? (
+                        <span className={cn("jp block text-xs mt-0.5 font-normal", picked && isAnswer ? "text-white/90" : "text-stone")}>
+                          {optReading}
+                        </span>
+                      ) : null}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        );
+      })()}
 
       {/* Hiển thị phân tích lời giải chi tiết ngay sau khi chọn đáp án */}
       {picked && (
