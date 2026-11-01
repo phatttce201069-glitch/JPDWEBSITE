@@ -15,21 +15,7 @@ export type QuestionExplanation = {
 export function getAnswerMeaning(answer: string, question?: ExamQuestion): string | null {
   if (!answer) return null;
 
-  // 1. Nếu đáp án trùng với từ vựng trong từ điển
-  const vocabHit = vocabulary.find(
-    (w) => w.word === answer || w.reading === answer || (w as Record<string, unknown>).kana === answer,
-  );
-  if (vocabHit?.meaning) return vocabHit.meaning;
-
-  // 2. Nếu đáp án là chữ Hán hoặc Hiragana trong bảng chữ cái
-  const alphaHit = alphabet.find((a) => a.char === answer);
-  if (alphaHit?.example) {
-    const match = alphaHit.example.match(/\(([^)]+)\)/);
-    if (match?.[1]) return match[1];
-    return alphaHit.example;
-  }
-
-  // 3. Bảng tra cứu nghĩa nhanh các từ vựng, ngữ pháp, trợ từ thông dụng trong JPD123
+  // 1. Bảng tra cứu nghĩa nhanh các từ vựng, ngữ pháp, trợ từ thông dụng trong JPD123
   const GLOSSARY: Record<string, string> = {
     // Bài 6
     やくそく: "cuộc hẹn, lời hứa",
@@ -178,6 +164,20 @@ export function getAnswerMeaning(answer: string, question?: ExamQuestion): strin
   };
 
   if (GLOSSARY[answer]) return GLOSSARY[answer];
+
+  // 2. Nếu đáp án trùng với từ vựng trong từ điển
+  const vocabHit = vocabulary.find(
+    (w) => w.word === answer || w.reading === answer || (w as Record<string, unknown>).kana === answer,
+  );
+  if (vocabHit?.meaning) return vocabHit.meaning;
+
+  // 3. Nếu đáp án là chữ Hán hoặc Hiragana trong bảng chữ cái
+  const alphaHit = alphabet.find((a) => a.char === answer);
+  if (alphaHit?.example) {
+    const match = alphaHit.example.match(/\(([^)]+)\)/);
+    if (match?.[1]) return match[1];
+    return alphaHit.example;
+  }
 
   // 4. Nếu question có explanation.reason ghi nghĩa
   if (question?.explanation?.reason) {

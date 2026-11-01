@@ -334,6 +334,65 @@ test("buildGrammarDrill supports practicing single grammar sections (vd: Bài 6 
   assert.ok(paper65.length >= 4, `Phần 6_5 phải tạo được ít nhất 4 câu hỏi, nhận được ${paper65.length}`);
 });
 
+test("buildFptJpd123Exam randomizes question order so Kanji is not locked to first 10 questions", () => {
+  // Chạy 5 lượt tạo đề, kiểm tra rằng thứ tự câu hỏi đã được xáo trộn ngẫu nhiên
+  let hasNonKanjiInFirst10 = false;
+
+  for (let i = 0; i < 5; i++) {
+    const paper = buildFptJpd123Exam();
+    assert.equal(paper.length, 30);
+    const first10Sections = paper.slice(0, 10).map((q) => q.section);
+    // Nếu được xáo trộn, 10 câu đầu sẽ không thể luôn luôn là 10 câu Kanji
+    if (first10Sections.some((sec) => sec !== "Kanji")) {
+      hasNonKanjiInFirst10 = true;
+      break;
+    }
+  }
+
+  assert.ok(
+    hasNonKanjiInFirst10,
+    "Thứ tự 30 câu hỏi phải được xáo trộn ngẫu nhiên, không được cố định 10 câu đầu luôn là Kanji",
+  );
+});
+
+test("buildFptJpd123Exam with single lesson 6 produces 30 non-repeating questions solely from Bài 6", () => {
+  const paper = buildFptJpd123Exam(["6"]);
+
+  assert.equal(paper.length, 30, "Đề thi Bài 6 phải có đủ 30 câu hỏi");
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30, "30 câu không trùng lặp");
+
+  // Đảm bảo 100% câu hỏi thuộc Bài 6
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(
+      lesson.includes("Bài 6"),
+      `Câu ${q.id} (${q.sentence}) phải thuộc Bài 6 nhưng lesson lại là: "${lesson}"`,
+    );
+    assert.ok(!lesson.includes("Bài 4"), `Câu ${q.id} không được thuộc Bài 4`);
+    assert.ok(!lesson.includes("Bài 5"), `Câu ${q.id} không được thuộc Bài 5`);
+    assert.ok(!lesson.includes("Bài 7"), `Câu ${q.id} không được thuộc Bài 7`);
+
+    // Tuyệt đối không chứa thể て của Bài 7
+    assert.ok(!q.sentence.includes("てください"), `Câu ${q.id} không được chứa てください`);
+    assert.ok(!q.sentence.includes("スプーン"), `Câu ${q.id} không được chứa đồ dùng Bài 7`);
+  }
+});
+
+test("getAnswerMeaning and Hiragana readings work accurately for exam questions", async () => {
+  const { getAnswerMeaning } = await import("./explanation.ts");
+  const { getSentenceReading } = await import("./kana-reading.ts");
+
+  // Kiểm tra dịch nghĩa đáp án
+  assert.equal(getAnswerMeaning("やくそく"), "cuộc hẹn, lời hứa");
+  assert.equal(getAnswerMeaning("パーティー"), "bữa tiệc");
+  assert.equal(getAnswerMeaning("より"), "hơn (dùng trong so sánh hơn)");
+
+  // Kiểm tra phiên âm Hiragana cho câu hỏi thi
+  const reading = getSentenceReading("友達と映画を見る（　）がありますから、早く帰ります。");
+  assert.equal(reading, "ともだちとえいがをみる（　）がありますから、はやくかえります。");
+});
+
+
 
 
 
