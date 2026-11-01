@@ -50,6 +50,63 @@ test("buildGrammarDrill isolates section-specific questions for Bai 6", () => {
   }
 });
 
+test("buildGrammarDrill isolates section-specific questions for Bai 7", () => {
+  // 1. N1 に N2 (Người/Động vật) が います (7_1)
+  const q71 = buildGrammarDrill("7", "7_1");
+  assert.ok(q71.length >= 4, "Phần 7_1 phải có ít nhất 4 câu hỏi");
+  for (const q of q71) {
+    const text = `${q.prompt} ${q.sentence} ${q.answer} ${q.explanation?.grammar || ""}`;
+    assert.ok(
+      text.includes("います") || text.includes("に") || text.includes("が"),
+      `Câu ${q.id} phải thuộc chuyên đề N1 に N2 が います: ${text}`,
+    );
+  }
+
+  // 2. Vて ください (7_2)
+  const q72 = buildGrammarDrill("7", "7_2");
+  assert.ok(q72.length >= 4, "Phần 7_2 phải có ít nhất 4 câu hỏi");
+  for (const q of q72) {
+    const text = `${q.prompt} ${q.sentence} ${q.answer} ${q.explanation?.grammar || ""}`;
+    assert.ok(
+      text.includes("ください") || text.includes("て"),
+      `Câu ${q.id} phải thuộc chuyên đề Vて ください: ${text}`,
+    );
+  }
+
+  // 3. Vて います (7_3)
+  const q73 = buildGrammarDrill("7", "7_3");
+  assert.ok(q73.length >= 4, "Phần 7_3 phải có ít nhất 4 câu hỏi");
+  for (const q of q73) {
+    const text = `${q.prompt} ${q.sentence} ${q.answer} ${q.explanation?.grammar || ""}`;
+    assert.ok(
+      text.includes("ています") || text.includes("ていますか") || text.includes("います"),
+      `Câu ${q.id} phải thuộc chuyên đề Vて います: ${text}`,
+    );
+  }
+
+  // 4. V ましょうか (7_4)
+  const q74 = buildGrammarDrill("7", "7_4");
+  assert.ok(q74.length >= 4, "Phần 7_4 phải có ít nhất 4 câu hỏi");
+  for (const q of q74) {
+    const text = `${q.prompt} ${q.sentence} ${q.answer} ${q.explanation?.grammar || ""}`;
+    assert.ok(
+      text.includes("ましょうか") || text.includes("ましょう"),
+      `Câu ${q.id} phải thuộc chuyên đề V ましょうか: ${text}`,
+    );
+  }
+
+  // 5. Vます かた (7_5)
+  const q75 = buildGrammarDrill("7", "7_5");
+  assert.ok(q75.length >= 4, "Phần 7_5 phải có ít nhất 4 câu hỏi");
+  for (const q of q75) {
+    const text = `${q.prompt} ${q.sentence} ${q.answer} ${q.explanation?.grammar || ""}`;
+    assert.ok(
+      text.includes("かた") || text.includes("方"),
+      `Câu ${q.id} phải thuộc chuyên đề Vます かた: ${text}`,
+    );
+  }
+});
+
 test("buildGrammarDrill supports multi-section selection", () => {
   const paper = buildGrammarDrill("6", "6_1,6_2");
   assert.ok(paper.length >= 8, "Luyện 2 phần 6_1 và 6_2 phải tạo ra ít nhất 8 câu hỏi");

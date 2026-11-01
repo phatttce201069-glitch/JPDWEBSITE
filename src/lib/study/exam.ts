@@ -377,11 +377,11 @@ const POINT_KEY_MAPPINGS: Record<string, string[]> = {
   "6_7": ["mai", "mai-cd", "mai-shatsu"],
 
   // Bài 7
-  "7_1": ["te", "ok-te", "order-te", "sit-te", "dono", "teiru", "iru"],
-  "7_2": ["suki", "ask-suki", "ok-suki", "sit-suki", "bad-suki"],
-  "7_3": ["zehi"],
-  "7_4": ["mou", "mada", "ok-mou", "sit-mou"],
-  "7_5": ["kata1", "kata2", "kata3"],
+  "7_1": ["iru", "in-park", "ask-who-iru", "sit-iru"],
+  "7_2": ["te", "ok-te", "sit-te", "te-kudasai-fill", "order-te-kudasai"],
+  "7_3": ["teiru", "ask-teiru", "sit-teiru"],
+  "7_4": ["mashouka", "help-mashouka", "sit-mashouka"],
+  "7_5": ["kata1", "kata2", "kata3", "sit-kata"],
 };
 
 function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoint): ExamQuestion[] {
@@ -417,6 +417,16 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
     て: ["た", "ます", "ない", "る"],
     すき: ["きらい", "ほしい", "いい", "じょうず"],
     方: ["かた", "ほう", "まえ", "あと"],
+    読み方: ["行き方", "作り方", "使い方"],
+    作り方: ["使い方", "読み方", "行き方"],
+    使い方: ["作り方", "読み方", "行き方"],
+    行き方: ["読み方", "作り方", "使い方"],
+    持ち方: ["作り方", "読み方", "行き方"],
+    います: ["あります", "します", "いきます", "きます"],
+    ください: ["ましょう", "ました", "ません", "たいです"],
+    てください: ["ましょうか", "ませんか", "ました", "てくださいません"],
+    ています: ["ました", "ません", "てください", "たいです"],
+    ましょうか: ["ましょう", "ませんか", "ました", "てください"],
     どこ: ["だれ", "なに", "いつ", "いくら"],
     いくら: ["どこ", "なんがい", "だれ", "いつ"],
     何階: ["どこ", "いくら", "なんさい", "だれ"],
@@ -447,9 +457,11 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
   else if (point.id === "5_4") targetKeywords.push("ました");
   else if (point.id === "5_6") targetKeywords.push("から");
   else if (point.id === "5_7") targetKeywords.push("と");
-  else if (point.id === "7_2") targetKeywords.push("すき");
-  else if (point.id === "7_4") targetKeywords.push("もう");
-  else if (point.id === "7_5") targetKeywords.push("方");
+  else if (point.id === "7_1") targetKeywords.push("います", "に", "が");
+  else if (point.id === "7_2") targetKeywords.push("ください", "て");
+  else if (point.id === "7_3") targetKeywords.push("ています");
+  else if (point.id === "7_4") targetKeywords.push("ましょうか");
+  else if (point.id === "7_5") targetKeywords.push("読み方", "作り方", "使い方", "行き方", "持ち方", "方");
 
   const allLessonExamples = lesson.points.flatMap((p) => p.examples);
 
@@ -959,51 +971,73 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
     push("mai-shatsu", FILL, "デパートでしろいシャツを2（　　）かいました。", "まい", ["だい", "こ", "かい"]);
   }
   if (bai === "7") {
-    push("suki", FILL, "いぬ（　　）すきです。", "が", ["を", "に", "で"]);
-    push("te", FILL, "ここになまえを（　　）ください。", "かいて", ["のんで", "かけて", "かって"]);
-    push("kata1", FILL, "A：カレーの（　　）をおしえてください。\nB：いいですよ。", "つくりかた", ["しかた", "つかいかた", "とりかた"]);
-    push("kata2", FILL, "えきまでの（　　）をおしえてください。", "いきかた", ["よみかた", "つくりかた", "もちかた"]);
-    push("kata3", FILL, "このかんじの（　　）をおしえてください。", "よみかた", ["いきかた", "つくりかた", "つかいかた"]);
-    push(
-      "dono",
-      FILL,
-      "A：すずきさん、おさらをとってください。\nB：（　　）おさらですか。\nA：（　　）です。",
-      "どの / それ",
-      ["どれ / その", "どの / その", "どれ / それ"],
-    );
-    push("teiru", FILL, "山口さんは今あそこで本を（　　）。", "よんでいます", ["かけています", "すっています", "おしえています"]);
-    push("zehi", FILL, "このカレーはおいしいですよ。ぜひ（　　）。", "たべてください", ["たべましょうか", "たべませんか", "たべます"]);
-    push("mou", FILL, "もうごはんを（　　）。", "たべました", ["たべます", "たべて", "たべませんか"]);
-    push("mada", FILL, "まだごはんを（　　）。", "たべていません", ["たべました", "たべます", "たべて"]);
-    push("iru", FILL, "きむらさん（　　）こうえん（　　）います。", "は / に", ["に / は", "と / に", "は / が"]);
-    push("ask-suki", MATCH_Q, "B：いぬがすきです。", "なにがすきですか。", ["どこがすきますか。", "いくらがすきですか。", "だれをすきますか。"]);
-    push("ok-suki", GRAM_OK, "「すき」の文", "いぬがすきです。", ["いぬをすきです。", "いぬがすきます。", "いぬはすきます。"]);
-    push("ok-te", GRAM_OK, "て形の頼み方", "なまえをかいてください。", ["なまえをかきますください。", "なまえをかいてますください。", "なまえをかいたください。"]);
-    push("ok-mou", GRAM_OK, "「もう」の文", "もうたべました。", ["もうたべますた。", "まだたべました。", "もうたべてです。"]);
-    push("order-te", ORDER, "あさごはん　／　を　／　たべて　／　いきます", "あさごはんをたべていきます。", [
-      "たべてあさごはんをいきます。",
-      "あさごはんたべてをいきます。",
-      "いきますあさごはんをたべて。",
+    // 7_1: N1 に N2 (Người/Động vật) が います
+    push("iru", FILL, "きむらさんは こうえん（　　）います。", "に", ["で", "へ", "を"]);
+    push("in-park", FILL, "にわ（　　）いぬがいます。", "に", ["で", "へ", "を"]);
+    push("ask-who-iru", MATCH_Q, "B：あそこに たなかさんが います。", "あそこに だれが いますか。", [
+      "あそこに どこが いますか。",
+      "あそこに なにが ありますか。",
+      "あそこは いくらですか。",
     ]);
-    push("sit-suki", SIT, "Bạn muốn nói mình thích chó.", "いぬがすきです。", [
-      "いぬをすきです。",
-      "いぬがすきます。",
-      "いぬはすきます。",
+    push("sit-iru", SIT, "Bạn muốn nói trong sân có một con chó.", "にわにいぬがいます。", [
+      "にわにいぬがあります。",
+      "にわでいぬがいます。",
+      "にわにいぬをいます。",
+    ]);
+
+    // 7_2: Vて ください
+    push("te", FILL, "ここになまえを（　　）ください。", "かいて", ["のんで", "かけて", "かって"]);
+    push("te-kudasai-fill", FILL, "ちょっと（　　）ください。", "まって", ["まちます", "まつ", "まった"]);
+    push("ok-te", GRAM_OK, "て形の頼み方", "なまえをかいてください。", [
+      "なまえをかきますください。",
+      "なまえをかいてますください。",
+      "なまえをかいたください。",
     ]);
     push("sit-te", SIT, "Bạn muốn nhờ người kia viết tên vào đây.", "ここになまえをかいてください。", [
       "ここになまえをかきますください。",
       "ここになまえをかいてますください。",
       "ここになまえをかいたください。",
     ]);
-    push("sit-mou", SIT, "Bạn muốn nói mình ăn cơm rồi.", "もうごはんをたべました。", [
-      "まだごはんをたべました。",
-      "もうごはんをたべますた。",
-      "もうごはんをたべてです。",
+    push("order-te-kudasai", ORDER, "まど　／　を　／　あけて　／　ください", "まどをあけてください。", [
+      "あけてまどをください。",
+      "まどあけてをください。",
+      "くださいまどをあけて。",
     ]);
-    push("bad-suki", WRONG, "「すき」の文", "いぬをすきです。", [
-      "いぬがすきです。",
-      "なまえをかいてください。",
-      "もうたべました。",
+
+    // 7_3: Vて います
+    push("teiru", FILL, "山口さんは今あそこで本を（　　）。", "よんでいます", ["かけています", "すっています", "おしえています"]);
+    push("ask-teiru", MATCH_Q, "B：いま、にほんごをべんきょうしています。", "いま、なにをしていますか。", [
+      "いま、どこへいきますか。",
+      "いま、なんじですか。",
+      "だれとべんきょうしますか。",
+    ]);
+    push("sit-teiru", SIT, "Bạn muốn nói bên ngoài trời đang mưa.", "そとであめがふっています。", [
+      "そとであめがふります。",
+      "そとであめをふっています。",
+      "そとであめがふりました。",
+    ]);
+
+    // 7_4: V ましょうか
+    push("mashouka", FILL, "おもそうですね。にもつを（　　）か。", "もちましょう", ["もってください", "もちました", "もっています"]);
+    push("help-mashouka", FILL, "A：エアコンを（　　）。\nB：ええ、おねがいします。", "つけましょうか", [
+      "つけましょう",
+      "つけてください",
+      "つけました",
+    ]);
+    push("sit-mashouka", SIT, "Bạn thấy bạn mình bận và muốn chủ động đề nghị giúp một tay.", "てつだいましょうか。", [
+      "てつだってください。",
+      "てつだいましたか。",
+      "てつだいません。",
+    ]);
+
+    // 7_5: Vます かた
+    push("kata1", FILL, "A：カレーの（　　）をおしえてください。\nB：いいですよ。", "つくりかた", ["しかた", "つかいかた", "とりかた"]);
+    push("kata2", FILL, "えきまでの（　　）をおしえてください。", "いきかた", ["よみかた", "つくりかた", "もちかた"]);
+    push("kata3", FILL, "このかんじの（　　）をおしえてください。", "よみかた", ["いきかた", "つくりかた", "つかいかた"]);
+    push("sit-kata", SIT, "Bạn muốn hỏi người khác cách đọc chữ Hán này.", "このかんじのよみかたをおしえてください。", [
+      "このかんじのよみかたをならいました。",
+      "このかんじはいくらですか。",
+      "このかんじをよみましょうか。",
     ]);
   }
   return questions;
