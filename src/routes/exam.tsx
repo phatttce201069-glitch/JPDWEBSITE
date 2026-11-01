@@ -29,7 +29,7 @@ import {
   type ExamQuestion,
 } from "@/lib/study/exam";
 import { findReading, vocabulary } from "@/lib/study/content";
-import { getSentenceReading, isViToJpQuestion } from "@/lib/study/kana-reading";
+import { getOptionReading, getSentenceReading, isViToJpQuestion } from "@/lib/study/kana-reading";
 import { useStudy } from "@/lib/study/store";
 import type { ExamSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
@@ -657,9 +657,20 @@ function ExamPage() {
               Toàn bộ đề thi ({paper.length} câu)
             </button>
           </div>
-          <span className="text-xs text-stone">
-            💡 Có đầy đủ: nghĩa, ngữ pháp, bài học, mẹo giải & lý do chọn
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowKana((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-line bg-sheet px-2.5 py-1 text-xs font-medium text-stone hover:text-ink hover:border-stone cursor-pointer transition-colors"
+              title="Bật/tắt hiển thị chữ Hiragana / Katakana bên dưới câu hỏi"
+            >
+              <Languages className="size-3 text-seal" />
+              <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
+            </button>
+            <span className="text-xs text-stone hidden sm:inline">
+              💡 Có đầy đủ: nghĩa, ngữ pháp, bài học, mẹo giải & lý do chọn
+            </span>
+          </div>
         </div>
 
         {/* Danh sách câu hỏi kèm lời giải chi tiết */}
@@ -683,14 +694,19 @@ function ExamPage() {
                 const userAnswer = qIndex >= 0 ? answers[qIndex] : null;
                 const isCorrect = userAnswer === question.answer;
 
+                const isMissedViToJp = isViToJpQuestion(question.sentence, question);
                 const isMissedReadingQ =
                   question.section === "Kanji" &&
                   (question.prompt.includes("cách đọc") ||
                     question.prompt.includes("読み方") ||
                     question.prompt.includes("âm Hán") ||
                     question.prompt.includes("âm thuần Nhật"));
-                const answerReading = !isMissedReadingQ ? findReading(question.answer) : null;
-                const userReading = userAnswer && !isMissedReadingQ ? findReading(userAnswer) : null;
+                const answerReading = !isMissedReadingQ && !isMissedViToJp && showKana
+                  ? getOptionReading(question.answer) || findReading(question.answer)
+                  : null;
+                const userReading = userAnswer && !isMissedReadingQ && !isMissedViToJp && showKana
+                  ? getOptionReading(userAnswer) || findReading(userAnswer)
+                  : null;
 
                 return (
                   <li key={question.id} className="py-4 space-y-2">
@@ -715,7 +731,12 @@ function ExamPage() {
                     <p className="text-sm text-ink font-medium">{question.prompt}</p>
 
                     <div className="rounded-md border border-line bg-sheet px-4 py-3">
-                      <Sentence text={question.sentence} compact isReadingQuestion={isMissedReadingQ} />
+                      <Sentence
+                        text={question.sentence}
+                        reading={!isMissedViToJp && !isMissedReadingQ && showKana ? getSentenceReading(question.sentence, question) : null}
+                        compact
+                        isReadingQuestion={isMissedReadingQ}
+                      />
                     </div>
 
                     <div className="text-sm space-y-1 pt-1">
@@ -873,7 +894,9 @@ function ExamPage() {
           if (picked && isAnswer) tone = "border-ink bg-ink text-paper";
           else if (selectedOption) tone = "border-seal bg-seal/10 text-seal";
 
-          const reading = !isReadingQuestion ? findReading(option) : null;
+          const reading = !isReadingQuestion && !isViToJp && showKana
+            ? getOptionReading(option) || findReading(option)
+            : null;
           const readingTone =
             picked && isAnswer
               ? "text-paper/80"
