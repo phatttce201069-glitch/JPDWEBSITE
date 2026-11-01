@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   CheckSquare,
   ChevronRight,
+  Languages,
   Layers,
   Loader2,
   Play,
@@ -28,6 +29,7 @@ import {
   type ExamQuestion,
 } from "@/lib/study/exam";
 import { findReading, vocabulary } from "@/lib/study/content";
+import { getSentenceReading, isViToJpQuestion } from "@/lib/study/kana-reading";
 import { useStudy } from "@/lib/study/store";
 import type { ExamSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
@@ -63,6 +65,7 @@ function ExamPage() {
   const [answers, setAnswers] = useState<(string | null)[]>([]);
   const [left, setLeft] = useState(EXAM_SECONDS);
   const [closed, setClosed] = useState(false);
+  const [showKana, setShowKana] = useState(true);
   const [note, setNote] = useState("");
   const nextRef = useRef<HTMLDivElement>(null);
 
@@ -789,6 +792,7 @@ function ExamPage() {
       current.prompt.includes("âm thuần Nhật") ||
       current.prompt.includes("onyomi") ||
       current.prompt.includes("kunyomi"));
+  const isViToJp = isViToJpQuestion(current.sentence, current);
 
   function choose(option: string) {
     if (picked) return;
@@ -813,6 +817,25 @@ function ExamPage() {
           )}
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
+          {!isViToJp && !isReadingQuestion ? (
+            <button
+              type="button"
+              onClick={() => setShowKana((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-line bg-sheet px-2.5 py-1 text-xs font-medium text-stone hover:text-ink hover:border-stone cursor-pointer transition-colors"
+              title="Bật/tắt hiển thị chữ Hiragana / Katakana bên dưới câu hỏi"
+            >
+              <Languages className="size-3.5 text-seal" />
+              <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
+            </button>
+          ) : isViToJp ? (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border border-line/60 bg-sheet/60 px-2.5 py-1 text-[11px] font-medium text-stone"
+              title="Câu hỏi từ tiếng Việt sang tiếng Nhật không hiển thị Hiragana để tránh làm lộ đáp án"
+            >
+              <Languages className="size-3 text-stone/70" />
+              <span className="hidden xs:inline">Ẩn Hiragana (tránh lộ đáp án)</span>
+            </span>
+          ) : null}
           <span className={cn("tabular-nums font-medium", left < 300 && "text-seal")}>{formatTime(left)}</span>
           <button
             type="button"
@@ -835,7 +858,11 @@ function ExamPage() {
       {current.promptJp ? <p className="jp mt-3 text-base leading-relaxed text-ink">{current.promptJp}</p> : null}
       <h1 className="mt-2 text-lg font-medium leading-snug text-ink">{current.prompt}</h1>
       <div className="mt-4 rounded-md border border-line bg-sheet px-5 py-6">
-        <Sentence text={current.sentence} isReadingQuestion={isReadingQuestion} />
+        <Sentence
+          text={current.sentence}
+          reading={!isViToJp && !isReadingQuestion && showKana ? getSentenceReading(current.sentence, current) : null}
+          isReadingQuestion={isReadingQuestion}
+        />
       </div>
       <div className="mt-3 grid gap-2">
         {current.options.map((option, optionIndex) => {
@@ -947,17 +974,19 @@ function ExamPage() {
 
 function Sentence({
   text,
+  reading,
   compact = false,
   isReadingQuestion = false,
 }: {
   text: string;
+  reading?: string | null;
   compact?: boolean;
   isReadingQuestion?: boolean;
 }) {
   const trimmed = text.trim();
   if (/^〔[^〕]+〕$/.test(trimmed)) {
     const target = trimmed.slice(1, -1);
-    const reading = !isReadingQuestion ? findReading(target) : null;
+    const targetReading = !isReadingQuestion ? reading || findReading(target) : null;
     return (
       <div className={cn("text-center", compact ? "py-1" : "py-2")}>
         <span
@@ -968,14 +997,14 @@ function Sentence({
         >
           {target}
         </span>
-        {reading ? (
+        {targetReading ? (
           <span
             className={cn(
               "jp block text-stone font-normal tracking-wide break-words",
               compact ? "text-sm mt-0.5" : "text-base sm:text-lg mt-1.5",
             )}
           >
-            {reading}
+            {targetReading}
           </span>
         ) : null}
       </div>
@@ -983,10 +1012,26 @@ function Sentence({
   }
 
   return (
-    <div className={cn("jp leading-loose text-ink", compact ? "text-base leading-relaxed" : "text-xl")}>
-      {text.split("\n").map((line, lineIndex) => (
-        <p key={lineIndex}>{renderLine(line, isReadingQuestion)}</p>
-      ))}
+    <div>
+      <div className={cn("jp leading-loose text-ink", compact ? "text-base leading-relaxed" : "text-xl")}>
+        {text.split("\n").map((line, lineIndex) => (
+          <p key={lineIndex}>{renderLine(line, isReadingQuestion)}</p>
+        ))}
+      </div>
+
+      {reading && reading !== text ? (
+        <div className="mt-3 pt-3 border-t border-line/60">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-seal uppercase tracking-wider mb-1">
+            <Languages className="size-3" />
+            <span>Cách đọc (Hiragana / Katakana):</span>
+          </div>
+          <div className={cn("jp leading-loose text-stone font-normal", compact ? "text-sm leading-relaxed" : "text-base")}>
+            {reading.split("\n").map((line, lineIndex) => (
+              <p key={lineIndex}>{renderLine(line, isReadingQuestion)}</p>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
