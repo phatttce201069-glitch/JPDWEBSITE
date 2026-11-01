@@ -5,6 +5,7 @@ import {
   toKana,
   getSentenceReading,
   getOptionReading,
+  isViToJpQuestion,
 } from "./kana-reading.ts";
 import { buildGrammarDrill, type ExamQuestion } from "./exam.ts";
 
@@ -58,9 +59,30 @@ test("getSentenceReading prioritizes question.reading if present", () => {
   assert.equal(reading, "にほんごはえいごより（　　）です。");
 });
 
+test("isViToJpQuestion correctly identifies translation questions and prevents leaks", () => {
+  const transQ: ExamQuestion = {
+    id: "pt-6_5-trans-0",
+    section: "Ngữ pháp",
+    promptJp: "意味に合う正しい日本語を選びなさい。",
+    prompt: 'Chọn câu tiếng Nhật đúng nhất cho nghĩa: "Vâng, chúng ta cùng uống nhé."',
+    sentence: "Dịch sang tiếng Nhật: Vâng, chúng ta cùng uống nhé.",
+    options: ["夏は冬より暑いです。", "ええ、飲みましょう。", "季節のなかで春がいちばん暖かいです。", "日曜日、どこでコンサートがありますか。"],
+    answer: "ええ、飲みましょう。",
+  };
+
+  assert.equal(isViToJpQuestion(transQ.sentence, transQ), true);
+  // getSentenceReading must return null to avoid leaking the answer!
+  assert.equal(getSentenceReading(transQ.sentence, transQ), null);
+
+  // Even if reading was erroneously set on the question object, getSentenceReading must still return null
+  const transQWithReading = { ...transQ, reading: "ええ、のみましょう。" };
+  assert.equal(getSentenceReading(transQWithReading.sentence, transQWithReading), null);
+});
+
 test("getSentenceReading returns null for pure Vietnamese prompt sentences", () => {
   const viSentence = "Dịch sang tiếng Nhật: Tiếng Nhật khó hơn tiếng Anh.";
   assert.equal(getSentenceReading(viSentence), null);
+  assert.equal(isViToJpQuestion(viSentence), true);
 });
 
 test("getOptionReading returns Hiragana for options containing Kanji and null for pure Kana", () => {
@@ -97,8 +119,15 @@ test("buildGrammarDrill questions provide valid readings for Kanji sentences", (
   const drill6_3 = buildGrammarDrill("6", "6_3");
   assert.ok(drill6_3.length > 0);
 
-  for (const q of drill6_3) {
-    if (hasKanji(q.sentence)) {
+  // Test Bài 6 section 6_5 (Rủ rê, Đồng ý và Từ chối khéo) - in user's screenshot
+  const drill6_5 = buildGrammarDrill("6", "6_5");
+  assert.ok(drill6_5.length > 0);
+  for (const q of drill6_5) {
+    if (isViToJpQuestion(q.sentence, q)) {
+      // Must NOT have reading on question sentence
+      assert.equal(getSentenceReading(q.sentence, q), null, `Translation question leaked reading: ${q.sentence}`);
+      assert.equal(q.reading, undefined, `q.reading should not be populated on translation question`);
+    } else if (hasKanji(q.sentence)) {
       const reading = getSentenceReading(q.sentence, q);
       assert.ok(reading !== null, `Failed to generate reading for: ${q.sentence}`);
       assert.equal(hasKanji(reading!), false, `Reading still contains Kanji: ${reading}`);
