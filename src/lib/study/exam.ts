@@ -504,9 +504,7 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
         otherJpWrongs,
       );
       if (qTrans) {
-        if (ex.reading) {
-          qTrans.reading = ex.reading;
-        }
+        // Không gán question.reading cho câu dịch từ tiếng Việt sang tiếng Nhật vì sẽ làm lộ đáp án
         qTrans.explanation = {
           meaning: ex.vi,
           grammar: point.structure_jp,
