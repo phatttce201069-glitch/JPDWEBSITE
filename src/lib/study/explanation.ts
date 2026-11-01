@@ -1,4 +1,5 @@
 import type { ExamQuestion, ExamSection } from "./exam.ts";
+import { vocabulary, alphabet } from "./content.ts";
 
 export type QuestionExplanation = {
   meaning: string;    // Dịch nghĩa câu & từ hoàn chỉnh
@@ -7,6 +8,185 @@ export type QuestionExplanation = {
   tips?: string;      // Mẹo giải nhanh / Dấu hiệu nhận biết
   reason: string;     // Lý do chọn đáp án đúng & phân tích đáp án gây nhiễu
 };
+
+/**
+ * Trả về bản dịch nghĩa tiếng Việt cho đáp án của câu hỏi
+ */
+export function getAnswerMeaning(answer: string, question?: ExamQuestion): string | null {
+  if (!answer) return null;
+
+  // 1. Nếu đáp án trùng với từ vựng trong từ điển
+  const vocabHit = vocabulary.find(
+    (w) => w.word === answer || w.reading === answer || (w as Record<string, unknown>).kana === answer,
+  );
+  if (vocabHit?.meaning) return vocabHit.meaning;
+
+  // 2. Nếu đáp án là chữ Hán hoặc Hiragana trong bảng chữ cái
+  const alphaHit = alphabet.find((a) => a.char === answer);
+  if (alphaHit?.example) {
+    const match = alphaHit.example.match(/\(([^)]+)\)/);
+    if (match?.[1]) return match[1];
+    return alphaHit.example;
+  }
+
+  // 3. Bảng tra cứu nghĩa nhanh các từ vựng, ngữ pháp, trợ từ thông dụng trong JPD123
+  const GLOSSARY: Record<string, string> = {
+    // Bài 6
+    やくそく: "cuộc hẹn, lời hứa",
+    約束: "cuộc hẹn, lời hứa",
+    用事: "việc bận",
+    ようじ: "việc bận",
+    時間: "thời gian",
+    じかん: "thời gian",
+    お祭り: "lễ hội",
+    おまつり: "lễ hội",
+    パーティー: "bữa tiệc",
+    コンサート: "buổi hòa nhạc",
+    まい: "tờ, tấm (lượng từ đếm vật mỏng phẳng)",
+    枚: "tờ, tấm (lượng từ đếm vật mỏng phẳng)",
+    ちょっと: "hơi / một chút (từ chối khéo)",
+    より: "hơn (dùng trong so sánh hơn)",
+    ほど: "bằng, như (dùng trong so sánh không bằng)",
+    どちら: "bên nào / cái nào (lựa chọn 2 đối tượng)",
+    どちらが: "bên nào / cái nào hơn",
+    いちばん: "nhất (so sánh cao nhất)",
+    一番: "nhất (so sánh cao nhất)",
+    春: "mùa xuân",
+    夏: "mùa hè",
+    秋: "mùa thu",
+    冬: "mùa đông",
+    季節: "mùa, các mùa trong năm",
+    ずっと: "hơn hẳn, suốt",
+    どちらも: "cả hai đều",
+    "ええ、飲みましょう": "Vâng, chúng ta cùng uống nhé",
+    "ええ、行きましょう": "Vâng, chúng ta cùng đi nhé",
+    "ええ、食べましょう": "Vâng, chúng ta cùng ăn nhé",
+
+    // Bài 7
+    スプーン: "thìa, muỗng",
+    フォーク: "dĩa, nĩa",
+    ナイフ: "dao",
+    お箸: "đũa",
+    箸: "đũa",
+    電子レンジ: "lò vi sóng",
+    使い方: "cách sử dụng",
+    読み方: "cách đọc",
+    作り方: "cách làm, cách chế biến",
+    行き方: "cách đi",
+    持ち方: "cách cầm",
+    書いて: "hãy viết (thể て)",
+    読んで: "hãy đọc (thể て)",
+    見て: "hãy nhìn / hãy xem (thể て)",
+    まって: "hãy chờ (thể て của 待ちます)",
+    待って: "hãy chờ",
+    とって: "hãy chụp / hãy lấy",
+    教えて: "hãy chỉ dạy, hãy nói cho biết",
+    貸して: "hãy cho mượn",
+    手伝って: "hãy giúp đỡ",
+    あけて: "hãy mở",
+    しめて: "hãy đóng",
+    つけて: "hãy bật (đèn, máy)",
+    けして: "hãy tắt",
+    かけて: "đang gọi (điện thoại)",
+    吸って: "hút (thuốc)",
+
+    // Bài 5
+    水: "nước",
+    みず: "nước",
+    お茶: "trà",
+    家: "nhà",
+    うち: "nhà của tôi",
+    本: "sách",
+    ほん: "sách",
+    写真: "bức ảnh",
+    手紙: "bức thư",
+    音楽: "âm nhạc",
+    散歩: "đi dạo",
+    家族: "gia đình",
+    病院: "bệnh viện",
+    自転車: "xe đạp",
+    行きたい: "muốn đi",
+    行きたいです: "muốn đi",
+    飲みたい: "muốn uống",
+    飲みたいです: "muốn uống",
+    食べたい: "muốn ăn",
+    買いたい: "muốn mua",
+    見たい: "muốn xem",
+    会いたい: "muốn gặp",
+    ほしい: "muốn có (sở hữu)",
+    ほしいです: "muốn có (sở hữu)",
+
+    // Bài 4
+    料理: "món ăn, nấu ăn",
+    りょうり: "món ăn, nấu ăn",
+    映画: "bộ phim",
+    えいが: "bộ phim",
+    新しい: "mới",
+    あたらしい: "mới",
+    古い: "cũ",
+    ふるい: "cũ",
+    暑い: "nóng (thời tiết)",
+    あつい: "nóng (thời tiết)",
+    寒い: "lạnh (thời tiết)",
+    さむい: "lạnh (thời tiết)",
+    高い: "đắt / cao",
+    たかい: "đắt / cao",
+    安い: "rẻ",
+    やすい: "rẻ",
+    大きい: "to lớn",
+    おおきい: "to lớn",
+    小さい: "nhỏ bé",
+    ちいさい: "nhỏ bé",
+    広い: "rộng rãi",
+    ひろい: "rộng rãi",
+    狭い: "chật hẹp",
+    せまい: "chật hẹp",
+    静か: "yên tĩnh",
+    しずか: "yên tĩnh",
+    きれい: "đẹp, sạch sẽ",
+    有名: "nổi tiếng",
+    ゆうめい: "nổi tiếng",
+    親切: "tốt bụng, thân thiện",
+    しんせつ: "tốt bụng, thân thiện",
+    元気: "khỏe mạnh",
+    げんき: "khỏe mạnh",
+    便利: "tiện lợi",
+    べんり: "tiện lợi",
+    暇: "rảnh rỗi",
+    ひま: "rảnh rỗi",
+    簡単: "đơn giản, dễ",
+    かんたん: "đơn giản, dễ",
+    おいしい: "ngon",
+    まずい: "dở, không ngon",
+    おもしろい: "thú vị",
+    つまらない: "nhàm chán",
+    忙しい: "bận rộn",
+    いそがしい: "bận rộn",
+    疲れた: "mệt mỏi",
+    つかれた: "mệt mỏi",
+
+    // Trợ từ
+    で: "tại (địa điểm sự kiện) / bằng (phương tiện, dụng cụ)",
+    に: "vào lúc (thời gian) / đến (đích đến) / cho (đối tượng nhận)",
+    を: "tác động lên (trợ từ tân ngữ)",
+    へ: "hướng tới (phương hướng)",
+    が: "trợ từ chủ ngữ / đối tượng của tính từ",
+    は: "trợ từ chủ đề",
+    と: "với / và",
+    から: "từ (thời gian, địa điểm) / vì (nguyên nhân)",
+    まで: "đến, cho đến",
+  };
+
+  if (GLOSSARY[answer]) return GLOSSARY[answer];
+
+  // 4. Nếu question có explanation.reason ghi nghĩa
+  if (question?.explanation?.reason) {
+    const match = question.explanation.reason.match(/=\s*([^.]+)/);
+    if (match?.[1]) return match[1].trim();
+  }
+
+  return null;
+}
 
 /**
  * Tạo câu hoàn chỉnh sau khi điền đáp án đúng để người dùng dễ theo dõi
@@ -297,6 +477,48 @@ const EXACT_EXPLANATIONS: Record<string, QuestionExplanation> = {
     lesson: "JPD123 - Bài 7 (Đồ dùng bàn ăn)",
     tips: "Ăn bít tết (ステーキ) thì đi thành cặp: Dao và Nĩa (ナイフとフォーク).",
     reason: "Đáp án đúng là「ナイフ」(Dao). 'スプーン' là Thìa, 'コップ' là Cốc/Ly, 'はし' là Đũa.",
+  },
+  "友達と映画を見る（　　）がありますから、早く帰ります。___やくそく": {
+    meaning: "Vì tôi có cuộc hẹn đi xem phim với bạn nên tôi sẽ về sớm.",
+    grammar: "Cấu trúc Bài 6: [Động từ thể từ điển / Danh từ の] + 約束があります (Có hẹn làm gì) & Liên từ chỉ nguyên nhân 〜から (Bởi vì... nên...)",
+    lesson: "JPD123 - Bài 6 (So sánh, Rủ rê & Cuộc hẹn)",
+    tips: "Từ khóa:「映画を見る」(xem phim) kết hợp với「早く帰ります」(về sớm) ➔ chọn 約束 / やくそく (cuộc hẹn, lời hứa).",
+    reason: "Đáp án đúng là「やくそく」(約束 = Cuộc hẹn, lời hứa). 'にもつ' là Hành lý, 'しゅくだい' là Bài tập, 'きっぷ' là Vé.",
+  },
+  "友達と映画を見る（　）がありますから、早く帰ります。___やくそく": {
+    meaning: "Vì tôi có cuộc hẹn đi xem phim với bạn nên tôi sẽ về sớm.",
+    grammar: "Cấu trúc Bài 6: [Động từ thể từ điển / Danh từ の] + 約束があります (Có hẹn làm gì) & Liên từ chỉ nguyên nhân 〜から (Bởi vì... nên...)",
+    lesson: "JPD123 - Bài 6 (So sánh, Rủ rê & Cuộc hẹn)",
+    tips: "Từ khóa:「映画を見る」(xem phim) kết hợp với「早く帰ります」(về sớm) ➔ chọn 約束 / やくそく (cuộc hẹn, lời hứa).",
+    reason: "Đáp án đúng là「やくそく」(約束 = Cuộc hẹn, lời hứa). 'にもつ' là Hành lý, 'しゅくだい' là Bài tập, 'きっぷ' là Vé.",
+  },
+  "今週の土曜日に友達の家で（　　）があります。___パーティー": {
+    meaning: "Thứ Bảy tuần này có bữa tiệc ở nhà bạn của tôi.",
+    grammar: "Địa điểm + で + N(sự kiện) + があります (Có sự kiện diễn ra tại địa điểm).",
+    lesson: "JPD123 - Bài 6 (Nơi diễn ra sự kiện で)",
+    tips: "Tổ chức tại nhà bạn (友達の家で) diễn ra sự kiện ➔ điền「パーティー」(bữa tiệc).",
+    reason: "Đáp án đúng là「パーティー」(Bữa tiệc). Các phương án 'つくえ' (cái bàn), 'くるま' (xe hơi), 'じてんしゃ' (xe đạp) là đồ vật tĩnh, đi với trợ từ にあります chứ không đi với であります.",
+  },
+  "今週の土曜日に友達の家で（　）があります。___パーティー": {
+    meaning: "Thứ Bảy tuần này có bữa tiệc ở nhà bạn của tôi.",
+    grammar: "Địa điểm + で + N(sự kiện) + があります (Có sự kiện diễn ra tại địa điểm).",
+    lesson: "JPD123 - Bài 6 (Nơi diễn ra sự kiện で)",
+    tips: "Tổ chức tại nhà bạn (友達の家で) diễn ra sự kiện ➔ điền「パーティー」(bữa tiệc).",
+    reason: "Đáp án đúng là「パーティー」(Bữa tiệc). Các phương án 'つくえ' (cái bàn), 'くるま' (xe hơi), 'じてんしゃ' (xe đạp) là đồ vật tĩnh, đi với trợ từ にあります chứ không đi với であります.",
+  },
+  "日曜日、浅草で（　　）がありますから、見に行きます。___お祭り": {
+    meaning: "Chủ nhật vì có lễ hội ở Asakusa nên tôi sẽ đi xem.",
+    grammar: "Sự kiện diễn ra: お祭りがあります (Có lễ hội). Mục đích di chuyển: V[bỏ ます] + に行きます (Đi để xem).",
+    lesson: "JPD123 - Bài 6 (Sự kiện văn hóa & Mục đích)",
+    tips: "Sự kiện văn hóa truyền thống nổi tiếng ở Asakusa (浅草) là「お祭り」(lễ hội).",
+    reason: "Đáp án đúng là「お祭り」(Lễ hội). 'かいしゃ' là Công ty, 'ぎんこう' là Ngân hàng, 'びょういん' là Bệnh viện.",
+  },
+  "日曜日、浅草で（　）がありますから、見に行きます。___お祭り": {
+    meaning: "Chủ nhật vì có lễ hội ở Asakusa nên tôi sẽ đi xem.",
+    grammar: "Sự kiện diễn ra: お祭りがあります (Có lễ hội). Mục đích di chuyển: V[bỏ ます] + に行きます (Đi để xem).",
+    lesson: "JPD123 - Bài 6 (Sự kiện văn hóa & Mục đích)",
+    tips: "Sự kiện văn hóa truyền thống nổi tiếng ở Asakusa (浅草) là「お祭り」(lễ hội).",
+    reason: "Đáp án đúng là「お祭り」(Lễ hội). 'かいしゃ' là Công ty, 'ぎんこう' là Ngân hàng, 'びょういん' là Bệnh viện.",
   },
   "冷たいジュースを（　　）に入れて、みんなで乾杯しました。___コップ": {
     meaning: "Rót nước trái cây lạnh vào cốc rồi mọi người cùng nhau cụng ly chúc mừng.",
@@ -891,12 +1113,20 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
     tips = "Lượng từ đếm vật mỏng phẳng (đĩa CD, áo sơ mi, tờ giấy, vé, tem) luôn dùng「枚 (まい)」.";
   }
 
+  const ansMeaning = getAnswerMeaning(q.answer, q);
+  const completed = getCompletedSentence(q);
+
+  let meaning = ansMeaning
+    ? `Ý nghĩa cấu trúc/đáp án: "${q.answer}" có nghĩa là "${ansMeaning}".`
+    : `Cấu trúc cần chọn:「${q.answer}」.`;
+  meaning += ` Câu hoàn chỉnh: ${completed}`;
+
   return {
-    meaning: `Câu đúng: ${getCompletedSentence(q)}`,
+    meaning,
     grammar: grammarPoint,
     lesson,
     tips,
-    reason: `Đáp án đúng là "${q.answer}". Theo quy tắc ngữ pháp của ${lesson}, cấu trúc "${grammarPoint}" yêu cầu dạng thức "${q.answer}" để tạo thành câu hoàn chỉnh, đúng ngữ pháp. Các phương án còn lại bị sai dạng chia hoặc sai quy tắc kết hợp trợ từ.`,
+    reason: `Đáp án đúng là "${q.answer}"${ansMeaning ? ` (${ansMeaning})` : ""}. Theo quy tắc ngữ pháp của ${lesson}, cấu trúc "${grammarPoint}" yêu cầu dạng thức "${q.answer}" để tạo thành câu hoàn chỉnh, đúng ngữ pháp. Các phương án còn lại bị sai dạng chia hoặc sai quy tắc kết hợp trợ từ.`,
   };
 }
 
@@ -905,13 +1135,22 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
  */
 function buildVocabExplanation(q: ExamQuestion): QuestionExplanation {
   const lesson = determineLesson(q);
+  const ansMeaning = getAnswerMeaning(q.answer, q);
+  const completed = getCompletedSentence(q);
+
+  let meaning = ansMeaning
+    ? `Ý nghĩa đáp án: "${q.answer}" có nghĩa là "${ansMeaning}".`
+    : `Từ cần điền:「${q.answer}」.`;
+  if (q.sentence) {
+    meaning += ` Câu hoàn chỉnh: ${completed}`;
+  }
 
   return {
-    meaning: `Câu hoàn chỉnh: ${getCompletedSentence(q)} (Từ cần điền:「${q.answer}」)`,
+    meaning,
     grammar: "Từ vựng chuyên đề & Ngữ cảnh giao tiếp thực tế",
     lesson,
     tips: "Liên hệ ngữ cảnh sinh hoạt hàng ngày (đồ dùng ăn uống, đồ đạc trong nhà, thời tiết, giao tiếp hỏi đáp) để loại trừ phương án sai.",
-    reason: `Đáp án đúng là "${q.answer}". Từ vựng này phù hợp nhất với ngữ cảnh và ngữ nghĩa của câu văn. Các phương án còn lại không hợp lý về mặt logic hoặc ngữ cảnh tình huống.`,
+    reason: `Đáp án đúng là "${q.answer}"${ansMeaning ? ` (${ansMeaning})` : ""}. Từ vựng này phù hợp nhất với ngữ cảnh và ngữ nghĩa của câu văn. Các phương án còn lại không hợp lý về mặt logic hoặc ngữ cảnh tình huống.`,
   };
 }
 

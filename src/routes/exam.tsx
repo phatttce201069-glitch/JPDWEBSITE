@@ -41,6 +41,7 @@ import {
   type AiSettings,
 } from "@/lib/study/ai-service";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
+import { getAnswerMeaning } from "@/lib/study/explanation";
 
 export const Route = createFileRoute("/exam")({
   validateSearch: (search: Record<string, unknown>): ExamSearch => ({
@@ -755,7 +756,17 @@ function ExamPage() {
                             ({answerReading})
                           </span>
                         ) : null}
+                        {getAnswerMeaning(question.answer, question) ? (
+                          <span className="text-stone font-medium ml-1.5 text-xs text-ink/80">
+                            — {getAnswerMeaning(question.answer, question)}
+                          </span>
+                        ) : null}
                       </p>
+                      {question.explanation?.meaning ? (
+                        <p className="text-xs text-stone italic">
+                          Dịch nghĩa: &quot;{question.explanation.meaning}&quot;
+                        </p>
+                      ) : null}
                     </div>
 
                     {/* Component Lời giải chi tiết */}
@@ -937,9 +948,23 @@ function ExamPage() {
       </div>
       <div ref={nextRef} className="mt-4 flex min-h-10 items-center justify-between gap-2">
         {picked ? (
-          <p className="text-sm text-stone">
-            {picked === current.answer ? "Chính xác." : `Chưa đúng. Đáp án: ${current.answer}`}
-          </p>
+          <div className="space-y-1">
+            <p className={cn("text-sm font-medium", picked === current.answer ? "text-emerald-700" : "text-seal")}>
+              {picked === current.answer ? "✓ Chính xác!" : "✗ Chưa đúng."}{" "}
+              Đáp án đúng: <span className="font-semibold underline decoration-2">{current.answer}</span>
+              {getAnswerMeaning(current.answer, current) ? (
+                <span className="font-normal text-stone ml-1">
+                  ({getAnswerMeaning(current.answer, current)})
+                </span>
+              ) : null}
+            </p>
+            {current.explanation?.meaning ? (
+              <p className="text-xs text-stone leading-relaxed">
+                <span className="font-medium text-ink">Dịch nghĩa: </span>
+                {current.explanation.meaning}
+              </p>
+            ) : null}
+          </div>
         ) : (
           <button
             type="button"
@@ -974,7 +999,7 @@ function ExamPage() {
       {/* Lời giải chi tiết hiện lên ngay khi người dùng chọn đáp án */}
       {picked && (
         <div className="mt-4 pt-3 border-t border-line">
-          <QuestionExplanationPanel question={current} />
+          <QuestionExplanationPanel question={current} defaultOpen={true} />
         </div>
       )}
 
