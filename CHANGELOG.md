@@ -6,6 +6,26 @@ Tất cả các thay đổi đáng chú ý của dự án **JPD123 - Cổng Họ
 
 ---
 
+## [1.4.0] - 2026-11-01
+
+### ✨ Tính Năng Mới (Added)
+- **Hỗ trợ phiên âm Hiragana trong đề thi AI**:
+  - Tích hợp nút bật/tắt hiển thị phiên âm Hiragana / Katakana trực tiếp trên thanh tiêu đề bài thi và trong chế độ xem lại câu hỏi.
+  - Hỗ trợ hiển thị cách đọc Hiragana bên dưới các phương án lựa chọn có chứa chữ Hán (Kanji).
+  - Tự động bảo vệ chống lộ đáp án: ẩn phiên âm cho các câu hỏi kiểm tra cách đọc Kanji và câu dịch từ tiếng Việt sang tiếng Nhật.
+- **Xáo trộn ngẫu nhiên toàn diện 30 câu hỏi**:
+  - Thứ tự 30 câu hỏi trong đề thi AI được hoán vị ngẫu nhiên toàn bộ (trộn đều Kanji, Từ vựng, Ngữ pháp khắp 30 câu), loại bỏ hoàn toàn việc cố định 10 câu Kanji đầu tiên.
+- **Hiển thị dịch nghĩa tiếng Việt cho câu hỏi và đáp án**:
+  - Hiển thị dịch nghĩa tiếng Việt chuẩn xác cho đáp án và ngữ cảnh câu hỏi ngay khi người học chọn đáp án và trong danh sách xem lại kết quả.
+  - Mở rộng bảng tra cứu thuật ngữ và từ điển giải thích ngữ pháp, từ vựng theo thời gian thực.
+- **Mở rộng kho câu hỏi phong phú đa dạng**:
+  - Bổ sung hàng loạt bộ câu hỏi hạt giống mới cho Kanji, Từ vựng và Ngữ pháp các bài JPD123 (Bài 4, 5, 6, 7).
+
+### 🐛 Sửa Lỗi & Tối Ưu (Fixed)
+- Siết chặt 100% phạm vi đề thi theo đúng bài học được người dùng chọn (ví dụ chọn Bài 6 thì chỉ xuất hiện nội dung Bài 6, tuyệt đối không bị rò rỉ câu hỏi ngoài phạm vi).
+
+---
+
 ## [1.3.0] - 2026-10-22
 
 ### ✨ Tính Năng Mới (Added)
