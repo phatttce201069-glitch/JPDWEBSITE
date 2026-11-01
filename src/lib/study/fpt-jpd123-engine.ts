@@ -27,7 +27,7 @@ export type ExamQuestion = {
  * @param items Mảng đầu vào cần xáo trộn
  * @returns Mảng mới đã được hoán vị ngẫu nhiên
  */
-function shuffle<T>(items: T[]): T[] {
+export function shuffle<T>(items: T[]): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -2305,8 +2305,9 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
   const vocabQuestions = pickSection(VOCAB_SEEDS, 10, "fpt-vocab");
   const grammarQuestions = pickSection(GRAMMAR_SEEDS, 10, "fpt-gram");
 
-  // Giữ cấu trúc đề thi chuẩn FPT: Phần 1 (Kanji 1-10) -> Phần 2 (Từ vựng 11-20) -> Phần 3 (Ngữ pháp 21-30)
-  const fullExam = [...kanjiQuestions, ...vocabQuestions, ...grammarQuestions];
+  // Xáo trộn ngẫu nhiên thứ tự 30 câu hỏi (trộn đều Kanji, Từ vựng, Ngữ pháp)
+  // thay vì câu hỏi dạng kanji luôn đưa lên 10 câu đầu.
+  const fullExam = shuffle([...kanjiQuestions, ...vocabQuestions, ...grammarQuestions]);
 
   return fullExam.map((q, index) => ({
     ...q,

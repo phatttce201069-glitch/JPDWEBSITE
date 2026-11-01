@@ -1,5 +1,5 @@
 import type { ExamQuestion } from "./exam.ts";
-import { buildFptJpd123Exam } from "./fpt-jpd123-engine.ts";
+import { buildFptJpd123Exam, shuffle } from "./fpt-jpd123-engine.ts";
 
 export type AiProvider = "built-in" | "gemini" | "xai" | "openai" | "groq";
 
@@ -438,8 +438,13 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
       }
     }
 
+    const randomizedQuestions = shuffle(validQuestions.slice(0, 30)).map((q, idx) => ({
+      ...q,
+      id: String(idx + 1),
+    }));
+
     return {
-      questions: validQuestions.slice(0, 30).map((q, idx) => ({ ...q, id: String(idx + 1) })),
+      questions: randomizedQuestions,
       isRealAi: true,
       provider: `${settings.provider.toUpperCase()} (${settings.model || "Default"})`,
     };
