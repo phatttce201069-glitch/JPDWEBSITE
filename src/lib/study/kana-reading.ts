@@ -534,9 +534,40 @@ export function toKana(text: string): string {
 }
 
 /**
+ * Kiểm tra xem câu hỏi có phải là dạng dịch từ tiếng Việt sang tiếng Nhật hay không.
+ * Các câu này có phần câu hỏi là tiếng Việt và đáp án là câu tiếng Nhật,
+ * do đó tuyệt đối KHÔNG hiển thị Hiragana để tránh làm lộ đáp án.
+ */
+export function isViToJpQuestion(
+  sentence?: string | null,
+  question?: Partial<ExamQuestion> | null,
+): boolean {
+  if (sentence && sentence.startsWith("Dịch sang tiếng Nhật")) return true;
+  if (sentence && !/[ぁ-んァ-ヶ一-龯]/.test(sentence)) return true;
+  if (question?.id && (question.id.includes("-trans-") || question.id.startsWith("vijp-"))) return true;
+  if (
+    question?.prompt &&
+    (question.prompt.includes("tiếng Nhật đúng nhất") ||
+      question.prompt.includes("Chọn câu tiếng Nhật") ||
+      question.prompt.includes("Dịch sang tiếng Nhật"))
+  ) {
+    return true;
+  }
+  if (
+    question?.sentence &&
+    (question.sentence.startsWith("Dịch sang tiếng Nhật") || !/[ぁ-んァ-ヶ一-龯]/.test(question.sentence))
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Trả về cách đọc Hiragana/Katakana cho câu hỏi luyện ngữ pháp.
- * - Nếu câu hỏi đã có sẵn trường `reading`, sử dụng trực tiếp.
- * - Nếu không, tìm trong ngân hàng ví dụ hoặc tự động chuyển đổi sang Kana.
+ * - Tuyệt đối không hiển thị reading nếu câu hỏi là dạng dịch từ tiếng Việt sang tiếng Nhật
+ *   hoặc câu đề bài là tiếng Việt thuần túy (tránh làm lộ đáp án).
+ * - Nếu câu tiếng Nhật đã có sẵn trường `reading`, sử dụng trực tiếp.
+ * - Nếu câu tiếng Nhật có chứa chữ Hán, tự động chuyển đổi sang Kana.
  * - Trả về `null` nếu câu không chứa tiếng Nhật hoặc không có chữ Hán cần phiên âm.
  */
 export function getSentenceReading(
@@ -545,23 +576,28 @@ export function getSentenceReading(
 ): string | null {
   if (!sentence) return null;
 
-  // 1. Ưu tiên reading được lưu sẵn trong question
-  if (question?.reading && question.reading.trim()) {
-    return question.reading;
+  // 1. Kiểm tra câu hỏi dạng dịch tiếng Việt -> tiếng Nhật: tuyệt đối không hiện reading để tránh lộ đáp án
+  if (isViToJpQuestion(sentence, question)) {
+    return null;
   }
 
-  // 2. Nếu câu là tiếng Việt thuần túy (ví dụ: "Dịch sang tiếng Nhật: ..."), không cần reading
+  // 2. Nếu câu là tiếng Việt thuần túy (không chứa ký tự tiếng Nhật), không cần reading
   if (!/[ぁ-んァ-ヶ一-龯]/.test(sentence)) {
     return null;
   }
 
-  // 3. Nếu câu có chứa chữ Hán, tiến hành phiên âm sang Hiragana/Katakana
+  // 3. Ưu tiên reading được lưu sẵn trong question (dành cho câu tiếng Nhật có chỗ trống)
+  if (question?.reading && question.reading.trim()) {
+    return question.reading;
+  }
+
+  // 4. Nếu câu tiếng Nhật có chứa chữ Hán, tiến hành phiên âm sang Hiragana/Katakana
   if (hasKanji(sentence)) {
     const reading = toKana(sentence);
     return reading !== sentence ? reading : null;
   }
 
-  // 4. Trường hợp câu toàn chữ Kana/Romaji
+  // 5. Trường hợp câu toàn chữ Kana/Romaji
   return null;
 }
 
