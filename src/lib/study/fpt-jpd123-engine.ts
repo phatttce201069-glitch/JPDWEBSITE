@@ -109,6 +109,588 @@ export type QuestionSeed = {
 // 1. KANJI BANK (Chữ Hán Bài 4 - 7: JPD123 FPT)
 // =========================================================================
 export const KANJI_SEEDS: QuestionSeed[] = [
+  // ==================== BÀI 1 KANJI ====================
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "（私）はFPT大学の学生です。",
+    answer: "わたし",
+    wrongs: ["わたくし", "ぼく", "おれ"],
+    bai: 1,
+    explanation: {
+      meaning: "Tôi là sinh viên trường Đại học FPT.",
+      grammar: "Chữ Hán: 私 (TƯ - tôi)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Chữ 私 âm Kunyomi đọc là わたし (watashi).",
+      reason: "私 trong câu xưng hô cơ bản đọc là わたし. Các lựa chọn khác không phải âm đọc thông dụng trong bài 1."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "あの方は日本語の（先生）です。",
+    answer: "せんせい",
+    wrongs: ["せいせん", "がくせい", "いしゃ"],
+    bai: 1,
+    explanation: {
+      meaning: "Vị kia là giáo viên tiếng Nhật.",
+      grammar: "Chữ Hán: 先生 (TIÊN SINH - giáo viên)",
+      lesson: "JPD113 - Bài 1",
+      tips: "先生 đọc là せんせい (sensei).",
+      reason: "先生 gồm chữ 先 (tiên) và 生 (sinh), đọc là せんせい."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "田中さんは東京（大学）の学生です。",
+    answer: "だいがく",
+    wrongs: ["こうこう", "ちゅうがく", "たいがく"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Tanaka là sinh viên trường đại học Tokyo.",
+      grammar: "Chữ Hán: 大学 (ĐẠI HỌC)",
+      lesson: "JPD113 - Bài 1",
+      tips: "大 (đại) + 学 (học) = だいがく (daigaku).",
+      reason: "大学 đọc là だいがく."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "アンさんは（学生）じゃありません。",
+    answer: "がくせい",
+    wrongs: ["がくせ", "かっせい", "がくせん"],
+    bai: 1,
+    explanation: {
+      meaning: "Bạn An không phải là học sinh, sinh viên.",
+      grammar: "Chữ Hán: 学生 (HỌC SINH)",
+      lesson: "JPD113 - Bài 1",
+      tips: "学生 đọc là がくせい (gakusei).",
+      reason: "学 (học - がく) ghép với 生 (sinh - せい) tạo thành がくせい."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "さとうさんは（日本人）です。",
+    answer: "にほんじん",
+    wrongs: ["にっぽんひと", "にほんひと", "にっぽんじん"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Sato là người Nhật.",
+      grammar: "Chữ Hán: 日本人 (NHẬT BẢN NHÂN - người Nhật)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Quốc gia + 人 (じん) = người nước đó.",
+      reason: "日本人 đọc là にほんじん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "リーさんは（中国人）ですか。",
+    answer: "ちゅうごくじん",
+    wrongs: ["ちゅうごくひと", "ちゅごくじん", "ちゅうこくじん"],
+    bai: 1,
+    explanation: {
+      meaning: "Bạn Lee có phải là người Trung Quốc không?",
+      grammar: "Chữ Hán: 中国人 (TRUNG QUỐC NHÂN)",
+      lesson: "JPD113 - Bài 1",
+      tips: "中国 đọc là ちゅうごく, thêm 人 đọc là ちゅうごくじん.",
+      reason: "中国人 đọc chuẩn là ちゅうごくじん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "教室に日本語の（本）があります。",
+    answer: "ほん",
+    wrongs: ["ぼん", "ぽん", "ほんご"],
+    bai: 1,
+    explanation: {
+      meaning: "Trong lớp có sách tiếng Nhật.",
+      grammar: "Chữ Hán: 本 (BẢN - sách)",
+      lesson: "JPD113 - Bài 1",
+      tips: "本 khi đứng một mình đọc là ほん (hon).",
+      reason: "本 (sách) đọc là ほん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "私の妹は今年（二十歳）になります。",
+    answer: "はたち",
+    wrongs: ["にじゅっさい", "にじゅうさい", "はたさい"],
+    bai: 1,
+    explanation: {
+      meaning: "Em gái tôi năm nay 20 tuổi.",
+      grammar: "Chữ Hán đặc biệt: 二十歳 (NHỊ THẬP TUẾ - 20 tuổi)",
+      lesson: "JPD113 - Bài 1",
+      tips: "20 tuổi có cách đọc đặc biệt là はたち (hatachi).",
+      reason: "二十歳 là trường hợp biến âm đặc biệt chỉ tuổi 20, đọc là はたち."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "あなたの（誕生日）は何月ですか。",
+    answer: "たんじょうび",
+    wrongs: ["たんじょうひ", "だんじょうび", "たんじょび"],
+    bai: 1,
+    explanation: {
+      meaning: "Sinh nhật của bạn là tháng mấy?",
+      grammar: "Chữ Hán: 誕生日 (ĐẢN SINH NHẬT - ngày sinh nhật)",
+      lesson: "JPD113 - Bài 1",
+      tips: "誕生 (たんじょう) + 日 (び) = たんじょうび.",
+      reason: "誕生日 đọc là たんじょうび."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "アンさんの弟は（何歳）ですか。",
+    answer: "なんさい",
+    wrongs: ["なにさい", "なんざい", "なにざい"],
+    bai: 1,
+    explanation: {
+      meaning: "Em trai bạn An bao nhiêu tuổi?",
+      grammar: "Chữ Hán: 何歳 (HÀ TUẾ - mấy tuổi)",
+      lesson: "JPD113 - Bài 1",
+      tips: "何 đứng trước hàng s (歳 - さい) đọc là なん.",
+      reason: "何歳 đọc là なんさい."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "田中さんの（専門）はコンピューターです。",
+    answer: "せんもん",
+    wrongs: ["ぜんもん", "せんぶん", "ぜんぶん"],
+    bai: 1,
+    explanation: {
+      meaning: "Chuyên môn của anh Tanaka là máy tính.",
+      grammar: "Chữ Hán: 専門 (CHUYÊN MÔN)",
+      lesson: "JPD113 - Bài 1",
+      tips: "専 (せん) + 門 (もん) = せんもん.",
+      reason: "専門 đọc là せんもん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "父の（名前）は山田です。",
+    answer: "なまえ",
+    wrongs: ["なばえ", "めいぜん", "なまえん"],
+    bai: 1,
+    explanation: {
+      meaning: "Tên của bố tôi là Yamada.",
+      grammar: "Chữ Hán: 名前 (DANH TIỀN - tên)",
+      lesson: "JPD113 - Bài 1",
+      tips: "名 (な) + 前 (まえ) = なまえ.",
+      reason: "名前 đọc là なまえ."
+    }
+  },
+
+  // ==================== BÀI 2 KANJI ====================
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "この日本語の本は（千円）です。",
+    answer: "せんえん",
+    wrongs: ["ぜんえん", "せんまる", "ちえん"],
+    bai: 2,
+    explanation: {
+      meaning: "Quyển sách tiếng Nhật này có giá 1.000 yên.",
+      grammar: "Chữ Hán: 千円 (THIÊN VIÊN - 1000 yên)",
+      lesson: "JPD113 - Bài 2",
+      tips: "千 (せん) + 円 (えん) = せんえん.",
+      reason: "千円 đọc là せんえん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "スーパーで（牛肉）を買いました。",
+    answer: "ぎゅうにく",
+    wrongs: ["うしにく", "ぎゅにく", "ぎゅうじく"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi đã mua thịt bò ở siêu thị.",
+      grammar: "Chữ Hán: 牛肉 (NGƯU NHỤC - thịt bò)",
+      lesson: "JPD113 - Bài 2",
+      tips: "牛 (ぎゅう) + 肉 (にく) = ぎゅうにく.",
+      reason: "牛肉 đọc là ぎゅうにく."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "日本の（魚）はとても新鮮でおいしいです。",
+    answer: "さかな",
+    wrongs: ["うお", "さかなん", "さな"],
+    bai: 2,
+    explanation: {
+      meaning: "Cá của Nhật Bản rất tươi và ngon.",
+      grammar: "Chữ Hán: 魚 (NGƯ - con cá)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Chữ 魚 đứng một mình đọc là さかな (sakana).",
+      reason: "魚 đọc là さかな."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "朝ごはんに（卵）を食べました。",
+    answer: "たまご",
+    wrongs: ["らん", "たまごん", "たばご"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi đã ăn trứng vào bữa sáng.",
+      grammar: "Chữ Hán: 卵 (NOÃN - quả trứng)",
+      lesson: "JPD113 - Bài 2",
+      tips: "卵 đọc là たまご (tamago).",
+      reason: "卵 đọc là たまご."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "コップに冷たい（水）を入れます。",
+    answer: "みず",
+    wrongs: ["すい", "みづ", "みずい"],
+    bai: 2,
+    explanation: {
+      meaning: "Rót nước lạnh vào cốc.",
+      grammar: "Chữ Hán: 水 (THỦY - nước)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Chữ 水 đứng một mình đọc là みず (mizu).",
+      reason: "水 đọc là みず."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "このTシャツは（百）円ショップで買いました。",
+    answer: "ひゃく",
+    wrongs: ["びゃく", "ぴゃく", "はく"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi đã mua chiếc áo thun này ở cửa hàng 100 yên.",
+      grammar: "Chữ Hán: 百 (BÁCH - một trăm)",
+      lesson: "JPD113 - Bài 2",
+      tips: "百 đọc là ひゃく (hyaku).",
+      reason: "百 đọc là ひゃく."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "このパソコンは（十万円）でした。",
+    answer: "じゅうまんえん",
+    wrongs: ["じゅうまん", "じゅまねん", "じゅうまんまる"],
+    bai: 2,
+    explanation: {
+      meaning: "Chiếc máy tính này có giá 100.000 yên (10 vạn yên).",
+      grammar: "Chữ Hán: 十万円 (THẬP VẠN VIÊN)",
+      lesson: "JPD113 - Bài 2",
+      tips: "十万 (じゅうまん) + 円 (えん) = じゅうまんえん.",
+      reason: "十万円 đọc là じゅうまんえん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "レストランの売り場は（何階）ですか。",
+    answer: "なんがい",
+    wrongs: ["なんかい", "なにがい", "なにかい"],
+    bai: 2,
+    explanation: {
+      meaning: "Khu vực nhà hàng ở tầng mấy?",
+      grammar: "Chữ Hán: 何階 (HÀ GIAI - tầng mấy)",
+      lesson: "JPD113 - Bài 2",
+      tips: "何階 biến âm đọc là なんがい (nangai).",
+      reason: "何階 đọc có biến âm đục: なんがい."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "あの赤い（車）は誰のですか。",
+    answer: "くるま",
+    wrongs: ["しゃ", "くるば", "じどう"],
+    bai: 2,
+    explanation: {
+      meaning: "Chiếc xe ô tô màu đỏ kia là của ai?",
+      grammar: "Chữ Hán: 車 (XA - xe ô tô)",
+      lesson: "JPD113 - Bài 2",
+      tips: "車 đứng một mình đọc là くるま (kuruma).",
+      reason: "車 đọc là くるま."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "駅の前に大きい（店）があります。",
+    answer: "みせ",
+    wrongs: ["てん", "みせん", "みぜ"],
+    bai: 2,
+    explanation: {
+      meaning: "Trước nhà ga có một cửa hàng lớn.",
+      grammar: "Chữ Hán: 店 (ĐIẾM - cửa hàng)",
+      lesson: "JPD113 - Bài 2",
+      tips: "店 đứng riêng đọc là みせ (mise).",
+      reason: "店 đọc là みせ."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "このスイカはとても（大）きいです。",
+    answer: "おお",
+    wrongs: ["だい", "お", "たい"],
+    bai: 2,
+    explanation: {
+      meaning: "Quả dưa hấu này rất to.",
+      grammar: "Chữ Hán: 大きい (ĐẠI - to lớn)",
+      lesson: "JPD113 - Bài 2",
+      tips: "大きい đọc là おおきい, chữ 大 đọc là おお.",
+      reason: "大 trong 大きい đọc là おお."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "そのかばんは（小）さいですね。",
+    answer: "ちい",
+    wrongs: ["しょう", "すこ", "ち"],
+    bai: 2,
+    explanation: {
+      meaning: "Chiếc cặp đó nhỏ nhỉ.",
+      grammar: "Chữ Hán: 小さい (TIỂU - nhỏ bé)",
+      lesson: "JPD113 - Bài 2",
+      tips: "小さい đọc là ちいさい, chữ 小 đọc là ちい.",
+      reason: "小 trong 小さい đọc là ちい."
+    }
+  },
+
+  // ==================== BÀI 3 KANJI ====================
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "毎朝7（時）に起きて、学校へ行きます。",
+    answer: "じ",
+    wrongs: ["とき", "ぶん", "はん"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi sáng tôi thức dậy lúc 7 giờ rồi đi học.",
+      grammar: "Chữ Hán: 時 (THỜI - giờ)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Số đếm + 時 đọc là じ (ji).",
+      reason: "時 chỉ giờ đọc là じ."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "いま4時30（分）です。",
+    answer: "ぷん",
+    wrongs: ["ふん", "はん", "ぶん"],
+    bai: 3,
+    explanation: {
+      meaning: "Bây giờ là 4 giờ 30 phút.",
+      grammar: "Chữ Hán: 分 (PHÂN - phút)",
+      lesson: "JPD113 - Bài 3",
+      tips: "30分 biến âm đọc là さんじゅっぷん / さんじっぷん.",
+      reason: "30分 đọc là さんじゅっぷん (đuôi ぷん)."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "午後1時（半）に友達と会います。",
+    answer: "はん",
+    wrongs: ["なか", "ばち", "ふん"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi gặp bạn vào lúc 1 giờ rưỡi chiều.",
+      grammar: "Chữ Hán: 半 (BÁN - nửa, rưỡi)",
+      lesson: "JPD113 - Bài 3",
+      tips: "1時半 = 1 giờ rưỡi, 半 đọc là はん.",
+      reason: "半 đọc là はん."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "（今）何時ですか。",
+    answer: "いま",
+    wrongs: ["こん", "きょう", "あした"],
+    bai: 3,
+    explanation: {
+      meaning: "Bây giờ là mấy giờ?",
+      grammar: "Chữ Hán: 今 (KIM - bây giờ)",
+      lesson: "JPD113 - Bài 3",
+      tips: "今 đứng độc lập đọc là いま (ima).",
+      reason: "今 đọc là いま."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "（朝）ご飯を食べます。",
+    answer: "あさ",
+    wrongs: ["ひる", "よる", "あした"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi ăn cơm sáng.",
+      grammar: "Chữ Hán: 朝 (TRIÊU - buổi sáng)",
+      lesson: "JPD113 - Bài 3",
+      tips: "朝 đọc là あさ (asa).",
+      reason: "朝 đọc là あさ."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "（昼）休みに公園を散歩します。",
+    answer: "ひる",
+    wrongs: ["あさ", "よる", "ばん"],
+    bai: 3,
+    explanation: {
+      meaning: "Giờ nghỉ trưa tôi đi dạo ở công viên.",
+      grammar: "Chữ Hán: 昼 (TRÚ - buổi trưa)",
+      lesson: "JPD113 - Bài 3",
+      tips: "昼 đọc là ひる (hiru).",
+      reason: "昼 đọc là ひる."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "（夜）11時に寝ます。",
+    answer: "よる",
+    wrongs: ["ばん", "あさ", "ひる"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi đi ngủ lúc 11 giờ đêm.",
+      grammar: "Chữ Hán: 夜 (DẠ - buổi tối, ban đêm)",
+      lesson: "JPD113 - Bài 3",
+      tips: "夜 đọc là よる (yoru).",
+      reason: "夜 đọc là よる."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "明日、図書館へ（行）きます。",
+    answer: "い",
+    wrongs: ["き", "かえ", "み"],
+    bai: 3,
+    explanation: {
+      meaning: "Ngày mai tôi đi đến thư viện.",
+      grammar: "Chữ Hán: 行きます (HÀNH - đi)",
+      lesson: "JPD113 - Bài 3",
+      tips: "行きます đọc là いきます.",
+      reason: "行 trong 行きます đọc là い."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "友達がうちに（来）ます。",
+    answer: "き",
+    wrongs: ["い", "かえ", "み"],
+    bai: 3,
+    explanation: {
+      meaning: "Bạn tôi đến nhà chơi.",
+      grammar: "Chữ Hán: 来ます (LAI - đến)",
+      lesson: "JPD113 - Bài 3",
+      tips: "来ます đọc là きます.",
+      reason: "来 trong 来ます đọc là き."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "毎日くだものを（食）べます。",
+    answer: "た",
+    wrongs: ["の", "み", "き"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi ngày tôi đều ăn trái cây.",
+      grammar: "Chữ Hán: 食べます (THỰC - ăn)",
+      lesson: "JPD113 - Bài 3",
+      tips: "食べます đọc là たべます.",
+      reason: "食 trong 食べます đọc là た."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "冷たい水を（飲）みます。",
+    answer: "の",
+    wrongs: ["た", "き", "み"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi uống nước lạnh.",
+      grammar: "Chữ Hán: 飲みます (ẨM - uống)",
+      lesson: "JPD113 - Bài 3",
+      tips: "飲みます đọc là のみます.",
+      reason: "飲 trong 飲みます đọc là の."
+    }
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.YOMI.promptJp,
+    prompt: HEADERS.YOMI.prompt,
+    sentence: "毎朝、新聞を（読）みます。",
+    answer: "よ",
+    wrongs: ["か", "き", "み"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi sáng tôi đều đọc báo.",
+      grammar: "Chữ Hán: 読みます (ĐỘC - đọc)",
+      lesson: "JPD113 - Bài 3",
+      tips: "読みます đọc là よみます.",
+      reason: "読 trong 読みます đọc là よ."
+    }
+  },
+
   // --- BÀI 4 KANJI ---
   {
     section: "Kanji",
@@ -1070,6 +1652,588 @@ export const KANJI_SEEDS: QuestionSeed[] = [
 // 2. VOCABULARY BANK (Từ vựng Bài 4 - 7: JPD123 FPT)
 // =========================================================================
 export const VOCAB_SEEDS: QuestionSeed[] = [
+  // ==================== BÀI 1 VOCAB ====================
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "初対面の人に会った時、「（　　）、田中です」と挨拶します。",
+    answer: "はじめまして",
+    wrongs: ["さようなら", "こんばんは", "おやすみなさい"],
+    bai: 1,
+    explanation: {
+      meaning: "Lần đầu gặp mặt: 'Rất vui được gặp bạn, tôi là Tanaka'.",
+      grammar: "Chào hỏi lần đầu: はじめまして",
+      lesson: "JPD113 - Bài 1",
+      tips: "Lần đầu gặp nhau luôn mở đầu bằng はじめまして.",
+      reason: "はじめまして dùng khi lần đầu tiên gặp một người."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「田中さん、どうぞ（　　）おねがいします。」",
+    answer: "よろしく",
+    wrongs: ["ありがたく", "おねがい", "おなじく"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Tanaka, rất mong được anh giúp đỡ.",
+      grammar: "Cụm giao tiếp: どうぞよろしくお願いします",
+      lesson: "JPD113 - Bài 1",
+      tips: "Cụm cố định: どうぞよろしく.",
+      reason: "どうぞよろしく là cách chào mong được giúp đỡ khi làm quen."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "マリアさんは病院で働いています。（　　）です。",
+    answer: "いしゃ",
+    wrongs: ["ぎんこういん", "かしゅ", "うんてんしゅ"],
+    bai: 1,
+    explanation: {
+      meaning: "Chị Maria làm việc ở bệnh viện. Chị ấy là bác sĩ.",
+      grammar: "Nghề nghiệp: 医者 (いしゃ - bác sĩ)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Bệnh viện (病院) thì làm nghề bác sĩ (いしゃ).",
+      reason: "Làm việc tại bệnh viện là bác sĩ (いしゃ)."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "マイさんはIT企業で働いています。（　　）です。",
+    answer: "かいしゃいん",
+    wrongs: ["せんせい", "がくせい", "きょうし"],
+    bai: 1,
+    explanation: {
+      meaning: "Mai làm việc ở công ty IT. Bạn ấy là nhân viên công ty.",
+      grammar: "Nghề nghiệp: 会社員 (かいしゃいん - nhân viên công ty)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Làm việc ở công ty là かいしゃいん.",
+      reason: "Người làm ở công ty gọi là かいしゃいん."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "私の（　　）は映画と音楽です。",
+    answer: "しゅみ",
+    wrongs: ["しごと", "なまえ", "せんもん"],
+    bai: 1,
+    explanation: {
+      meaning: "Sở thích của tôi là phim ảnh và âm nhạc.",
+      grammar: "Danh từ: 趣味 (しゅみ - sở thích)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Phim ảnh (映画) và âm nhạc (音楽) là sở thích (しゅみ).",
+      reason: "しゅみ nghĩa là sở thích."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「お（　　）はどちらですか。」「ベトナムです。」",
+    answer: "くに",
+    wrongs: ["うち", "へや", "まち"],
+    bai: 1,
+    explanation: {
+      meaning: "Quý quốc của bạn là ở đâu? - Là Việt Nam.",
+      grammar: "Hỏi quốc tịch lịch sự: お国 (おくに)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Hỏi xuất thân quốc gia dùng おくにはどちらですか.",
+      reason: "ベトナム là tên nước nên câu hỏi là おくに."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「アンさんは何歳ですか。」「（　　）です。」",
+    answer: "はたち",
+    wrongs: ["にじゅう", "はたちさい", "はつか"],
+    bai: 1,
+    explanation: {
+      meaning: "Bạn An bao nhiêu tuổi? - 20 tuổi.",
+      grammar: "Tuổi tác đặc biệt: 20 tuổi = はたち",
+      lesson: "JPD113 - Bài 1",
+      tips: "20 tuổi không thêm さい, gọi là はたち.",
+      reason: "はたち là 20 tuổi (không nói はたちさい)."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「あなたの（　　）は何番ですか。」「090-1234-5678です。」",
+    answer: "でんわばんごう",
+    wrongs: ["たんじょうび", "なまえ", "じゅうしょ"],
+    bai: 1,
+    explanation: {
+      meaning: "Số điện thoại của bạn là số mấy? - Là 090-1234-5678.",
+      grammar: "Từ vựng: 電話番号 (でんわばんごう - số điện thoại)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Dãy số có gạch nối là số điện thoại (でんわばんごう).",
+      reason: "Câu trả lời là dãy số điện thoại nên chọn でんわばんごう."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "鈴木さんはIT企業の（　　）です。",
+    answer: "エンジニア",
+    wrongs: ["アルバイト", "カメラ", "パソコン"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Suzuki là kỹ sư của doanh nghiệp IT.",
+      grammar: "Nghề nghiệp: エンジニア (kỹ sư)",
+      lesson: "JPD113 - Bài 1",
+      tips: "IT企業 thì làm エンジニア (engineer).",
+      reason: "エンジニア là kỹ sư công nghệ."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "ミラーさんはアメリカ（　　）です。",
+    answer: "じん",
+    wrongs: ["ご", "ほん", "ひと"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Miller là người Mỹ.",
+      grammar: "Hậu tố chỉ người: 〜人 (〜じん)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Tên nước + じん = người nước đó.",
+      reason: "アメリカじん là người Mỹ."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "山田さんの奥さんは（　　）です。家で家事をしています。",
+    answer: "しゅふ",
+    wrongs: ["きょうし", "いしゃ", "しゃいん"],
+    bai: 1,
+    explanation: {
+      meaning: "Vợ anh Yamada là nội trợ. Ở nhà làm việc nhà.",
+      grammar: "Nghề nghiệp: 主婦 (しゅふ - nội trợ)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Làm việc nhà chăm lo gia đình là nội trợ (しゅふ).",
+      reason: "しゅふ nghĩa là người nội trợ."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「お（　　）は何ですか。」「アンです。」",
+    answer: "なまえ",
+    wrongs: ["とし", "しゅみ", "くに"],
+    bai: 1,
+    explanation: {
+      meaning: "Tên bạn là gì? - Là An.",
+      grammar: "Hỏi tên: お名前 (おなまえ)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Trả lời là tên riêng nên câu hỏi là おなまえ.",
+      reason: "おなまえ nghĩa là tên."
+    }
+  },
+
+  // ==================== BÀI 2 VOCAB ====================
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "お金を（　　）に入れて、出かけます。",
+    answer: "さいふ",
+    wrongs: ["とけい", "くつ", "ズボン"],
+    bai: 2,
+    explanation: {
+      meaning: "Bỏ tiền vào ví rồi đi ra ngoài.",
+      grammar: "Đồ vật: 財布 (さいふ - cái ví)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Đựng tiền (お金) thì dùng ví (さいふ).",
+      reason: "さいふ nghĩa là ví đựng tiền."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "旅行で綺麗な写真を撮るために（　　）を買いました。",
+    answer: "カメラ",
+    wrongs: ["テレビ", "CD", "ペン"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi đã mua máy ảnh để chụp ảnh đẹp khi đi du lịch.",
+      grammar: "Đồ vật: カメラ (máy ảnh)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Chụp ảnh (写真) thì dùng máy ảnh (カメラ).",
+      reason: "カメラ nghĩa là máy ảnh."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "レポートを書くために（　　）を使います。",
+    answer: "パソコン",
+    wrongs: ["カメラ", "ズボン", "さいふ"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi sử dụng máy tính xách tay để viết báo cáo.",
+      grammar: "Thiết bị: パソコン (máy tính PC/laptop)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Viết báo cáo, gõ văn bản dùng パソコン.",
+      reason: "パソコン là máy vi tính."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "いま何時か知りたいですから、（　　）を見ます。",
+    answer: "とけい",
+    wrongs: ["めがね", "さいふ", "かばん"],
+    bai: 2,
+    explanation: {
+      meaning: "Vì muốn biết mấy giờ rồi nên tôi xem đồng hồ.",
+      grammar: "Đồ vật: 時計 (とけい - đồng hồ)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Xem giờ thì nhìn đồng hồ (とけい).",
+      reason: "とけい nghĩa là đồng hồ."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "毎朝、朝ごはんに（　　）とたまごを食べます。",
+    answer: "パン",
+    wrongs: ["くつ", "カメラ", "さいふ"],
+    bai: 2,
+    explanation: {
+      meaning: "Mỗi sáng tôi ăn bánh mì và trứng.",
+      grammar: "Món ăn: パン (bánh mì)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Món ăn cùng với trứng vào bữa sáng là bánh mì (パン).",
+      reason: "パン nghĩa là bánh mì."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "喫茶店で温かい（　　）を飲みました。",
+    answer: "コーヒー",
+    wrongs: ["ごはん", "パン", "さかな"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi đã uống cà phê nóng ở quán giải khát.",
+      grammar: "Đồ uống: コーヒー (cà phê)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Đồ uống ở quán cà phê là コーヒー.",
+      reason: "コーヒー là đồ uống (cà phê)."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「すみません、（　　）はどこですか。」「あちらです。」",
+    answer: "トイレ",
+    wrongs: ["ペン", "さいふ", "とけい"],
+    bai: 2,
+    explanation: {
+      meaning: "Xin lỗi, nhà vệ sinh ở đâu vậy? - Ở đằng kia ạ.",
+      grammar: "Địa điểm: トイレ (nhà vệ sinh)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Hỏi địa điểm trong toà nhà thường là トイレ.",
+      reason: "トイレ là nhà vệ sinh."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "（　　）で野菜や新鮮な果物を買います。",
+    answer: "スーパー",
+    wrongs: ["きっさてん", "エレベーター", "レジ"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi mua rau và trái cây tươi ở siêu thị.",
+      grammar: "Địa điểm mua sắm: スーパー (siêu thị)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Mua rau quả đồ ăn ở スーパー (supermarket).",
+      reason: "スーパー nghĩa là siêu thị."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「この傘は（　　）ですか。」「500円です。」",
+    answer: "いくら",
+    wrongs: ["どこ", "だれ", "なん"],
+    bai: 2,
+    explanation: {
+      meaning: "Chiếc ô này bao nhiêu tiền? - Là 500 yên.",
+      grammar: "Từ để hỏi giá: いくら (bao nhiêu tiền)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Trả lời có số tiền (500円) thì câu hỏi phải là いくら.",
+      reason: "いくら dùng để hỏi giá tiền."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "買い物をして、（　　）でお金を払います。",
+    answer: "レジ",
+    wrongs: ["トイレ", "エレベーター", "メニュー"],
+    bai: 2,
+    explanation: {
+      meaning: "Mua sắm xong, thanh toán tiền tại quầy thu ngân.",
+      grammar: "Từ vựng: レジ (quầy thu ngân / quầy tính tiền)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Nơi trả tiền trong siêu thị là レジ (cash register).",
+      reason: "レジ nghĩa là quầy thu ngân."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "レストランで（　　）を見て、食べたい料理を選びます。",
+    answer: "メニュー",
+    wrongs: ["レジ", "スーパー", "とけい"],
+    bai: 2,
+    explanation: {
+      meaning: "Xem thực đơn ở nhà hàng để chọn món muốn ăn.",
+      grammar: "Từ vựng: メニュー (thực đơn)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Chọn món ăn ở nhà hàng xem メニュー (menu).",
+      reason: "メニュー nghĩa là thực đơn."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "デパートの2階へ行くために（　　）に乗ります。",
+    answer: "エスカレーター",
+    wrongs: ["レジ", "メニュー", "テーブル"],
+    bai: 2,
+    explanation: {
+      meaning: "Tôi đi thang cuốn để lên tầng 2 của trung tâm thương mại.",
+      grammar: "Từ vựng: エスカレーター (thang cuốn)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Phương tiện di chuyển giữa các tầng là エスカレーター.",
+      reason: "エスカレーター là thang cuốn."
+    }
+  },
+
+  // ==================== BÀI 3 VOCAB ====================
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "（　　）7時に起きて、学校へ行きます。",
+    answer: "毎朝",
+    wrongs: ["毎晩", "昨日", "先週"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi sáng tôi thức dậy lúc 7 giờ rồi đi học.",
+      grammar: "Thời gian lặp lại: 毎朝 (まいあさ - mỗi sáng)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Thức dậy lúc 7 giờ sáng thì dùng 毎朝.",
+      reason: "毎朝 là mỗi buổi sáng."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "（　　）はお金を預けたり、おろしたりするところです。",
+    answer: "銀行",
+    wrongs: ["病院", "図書館", "郵便局"],
+    bai: 3,
+    explanation: {
+      meaning: "Ngân hàng là nơi gửi và rút tiền.",
+      grammar: "Địa điểm: 銀行 (ぎんこう - ngân hàng)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Liên quan đến tiền bạc (お金) là ngân hàng (銀行).",
+      reason: "銀行 là ngân hàng."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "静かな部屋で本を借りるために（　　）へ行きます。",
+    answer: "図書館",
+    wrongs: ["銀行", "病院", "公園"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi đến thư viện để mượn sách ở phòng yên tĩnh.",
+      grammar: "Địa điểm: 図書館 (としょかん - thư viện)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đọc sách, mượn sách (本) thì đến 図書館.",
+      reason: "図書館 là thư viện."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "頭が痛いですから、（　　）へ行って薬をもらいます。",
+    answer: "病院",
+    wrongs: ["銀行", "図書館", "郵便局"],
+    bai: 3,
+    explanation: {
+      meaning: "Vì đau đầu nên tôi đi bệnh viện để lấy thuốc.",
+      grammar: "Địa điểm: 病院 (びょういん - bệnh viện)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đau ốm khám bệnh uống thuốc thì đến 病院.",
+      reason: "病院 là bệnh viện."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "国へ手紙を出すために（　　）へ行きます。",
+    answer: "郵便局",
+    wrongs: ["銀行", "病院", "公園"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi đến bưu điện để gửi thư về nước.",
+      grammar: "Địa điểm: 郵便局 (ゆうびんきょく - bưu điện)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Gửi thư (手紙を出す) thì đến 郵便局.",
+      reason: "郵便局 là bưu điện."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "「今日は何（　　）ですか。」「金曜日です。」",
+    answer: "曜日",
+    wrongs: ["日", "月", "年"],
+    bai: 3,
+    explanation: {
+      meaning: "Hôm nay là thứ mấy? - Là thứ Sáu.",
+      grammar: "Hỏi thứ: 何曜日 (なんようび)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Câu trả lời có 金曜日 thì câu hỏi là 何曜日.",
+      reason: "曜日 chỉ các thứ trong tuần."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "夜11時に（　　）。おやすみなさい。",
+    answer: "寝ます",
+    wrongs: ["起きます", "行きます", "働きます"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi đi ngủ lúc 11 giờ đêm. Chúc ngủ ngon.",
+      grammar: "Động từ: 寝ます (ねます - đi ngủ)",
+      lesson: "JPD113 - Bài 3",
+      tips: "11 giờ đêm + chúc ngủ ngon = đi ngủ (寝ます).",
+      reason: "寝ます nghĩa là đi ngủ."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "朝6時に（　　）。おはようございます。",
+    answer: "起きます",
+    wrongs: ["寝ます", "行きます", "帰ります"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi thức dậy lúc 6 giờ sáng. Xin chào buổi sáng.",
+      grammar: "Động từ: 起きます (おきます - thức dậy)",
+      lesson: "JPD113 - Bài 3",
+      tips: "6 giờ sáng + chào buổi sáng = thức dậy (起きます).",
+      reason: "起きます nghĩa là thức dậy."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "父は月曜日から金曜日まで会社で（　　）。",
+    answer: "働きます",
+    wrongs: ["寝ます", "起きます", "休みます"],
+    bai: 3,
+    explanation: {
+      meaning: "Bố tôi làm việc ở công ty từ thứ Hai đến thứ Sáu.",
+      grammar: "Động từ: 働きます (はたらきます - làm việc)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Ở công ty (会社で) thì làm việc (働きます).",
+      reason: "働きます nghĩa là làm việc."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "土曜日と日曜日は学校が（　　）です。",
+    answer: "休み",
+    wrongs: ["行き", "働き", "起き"],
+    bai: 3,
+    explanation: {
+      meaning: "Thứ Bảy và Chủ Nhật trường học được nghỉ.",
+      grammar: "Danh từ: 休み (やすみ - ngày nghỉ)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Cuối tuần thì trường học được nghỉ (休み).",
+      reason: "休み là ngày nghỉ."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "毎日、日本語センターで熱心に（　　）。",
+    answer: "勉強します",
+    wrongs: ["寝ます", "起きます", "歩きます"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi ngày tôi đều chăm chỉ học tiếng Nhật ở trung tâm.",
+      grammar: "Động từ: 勉強します (べんきょうします - học tập)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Học tiếng Nhật thì dùng 勉強します.",
+      reason: "勉強します nghĩa là học tập."
+    }
+  },
+  {
+    section: "Từ vựng",
+    promptJp: HEADERS.VOCAB_FILL.promptJp,
+    prompt: HEADERS.VOCAB_FILL.prompt,
+    sentence: "授業が終わったら、まっすぐうちへ（　　）。",
+    answer: "帰ります",
+    wrongs: ["寝ます", "起きます", "読みます"],
+    bai: 3,
+    explanation: {
+      meaning: "Học xong là tôi về thẳng nhà.",
+      grammar: "Động từ di chuyển: 帰ります (かえります - về)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đi về nhà thì dùng うちへ帰ります.",
+      reason: "帰ります dùng cho việc về nơi chốn thân thuộc như nhà, quê hương."
+    }
+  },
+
   // --- BÀI 4 VOCAB ---
   {
     section: "Từ vựng",
@@ -1948,6 +3112,588 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
 // 3. GRAMMAR BANK (Ngữ pháp Bài 4 - 7: JPD123 FPT)
 // =========================================================================
 export const GRAMMAR_SEEDS: QuestionSeed[] = [
+  // ==================== BÀI 1 GRAMMAR ====================
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "私（　　）FPT大学の学生です。",
+    answer: "は",
+    wrongs: ["が", "を", "に"],
+    bai: 1,
+    explanation: {
+      meaning: "Tôi là sinh viên trường Đại học FPT.",
+      grammar: "Trợ từ chủ đề: N1 は N2 です",
+      lesson: "JPD113 - Bài 1",
+      tips: "Đứng sau chủ ngữ chỉ chủ đề câu là trợ từ は.",
+      reason: "は đánh dấu chủ ngữ/chủ đề trong câu khẳng định N1 は N2 です."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "佐藤さんは中国人（　　）。日本人です。",
+    answer: "じゃありません",
+    wrongs: ["じゃありませんでした", "あります", "ありません"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Sato không phải là người Trung Quốc. Anh ấy là người Nhật.",
+      grammar: "Câu phủ định danh từ: N1 は N2 じゃありません",
+      lesson: "JPD113 - Bài 1",
+      tips: "Phủ định thì hiện tại của danh từ dùng じゃありません.",
+      reason: "じゃありません là dạng phủ định lịch sự của です."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "山田さんは学生ですか。（　　）、学生じゃありません。先生です。",
+    answer: "いいえ",
+    wrongs: ["はい", "ええ", "そうです"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Yamada có phải là học sinh không? - Không, không phải học sinh. Là giáo viên.",
+      grammar: "Trả lời phủ định câu hỏi nghi vấn: いいえ",
+      lesson: "JPD113 - Bài 1",
+      tips: "Phía sau là じゃありません thì đầu câu trả lời phải là いいえ.",
+      reason: "いいえ dùng để trả lời phủ định."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "アンさんは学生です。マリアさん（　　）学生です。",
+    answer: "も",
+    wrongs: ["は", "の", "と"],
+    bai: 1,
+    explanation: {
+      meaning: "Bạn An là học sinh. Bạn Maria cũng là học sinh.",
+      grammar: "Trợ từ đồng nhất thông tin: N も",
+      lesson: "JPD113 - Bài 1",
+      tips: "Khi thông tin lặp lại giống câu trước, dùng trợ từ も thay cho は.",
+      reason: "も có nghĩa là 'cũng'."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "山田さんはFPT（　　）社員です。",
+    answer: "の",
+    wrongs: ["は", "も", "と"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Yamada là nhân viên của công ty FPT.",
+      grammar: "Trợ từ sở thuộc/sở hữu: N1 の N2",
+      lesson: "JPD113 - Bài 1",
+      tips: "N1 là tổ chức/công ty, N2 là vị trí thì nối bằng の.",
+      reason: "の biểu thị mối quan hệ thuộc về một tổ chức."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "机の上に本（　　）ノートがあります。",
+    answer: "と",
+    wrongs: ["の", "も", "は"],
+    bai: 1,
+    explanation: {
+      meaning: "Trên bàn có sách và vở ghi.",
+      grammar: "Trợ từ liệt kê: N1 と N2 (N1 và N2)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Liệt kê hoàn toàn danh từ dùng と.",
+      reason: "と nối các danh từ mang nghĩa 'và'."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "田中さんは日本人ですか、（　　）アメリカ人ですか。",
+    answer: "それとも",
+    wrongs: ["そして", "しかし", "だから"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Tanaka là người Nhật Bản, hay là người Mỹ?",
+      grammar: "Câu hỏi lựa chọn: Câu 1 か、それとも Câu 2 か",
+      lesson: "JPD113 - Bài 1",
+      tips: "Nối 2 vế câu hỏi lựa chọn dùng それとも (hay là).",
+      reason: "それとも dùng trong câu hỏi lựa chọn giữa 2 phương án."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "私（　　）趣味は映画を見ることです。",
+    answer: "の",
+    wrongs: ["は", "も", "で"],
+    bai: 1,
+    explanation: {
+      meaning: "Sở thích của tôi là xem phim.",
+      grammar: "Sở hữu cách: 私の + Danh từ",
+      lesson: "JPD113 - Bài 1",
+      tips: "Sở thích của tôi = 私の趣味.",
+      reason: "の nối chỉ quan hệ sở hữu giữa tôi và sở thích."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「あの方はどなたですか。」「（　　）は田中先生です。」",
+    answer: "あの方",
+    wrongs: ["これ", "ここ", "どれ"],
+    bai: 1,
+    explanation: {
+      meaning: "Vị kia là ai vậy? - Vị kia là thầy Tanaka.",
+      grammar: "Đại từ chỉ người lịch sự: あの方 (あのかた)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Hỏi あの方 thì trả lời tương ứng bằng あの方.",
+      reason: "あの方 là dạng lịch sự của あの人."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「あなたは学生ですか。」「はい、学生（　　）。」",
+    answer: "です",
+    wrongs: ["でした", "ます", "ません"],
+    bai: 1,
+    explanation: {
+      meaning: "Bạn có phải là học sinh không? - Vâng, tôi là học sinh.",
+      grammar: "Khẳng định danh từ: はい、N です",
+      lesson: "JPD113 - Bài 1",
+      tips: "Trả lời はい thì kết thúc bằng です.",
+      reason: "です là dạng khẳng định lịch sự ở hiện tại."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "アンさんの誕生日は6月15日（　　）。",
+    answer: "です",
+    wrongs: ["ます", "でした", "で"],
+    bai: 1,
+    explanation: {
+      meaning: "Sinh nhật của bạn An là ngày 15 tháng 6.",
+      grammar: "Vị ngữ danh từ: 〜日 です",
+      lesson: "JPD113 - Bài 1",
+      tips: "Ngày tháng là danh từ, kết thúc câu lịch sự dùng です.",
+      reason: "Danh từ kết thúc bằng です."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "佐藤さんは会社員です。鈴木さん（　　）会社員です。",
+    answer: "も",
+    wrongs: ["は", "を", "が"],
+    bai: 1,
+    explanation: {
+      meaning: "Anh Sato là nhân viên công ty. Anh Suzuki cũng là nhân viên công ty.",
+      grammar: "Trợ từ も (cũng)",
+      lesson: "JPD113 - Bài 1",
+      tips: "Cùng nghề nghiệp会社員 nên dùng trợ từ も.",
+      reason: "も dùng để chỉ sự tương đồng về thông tin."
+    }
+  },
+
+  // ==================== BÀI 2 GRAMMAR ====================
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「（　　）はいくらですか。」「これは千円です。」",
+    answer: "それ",
+    wrongs: ["ここ", "どこ", "どちら"],
+    bai: 2,
+    explanation: {
+      meaning: "Cái đó giá bao nhiêu? - Cái này 1.000 yên.",
+      grammar: "Cặp chỉ định từ hỏi đáp: それ ⇔ これ",
+      lesson: "JPD113 - Bài 2",
+      tips: "Người trả lời nói これ (cái này của tôi) thì người hỏi phải hỏi それ (cái đó gần bạn).",
+      reason: "Khi hỏi vật ở gần người nghe, ta dùng それ."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「お手洗いは（　　）ですか。」「あそこです。」",
+    answer: "どこ",
+    wrongs: ["いくら", "だれ", "なん"],
+    bai: 2,
+    explanation: {
+      meaning: "Nhà vệ sinh ở đâu vậy? - Ở đằng kia ạ.",
+      grammar: "Từ để hỏi nơi chốn: どこ",
+      lesson: "JPD113 - Bài 2",
+      tips: "Trả lời là vị trí (あそこ) thì câu hỏi phải là どこ.",
+      reason: "どこ dùng để hỏi địa điểm, nơi chốn."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "店員さん、すみません。この時計（　　）ください。",
+    answer: "を",
+    wrongs: ["は", "が", "に"],
+    bai: 2,
+    explanation: {
+      meaning: "Xin lỗi anh bán hàng, xin hãy bán cho tôi chiếc đồng hồ này.",
+      grammar: "Mẫu câu mua hàng: N を ください",
+      lesson: "JPD113 - Bài 2",
+      tips: "Vật muốn lấy/mua đi kèm trợ từ を + ください.",
+      reason: "Trợ từ を đi trước ください khi yêu cầu lấy món đồ."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「これは（　　）のワインですか。」「フランスのワインです。」",
+    answer: "どこ",
+    wrongs: ["だれ", "いくら", "なん"],
+    bai: 2,
+    explanation: {
+      meaning: "Đây là rượu vang của xuất xứ ở đâu vậy? - Là rượu vang của nước Pháp.",
+      grammar: "Hỏi xuất xứ đồ vật: どこの N",
+      lesson: "JPD113 - Bài 2",
+      tips: "Câu trả lời là tên quốc gia (フランス) nên hỏi どこの.",
+      reason: "どこの N dùng để hỏi xuất xứ sản xuất của món đồ."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「そのかばんは（　　）のですか。」「私のです。」",
+    answer: "だれ",
+    wrongs: ["どこ", "いくら", "どれ"],
+    bai: 2,
+    explanation: {
+      meaning: "Chiếc cặp đó là của ai vậy? - Là của tôi.",
+      grammar: "Hỏi chủ sở hữu: だれの N",
+      lesson: "JPD113 - Bài 2",
+      tips: "Trả lời 私の (của tôi) thì câu hỏi là だれの (của ai).",
+      reason: "だれの dùng để hỏi về quyền sở hữu của đồ vật."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "（　　）は私のペンです。それはあなたのです。",
+    answer: "これ",
+    wrongs: ["ここ", "どこ", "どれ"],
+    bai: 2,
+    explanation: {
+      meaning: "Cái này là bút của tôi. Cái đó là của bạn.",
+      grammar: "Đại từ chỉ định đồ vật gần người nói: これ",
+      lesson: "JPD113 - Bài 2",
+      tips: "Chỉ đồ vật ở gần mình dùng これ.",
+      reason: "これ là đại từ chỉ vật gần người nói."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "レストランの売り場は（　　）階ですか。",
+    answer: "何",
+    wrongs: ["どこ", "いくら", "だれ"],
+    bai: 2,
+    explanation: {
+      meaning: "Khu ẩm thực nhà hàng ở tầng mấy vậy?",
+      grammar: "Hỏi số tầng: 何階 (なんがい)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Đứng trước 階 dùng 何 (なん).",
+      reason: "何階 dùng để hỏi tầng số mấy."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "あそこに停まっている（　　）は日本の自動車です。",
+    answer: "あれ",
+    wrongs: ["あそこ", "あの", "どれ"],
+    bai: 2,
+    explanation: {
+      meaning: "Cái xe đỗ ở đằng xa kia là xe ô tô Nhật Bản.",
+      grammar: "Đại từ chỉ vật ở xa cả hai người: あれ",
+      lesson: "JPD113 - Bài 2",
+      tips: "Vật ở xa cả người nói lẫn người nghe dùng あれ.",
+      reason: "あれ đóng vai trò chủ ngữ chỉ vật ở xa."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "会社の受付は（　　）です。",
+    answer: "ここ",
+    wrongs: ["これ", "この", "どれ"],
+    bai: 2,
+    explanation: {
+      meaning: "Bàn lễ tân của công ty là ở chỗ này.",
+      grammar: "Chỉ vị trí gần người nói: ここ",
+      lesson: "JPD113 - Bài 2",
+      tips: "Chỉ địa điểm vị trí dùng ここ (chỗ này).",
+      reason: "ここ dùng để chỉ vị trí nơi chốn."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "このTシャツは1枚 2,000（　　）です。",
+    answer: "円",
+    wrongs: ["時", "階", "人"],
+    bai: 2,
+    explanation: {
+      meaning: "Chiếc áo thun này giá 2.000 yên một chiếc.",
+      grammar: "Đơn vị tiền tệ: 円 (えん - Yên Nhật)",
+      lesson: "JPD113 - Bài 2",
+      tips: "Giá tiền ở Nhật dùng đơn vị 円 (yên).",
+      reason: "円 là đơn vị tiền tệ Nhật Bản."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「それは何ですか。」「（　　）は日本語の辞書です。」",
+    answer: "これ",
+    wrongs: ["それ", "あれ", "どれ"],
+    bai: 2,
+    explanation: {
+      meaning: "Cái đó là cái gì vậy? - Cái này là từ điển tiếng Nhật.",
+      grammar: "Hỏi それ thì trả lời bằng これ",
+      lesson: "JPD113 - Bài 2",
+      tips: "Đối phương hỏi それ thì mình cầm trên tay trả lời これ.",
+      reason: "Quy tắc hội thoại: hỏi それ trả lời これ."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "教室に新しい机（　　）あります。",
+    answer: "が",
+    wrongs: ["を", "に", "へ"],
+    bai: 2,
+    explanation: {
+      meaning: "Trong lớp học có bàn mới.",
+      grammar: "Sự tồn tại của đồ vật: N が あります",
+      lesson: "JPD113 - Bài 2",
+      tips: "Đồ vật tồn tại đi với trợ từ が + あります.",
+      reason: "Trợ từ が đứng trước あります chỉ vật thể hiện diện."
+    }
+  },
+
+  // ==================== BÀI 3 GRAMMAR ====================
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "明日、友達と学校（　　）行きます。",
+    answer: "へ",
+    wrongs: ["を", "で", "が"],
+    bai: 3,
+    explanation: {
+      meaning: "Ngày mai tôi đi đến trường cùng bạn.",
+      grammar: "Trợ từ phương hướng/đích đến: Địa điểm + へ + 行きます",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đích đến của động từ di chuyển (行く, 来る, 帰る) dùng trợ từ へ (phát âm là e).",
+      reason: "へ chỉ phương hướng, hướng di chuyển đến địa điểm."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "図書館（　　）静かに本を読みます。",
+    answer: "で",
+    wrongs: ["へ", "に", "を"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi đọc sách một cách yên tĩnh ở thư viện.",
+      grammar: "Địa điểm diễn ra hành động: Nơi chốn + で + V",
+      lesson: "JPD113 - Bài 3",
+      tips: "Hành động (読む, 食べる, 勉強する) diễn ra ở đâu thì nơi đó đi với で.",
+      reason: "で chỉ nơi chốn diễn ra hành động."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "毎朝、冷たい水（　　）コップで飲みます。",
+    answer: "を",
+    wrongs: ["へ", "で", "に"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi sáng tôi uống nước lạnh bằng cốc.",
+      grammar: "Tân ngữ trực tiếp của ngoại động từ: N を V",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đối tượng tác động của hành động uống (飲む) đi với を.",
+      reason: "を đánh dấu tân ngữ trực tiếp của hành động."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "毎朝7時（　　）起きます。",
+    answer: "に",
+    wrongs: ["で", "へ", "を"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi sáng tôi thức dậy vào lúc 7 giờ.",
+      grammar: "Thời điểm xác định: Thời gian có con số + に + V",
+      lesson: "JPD113 - Bài 3",
+      tips: "Thời gian có chữ số cụ thể (7時, 6月) đi với に.",
+      reason: "に dùng để chỉ thời điểm cụ thể diễn ra hành động."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "昨日は日曜日でしたから、勉強（　　）。休みました。",
+    answer: "しませんでした",
+    wrongs: ["します", "しません", "しました"],
+    bai: 3,
+    explanation: {
+      meaning: "Hôm qua là chủ nhật nên tôi không học. Tôi đã nghỉ ngơi.",
+      grammar: "Phủ định quá khứ của động từ: V ませんでした",
+      lesson: "JPD113 - Bài 3",
+      tips: "Hành động trong quá khứ (昨日) ở dạng phủ định là ませんでした.",
+      reason: "しませんでした là thể phủ định trong quá khứ của します."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "銀行は午前9時（　　）午後5時（　　）まで開いています。",
+    answer: "から",
+    wrongs: ["まで", "に", "へ"],
+    bai: 3,
+    explanation: {
+      meaning: "Ngân hàng mở cửa từ 9 giờ sáng đến 5 giờ chiều.",
+      grammar: "Phạm vi thời gian: N1 から N2 まで (từ N1 đến N2)",
+      lesson: "JPD113 - Bài 3",
+      tips: "Điểm bắt đầu dùng から, kết thúc dùng まで.",
+      reason: "から biểu thị điểm mốc thời gian bắt đầu."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "「毎晩、何時（　　）寝ますか。」「11時に寝ます。」",
+    answer: "に",
+    wrongs: ["で", "へ", "を"],
+    bai: 3,
+    explanation: {
+      meaning: "Mỗi tối bạn đi ngủ lúc mấy giờ? - Tôi ngủ lúc 11 giờ.",
+      grammar: "Hỏi thời điểm: 何時に Vますか",
+      lesson: "JPD113 - Bài 3",
+      tips: "Hỏi giờ giấc đi ngủ dùng 何時に.",
+      reason: "に đi sau từ chỉ thời gian cụ thể."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "今晩、うちでテレビ（　　）見ます。",
+    answer: "を",
+    wrongs: ["に", "で", "へ"],
+    bai: 3,
+    explanation: {
+      meaning: "Tối nay tôi xem tivi ở nhà.",
+      grammar: "Tân ngữ hành động: テレビ を 見ます",
+      lesson: "JPD113 - Bài 3",
+      tips: "Xem tivi thì tivi là tân ngữ đi với を.",
+      reason: "を là trợ từ chỉ đối tượng tác động của hành động xem."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "土曜日と日曜日は働き（　　）。休みです。",
+    answer: "ません",
+    wrongs: ["ました", "ます", "でした"],
+    bai: 3,
+    explanation: {
+      meaning: "Thứ Bảy và Chủ Nhật tôi không làm việc. Tôi được nghỉ.",
+      grammar: "Phủ định hiện tại/tương lai của động từ: V ません",
+      lesson: "JPD113 - Bài 3",
+      tips: "Ngày nghỉ thì không làm việc = 働きません.",
+      reason: "ません là dạng phủ định lịch sự của ます."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "駅まで歩いて（　　）。",
+    answer: "行きます",
+    wrongs: ["見ます", "読みます", "寝ます"],
+    bai: 3,
+    explanation: {
+      meaning: "Tôi đi bộ đến nhà ga.",
+      grammar: "Cách thức di chuyển: 歩いて 行きます",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đi bộ đến ga dùng 歩いて行きます.",
+      reason: "行きます đi với phương tiện/cách thức di chuyển 歩いて."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "昨日、駅の改札の前で友達（　　）会いました。",
+    answer: "に",
+    wrongs: ["を", "で", "へ"],
+    bai: 3,
+    explanation: {
+      meaning: "Hôm qua tôi đã gặp bạn ở trước cửa soát vé nhà ga.",
+      grammar: "Gặp gỡ ai: Người + に 会います",
+      lesson: "JPD113 - Bài 3",
+      tips: "Động từ 会います luôn đi với trợ từ に.",
+      reason: "Đối tượng gặp gỡ đi với trợ từ に, không dùng を."
+    }
+  },
+  {
+    section: "Ngữ pháp",
+    promptJp: HEADERS.GRAM_FILL.promptJp,
+    prompt: HEADERS.GRAM_FILL.prompt,
+    sentence: "午後5時に会社を出て、うち（　　）帰ります。",
+    answer: "へ",
+    wrongs: ["で", "を", "から"],
+    bai: 3,
+    explanation: {
+      meaning: "5 giờ chiều tôi rời công ty rồi về nhà.",
+      grammar: "Đích đến về nhà: うち へ 帰ります",
+      lesson: "JPD113 - Bài 3",
+      tips: "Đích đến của 帰る dùng へ hoặc に.",
+      reason: "へ chỉ hướng đi về nhà."
+    }
+  },
+
   // --- BÀI 4 GRAMMAR ---
   {
     section: "Ngữ pháp",
@@ -2970,7 +4716,8 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
         answer: seed.answer,
       };
       const exp = seed.explanation || getQuestionExplanation(q as any);
-      let lesson = `JPD123 - Bài ${seed.bai} (${q.section})`;
+      const courseName = seed.bai && seed.bai <= 3 ? "JPD113" : "JPD123";
+      let lesson = `${courseName} - Bài ${seed.bai} (${q.section})`;
       if (
         exp.lesson &&
         exp.lesson.includes(`Bài ${seed.bai}`) &&

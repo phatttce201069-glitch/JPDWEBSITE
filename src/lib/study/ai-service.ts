@@ -205,10 +205,18 @@ export function buildAiPrompt(selectedBai?: string[]): {
     negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về Thể て (chia 3 nhóm, Vてください, Vています, Vましょうか, Cách làm 〜かた), sự tồn tại người/động vật (N1 に N2 がいます), hay dụng cụ ăn uống của Bài 7.\n";
   }
 
+  const isJpd113Only = allowedBai.every((b) => b <= 3);
+  const courseCode = isJpd113Only ? "JPD113" : allowedBai.some((b) => b <= 3) ? "JPD113 & JPD123" : "JPD123";
+  const courseTitle = isJpd113Only
+    ? "JPD113 (Tiếng Nhật 1)"
+    : allowedBai.some((b) => b <= 3)
+      ? "JPD113 & JPD123"
+      : "JPD123 (Tiếng Nhật 2)";
+
   const entropySeed = Math.random().toString(36).slice(2, 8).toUpperCase();
 
-  const systemPrompt = `Bạn là giảng viên tiếng Nhật trường Đại học FPT chuyên biên soạn đề thi môn JPD123 (Tiếng Nhật 2).
-Nhiệm vụ: Tạo một đề thi trắc nghiệm A-D gồm đúng 30 câu chuẩn cấu trúc đề thi kết thúc môn (Final Exam) JPD123 FPT.
+  const systemPrompt = `Bạn là giảng viên tiếng Nhật trường Đại học FPT chuyên biên soạn đề thi môn ${courseTitle}.
+Nhiệm vụ: Tạo một đề thi trắc nghiệm A-D gồm đúng 30 câu chuẩn cấu trúc đề thi kết thúc môn (Final Exam) ${courseCode} FPT.
 Mã phiên đề thi ngẫu nhiên: #${entropySeed}.
 
 QUY TẮC BẮT BUỘC VỀ PHẠM VI BÀI HỌC (CRITICAL CONSTRAINT - TUÂN THỦ 100%):
@@ -699,11 +707,13 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
     const message = err instanceof Error ? err.message : String(err);
     console.warn("[AI Exam Generator] Error calling LLM, fallback to Built-in Engine:", message);
     const fallback = buildFptJpd123Exam(selectedBai);
+    const isJpd113Only = selectedBai && selectedBai.length > 0 && selectedBai.every((b) => Number(b) <= 3);
+    const courseCode = isJpd113Only ? "JPD113" : "JPD123";
     return {
       questions: fallback,
       isRealAi: false,
       provider: "AI Engine (FPT Fallback)",
-      error: `Không thể kết nối AI (${message}). Hệ thống đã tự động kích hoạt bộ đề thi chuẩn JPD123 FPT thay thế.`,
+      error: `Không thể kết nối AI (${message}). Hệ thống đã tự động kích hoạt bộ đề thi chuẩn ${courseCode} FPT thay thế.`,
     };
   }
 }

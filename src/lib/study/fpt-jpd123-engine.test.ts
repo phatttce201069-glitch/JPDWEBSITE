@@ -483,6 +483,69 @@ test("isQuestionAllowedForLessons strictly isolates selected lessons and rejects
   assert.equal(isQuestionAllowedForLessons(validBai7Question, [6]), false, "Câu hỏi Bài 7 phải bị loại bỏ khi chỉ chọn Bài 6");
 });
 
+test("buildFptJpd123Exam with JPD113 (Lessons 1, 2, 3) produces 30 balanced non-repeating questions", () => {
+  const paper = buildFptJpd123Exam(["1", "2", "3"]);
+
+  assert.equal(paper.length, 30, "Đề thi JPD113 phải có đúng 30 câu");
+  assert.equal(paper.filter((q) => q.section === "Kanji").length, 10, "10 câu Kanji");
+  assert.equal(paper.filter((q) => q.section === "Từ vựng").length, 10, "10 câu Từ vựng");
+  assert.equal(paper.filter((q) => q.section === "Ngữ pháp").length, 10, "10 câu Ngữ pháp");
+
+  const uniqueSentences = new Set(paper.map((q) => q.sentence));
+  assert.equal(uniqueSentences.size, 30, "30 câu hỏi phải không trùng lặp");
+
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    const isJpd113Bai =
+      (lesson.includes("Bài 1") || lesson.includes("Bài 2") || lesson.includes("Bài 3")) &&
+      !lesson.includes("đến");
+    assert.ok(isJpd113Bai, `Câu ${q.id} (${q.sentence}) phải thuộc Bài 1, 2 hoặc 3 của JPD113, nhận được: ${lesson}`);
+    assert.ok(!lesson.includes("Bài 4"), "Không được rò rỉ Bài 4");
+    assert.ok(!lesson.includes("Bài 5"), "Không được rò rỉ Bài 5");
+    assert.ok(!lesson.includes("Bài 6"), "Không được rò rỉ Bài 6");
+    assert.ok(!lesson.includes("Bài 7"), "Không được rò rỉ Bài 7");
+  }
+});
+
+test("buildFptJpd123Exam with single lesson 1 produces 30 non-repeating questions solely from Bài 1", () => {
+  const paper = buildFptJpd123Exam(["1"]);
+  assert.equal(paper.length, 30);
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30);
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(lesson.includes("Bài 1"), `Câu ${q.id} phải thuộc Bài 1: ${lesson}`);
+  }
+});
+
+test("buildFptJpd123Exam with single lesson 2 produces 30 non-repeating questions solely from Bài 2", () => {
+  const paper = buildFptJpd123Exam(["2"]);
+  assert.equal(paper.length, 30);
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30);
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(lesson.includes("Bài 2"), `Câu ${q.id} phải thuộc Bài 2: ${lesson}`);
+  }
+});
+
+test("buildFptJpd123Exam with single lesson 3 produces 30 non-repeating questions solely from Bài 3", () => {
+  const paper = buildFptJpd123Exam(["3"]);
+  assert.equal(paper.length, 30);
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30);
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(lesson.includes("Bài 3"), `Câu ${q.id} phải thuộc Bài 3: ${lesson}`);
+  }
+});
+
+test("buildAiPrompt for JPD113 scopes to Bài 1, 2, 3 and sets course title to JPD113 (Tiếng Nhật 1)", () => {
+  const { systemPrompt, allowedBai } = buildAiPrompt(["1", "2", "3"]);
+  assert.deepEqual(allowedBai, [1, 2, 3]);
+  assert.ok(systemPrompt.includes("JPD113 (Tiếng Nhật 1)"), "System prompt phải nêu rõ JPD113 (Tiếng Nhật 1)");
+  assert.ok(systemPrompt.includes("Bài 1, Bài 2, Bài 3"), "Phải liệt kê Bài 1, Bài 2, Bài 3");
+  assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về tính từ chia quá khứ"), "Phải cấm Bài 4");
+});
+
+
 
 
 
