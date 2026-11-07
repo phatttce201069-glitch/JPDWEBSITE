@@ -276,27 +276,49 @@ function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boo
     ) {
       return false;
     }
-    for (let b = 1; b <= 7; b++) {
+    for (let b = 1; b <= 10; b++) {
       if (!allowedBai.includes(b) && q.explanation.lesson.includes(`Bài ${b}`)) {
         return false;
       }
     }
   }
 
-  // 2. Nếu Bài 4 không được chọn: loại bỏ từ ngữ và ngữ pháp đặc thù Bài 4
+  // 2. Nếu Bài 1 không được chọn
+  if (!allowedBai.includes(1)) {
+    if (q.prompt.includes("Bài 1")) return false;
+  }
+
+  // 3. Nếu Bài 2 không được chọn
+  if (!allowedBai.includes(2)) {
+    if (q.sentence.includes("何階") || q.sentence.includes("いくらですか") || q.prompt.includes("Bài 2")) {
+      return false;
+    }
+  }
+
+  // 4. Nếu Bài 3 không được chọn
+  if (!allowedBai.includes(3)) {
+    if (q.sentence.includes("へ行きます") || q.prompt.includes("Bài 3")) {
+      return false;
+    }
+  }
+
+  // 5. Nếu Bài 4 không được chọn: loại bỏ từ ngữ và ngữ pháp đặc thù Bài 4
   if (!allowedBai.includes(4)) {
     if (
       q.sentence.includes("どのくらい") ||
       q.sentence.includes("そして") ||
       q.sentence.includes("しかし") ||
       q.sentence.includes("ぜんぜん") ||
+      q.sentence.includes("暑いですが") ||
+      q.sentence.includes("おいしかった") ||
+      q.sentence.includes("静かでした") ||
       q.prompt.includes("Bài 4")
     ) {
       return false;
     }
   }
 
-  // 3. Nếu Bài 5 không được chọn: loại bỏ cấu trúc mong muốn và mục đích Bài 5
+  // 6. Nếu Bài 5 không được chọn: loại bỏ cấu trúc mong muốn và mục đích Bài 5
   if (!allowedBai.includes(5)) {
     if (
       q.sentence.includes("ほしい") ||
@@ -310,7 +332,7 @@ function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boo
     }
   }
 
-  // 4. Nếu Bài 6 không được chọn: loại bỏ từ khóa so sánh, rủ rê/từ chối khéo, sự kiện, đếm vật mỏng
+  // 7. Nếu Bài 6 không được chọn: loại bỏ từ khóa so sánh, rủ rê/từ chối khéo, sự kiện, đếm vật mỏng
   if (!allowedBai.includes(6)) {
     if (
       q.sentence.includes("より") ||
@@ -326,6 +348,9 @@ function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boo
       q.sentence.includes("お祭りがあります") ||
       q.sentence.includes("まいあります") ||
       q.sentence.includes("枚あります") ||
+      q.sentence.includes("2枚") ||
+      q.sentence.includes("1枚") ||
+      q.sentence.includes("3枚") ||
       q.sentence.includes("枚") ||
       q.prompt.includes("So sánh") ||
       q.prompt.includes("so sánh") ||
@@ -337,13 +362,15 @@ function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boo
     }
   }
 
-  // 5. Nếu Bài 7 không được chọn: loại bỏ thể て và dụng cụ ăn uống
+  // 8. Nếu Bài 7 không được chọn: loại bỏ thể て, chia động từ, tiếp diễn và dụng cụ ăn uống
   if (!allowedBai.includes(7)) {
     if (
       q.sentence.includes("てください") ||
       q.sentence.includes("ています") ||
+      q.sentence.includes("ていません") ||
       q.sentence.includes("てはいけません") ||
       q.sentence.includes("てもいいです") ||
+      q.sentence.includes("ましょうか") ||
       q.sentence.includes("スプーン") ||
       q.sentence.includes("フォーク") ||
       q.sentence.includes("ナイフ") ||
@@ -353,58 +380,90 @@ function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boo
       q.sentence.includes("使い方") ||
       q.sentence.includes("作り方") ||
       q.sentence.includes("行き方") ||
+      q.sentence.includes("持ち方") ||
       q.prompt.includes("thể て") ||
       q.prompt.includes("Thể て") ||
+      q.prompt.includes("tiếp diễn") ||
       q.prompt.includes("Bài 7")
     ) {
       return false;
     }
   }
 
-  // 6. Nếu chỉ chọn duy nhất 1 bài (ví dụ Bài 6): đảm bảo câu hỏi khớp 100% phạm vi bài đó
-  if (allowedBai.length === 1 && allowedBai[0] === 6) {
-    const isBai6Kanji = /[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(q.sentence + q.answer);
-    const isBai6GrammarOrVocab =
-      q.sentence.includes("より") ||
-      q.sentence.includes("ほど") ||
-      q.sentence.includes("どちら") ||
-      q.sentence.includes("いちばん") ||
-      q.sentence.includes("一番") ||
-      q.sentence.includes("ちょっと") ||
-      q.sentence.includes("やくそく") ||
-      q.sentence.includes("約束") ||
-      q.sentence.includes("用事") ||
-      q.sentence.includes("お祭り") ||
-      q.sentence.includes("まつり") ||
-      q.sentence.includes("パーティー") ||
-      q.sentence.includes("コンサート") ||
-      q.sentence.includes("まい") ||
-      q.sentence.includes("枚") ||
-      q.sentence.includes("季節") ||
-      q.sentence.includes("春") ||
-      q.sentence.includes("夏") ||
-      q.sentence.includes("秋") ||
-      q.sentence.includes("冬") ||
-      q.sentence.includes("雪") ||
-      q.sentence.includes("雨") ||
-      q.sentence.includes("魚") ||
-      q.sentence.includes("肉") ||
-      q.sentence.includes("野菜") ||
-      q.sentence.includes("チケット") ||
-      q.sentence.includes("CD") ||
-      q.sentence.includes("シャツ") ||
-      q.sentence.includes("切符") ||
-      q.sentence.includes("荷物") ||
-      q.sentence.includes("宿題") ||
-      q.prompt.includes("so sánh") ||
-      q.prompt.includes("So sánh") ||
-      q.prompt.includes("từ chối") ||
-      q.prompt.includes("rủ rê") ||
-      q.prompt.includes("sự kiện") ||
-      q.prompt.includes("lượng từ");
+  // 9. Nếu chỉ chọn duy nhất 1 bài: đảm bảo câu hỏi khớp 100% phạm vi bài đó
+  if (allowedBai.length === 1) {
+    const singleBai = allowedBai[0];
+    if (singleBai === 6) {
+      const isBai6Kanji = /[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(q.sentence + q.answer);
+      const isBai6GrammarOrVocab =
+        q.sentence.includes("より") ||
+        q.sentence.includes("ほど") ||
+        q.sentence.includes("どちら") ||
+        q.sentence.includes("いちばん") ||
+        q.sentence.includes("一番") ||
+        q.sentence.includes("ちょっと") ||
+        q.sentence.includes("やくそく") ||
+        q.sentence.includes("約束") ||
+        q.sentence.includes("用事") ||
+        q.sentence.includes("お祭り") ||
+        q.sentence.includes("まつり") ||
+        q.sentence.includes("パーティー") ||
+        q.sentence.includes("コンサート") ||
+        q.sentence.includes("まい") ||
+        q.sentence.includes("枚") ||
+        q.sentence.includes("季節") ||
+        q.sentence.includes("春") ||
+        q.sentence.includes("夏") ||
+        q.sentence.includes("秋") ||
+        q.sentence.includes("冬") ||
+        q.sentence.includes("雪") ||
+        q.sentence.includes("雨") ||
+        q.sentence.includes("チケット") ||
+        q.sentence.includes("CD") ||
+        q.sentence.includes("シャツ") ||
+        q.prompt.includes("so sánh") ||
+        q.prompt.includes("So sánh") ||
+        q.prompt.includes("từ chối") ||
+        q.prompt.includes("rủ rê") ||
+        q.prompt.includes("sự kiện") ||
+        q.prompt.includes("lượng từ");
 
-    if (!isBai6Kanji && !isBai6GrammarOrVocab) {
-      return false;
+      if (!isBai6Kanji && !isBai6GrammarOrVocab) {
+        return false;
+      }
+    } else if (singleBai === 7) {
+      const isBai7Kanji = /[肉料理野半大小病院電気開閉待書読話泳行来]/.test(q.sentence + q.answer);
+      const isBai7GrammarOrVocab =
+        q.sentence.includes("て") ||
+        q.sentence.includes("てください") ||
+        q.sentence.includes("ています") ||
+        q.sentence.includes("ていません") ||
+        q.sentence.includes("ましょうか") ||
+        q.sentence.includes("方") ||
+        q.sentence.includes("かた") ||
+        q.sentence.includes("います") ||
+        q.sentence.includes("スプーン") ||
+        q.sentence.includes("フォーク") ||
+        q.sentence.includes("ナイフ") ||
+        q.sentence.includes("はし") ||
+        q.sentence.includes("コップ") ||
+        q.sentence.includes("お皿") ||
+        q.sentence.includes("冷蔵庫") ||
+        q.sentence.includes("電子レンジ") ||
+        q.sentence.includes("砂糖") ||
+        q.sentence.includes("塩") ||
+        q.sentence.includes("醤油") ||
+        q.prompt.includes("て形") ||
+        q.prompt.includes("thể て") ||
+        q.prompt.includes("Thể て") ||
+        q.prompt.includes("tiếp diễn") ||
+        q.prompt.includes("cách làm") ||
+        q.prompt.includes("đề nghị") ||
+        q.prompt.includes("yêu cầu");
+
+      if (!isBai7Kanji && !isBai7GrammarOrVocab) {
+        return false;
+      }
     }
   }
 
