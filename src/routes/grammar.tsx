@@ -21,6 +21,7 @@ import { getOptionReading, getSentenceReading, hasKanji, isViToJpQuestion } from
 import type { GrammarLesson, GrammarPoint, GrammarSearch } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
+import { VerbConjugationTable } from "@/components/verb-conjugation-table";
 
 /**
  * Chuẩn hóa tham số query từ URL: loại bỏ các ký tự bọc ngoặc kép (%22 hoặc '"')
@@ -172,6 +173,14 @@ function GrammarPage() {
           ) : null}
         </dl>
 
+        {point.conjugation_table ? (
+          <VerbConjugationTable
+            table={point.conjugation_table}
+            onDrill={() => setSearch({ point: point.id, drill: true })}
+            defaultShowReading={showReading}
+          />
+        ) : null}
+
         <div className="mt-8 flex items-center justify-between">
           <h2 className="text-sm tracking-wide text-stone uppercase font-medium">Ví dụ minh họa</h2>
           <button
@@ -267,6 +276,28 @@ function GrammarPage() {
             </Button>
           </div>
         </div>
+
+        {/* Banner bảng chia động từ nếu là Bài 7 */}
+        {lesson.id === "7" ? (
+          <div className="mt-4 rounded-xl border border-seal/30 bg-seal/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <BookOpen className="size-5 text-seal shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-seal">Bảng chia động từ thể て (23 động từ SGK)</p>
+                <p className="text-xs text-stone mt-0.5">
+                  Tổng hợp đầy đủ 3 nhóm động từ (1グループ, 2グループ, 3グループ) theo đúng bảng giáo trình Bài 7.
+                </p>
+              </div>
+            </div>
+            <Button
+              tone="seal"
+              className="shrink-0 text-xs shadow-xs"
+              onClick={() => setSearch({ point: "7_1", drill: false })}
+            >
+              Xem bảng chia động từ →
+            </Button>
+          </div>
+        ) : null}
 
         {/* Danh sách từng phần ngữ pháp với nút Luyện riêng */}
         <div className="mt-8 flex items-center justify-between">

@@ -1,4 +1,5 @@
-import type { GrammarLesson } from "@/lib/study/types";
+import type { GrammarLesson } from "../lib/study/types.ts";
+import { BAI_7_VERB_CONJUGATION_TABLE } from "./verb-conjugation.ts";
 
 export const grammar: GrammarLesson[] = [
   {
@@ -2119,6 +2120,7 @@ export const grammar: GrammarLesson[] = [
         "usage": "1. Nhóm 1: Động từ có âm trước ます thuộc hàng い (買い・立ち・帰り・飲み・呼び・書き・泳ぎ・話し) đổi theo quy tắc âm đệm.\n2. Nhóm 2: Động từ có âm trước ます thuộc hàng え hoặc một số động từ đặc biệt (見ます, います, 起きます, 借ります) bỏ ます thêm て.\n3. Nhóm 3: します → して, 来ます → 来て.",
         "note": "Ngoại lệ quan trọng nhất: 行きます (ikimasu) chia thành 行って (itte), KHÔNG chia là 行いて. Chú ý phân biệt động từ Nhóm 2 đặc biệt có đuôi âm [い] như 見ます, 起きます.",
         "color": "#ffb6c1",
+        "conjugation_table": BAI_7_VERB_CONJUGATION_TABLE,
         "examples": [
           {
             "jp": "台所でコップを洗って、テーブルに置きます。",

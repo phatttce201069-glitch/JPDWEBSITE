@@ -48,6 +48,8 @@ export type Glyph = {
   kunyomi?: string;
 };
 
+import type { VerbConjugationTableData } from "../../data/verb-conjugation.ts";
+
 /** Cấu trúc một từ vựng tiếng Nhật */
 export type Word = {
   id: number;
@@ -79,6 +81,7 @@ export type GrammarPoint = {
   note: string;
   color: string;
   examples: GrammarExample[];
+  conjugation_table?: VerbConjugationTableData;
 };
 
 /** Cấu trúc một bài học ngữ pháp */

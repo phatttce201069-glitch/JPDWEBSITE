@@ -193,3 +193,45 @@ test("grammar drill questions and grammar examples strictly utilize the lesson v
     drill6Text.includes("枚");
   assert.ok(hasBai6Vocab, `Đề luyện tập Bài 6 phải chứa từ vựng của Bài 6: ${drill6Text}`);
 });
+
+test("BAI_7_VERB_CONJUGATION_TABLE contains full 23 verbs from textbook and links to 7_1", async () => {
+  const { grammar } = await import("./content.ts");
+  const { BAI_7_VERB_CONJUGATION_TABLE, BAI_7_VERB_CONJUGATION_ENTRIES } = await import("../../data/verb-conjugation.ts");
+
+  assert.equal(BAI_7_VERB_CONJUGATION_ENTRIES.length, 23, "Bảng chia động từ Bài 7 phải chứa đúng 23 động từ từ sách giáo khoa");
+  assert.equal(BAI_7_VERB_CONJUGATION_TABLE.allVerbs.length, 23);
+
+  const g1 = BAI_7_VERB_CONJUGATION_ENTRIES.filter((v) => v.group === 1);
+  const g2 = BAI_7_VERB_CONJUGATION_ENTRIES.filter((v) => v.group === 2);
+  const g3 = BAI_7_VERB_CONJUGATION_ENTRIES.filter((v) => v.group === 3);
+
+  assert.equal(g1.length, 16, "Nhóm 1 phải có đúng 16 động từ");
+  assert.equal(g2.length, 4, "Nhóm 2 phải có đúng 4 động từ (gồm ngoại lệ 起きます)");
+  assert.equal(g3.length, 3, "Nhóm 3 phải có đúng 3 động từ (来ます, 持って来ます, 勉強します)");
+
+  // Kiểm tra từng động từ có đầy đủ thông tin
+  for (const v of BAI_7_VERB_CONJUGATION_ENTRIES) {
+    assert.ok(v.kanji.length > 0, `${v.id}: kanji không được rỗng`);
+    assert.ok(v.masu.length > 0, `${v.id}: masu không được rỗng`);
+    assert.ok(v.masuReading.length > 0, `${v.id}: masuReading không được rỗng`);
+    assert.ok(v.te.length > 0, `${v.id}: te không được rỗng`);
+    assert.ok(v.teReading.length > 0, `${v.id}: teReading không được rỗng`);
+    assert.ok(v.meaning.length > 0, `${v.id}: meaning không được rỗng`);
+    assert.ok(v.rule.length > 0, `${v.id}: rule không được rỗng`);
+  }
+
+  // Kiểm tra liên kết vào điểm ngữ pháp 7_1
+  const lesson7 = grammar.find((l) => l.id === "7");
+  assert.ok(lesson7, "Phải tìm thấy Bài 7");
+  const p71 = lesson7.points.find((p) => p.id === "7_1");
+  assert.ok(p71, "Phải tìm thấy phần 7_1");
+  assert.ok(p71.conjugation_table, "Phần 7_1 phải có conjugation_table đính kèm");
+  assert.equal(p71.conjugation_table.allVerbs.length, 23);
+
+  // Kiểm tra phần luyện tập 7_1 sinh ra câu hỏi bao phủ các động từ trong bảng
+  const q71 = buildGrammarDrill("7", "7_1");
+  assert.equal(q71.length, 10, "Đề luyện 7_1 phải đủ 10 câu");
+  for (const q of q71) {
+    assert.ok(q.options.includes(q.answer));
+  }
+});

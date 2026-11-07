@@ -377,7 +377,35 @@ const POINT_KEY_MAPPINGS: Record<string, string[]> = {
   "6_7": ["mai", "mai-cd", "mai-shatsu"],
 
   // Bài 7
-  "7_1": ["conj-kaku", "conj-iku", "conj-nomu", "conj-matsu", "conj-taberu", "conj-suru", "conj-kuru", "conj-hanasu", "conj-isogu", "order-te"],
+  "7_1": [
+    "conj-kaku",
+    "conj-iku",
+    "conj-nomu",
+    "conj-matsu",
+    "conj-taberu",
+    "conj-suru",
+    "conj-kuru",
+    "conj-hanasu",
+    "conj-isogu",
+    "conj-kai",
+    "conj-tetsudai",
+    "conj-sui",
+    "conj-mochi",
+    "conj-tsukuri",
+    "conj-kiri",
+    "conj-yomi",
+    "conj-asobi",
+    "conj-oki1",
+    "conj-motteiki",
+    "conj-oyogi",
+    "conj-kashi",
+    "conj-ake",
+    "conj-oshie",
+    "conj-oki2",
+    "conj-mottekuru",
+    "conj-benkyou",
+    "order-te",
+  ],
   "7_2": ["iru", "in-park", "ask-who-iru", "sit-iru"],
   "7_3": ["te", "ok-te", "sit-te", "te-kudasai-fill", "order-te-kudasai"],
   "7_4": ["teiru", "ask-teiru", "sit-teiru", "rain-teiru", "neg-teiru", "work-teiru", "ask-what-doing"],
@@ -1052,6 +1080,91 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
       "急いて",
       "急って",
       "急ぎて",
+    ]);
+    push("conj-kai", FILL, "動詞「買います（グループ1）」のて形を選びなさい。\nスーパーでパンを（　　）、帰ります。", "買って", [
+      "買いて",
+      "買いって",
+      "買んで",
+    ]);
+    push("conj-tetsudai", FILL, "動詞「手伝います（グループ1）」のて形を選びなさい。\n母の台所仕事を（　　）、皿を洗いました。", "手伝って", [
+      "手伝いて",
+      "手伝いで",
+      "手伝ってて",
+    ]);
+    push("conj-sui", FILL, "動詞「吸います（グループ1）」のて形を選びなさい。\n外でたばこを（　　）、部屋に入りました。", "吸って", [
+      "吸いて",
+      "吸いで",
+      "吸んで",
+    ]);
+    push("conj-mochi", FILL, "動詞「持ちます（グループ1）」のて形を選びなさい。\nかばんを（　　）、出かけます。", "持って", [
+      "持ちて",
+      "持んで",
+      "持いて",
+    ]);
+    push("conj-tsukuri", FILL, "動詞「作ります（グループ1）」のて形を選びなさい。\n台所で料理を（　　）、テーブルに置きました。", "作って", [
+      "作りて",
+      "作んで",
+      "作いて",
+    ]);
+    push("conj-kiri", FILL, "動詞「切ります（グループ1）」のて形を選びなさい。\nナイフで肉を（　　）、皿に置きます。", "切って", [
+      "切りて",
+      "切んで",
+      "切いて",
+    ]);
+    push("conj-yomi", FILL, "動詞「読みます（グループ1）」のて形を選びなさい。\nこの本を（　　）、勉強します。", "読んで", [
+      "読みて",
+      "読って",
+      "読いて",
+    ]);
+    push("conj-asobi", FILL, "動詞「遊びます（グループ1）」のて形を選びなさい。\n公園で友だちと（　　）、帰りました。", "遊んで", [
+      "遊びて",
+      "遊って",
+      "遊いて",
+    ]);
+    push("conj-oki1", FILL, "動詞「置きます（グループ1）」のて形を選びなさい。\nコップをテーブルに（　　）ください。", "置いて", [
+      "置きて",
+      "置って",
+      "置いで",
+    ]);
+    push("conj-motteiki", FILL, "【注意・例外】動詞「持って行きます（グループ1）」のて形を選びなさい。\n傘を（　　）ください。", "持って行って", [
+      "持って行きて",
+      "持って行いて",
+      "持って行いで",
+    ]);
+    push("conj-oyogi", FILL, "動詞「泳ぎます（グループ1）」のて形を選びなさい。\nプールでたくさん（　　）、疲れました。", "泳いで", [
+      "泳ぎて",
+      "泳いて",
+      "泳って",
+    ]);
+    push("conj-kashi", FILL, "動詞「貸します（グループ1）」のて形を選びなさい。\nペンを（　　）ください。", "貸して", [
+      "貸してて",
+      "貸しては",
+      "貸してない",
+    ]);
+    push("conj-ake", FILL, "動詞「開けます（グループ2）」のて形を選びなさい。\n部屋の窓を（　　）、外を見ます。", "開けて", [
+      "開けって",
+      "開けんで",
+      "開いて",
+    ]);
+    push("conj-oshie", FILL, "動詞「教えます（グループ2）」のて形を選びなさい。\n電話番号を（　　）ください。", "教えて", [
+      "教えって",
+      "教えんで",
+      "教いて",
+    ]);
+    push("conj-oki2", FILL, "【注意・例外】動詞「起きます（グループ2）」のて形を選びなさい。\n朝6時に（　　）、散歩しました。", "起きて", [
+      "起いて",
+      "起って",
+      "起きって",
+    ]);
+    push("conj-mottekuru", FILL, "動詞「持って来ます（グループ3）」のて形を選びなさい。\nノートを（　　）ください。", "持って来て", [
+      "持って来って",
+      "持って来んで",
+      "持って来いた",
+    ]);
+    push("conj-benkyou", FILL, "動詞「勉強します（グループ3）」のて形を選びなさい。\n日本語を（　　）、日本へ行きます。", "勉強して", [
+      "勉強しって",
+      "勉強すて",
+      "勉強した",
     ]);
     push("order-te", ORDER, "台所　／　で　／　コップを　／　あらって　／　おきます", "台所でコップをあらっておきます。", [
       "あらって台所でコップをおきます。",
