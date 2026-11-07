@@ -42,6 +42,7 @@ import {
 } from "@/lib/study/ai-service";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
 import { getAnswerMeaning } from "@/lib/study/explanation";
+import { buildFptJpd123Exam } from "@/lib/study/fpt-jpd123-engine";
 
 export const Route = createFileRoute("/exam")({
   validateSearch: (search: Record<string, unknown>): ExamSearch => ({
@@ -72,7 +73,7 @@ function ExamPage() {
 
   // AI Exam States
   const [isAiExam, setIsAiExam] = useState(false);
-  const [isAiModeTab, setIsAiModeTab] = useState(search.ai || search.course === "JPD123");
+  const [isAiModeTab, setIsAiModeTab] = useState(search.ai || search.course === "JPD113" || search.course === "JPD123");
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
   const [aiProviderName, setAiProviderName] = useState("");
@@ -132,6 +133,10 @@ function ExamPage() {
     setSearch({ bai: next.join(",") });
   }
 
+  function selectAllJpd113() {
+    setSearch({ bai: "1,2,3" });
+  }
+
   function selectAllJpd123() {
     setSearch({ bai: "4,5,6,7" });
   }
@@ -168,6 +173,25 @@ function ExamPage() {
       return;
     }
 
+    if (search.course === "JPD113" || search.course === "JPD123") {
+      const targetBai =
+        selected.length > 0
+          ? selected
+          : search.course === "JPD113"
+            ? ["1", "2", "3"]
+            : ["4", "5", "6", "7"];
+      const next = buildFptJpd123Exam(targetBai);
+      setNote("");
+      setIsAiExam(false);
+      setPaper(next);
+      setIndex(0);
+      setPicked(null);
+      setAnswers(Array(next.length).fill(null));
+      setLeft(EXAM_SECONDS);
+      setClosed(false);
+      return;
+    }
+
     if (selected.length === 0) {
       setNote("Vui lòng chọn ít nhất một bài để tạo đề.");
       return;
@@ -194,17 +218,18 @@ function ExamPage() {
 
     // Simulate animated AI drafting progression
     await new Promise((r) => setTimeout(r, 350));
-    setGenerationStep(1); // Phân tích cấu trúc môn JPD123 FPT
+    setGenerationStep(1); // Phân tích cấu trúc môn FPT
 
     await new Promise((r) => setTimeout(r, 450));
     setGenerationStep(2); // Soạn câu hỏi Kanji, Từ vựng, Ngữ pháp
 
+    const defaultBai = search.course === "JPD113" ? ["1", "2", "3"] : ["4", "5", "6", "7"];
     const target =
       targetBaiList && targetBaiList.length > 0
         ? targetBaiList
         : selected.length > 0
           ? selected
-          : ["4", "5", "6", "7"];
+          : defaultBai;
 
     const result = await generateFptAiExam(target);
 
@@ -258,7 +283,7 @@ function ExamPage() {
           Đề thi trắc nghiệm A–D bám sát đề thi JLPT N5 và chuẩn môn học tiếng Nhật Đại học FPT.
         </p>
 
-        {/* Highlight 1: AI EXAM GENERATOR (FPT JPD123 FORM) */}
+        {/* Highlight 1: AI EXAM GENERATOR (FPT JPD113 & JPD123 FORMS) */}
         <div className="mt-8">
           <div className="flex items-center justify-between">
             <h2 className="text-sm tracking-wide text-stone uppercase flex items-center gap-1.5">
@@ -275,46 +300,92 @@ function ExamPage() {
             </button>
           </div>
 
-          <div className="mt-2 rounded-xl border-2 border-ink/20 bg-sheet p-5 shadow-xs transition-all hover:border-ink/40">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-1.5">
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* JPD113 Card */}
+            <div className="rounded-xl border-2 border-ink/20 bg-sheet p-5 shadow-xs transition-all hover:border-ink/40 flex flex-col justify-between">
+              <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-500/20">
                     <Bot className="size-3.5" />
-                    AI POWERED · CHUẨN FORM FPTU
+                    AI · FORM FPTU
                   </span>
-                  <span className="text-xs text-stone">30 câu · 30 phút · Bài 4 đến 7</span>
+                  <span className="text-xs text-stone">30 câu · 30 phút · Bài 1–3</span>
+                </div>
+                <h3 className="font-semibold text-ink text-lg">
+                  JPD113 · Đề thi Thông minh AI
+                </h3>
+                <p className="text-sm text-stone leading-relaxed">
+                  Mô phỏng 100% cấu trúc đề thi kết thúc môn <strong>JPD113 (Tiếng Nhật 1)</strong>:
+                  Đúng <strong>10 câu Kanji</strong> + <strong>10 câu Từ vựng</strong> + <strong>10 câu Ngữ pháp</strong>.
+                  Tự động xáo trộn ngẫu nhiên và hỗ trợ hiển thị Hiragana.
+                </p>
+                <div className="pt-1 flex flex-wrap gap-1.5 text-xs text-stone">
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Kanji Bài 1–3</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Từ vựng Bài 1–3</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Ngữ pháp Bài 1–3</span>
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-line/50">
+                <Button
+                  tone="seal"
+                  onClick={() => startAiExam(["1", "2", "3"])}
+                  className="flex-1 flex items-center justify-center gap-1.5 font-medium text-xs sm:text-sm"
+                >
+                  <Sparkles className="size-4" />
+                  Làm đề JPD113 ngay
+                </Button>
+                <Button
+                  tone="ghost"
+                  onClick={() => setSearch({ course: "JPD113", bai: "1,2,3", ai: true })}
+                  className="flex items-center justify-center gap-1 text-xs sm:text-sm"
+                >
+                  Tùy chỉnh bài
+                  <ChevronRight className="size-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* JPD123 Card */}
+            <div className="rounded-xl border-2 border-ink/20 bg-sheet p-5 shadow-xs transition-all hover:border-ink/40 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-500/20">
+                    <Bot className="size-3.5" />
+                    AI · FORM FPTU
+                  </span>
+                  <span className="text-xs text-stone">30 câu · 30 phút · Bài 4–7</span>
                 </div>
                 <h3 className="font-semibold text-ink text-lg">
                   JPD123 · Đề thi Thông minh AI
                 </h3>
-                <p className="text-sm text-stone max-w-xl leading-relaxed">
-                  Mô phỏng 100% cấu trúc đề thi kết thúc môn <strong>JPD123 Đại học FPT</strong>:
+                <p className="text-sm text-stone leading-relaxed">
+                  Mô phỏng 100% cấu trúc đề thi kết thúc môn <strong>JPD123 (Tiếng Nhật 2)</strong>:
                   Đúng <strong>10 câu Kanji</strong> + <strong>10 câu Từ vựng</strong> + <strong>10 câu Ngữ pháp</strong>.
-                  Thuật toán AI tự động làm mới câu hỏi mỗi lượt thi, tạo sự đa dạng và ngữ cảnh thực tế phong phú.
+                  Thuật toán AI tự động làm mới câu hỏi mỗi lượt thi.
                 </p>
-                <div className="pt-1 flex flex-wrap gap-2 text-xs text-stone">
-                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Kanji (Đọc / Viết / Âm Hán)</span>
-                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Từ vựng (Điền từ / Trái nghĩa / Đàm thoại)</span>
-                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Ngữ pháp (Thể て / So sánh / Mong muốn)</span>
+                <div className="pt-1 flex flex-wrap gap-1.5 text-xs text-stone">
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Kanji Bài 4–7</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Từ vựng Bài 4–7</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 10 Ngữ pháp Bài 4–7</span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+              <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-line/50">
                 <Button
                   tone="seal"
                   onClick={() => startAiExam(["4", "5", "6", "7"])}
-                  className="flex items-center justify-center gap-2 font-medium"
+                  className="flex-1 flex items-center justify-center gap-1.5 font-medium text-xs sm:text-sm"
                 >
                   <Sparkles className="size-4" />
-                  Làm đề thi AI ngay
+                  Làm đề JPD123 ngay
                 </Button>
                 <Button
                   tone="ghost"
                   onClick={() => setSearch({ course: "JPD123", bai: "4,5,6,7", ai: true })}
-                  className="flex items-center justify-center gap-1 text-sm"
+                  className="flex items-center justify-center gap-1 text-xs sm:text-sm"
                 >
-                  Tùy chỉnh bài thi
+                  Tùy chỉnh bài
                   <ChevronRight className="size-4" />
                 </Button>
               </div>
@@ -368,14 +439,20 @@ function ExamPage() {
                 <button
                   type="button"
                   className="flex min-h-14 w-full items-center justify-between py-3 text-left transition-colors hover:text-ink"
-                  onClick={() => setSearch({ course, bai: course === "JPD123" ? "4,5,6,7" : "", ai: course === "JPD123" })}
+                  onClick={() =>
+                    setSearch({
+                      course,
+                      bai: course === "JPD113" ? "1,2,3" : "4,5,6,7",
+                      ai: true,
+                    })
+                  }
                 >
                   <div>
                     <span className="font-medium text-base">{course}</span>
                     <span className="block text-sm text-stone">
                       {course === "JPD113"
-                        ? "Tiếng Nhật 1 · Sơ cấp 1 (Bài 1–3)"
-                        : "Tiếng Nhật 2 · Sơ cấp 2 (Bài 4–7) · Có hỗ trợ AI"}
+                        ? "Tiếng Nhật 1 · Sơ cấp 1 (Bài 1–3) · Chuẩn Form FPT 30 câu (AI & Tiêu chuẩn)"
+                        : "Tiếng Nhật 2 · Sơ cấp 2 (Bài 4–7) · Chuẩn Form FPT 30 câu (AI & Tiêu chuẩn)"}
                     </span>
                   </div>
                   <ChevronRight className="size-4 text-stone" />
@@ -395,7 +472,7 @@ function ExamPage() {
         )}
 
         {/* AI Generating Overlay */}
-        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
+        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} course={search.course || "FPT"} />}
       </div>
     );
   }
@@ -404,7 +481,7 @@ function ExamPage() {
   if (!paper) {
     const units = examUnits(search.course, starred);
     const isStarred = search.course === "starred";
-    const isJpd123 = search.course === "JPD123";
+    const isFptCourse = search.course === "JPD113" || search.course === "JPD123";
 
     return (
       <div>
@@ -423,7 +500,7 @@ function ExamPage() {
             </h1>
           </div>
 
-          {isJpd123 && (
+          {isFptCourse && (
             <button
               type="button"
               onClick={() => setShowAiSettings(true)}
@@ -438,13 +515,13 @@ function ExamPage() {
         <p className="mt-2 text-stone">
           {isStarred
             ? "Đề thi trắc nghiệm A–D được lập riêng từ các từ vựng bạn đã đánh dấu. Bạn có thể chọn tất cả hoặc chọn theo từng bài."
-            : isJpd123
-              ? `Chương trình Tiếng Nhật 2${selected.length ? ` (Đã chọn: Bài ${selected.join(" + ")})` : ""}. Bạn có thể chọn làm Đề thi AI hoặc Đề thi Tiêu chuẩn.`
+            : isFptCourse
+              ? `Chương trình ${search.course === "JPD113" ? "Tiếng Nhật 1 (Bài 1–3)" : "Tiếng Nhật 2 (Bài 4–7)"}${selected.length ? ` (Đã chọn: Bài ${selected.join(" + ")})` : ""}. Bạn có thể chọn làm Đề thi AI hoặc Đề thi Tiêu chuẩn (30 câu chuẩn FPT).`
               : "Chọn một bài hoặc gộp nhiều bài. Câu vẫn về từ vựng, kanji và ngữ pháp của các bài đó."}
         </p>
 
-        {/* Mode Selector for JPD123 */}
-        {isJpd123 && (
+        {/* Mode Selector for FPT Courses */}
+        {isFptCourse && (
           <div className="mt-5 flex items-center gap-2 border-b border-line pb-3">
             <button
               type="button"
@@ -481,25 +558,95 @@ function ExamPage() {
           </div>
         )}
 
-        {/* AI Mode Banner for JPD123 */}
-        {isJpd123 && isAiModeTab && (
+        {/* AI Mode Banner for FPT Courses */}
+        {isFptCourse && isAiModeTab && (
           <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-ink space-y-2">
             <div className="flex items-center gap-2 font-medium text-amber-800">
               <Bot className="size-4" />
-              Cấu trúc chuẩn Form Đề thi Kết thúc môn JPD123 (Đại học FPT)
+              Cấu trúc chuẩn Form Đề thi Kết thúc môn {search.course} (Đại học FPT)
             </div>
             <p className="text-stone text-xs leading-relaxed">
               Mỗi đề gồm đúng <strong>30 câu · 30 phút</strong>: 10 câu Chữ Hán + 10 câu Từ vựng + 10 câu Ngữ pháp.
-              Hệ thống tự động xáo trộn và sinh mới câu hỏi theo giáo trình Minna / Marugoto Sơ cấp 2.
+              Hệ thống tự động xáo trộn và sinh mới câu hỏi theo giáo trình {search.course === "JPD113" ? "Minna / Marugoto Sơ cấp 1 (Bài 1–3)" : "Minna / Marugoto Sơ cấp 2 (Bài 4–7)"}.
             </p>
-            <div className="flex flex-wrap gap-2 pt-1 text-xs">
-              <button
-                type="button"
-                onClick={selectAllJpd123}
-                className="underline text-ink font-medium hover:text-seal"
-              >
-                Chọn trọn bộ (Bài 4, 5, 6, 7)
-              </button>
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+              {search.course === "JPD113" ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={selectAllJpd113}
+                    className="underline text-ink font-medium hover:text-seal"
+                  >
+                    Chọn trọn bộ (Bài 1, 2, 3)
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "1" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 1
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "2" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 2
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "3" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 3
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={selectAllJpd123}
+                    className="underline text-ink font-medium hover:text-seal"
+                  >
+                    Chọn trọn bộ (Bài 4, 5, 6, 7)
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "4" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 4
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "5" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 5
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "6" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 6
+                  </button>
+                  <span className="text-stone/40">·</span>
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ bai: "7" })}
+                    className="underline text-stone hover:text-ink"
+                  >
+                    Chỉ Bài 7
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -537,7 +684,7 @@ function ExamPage() {
             </ul>
 
             <div className="mt-6 space-y-2">
-              {isJpd123 && isAiModeTab ? (
+              {isFptCourse && isAiModeTab ? (
                 <Button
                   className="w-full flex items-center justify-center gap-2 py-3"
                   tone="seal"
@@ -546,8 +693,8 @@ function ExamPage() {
                 >
                   <Sparkles className="size-4" />
                   {selected.length
-                    ? `Bắt đầu làm đề thi AI · Bài ${selected.join(" + ")} (30 câu chuẩn FPT)`
-                    : "Chọn ít nhất 1 bài để làm đề thi AI"}
+                    ? `Bắt đầu làm đề thi AI · ${search.course} Bài ${selected.join(" + ")} (30 câu chuẩn FPT)`
+                    : `Chọn ít nhất 1 bài để làm đề thi AI ${search.course}`}
                 </Button>
               ) : (
                 <Button
@@ -560,7 +707,9 @@ function ExamPage() {
                     ? selected.length
                       ? `Bắt đầu làm bài · Bài ${selected.join(" + ")}`
                       : `Bắt đầu làm bài · Tất cả ${starredWords.length} từ`
-                    : `Làm ${EXAM_SIZE} câu ${selected.length ? `· Bài ${selected.join(" + ")}` : ""}`}
+                    : isFptCourse
+                      ? `Bắt đầu kiểm tra · ${search.course} Bài ${selected.join(" + ")} (30 câu chuẩn FPT)`
+                      : `Làm ${EXAM_SIZE} câu ${selected.length ? `· Bài ${selected.join(" + ")}` : ""}`}
                 </Button>
               )}
             </div>
@@ -579,7 +728,7 @@ function ExamPage() {
         )}
 
         {/* AI Generating Overlay */}
-        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
+        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} course={search.course || "FPT"} />}
       </div>
     );
   }
@@ -601,7 +750,7 @@ function ExamPage() {
           {isAiExam && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 font-medium text-xs border border-amber-500/20">
               <Bot className="size-3" />
-              Đề thi AI JPD123 FPT
+              Đề thi AI {search.course || "FPT"}
             </span>
           )}
           <span>
@@ -808,7 +957,7 @@ function ExamPage() {
         )}
 
         {/* AI Generating Overlay */}
-        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} />}
+        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} course={search.course || "FPT"} />}
       </div>
     );
   }
@@ -844,7 +993,7 @@ function ExamPage() {
           {isAiExam && (
             <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-amber-500/10 text-amber-700 border border-amber-500/20">
               <Bot className="size-3" />
-              Đề thi AI JPD123 FPT
+              Đề thi AI {search.course || "FPT"}
             </span>
           )}
         </div>
@@ -884,7 +1033,7 @@ function ExamPage() {
 
       <div className="mt-5 flex items-center justify-between">
         <p className="text-sm font-medium text-stone tracking-wide uppercase">{current.section}</p>
-        <span className="text-xs text-stone">Chuẩn Form JPD123</span>
+        <span className="text-xs text-stone">Chuẩn Form {search.course || "FPT"}</span>
       </div>
 
       {current.promptJp ? <p className="jp mt-3 text-base leading-relaxed text-ink">{current.promptJp}</p> : null}
@@ -1110,13 +1259,15 @@ function formatTime(total: number) {
 }
 
 /**
- * Overlay hiển thị tiến trình AI biên soạn đề thi JPD123 FPT
+ * Overlay hiển thị tiến trình AI biên soạn đề thi FPT (JPD113 & JPD123)
  */
-function AiGeneratingOverlay({ step }: { step: number }) {
+function AiGeneratingOverlay({ step, course = "FPT" }: { step: number; course?: string }) {
   const steps = [
-    "Khởi tạo ma trận đề thi JPD123 Đại học FPT...",
+    `Khởi tạo ma trận đề thi ${course} Đại học FPT...`,
     "Phân tích chuẩn môn học: 10 Kanji · 10 Từ vựng · 10 Ngữ pháp...",
-    "Soạn câu hỏi & ngữ cảnh Minna / Marugoto Sơ cấp 2...",
+    course === "JPD113"
+      ? "Soạn câu hỏi & ngữ cảnh Minna / Marugoto Sơ cấp 1 (Bài 1–3)..."
+      : "Soạn câu hỏi & ngữ cảnh Minna / Marugoto Sơ cấp 2 (Bài 4–7)...",
     "Thẩm định 4 đáp án A–B–C–D và chuẩn hoá Hiragana/Katakana...",
   ];
 
@@ -1129,7 +1280,7 @@ function AiGeneratingOverlay({ step }: { step: number }) {
           </div>
           <div>
             <h3 className="font-semibold text-ink text-base">
-              Trợ lý AI đang tạo đề thi JPD123 FPT
+              Trợ lý AI đang tạo đề thi {course} FPT
             </h3>
             <p className="text-xs text-stone">Mô phỏng 100% đề thi kết thúc môn</p>
           </div>
@@ -1229,7 +1380,7 @@ function AiSettingsModal({
             <div className="rounded-md bg-paper border border-line p-3 text-xs text-stone space-y-1">
               <p className="font-medium text-ink">Chế độ AI Tích hợp sẵn (Sumi FPT Engine):</p>
               <p>• Hoàn toàn miễn phí, chạy trực tiếp không cần đăng ký tài khoản hay API Key.</p>
-              <p>• Thuật toán sinh đề mô phỏng chuẩn 100% form đề thi kết thúc môn JPD123 Đại học FPT.</p>
+              <p>• Thuật toán sinh đề mô phỏng chuẩn 100% form đề thi kết thúc môn JPD113 & JPD123 Đại học FPT (30 câu: 10 Kanji + 10 Từ vựng + 10 Ngữ pháp).</p>
               <p>• Mỗi lượt thi được làm mới câu hỏi, hỗ trợ đầy đủ Furigana và bảng đối chiếu đáp án.</p>
             </div>
           ) : (

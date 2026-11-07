@@ -1,6 +1,7 @@
 import { alphabet, grammar, shuffle, vocabulary } from "./content.ts";
 import { kanaReading } from "./romaji.ts";
 import type { Glyph, GrammarLesson, GrammarPoint, Word } from "./types.ts";
+import { buildFptJpd123Exam } from "./fpt-jpd123-engine.ts";
 
 export const EXAM_SIZE = 30;
 export const EXAM_SECONDS = 30 * 60;
@@ -276,6 +277,9 @@ export function buildStarredExam(words: Word[], limit?: number): ExamQuestion[] 
 }
 
 export function buildExam(course: ExamCourse, baiList: string[]): ExamQuestion[] {
+  if (course === "JPD113" || course === "JPD123") {
+    return buildFptJpd123Exam(baiList);
+  }
   const selected = new Set(baiList.filter(Boolean));
   const courseWords = vocabulary.filter((word) => word.course === course && examWord(word));
   const words = courseWords.filter((word) => selected.has(baiOf(word.lesson) ?? ""));
