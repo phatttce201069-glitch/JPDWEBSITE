@@ -65,6 +65,7 @@ function GrammarPage() {
   const navigate = useNavigate({ from: "/grammar" });
   const setLast = useStudy((state) => state.setLast);
   const [showReading, setShowReading] = useState(false);
+  const [courseFilter, setCourseFilter] = useState<"all" | "JPD113" | "JPD123">("all");
 
   const found = search.point ? pointById(search.point) : null;
   const lesson = (search.lesson ? grammar.find((item) => item.id === search.lesson) : null) ?? found?.lesson ?? null;
@@ -252,9 +253,21 @@ function GrammarPage() {
           className="text-sm text-stone hover:text-ink cursor-pointer"
           onClick={() => setSearch({ lesson: "", point: "", drill: false })}
         >
-          ← Tất cả bài
+          ← Tất cả bài ngữ pháp
         </button>
-        <p className="jp mt-3 text-sm text-stone">{lesson.subtitle}</p>
+        <div className="mt-3 flex items-center gap-2">
+          <span
+            className={cn(
+              "rounded px-2 py-0.5 text-xs font-mono font-medium border",
+              Number(lesson.id) <= 3
+                ? "bg-sky-500/10 text-sky-800 border-sky-500/30"
+                : "bg-amber-500/10 text-amber-800 border-amber-500/30",
+            )}
+          >
+            {Number(lesson.id) <= 3 ? "JPD113 · Tiếng Nhật 1" : "JPD123 · Tiếng Nhật 2"}
+          </span>
+          <p className="jp text-sm text-stone">{lesson.subtitle}</p>
+        </div>
         <h1 className="display mt-1 text-4xl">{lesson.title}</h1>
         <p className="mt-3 text-stone leading-relaxed">{lesson.description}</p>
 
@@ -372,19 +385,68 @@ function GrammarPage() {
         </div>
       </div>
 
+      {/* Course Filter Tabs */}
+      <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-line pb-3">
+        <button
+          type="button"
+          onClick={() => setCourseFilter("all")}
+          className={cn(
+            "px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer",
+            courseFilter === "all"
+              ? "bg-ink text-paper"
+              : "bg-sheet text-stone hover:text-ink border border-line",
+          )}
+        >
+          Tất cả (Bài 1–7)
+        </button>
+        <button
+          type="button"
+          onClick={() => setCourseFilter("JPD113")}
+          className={cn(
+            "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer",
+            courseFilter === "JPD113"
+              ? "bg-ink text-paper"
+              : "bg-sheet text-stone hover:text-ink border border-line",
+          )}
+        >
+          <span>JPD113 (Bài 1–3)</span>
+          <span className="text-[11px] opacity-80">· Tiếng Nhật 1</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setCourseFilter("JPD123")}
+          className={cn(
+            "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer",
+            courseFilter === "JPD123"
+              ? "bg-ink text-paper"
+              : "bg-sheet text-stone hover:text-ink border border-line",
+          )}
+        >
+          <span>JPD123 (Bài 4–7)</span>
+          <span className="text-[11px] opacity-80">· Tiếng Nhật 2</span>
+        </button>
+      </div>
+
       {/* Thông báo hướng dẫn nhanh */}
-      <div className="mt-6 rounded-xl border border-seal/30 bg-seal/5 p-4 flex items-start gap-3">
+      <div className="mt-4 rounded-xl border border-seal/30 bg-seal/5 p-4 flex items-start gap-3">
         <Target className="size-5 text-seal shrink-0 mt-0.5" />
         <div className="text-sm">
-          <p className="font-semibold text-seal">Tính năng Luyện riêng từng phần ngữ pháp đã sẵn sàng!</p>
+          <p className="font-semibold text-seal">Luyện riêng từng phần ngữ pháp đã sẵn sàng cho cả JPD113 & JPD123!</p>
           <p className="text-stone mt-0.5">
-            Bạn có thể bấm vào bất kỳ ô phần ngữ pháp nào bên dưới (ví dụ ở <strong>Bài 6</strong>: <span className="underline decoration-seal font-medium text-ink">Phần 1: A hơn B</span>) để luyện tập riêng dạng câu hỏi của phần đó mà không phải làm cả bài.
+            Bấm vào bất kỳ ô phần ngữ pháp nào bên dưới (ví dụ ở <strong>JPD113 - Bài 1</strong>: <span className="underline decoration-seal font-medium text-ink">Phần 1: N1 là N2</span> hoặc <strong>JPD123 - Bài 6</strong>: <span className="underline decoration-seal font-medium text-ink">Phần 1: A hơn B</span>) để luyện trắc nghiệm riêng dạng câu hỏi đó.
           </p>
         </div>
       </div>
 
       <ul className="mt-8 space-y-5">
-        {grammar.map((item) => (
+        {grammar
+          .filter((item) => {
+            const num = Number(item.id);
+            if (courseFilter === "JPD113") return num <= 3;
+            if (courseFilter === "JPD123") return num >= 4;
+            return true;
+          })
+          .map((item) => (
           <li
             key={item.id}
             className="rounded-xl border border-line bg-sheet/40 p-5 sm:p-6 transition-all hover:border-stone/40 shadow-2xs"
@@ -393,6 +455,16 @@ function GrammarPage() {
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "rounded px-2 py-0.5 text-xs font-mono font-medium border",
+                      Number(item.id) <= 3
+                        ? "bg-sky-500/10 text-sky-800 border-sky-500/30"
+                        : "bg-amber-500/10 text-amber-800 border-amber-500/30",
+                    )}
+                  >
+                    {Number(item.id) <= 3 ? "JPD113 · Tiếng Nhật 1" : "JPD123 · Tiếng Nhật 2"}
+                  </span>
                   <span className="rounded bg-paper px-2 py-0.5 text-xs font-mono font-medium text-stone border border-line">
                     {item.subtitle}
                   </span>
