@@ -908,6 +908,162 @@ export const KANJI_SEEDS: QuestionSeed[] = [
     wrongs: ["PHÂN", "NGỌ", "HOÀN"],
     bai: 7,
   },
+{
+  "section": "Kanji",
+  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
+  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
+  "sentence": "スーパーで豚の（肉）を買いました。",
+  "answer": "にく",
+  "wrongs": [
+    "とり",
+    "さかな",
+    "ぎゅう"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
+  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
+  "sentence": "きのう、新鮮な（野菜）を食べました。",
+  "answer": "やさい",
+  "wrongs": [
+    "やせい",
+    "のさい",
+    "やざい"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
+  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
+  "sentence": "気分が悪いので、（病院）へ行きます。",
+  "answer": "びょういん",
+  "wrongs": [
+    "びょうかん",
+    "びよういん",
+    "びょうえん"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
+  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
+  "sentence": "暑いですね。部屋の（電気）をつけてください。",
+  "answer": "でんき",
+  "wrongs": [
+    "でんしゃ",
+    "でんわ",
+    "てんき"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
+  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
+  "sentence": "窓を（開けて）ください。",
+  "answer": "あけて",
+  "wrongs": [
+    "しめて",
+    "つけて",
+    "けして"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
+  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
+  "sentence": "寒いですから、ドアを（閉めて）ください。",
+  "answer": "しめて",
+  "wrongs": [
+    "あけて",
+    "たてて",
+    "けして"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "下線のひらがなの正しい漢字を選びなさい。",
+  "prompt": "Chọn chữ Hán tự đúng của chữ Hiragana trong（　　）.",
+  "sentence": "すしの（つくりかた）を習いました。",
+  "answer": "作り方",
+  "wrongs": [
+    "作リ方",
+    "創り方",
+    "作り芳"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "下線のひらがなの正しい漢字を選びなさい。",
+  "prompt": "Chọn chữ Hán tự đúng của chữ Hiragana trong（　　）.",
+  "sentence": "あそこで少し（まって）ください。",
+  "answer": "待って",
+  "wrongs": [
+    "持って",
+    "特って",
+    "侍って"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "下線のひらがなの正しい漢字を選びなさい。",
+  "prompt": "Chọn chữ Hán tự đúng của chữ Hiragana trong（　　）.",
+  "sentence": "ここに住所と名前を（かいて）ください。",
+  "answer": "書いて",
+  "wrongs": [
+    "描いて",
+    "着いて",
+    "聞いて"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "下線の漢字の音読みまたは意味・漢字音を選びなさい。",
+  "prompt": "Chữ Hán「病」trong「病院 (びょういん)」có âm Hán Việt là gì?",
+  "sentence": "〔病〕院",
+  "answer": "BỆNH",
+  "wrongs": [
+    "VIỆN",
+    "ĐIỆN",
+    "KHÍ"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "下線の漢字の音読みまたは意味・漢字音を選びなさい。",
+  "prompt": "Chữ Hán「開」trong「開けてください」mang ý nghĩa gì?",
+  "sentence": "〔開〕けてください",
+  "answer": "Khai (Mở)",
+  "wrongs": [
+    "Bế (Đóng)",
+    "Khởi (Thức dậy)",
+    "Văn (Nghe)"
+  ],
+  "bai": 7
+},
+{
+  "section": "Kanji",
+  "promptJp": "下線の漢字の音読みまたは意味・漢字音を選びなさい。",
+  "prompt": "Chữ Hán「閉」trong「閉めてください」mang ý nghĩa gì?",
+  "sentence": "〔閉〕めてください",
+  "answer": "Bế (Đóng)",
+  "wrongs": [
+    "Khai (Mở)",
+    "Diệt (Tắt)",
+    "Chỉ (Dừng)"
+  ],
+  "bai": 7
+}
 ];
 
 // =========================================================================
@@ -1643,6 +1799,149 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     wrongs: ["つくりかた", "よみかた", "のみかた"],
     bai: 7,
   },
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "スープを（　　）で飲みます。",
+  "answer": "スプーン",
+  "wrongs": [
+    "フォーク",
+    "ナイフ",
+    "はし"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "ステーキをナイフと（　　）で切ります。",
+  "answer": "フォーク",
+  "wrongs": [
+    "スプーン",
+    "コップ",
+    "お皿"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "日本人はごはんを（　　）で食べます。",
+  "answer": "はし",
+  "wrongs": [
+    "フォーク",
+    "ナイフ",
+    "スプーン"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "料理が冷たいですから、（　　）で温めましょう。",
+  "answer": "電子レンジ",
+  "wrongs": [
+    "冷蔵庫",
+    "エアコン",
+    "洗濯機"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "ビールは（　　）の中に入っています。",
+  "answer": "冷蔵庫",
+  "wrongs": [
+    "電子レンジ",
+    "鞄",
+    "ポケット"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "コーヒーに（　　）を少し入れます。",
+  "answer": "砂糖",
+  "wrongs": [
+    "塩",
+    "醤油",
+    "肉"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "文の意味に最も合う言葉を一つ選びなさい。",
+  "prompt": "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+  "sentence": "すしに（　　）をつけて食べます。",
+  "answer": "醤油",
+  "wrongs": [
+    "砂糖",
+    "塩",
+    "コップ"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "会話を読んで、（　　）に最もよい言葉・返事を選びなさい。",
+  "prompt": "Đọc đoạn hội thoại và chọn từ thích hợp điền vào chỗ trống（　　）:",
+  "sentence": "A：日本の富士山はとてもきれいですよ。（　　）行ってみてください。\nB：はい、ぜひ行きたいです。",
+  "answer": "ぜひ",
+  "wrongs": [
+    "あまり",
+    "ぜんぜん",
+    "すこし"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "会話を読んで、（　　）に最もよい言葉・返事を選びなさい。",
+  "prompt": "Đọc đoạn hội thoại và chọn câu đáp phù hợp cho lời đề nghị giúp đỡ:",
+  "sentence": "A：荷物を持ちましょうか。\nB：（　　）。",
+  "answer": "すみません、お願いします",
+  "wrongs": [
+    "いいえ、食べません",
+    "はい、そうです",
+    "はじめまして"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "下線の言葉と反対の意味の言葉を選びなさい。",
+  "prompt": "Chọn từ có nghĩa ngược lại với từ「開けます (mở)」:",
+  "sentence": "窓を（開けます）。",
+  "answer": "閉めます",
+  "wrongs": [
+    "つけます",
+    "消します",
+    "行きます"
+  ],
+  "bai": 7
+},
+{
+  "section": "Từ vựng",
+  "promptJp": "下線の言葉と反対の意味の言葉を選びなさい。",
+  "prompt": "Chọn từ có nghĩa ngược lại với từ「つけます (bật điện)」:",
+  "sentence": "電気を（つけます）。",
+  "answer": "消します",
+  "wrongs": [
+    "閉めます",
+    "開けます",
+    "止めます"
+  ],
+  "bai": 7
+}
 ];
 
 // =========================================================================
@@ -2431,7 +2730,188 @@ export const GRAMMAR_SEEDS: QuestionSeed[] = [
     wrongs: ["も", "が", "を"],
     bai: 7,
   },
-
+{
+  "section": "Ngữ pháp",
+  "promptJp": "文法的に正しい言葉・助詞を一つ選びなさい。",
+  "prompt": "Chọn trợ từ đi với mẫu câu tồn tại người/động vật「N1 に N2 が います」:",
+  "sentence": "庭（　　）可愛い犬がいます。",
+  "answer": "に",
+  "wrongs": [
+    "で",
+    "へ",
+    "を"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "文法的に正しい言葉・助詞を一つ選びなさい。",
+  "prompt": "Chọn trợ từ đánh dấu chủ thể tồn tại trong câu「N1 に N2 が います」:",
+  "sentence": "教室に田中先生（　　）います。",
+  "answer": "が",
+  "wrongs": [
+    "を",
+    "で",
+    "へ"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng chia đúng của động từ tồn tại người/động vật:",
+  "sentence": "あそこに誰が（　　）か。\n山田さんが（　　）。",
+  "answer": "います / います",
+  "wrongs": [
+    "あります / あります",
+    "します / します",
+    "行きます / 行きます"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng chuyển sang thể て của động từ nhóm 1「行きます (ngoại lệ)」:",
+  "sentence": "急いで駅へ（　　）、電車に乗りました。",
+  "answer": "行って",
+  "wrongs": [
+    "行いて",
+    "行いで",
+    "行て"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng chuyển sang thể て của động từ nhóm 1「話します」:",
+  "sentence": "日本語で（　　）ください。",
+  "answer": "話して",
+  "wrongs": [
+    "話しって",
+    "話いで",
+    "話しては"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng chuyển sang thể て của động từ nhóm 3「します」:",
+  "sentence": "部屋を掃除（　　）、窓を開けてください。",
+  "answer": "して",
+  "wrongs": [
+    "しって",
+    "すて",
+    "した"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng chuyển sang thể て của động từ nhóm 3「来ます (きます)」:",
+  "sentence": "明日、私のうちへ遊びに（　　）ください。",
+  "answer": "来て",
+  "wrongs": [
+    "来って",
+    "来んで",
+    "来いた"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng thì hiện tại tiếp diễn (đang làm V):",
+  "sentence": "外で冷たい雨が（　　）。傘を持っていきましょう。",
+  "answer": "降っています",
+  "wrongs": [
+    "降ります",
+    "降りました",
+    "降ってください"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "会話を読んで、（　　）に最もよい言葉・返事を選びなさい。",
+  "prompt": "Chọn câu hỏi đang làm gì (thì tiếp diễn) phù hợp trong ngữ cảnh:",
+  "sentence": "A：今、（　　）か。\nB：日本語の宿題をしています。",
+  "answer": "何をしています",
+  "wrongs": [
+    "何を行きます",
+    "何をしました",
+    "何を見たいです"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn dạng phủ định của thì tiếp diễn (đang không làm):",
+  "sentence": "今、ゲームを（　　）。勉強しています。",
+  "answer": "していません",
+  "wrongs": [
+    "しませんでした",
+    "しないで",
+    "しません"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "会話を読んで、（　　）に最もよい言葉・返事を選びなさい。",
+  "prompt": "Chọn câu đề nghị làm giúp (Vましょうか) phù hợp:",
+  "sentence": "重そうですね。荷物を（　　）か。",
+  "answer": "持ちましょう",
+  "wrongs": [
+    "もってください",
+    "もちました",
+    "もっています"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "会話を読んで、（　　）に最もよい言葉・返事を選びなさい。",
+  "prompt": "Chọn mẫu câu chủ động đề nghị giúp đỡ đối phương:",
+  "sentence": "A：エアコンを（　　）。\nB：ええ、お願いします。",
+  "answer": "つけましょうか",
+  "wrongs": [
+    "つけましょう",
+    "つけてください",
+    "つけました"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn mẫu câu hỏi cách làm (Vます bỏ ます + かた):",
+  "sentence": "駅までの（　　）が分かりません。教えてください。",
+  "answer": "行き方",
+  "wrongs": [
+    "行った方",
+    "行く方",
+    "行き芳"
+  ],
+  "bai": 7
+},
+{
+  "section": "Ngữ pháp",
+  "promptJp": "動詞・形容詞の正しい形を選びなさい。",
+  "prompt": "Chọn mẫu câu hỏi cách sử dụng (Vます bỏ ます + かた):",
+  "sentence": "お箸の（　　）を見せてください。",
+  "answer": "持ち方",
+  "wrongs": [
+    "持った方",
+    "持つ方",
+    "持ちほう"
+  ],
+  "bai": 7
+}
 ];
 
 /**
