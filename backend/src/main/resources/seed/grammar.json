@@ -1980,6 +1980,55 @@
     "points": [
       {
         "id": "7_1",
+        "structure_jp": "Vて: Chia động từ sang thể て (Nhóm 1, 2, 3)",
+        "structure_vi": "Quy tắc chia động từ sang thể て",
+        "chips": [
+          "Chia động từ",
+          "Nhóm 1",
+          "Nhóm 2",
+          "Nhóm 3",
+          "Thể て"
+        ],
+        "formula": "• Nhóm 1: [う・つ・る] → って | [む・ぶ・ぬ] → んで | [く] → いて (Ngoại lệ: 行く→行って) | [ぐ] → いで | [す] → して\n• Nhóm 2: [Bỏ ます] + て (食べます→食べて, 見ます→見て)\n• Nhóm 3: します → して | 来ます (きます) → 来て (きて)",
+        "explanation": "Thể て là dạng chia quan trọng nhất trong tiếng Nhật sơ cấp, dùng để nối các hành động theo thứ tự thời gian và làm nền tảng tạo thành các mẫu câu: yêu cầu (Vてください), thì tiếp diễn (Vています), xin phép (Vてもいいです), cấm chỉ (Vてはいけません).",
+        "usage": "1. Nhóm 1: Động từ có âm trước ます thuộc hàng い (買い・立ち・帰り・飲み・呼び・書き・泳ぎ・話し) đổi theo quy tắc âm đệm.\n2. Nhóm 2: Động từ có âm trước ます thuộc hàng え hoặc một số động từ đặc biệt (見ます, います, 起きます, 借ります) bỏ ます thêm て.\n3. Nhóm 3: します → して, 来ます → 来て.",
+        "note": "Ngoại lệ quan trọng nhất: 行きます (ikimasu) chia thành 行って (itte), KHÔNG chia là 行いて. Chú ý phân biệt động từ Nhóm 2 đặc biệt có đuôi âm [い] như 見ます, 起きます.",
+        "color": "#ffb6c1",
+        "examples": [
+          {
+            "jp": "手紙を書いて、郵便局へ行きます。",
+            "reading": "てがみを かいて、ゆうびんきょくへ いきます。",
+            "romaji": "Tegami o kaite, yuubinkyoku e ikimasu.",
+            "vi": "Viết thư xong rồi đi đến bưu điện."
+          },
+          {
+            "jp": "毎朝7時に起きて、朝ごはんを食べます。",
+            "reading": "まいあさ しちじに おきて、あさごはんを たべます。",
+            "romaji": "Maiasa shichiji ni okite, asagohan o tabemasu.",
+            "vi": "Mỗi sáng tôi thức dậy lúc 7 giờ rồi ăn sáng."
+          },
+          {
+            "jp": "友達に会って、映画を見ました。",
+            "reading": "ともだちに あって、えいがを みました。",
+            "romaji": "Tomodachi ni atte, eiga o mimashita.",
+            "vi": "Tôi đã gặp bạn rồi xem phim."
+          },
+          {
+            "jp": "図書館で本を借りて、家で読みます。",
+            "reading": "としょかんで ほんを かりて、いえで よみます。",
+            "romaji": "Toshokan de hon o karite, ie de yomimasu.",
+            "vi": "Tôi mượn sách ở thư viện rồi đọc ở nhà."
+          },
+          {
+            "jp": "急いで駅へ行って、電車に乗りました。",
+            "reading": "いそいで えきへ いって、でんしゃに のりました。",
+            "romaji": "Isoide eki e itte, densha ni norimashita.",
+            "vi": "Tôi khẩn trương đi ra ga rồi lên tàu."
+          }
+        ]
+      },
+      {
+        "id": "7_2",
         "structure_jp": "N1 に N2 (Người/Động vật) が います",
         "structure_vi": "Ở N1 có N2",
         "chips": [
@@ -2028,7 +2077,7 @@
         ]
       },
       {
-        "id": "7_2",
+        "id": "7_3",
         "structure_jp": "Vて ください",
         "structure_vi": "Xin hãy V",
         "chips": [
@@ -2074,7 +2123,7 @@
         ]
       },
       {
-        "id": "7_3",
+        "id": "7_4",
         "structure_jp": "Vて います",
         "structure_vi": "Đang làm V",
         "chips": [
@@ -2120,7 +2169,7 @@
         ]
       },
       {
-        "id": "7_4",
+        "id": "7_5",
         "structure_jp": "V ましょうか",
         "structure_vi": "Để tôi làm V nhé?",
         "chips": [
@@ -2166,7 +2215,7 @@
         ]
       },
       {
-        "id": "7_5",
+        "id": "7_6",
         "structure_jp": "Vます かた",
         "structure_vi": "Cách V",
         "chips": [
