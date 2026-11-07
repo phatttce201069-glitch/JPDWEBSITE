@@ -252,7 +252,38 @@ export const grammar: GrammarLesson[] = [
         "usage": "Dùng để liệt kê toàn bộ các sự vật, sự việc.",
         "note": "",
         "color": "#ffd700",
-        "examples": []
+        "examples": [
+          {
+            "jp": "私と田中さんは学生です。",
+            "reading": "わたしと たなかさんは がくせいです。",
+            "romaji": "Watashi to Tanaka-san wa gakusei desu.",
+            "vi": "Tôi và anh Tanaka là sinh viên."
+          },
+          {
+            "jp": "本とノートを買います。",
+            "reading": "ほんと ノートを かいます。",
+            "romaji": "Hon to nooto o kaimasu.",
+            "vi": "Mua sách và vở."
+          },
+          {
+            "jp": "教室に先生と学生がいます。",
+            "reading": "きょうしつに せんせいと がくせいが います。",
+            "romaji": "Kyoushitsu ni sensei to gakusei ga imasu.",
+            "vi": "Trong phòng học có giáo viên và học sinh."
+          },
+          {
+            "jp": "パンとたまごを食べます。",
+            "reading": "パンと たまごを たべます。",
+            "romaji": "Pan to tamago o tabemasu.",
+            "vi": "Ăn bánh mì và trứng."
+          },
+          {
+            "jp": "田中さんとアンさんは日本語を勉強します。",
+            "reading": "たなかさんと アンさんは にほんごを べんきょうします。",
+            "romaji": "Tanaka-san to An-san wa nihongo o benkyou shimasu.",
+            "vi": "Anh Tanaka và bạn An học tiếng Nhật."
+          }
+        ]
       },
       {
         "id": "1_7",
@@ -313,7 +344,38 @@ export const grammar: GrammarLesson[] = [
         "usage": "Dùng để xác nhận tính đúng sai của một thông tin.",
         "note": "Trả lời bắt đầu bằng はい (Vâng) hoặc いいえ (Không).",
         "color": "#dda0dd",
-        "examples": []
+        "examples": [
+          {
+            "jp": "あなたは学生ですか。はい、学生です。",
+            "reading": "あなたは がくせいですか。はい、がくせいです。",
+            "romaji": "Anata wa gakusei desu ka. Hai, gakusei desu.",
+            "vi": "Bạn có phải là sinh viên không? - Vâng, tôi là sinh viên."
+          },
+          {
+            "jp": "田中さんは先生ですか。いいえ、先生じゃありません。",
+            "reading": "たなかさんは せんせいですか。いいえ、せんせいじゃ ありません。",
+            "romaji": "Tanaka-san wa sensei desu ka. Iie, sensei ja arimasen.",
+            "vi": "Anh Tanaka có phải là giáo viên không? - Không, không phải giáo viên."
+          },
+          {
+            "jp": "ミラーさんは会社員ですか。はい、会社員です。",
+            "reading": "ミラーさんは かいしゃいんですか。はい、かいしゃいんです。",
+            "romaji": "Miraa-san wa kaishain desu ka. Hai, kaishain desu.",
+            "vi": "Anh Miller có phải là nhân viên công ty không? - Vâng, là nhân viên công ty."
+          },
+          {
+            "jp": "アンさんはベトナム人ですか。はい、ベトナム人です。",
+            "reading": "アンさんは ベトナムじんですか。はい、ベトナムじんです。",
+            "romaji": "An-san wa Betonamujin desu ka. Hai, Betonamujin desu.",
+            "vi": "Bạn An có phải là người Việt Nam không? - Vâng, là người Việt Nam."
+          },
+          {
+            "jp": "佐藤さんは医者ですか。いいえ、医者じゃありません。",
+            "reading": "さとうさんは いしゃですか。いいえ、いしゃじゃ ありません。",
+            "romaji": "Satou-san wa isha desu ka. Iie, isha ja arimasen.",
+            "vi": "Anh Sato có phải là bác sĩ không? - Không, không phải bác sĩ."
+          }
+        ]
       }
     ]
   },
@@ -474,7 +536,38 @@ export const grammar: GrammarLesson[] = [
         "usage": "Dùng để hỏi giá của một món đồ.",
         "note": "",
         "color": "#dda0dd",
-        "examples": []
+        "examples": [
+          {
+            "jp": "このTシャツはいくらですか。2000円です。",
+            "reading": "この Tシャツは いくらですか。にせんえんです。",
+            "romaji": "Kono tiishatsu wa ikura desu ka. Nisen-en desu.",
+            "vi": "Cái áo thun này bao nhiêu tiền? 2000 yên."
+          },
+          {
+            "jp": "そのかばんはいくらですか。3500円です。",
+            "reading": "その かばんは いくらですか。さんぜんごひゃくえんです。",
+            "romaji": "Sono kaban wa ikura desu ka. Sanzen gohyaku-en desu.",
+            "vi": "Cái cặp xách đó bao nhiêu tiền? 3500 yên."
+          },
+          {
+            "jp": "この靴はいくらですか。4000円です。",
+            "reading": "この くつは いくらですか。よんせんえんです。",
+            "romaji": "Kono kutsu wa ikura desu ka. Yonsen-en desu.",
+            "vi": "Đôi giày này bao nhiêu tiền? 4000 yên."
+          },
+          {
+            "jp": "この時計はいくらですか。5000円です。",
+            "reading": "この とけいは いくらですか。ごせんえんです。",
+            "romaji": "Kono tokei wa ikura desu ka. Gosen-en desu.",
+            "vi": "Cái đồng hồ này bao nhiêu tiền? 5000 yên."
+          },
+          {
+            "jp": "日本語の本はいくらですか。1500円です。",
+            "reading": "にほんごの ほんは いくらですか。せんごひゃくえんです。",
+            "romaji": "Nihongo no hon wa ikura desu ka. Sen gohyaku-en desu.",
+            "vi": "Quyển sách tiếng Nhật này bao nhiêu tiền? 1500 yên."
+          }
+        ]
       },
       {
         "id": "2_5",
@@ -535,7 +628,38 @@ export const grammar: GrammarLesson[] = [
         "usage": "Hỏi xem một vật thuộc về ai.",
         "note": "",
         "color": "#ffd700",
-        "examples": []
+        "examples": [
+          {
+            "jp": "これはだれのかばんですか。私のかばんです。",
+            "reading": "これは だれの かばんですか。わたしの かばんです。",
+            "romaji": "Kore wa dare no kaban desu ka. Watashi no kaban desu.",
+            "vi": "Đây là cặp xách của ai? Là cặp của tôi."
+          },
+          {
+            "jp": "その財布はだれの財布ですか。田中さんの財布です。",
+            "reading": "その さいふは だれの さいふですか。たなかさんの さいふです。",
+            "romaji": "Sono saifu wa dare no saifu desu ka. Tanaka-san no saifu desu.",
+            "vi": "Cái ví đó là ví của ai? Là ví của anh Tanaka."
+          },
+          {
+            "jp": "この靴はだれの靴ですか。佐藤さんの靴です。",
+            "reading": "この くつは だれの くつですか。さとうさんの くつです。",
+            "romaji": "Kono kutsu wa dare no kutsu desu ka. Satou-san no kutsu desu.",
+            "vi": "Đôi giày này là giày của ai? Là giày của anh Sato."
+          },
+          {
+            "jp": "あれはだれの傘ですか。アンさんの傘です。",
+            "reading": "あれは だれの かさですか。アンさんの かさです。",
+            "romaji": "Are wa dare no kasa desu ka. An-san no kasa desu.",
+            "vi": "Kia là chiếc ô của ai? Là ô của bạn An."
+          },
+          {
+            "jp": "この時計はだれの時計ですか。先生の時計です。",
+            "reading": "この とけいは だれの とけいですか。せんせいの とけいです。",
+            "romaji": "Kono tokei wa dare no tokei desu ka. Sensei no tokei desu.",
+            "vi": "Chiếc đồng hồ này là của ai? Là đồng hồ của thầy giáo."
+          }
+        ]
       }
     ]
   },
@@ -1643,40 +1767,6 @@ export const grammar: GrammarLesson[] = [
     "description": "Hỏi cái nào hơn, so sánh hơn/kém, rủ rê và đáp lại (từ chối khéo kèm lý do), nơi diễn ra sự kiện và đếm vật mỏng.",
     "points": [
       {
-        "color": "#ffb6c1",
-        "examples": [
-          {
-            "jp": "日本語は英語より難しいです。",
-            "reading": "にほんごはえいごよりむずかしいです。",
-            "romaji": "Nihongo wa eigo yori muzukashii desu.",
-            "vi": "Tiếng Nhật khó hơn tiếng Anh."
-          },
-          {
-            "jp": "東京は大阪より大きいです。",
-            "reading": "とうきょうはおおさかよりおおきいです。",
-            "romaji": "Toukyou wa Oosaka yori ookii desu.",
-            "vi": "Tokyo lớn hơn Osaka."
-          },
-          {
-            "jp": "電車はバスより速いです。",
-            "reading": "でんしゃはバスよりはやいです。",
-            "romaji": "Densha wa basu yori hayai desu.",
-            "vi": "Tàu điện nhanh hơn xe buýt."
-          },
-          {
-            "jp": "夏は冬より暑いです。",
-            "reading": "なつはふゆよりあついです。",
-            "romaji": "Natsu wa fuyu yori atsui desu.",
-            "vi": "Mùa hè nóng hơn mùa đông."
-          },
-          {
-            "jp": "この店はあの店より安いです。",
-            "reading": "このみせはあのみせよりやすいです。",
-            "romaji": "Kono mise wa ano mise yori yasui desu.",
-            "vi": "Quán này rẻ hơn quán kia."
-          }
-        ],
-        "note": "より đứng ngay sau cái làm mốc, không đứng sau tính từ.",
         "id": "6_1",
         "structure_jp": "A は B より Adj です",
         "structure_vi": "A hơn B",
@@ -1687,43 +1777,43 @@ export const grammar: GrammarLesson[] = [
         ],
         "formula": "A + は + B + より + tính từ + です. B là mốc so sánh.",
         "explanation": "So sánh hơn giữa hai đối tượng",
-        "usage": "日本語は英語より難しいです là tiếng Nhật khó hơn tiếng Anh."
-      },
-      {
-        "color": "#ffd700",
+        "usage": "焼き肉はラーメンより高いです là thịt nướng đắt hơn mì ramen.",
+        "note": "より đứng ngay sau cái làm mốc, không đứng sau tính từ.",
+        "color": "#ffb6c1",
         "examples": [
           {
-            "jp": "英語は日本語ほど難しくないです。",
-            "reading": "えいごはにほんごほどむずかしくないです。",
-            "romaji": "Eigo wa nihongo hodo muzukashikunai desu.",
-            "vi": "Tiếng Anh không khó bằng tiếng Nhật."
+            "jp": "焼き肉はラーメンより高いです。",
+            "reading": "やきにくは ラーメンより たかいです。",
+            "romaji": "Yakiniku wa raamen yori takai desu.",
+            "vi": "Thịt nướng đắt hơn mì ramen."
           },
           {
-            "jp": "大阪は東京ほど大きくないです。",
-            "reading": "おおさかはとうきょうほどおおきくないです。",
-            "romaji": "Oosaka wa Toukyou hodo ookikunai desu.",
-            "vi": "Osaka không lớn bằng Tokyo."
+            "jp": "地下鉄はバスより早いです。",
+            "reading": "ちかてつは バスより はやいです。",
+            "romaji": "Chikatetsu wa basu yori hayai desu.",
+            "vi": "Tàu điện ngầm nhanh hơn xe buýt."
           },
           {
-            "jp": "バスは電車ほど速くないです。",
-            "reading": "バスはでんしゃほどはやくないです。",
-            "romaji": "Basu wa densha hodo hayakunai desu.",
-            "vi": "Xe buýt không nhanh bằng tàu điện."
+            "jp": "この居酒屋はあの店より広いです。",
+            "reading": "この いざかやは あの みせより ひろいです。",
+            "romaji": "Kono izakaya wa ano mise yori hiroi desu.",
+            "vi": "Quán rượu này rộng hơn quán kia."
           },
           {
-            "jp": "今日はきのうほど寒くないです。",
-            "reading": "きょうはきのうほどさむくないです。",
-            "romaji": "Kyou wa kinou hodo samukunai desu.",
-            "vi": "Hôm nay không lạnh bằng hôm qua."
+            "jp": "この映画館は前の店より近いです。",
+            "reading": "この えいがかんは まえの みせより ちかいです。",
+            "romaji": "Kono eigakan wa mae no mise yori chikai desu.",
+            "vi": "Rạp chiếu phim này gần hơn cửa hàng trước."
           },
           {
-            "jp": "この本はあの本ほどおもしろくないです。",
-            "reading": "このほんはあのほんほどおもしろくないです。",
-            "romaji": "Kono hon wa ano hon hodo omoshirokunai desu.",
-            "vi": "Quyển này không hay bằng quyển kia."
+            "jp": "すき焼きはお好み焼きより好きです。",
+            "reading": "すきやきは おこのみやきより すきです。",
+            "romaji": "Sukiyaki wa okonomiyaki yori suki desu.",
+            "vi": "Tôi thích lẩu sukiyaki hơn bánh xèo okonomiyaki."
           }
-        ],
-        "note": "Tính từ phải ở thể phủ định: 難しくない、大きくない、好きじゃない.",
+        ]
+      },
+      {
         "id": "6_2",
         "structure_jp": "A は B ほど Adj ない",
         "structure_vi": "A không bằng B",
@@ -1734,43 +1824,43 @@ export const grammar: GrammarLesson[] = [
         ],
         "formula": "A + は + B + ほど + tính từ thể phủ định. ほど không đi với câu khẳng định.",
         "explanation": "So sánh kém, A không đạt tới mức của B",
-        "usage": "英語は日本語ほど難しくないです là tiếng Anh không khó bằng tiếng Nhật."
-      },
-      {
-        "color": "#98fb98",
+        "usage": "ラーメンは焼き肉ほど高くないです là mì ramen không đắt bằng thịt nướng.",
+        "note": "Tính từ phải ở thể phủ định: 高くない、早くない、広くない、好きじゃない.",
+        "color": "#ffd700",
         "examples": [
           {
-            "jp": "一年で八月がいちばん暑いです。",
-            "reading": "いちねんで はちがつがいちばんあついです。",
-            "romaji": "Ichinen de hachigatsu ga ichiban atsui desu.",
-            "vi": "Trong một năm, tháng 8 nóng nhất."
+            "jp": "ラーメンは焼き肉ほど高くないです。",
+            "reading": "ラーメンは やきにくほど たかくないです。",
+            "romaji": "Raamen wa yakiniku hodo takakunai desu.",
+            "vi": "Mì ramen không đắt bằng thịt nướng."
           },
           {
-            "jp": "クラスのなかで田中さんがいちばん若いです。",
-            "reading": "クラスのなかでたなかさんがいちばんわかいです。",
-            "romaji": "Kurasu no naka de Tanaka-san ga ichiban wakai desu.",
-            "vi": "Trong lớp, anh Tanaka trẻ nhất."
+            "jp": "バスは地下鉄ほど早くないです。",
+            "reading": "バスは ちかてつほど はやくないです。",
+            "romaji": "Basu wa chikatetsu hodo hayakunai desu.",
+            "vi": "Xe buýt không nhanh bằng tàu điện ngầm."
           },
           {
-            "jp": "日本で富士山がいちばん高いです。",
-            "reading": "にほんでふじさんがいちばんたかいです。",
-            "romaji": "Nihon de Fujisan ga ichiban takai desu.",
-            "vi": "Ở Nhật, núi Phú Sĩ cao nhất."
+            "jp": "あの映画館はこの居酒屋ほど広くないです。",
+            "reading": "あの えいがかんは この いざかやほど ひろくないです。",
+            "romaji": "Ano eigakan wa kono izakaya hodo hirokunai desu.",
+            "vi": "Rạp chiếu phim kia không rộng bằng quán rượu này."
           },
           {
-            "jp": "この三つでこれが一番安いです。",
-            "reading": "このみっつでこれがいちばんやすいです。",
-            "romaji": "Kono mittsu de kore ga ichiban yasui desu.",
-            "vi": "Trong ba cái này, cái này rẻ nhất."
+            "jp": "カラオケはコンサートほど高くないです。",
+            "reading": "カラオケは コンサートほど たかくないです。",
+            "romaji": "Karaoke wa konsaato hodo takakunai desu.",
+            "vi": "Đi hát karaoke không đắt bằng đi xem hòa nhạc."
           },
           {
-            "jp": "季節のなかで春がいちばん暖かいです。",
-            "reading": "きせつのなかではるがいちばんあたたかいです。",
-            "romaji": "Kisetsu no naka de haru ga ichiban atatakai desu.",
-            "vi": "Trong các mùa, mùa xuân ấm nhất."
+            "jp": "あの店はこの映画館ほど近くないです。",
+            "reading": "あの みせは この えいがかんほど ちかくないです。",
+            "romaji": "Ano mise wa kono eigakan hodo chikakunai desu.",
+            "vi": "Cửa hàng kia không gần bằng rạp chiếu phim này."
           }
-        ],
-        "note": "Cái nhất dùng trợ từ が, không dùng は. のなかで nêu nhóm đang so.",
+        ]
+      },
+      {
         "id": "6_3",
         "structure_jp": "N のなかで A がいちばん Adj",
         "structure_vi": "Trong N, A là nhất",
@@ -1781,11 +1871,43 @@ export const grammar: GrammarLesson[] = [
         ],
         "formula": "Phạm vi + のなかで / で + cái nhất + が + いちばん + tính từ + です.",
         "explanation": "So sánh nhất trong một nhóm",
-        "usage": "一年で八月がいちばん暑いです là trong một năm, tháng 8 nóng nhất."
+        "usage": "食べ物のなかで焼き肉がいちばん好きです là trong các món ăn, tôi thích món thịt nướng nhất.",
+        "note": "Cái nhất dùng trợ từ が, không dùng は. のなかで nêu nhóm đang so.",
+        "color": "#98fb98",
+        "examples": [
+          {
+            "jp": "食べ物のなかで、焼き肉がいちばん好きです。",
+            "reading": "たべものの なかで、やきにくが いちばん すきです。",
+            "romaji": "Tabemono no naka de, yakiniku ga ichiban suki desu.",
+            "vi": "Trong các món ăn, tôi thích món thịt nướng nhất."
+          },
+          {
+            "jp": "季節のなかで春がいちばん暖かいです。",
+            "reading": "きせつの なかで はるが いちばん あたたかいです。",
+            "romaji": "Kisetsu no naka de haru ga ichiban atatakai desu.",
+            "vi": "Trong các mùa, mùa xuân ấm nhất."
+          },
+          {
+            "jp": "スポーツのなかで、野球がいちばん面白いです。",
+            "reading": "スポーツの なかで、やきゅうが いちばん おもしろいです。",
+            "romaji": "Supootsu no naka de, yakyuu ga ichiban omoshiroi desu.",
+            "vi": "Trong các môn thể thao, bóng chày thú vị nhất."
+          },
+          {
+            "jp": "このコース料理のなかで、すき焼きがいちばんおいしいです。",
+            "reading": "この コースりょうりの なかで、すきやきが いちばん おいしいです。",
+            "romaji": "Kono koosu ryouri no naka de, sukiyaki ga ichiban oishii desu.",
+            "vi": "Trong set món ăn này, lẩu sukiyaki ngon nhất."
+          },
+          {
+            "jp": "飲み物のなかで、冷たいジュースがいちばん好きです。",
+            "reading": "のみものの なかで、つめたい ジュースが いちばん すきです。",
+            "romaji": "Nomimono no naka de, tsumetai juusu ga ichiban suki desu.",
+            "vi": "Trong các loại đồ uống, tôi thích nước ép lạnh nhất."
+          }
+        ]
       },
       {
-        "color": "#dda0dd",
-        "note": "Câu trả lời dùng のほうが, không lặp lại どちら.",
         "id": "6_4",
         "structure_jp": "N1 と N2 と どちらが A ですか",
         "structure_vi": "N1 và N2, cái nào hơn?",
@@ -1795,182 +1917,183 @@ export const grammar: GrammarLesson[] = [
         ],
         "formula": "N1 と N2 と どちらが + tính từ + ですか. Trả lời: N のほうが + tính từ + です.",
         "explanation": "Hỏi cái nào hơn trong hai thứ",
-        "usage": "夏と冬とどちらが暑いですか. Trả lời 夏のほうが暑いです.",
+        "usage": "焼き肉とラーメンとどちらが好きですか. Trả lời 焼き肉のほうが好きです.",
+        "note": "Câu trả lời dùng のほうが, không lặp lại どちら.",
+        "color": "#dda0dd",
         "examples": [
           {
-            "jp": "サッカーとテニスとどちらが好きですか。",
-            "reading": "サッカーとテニスとどちらがすきですか。",
-            "romaji": "Sakkaa to tenisu to dochira ga suki desu ka.",
-            "vi": "Bóng đá và quần vợt, bạn thích môn nào hơn?"
+            "jp": "焼き肉とラーメンとどちらが好きですか。",
+            "reading": "やきにくと ラーメンと どちらが すきですか。",
+            "romaji": "Yakiniku to raamen to dochira ga suki desu ka.",
+            "vi": "Thịt nướng và mì ramen, bạn thích món nào hơn?"
           },
           {
-            "jp": "夏と冬とどちらが暑いですか。",
-            "reading": "なつとふゆとどちらがあついですか。",
-            "romaji": "Natsu to fuyu to dochira ga atsui desu ka.",
-            "vi": "Mùa hè và mùa đông, mùa nào nóng hơn?"
+            "jp": "焼き肉のほうが好きです。",
+            "reading": "やきにくの ほうが すきです。",
+            "romaji": "Yakiniku no hou ga suki desu.",
+            "vi": "Tôi thích thịt nướng hơn."
           },
           {
-            "jp": "夏のほうが暑いです。",
-            "reading": "なつのほうがあついです。",
-            "romaji": "Natsu no hou ga atsui desu.",
-            "vi": "Mùa hè nóng hơn."
+            "jp": "地下鉄とバスとどちらが早いですか。",
+            "reading": "ちかてつと バスと どちらが はやいですか。",
+            "romaji": "Chikatetsu to basu to dochira ga hayai desu ka.",
+            "vi": "Tàu điện ngầm và xe buýt, phương tiện nào nhanh hơn?"
           },
           {
-            "jp": "バスと電車とどちらが速いですか。",
-            "reading": "バスとでんしゃとどちらがはやいですか。",
-            "romaji": "Basu to densha to dochira ga hayai desu ka.",
-            "vi": "Xe buýt và tàu điện, cái nào nhanh hơn?"
+            "jp": "地下鉄のほうが早いです。",
+            "reading": "ちかてつの ほうが はやいです。",
+            "romaji": "Chikatetsu no hou ga hayai desu.",
+            "vi": "Tàu điện ngầm nhanh hơn."
           },
           {
-            "jp": "電車のほうが速いです。",
-            "reading": "でんしゃのほうがはやいです。",
-            "romaji": "Densha no hou ga hayai desu.",
-            "vi": "Tàu điện nhanh hơn."
+            "jp": "ジャズとコメディーとどちらが面白いですか。",
+            "reading": "ジャズと コメディーと どちらが おもしろいですか。",
+            "romaji": "Jazu to komedii to dochira ga omoshiroi desu ka.",
+            "vi": "Nhạc jazz và kịch hài, thể loại nào thú vị hơn?"
           }
         ]
       },
       {
-        "color": "#ffb6c1",
-        "examples": [
-          {
-            "jp": "日曜日、いっしょに映画を見に行きませんか。",
-            "reading": "にちようび、いっしょにえいがをみにいきませんか。",
-            "romaji": "Nichiyoubi, isshoni eiga o mi ni ikimasen ka.",
-            "vi": "Chủ nhật này cùng đi xem phim với tôi không?"
-          },
-          {
-            "jp": "すみません。日曜日はちょっと… 約束がありますから。",
-            "reading": "すみません。にちようびはちょっと… やくそくがありますから。",
-            "romaji": "Sumimasen. Nichiyoubi wa chotto... Yakusoku ga arimasu kara.",
-            "vi": "Xin lỗi. Chủ nhật thì hơi... Vì tôi có hẹn rồi."
-          },
-          {
-            "jp": "いっしょにお茶を飲みませんか。",
-            "reading": "いっしょにおちゃをのみませんか。",
-            "romaji": "Isshoni ocha o nomimasen ka.",
-            "vi": "Cùng đi uống trà với tôi nhé?"
-          },
-          {
-            "jp": "ええ、飲みましょう。",
-            "reading": "ええ、のみましょう。",
-            "romaji": "Ee, nomimashou.",
-            "vi": "Vâng, chúng ta cùng uống nhé."
-          },
-          {
-            "jp": "あした、テニスをしませんか。すみません、用事がありますから。",
-            "reading": "あした、テニスをしませんか。すみません、ようじがありますから。",
-            "romaji": "Ashita, tenisu o shimasen ka. Sumimasen, youji ga arimasu kara.",
-            "vi": "Ngày mai chơi tennis nhé? - Xin lỗi, vì tôi có việc bận rồi."
-          }
-        ],
-        "note": "Mẫu 〜はちょっと… là cách từ chối khéo léo và tế nhị rất phổ biến của người Nhật. Vế sau dùng「N がありますから」để đưa ra lý do chính đáng.",
         "id": "6_5",
         "structure_jp": "〜はちょっと… / 〜がありますから",
         "structure_vi": "Rủ rê, Đồng ý và Từ chối khéo kèm lý do",
         "chips": [
-          "Vませんか",
-          "Vましょう",
-          "〜はちょっと",
-          "〜から"
+          "〜はちょっと…",
+          "〜から",
+          "〜ませんか",
+          "〜ましょう"
         ],
-        "formula": "Rủ rê: いっしょに Vませんか。 Đồng ý: ええ、Vましょう。 Từ chối khéo: すみません、〜はちょっと…。 Nêu lý do: [N/Lý do] がありますから。",
-        "explanation": "Mở rộng nhóm câu mời rủ: cách rủ rê cùng làm gì, cách đồng ý nhiệt tình và cách từ chối khéo léo kèm theo lý do cụ thể.",
-        "usage": "Khi từ chối lời mời, người Nhật tránh nói thẳng「いいえ」mà dùng「すみません。〜はちょっと…」(Xin lỗi, việc đó thì hơi...) rồi giải thích lý do「やくそくがありますから」(Vì tôi có hẹn rồi)."
-      },
-      {
-        "color": "#ffd700",
+        "formula": "• Rủ rê: Vません + か。\n• Đồng ý: ええ、[Vましょう / いいですね / ぜひ]。\n• Từ chối khéo: すみません、[Thời gian] はちょっと… [N] がありますから / [Lý do] から。",
+        "explanation": "Người Nhật thường tránh nói 'Không' (いいえ) trực tiếp khi từ chối lời mời. Thay vào đó, họ dùng '〜はちょっと…' (thì hơi...) kèm lý do với '〜から' (vì...).",
+        "usage": "Từ chối khéo: 日曜日はちょっと… 約束がありますから (Chủ nhật thì hơi... vì tôi có hẹn rồi).",
+        "note": "Sau 〜はちょっと… thường ngắt lửng mang sắc thái lịch sự, tế nhị.",
+        "color": "#ffb6c1",
         "examples": [
           {
-            "jp": "FPT大学でお祭りがあります。",
-            "reading": "FPTだいがくでおまつりがあります。",
-            "romaji": "FPT daigaku de omatsuri ga arimasu.",
-            "vi": "Có lễ hội ở trường Đại học FPT."
+            "jp": "日曜日、いっしょに映画館へ行きませんか。",
+            "reading": "にちようび、いっしょに えいがかんへ いきませんか。",
+            "romaji": "Nichiyoubi, isshoni eigakan e ikimasen ka.",
+            "vi": "Chủ nhật này cùng đi xem phim ở rạp với tôi không?"
           },
           {
-            "jp": "あした、大学で日本語の試験があります。",
-            "reading": "あした、だいがくでにほんごのしけんがあります。",
-            "romaji": "Ashita, daigaku de nihongo no shiken ga arimasu.",
-            "vi": "Ngày mai có kỳ thi tiếng Nhật ở trường đại học."
+            "jp": "すみません。日曜日はちょっと… 約束がありますから。",
+            "reading": "すみません。にちようびは ちょっと… やくそくが ありますから。",
+            "romaji": "Sumimasen. Nichiyoubi wa chotto... Yakusoku ga arimasu kara.",
+            "vi": "Xin lỗi. Chủ nhật thì hơi... Vì tôi có hẹn rồi."
           },
           {
-            "jp": "今晩、公園でパーティーがあります。",
-            "reading": "こんばん、こうえんでパーティーがあります。",
-            "romaji": "Konban, kouen de paatii ga arimasu.",
-            "vi": "Tối nay có bữa tiệc ở công viên."
+            "jp": "いっしょに焼き肉を食べませんか。ええ、ぜひ食べましょう。",
+            "reading": "いっしょに やきにくを たべませんか。ええ、ぜひ たべましょう。",
+            "romaji": "Isshoni yakiniku o tabemasen ka. Ee, zehi tabemashou.",
+            "vi": "Cùng ăn thịt nướng nhé? - Vâng, nhất định rồi."
           },
           {
-            "jp": "東京でサッカーの試合があります。",
-            "reading": "とうきょうでサッカーのしあいがあります。",
-            "romaji": "Toukyou de sakkaa no shiai ga arimasu.",
-            "vi": "Ở Tokyo có trận thi đấu bóng đá."
+            "jp": "今週カラオケに行きませんか。すみません、用事がありますから、また今度お願いします。",
+            "reading": "こんしゅう カラオケに いきませんか。すみません、ようじが ありますから、また こんど おねがいします。",
+            "romaji": "Konshuu karaoke ni ikimasen ka. Sumimasen, youji ga arimasu kara, mata kondo onegaishimasu.",
+            "vi": "Tuần này cùng đi karaoke không? - Xin lỗi, vì có việc bận nên hẹn bạn lần tới nhé."
           },
           {
-            "jp": "日曜日、どこでコンサートがありますか。",
-            "reading": "にちようび、どこでコンサートがありますか。",
-            "romaji": "Nichiyoubi, doko de konsaato ga arimasu ka.",
-            "vi": "Chủ nhật có buổi hòa nhạc ở đâu vậy?"
+            "jp": "野球の試合を見に行きませんか。ええ、楽しみにしています。",
+            "reading": "やきゅうの しあいを みに いきませんか。ええ、たのしみに して います。",
+            "romaji": "Yakyuu no shiai o mi ni ikimasen ka. Ee, tanoshimi ni shite imasu.",
+            "vi": "Cùng đi xem trận bóng chày nhé? - Vâng, tôi rất mong đợi."
           }
-        ],
-        "note": "FPT大学でお祭りがあります (Có lễ hội ở FPT). Dùng で vì lễ hội là sự kiện/hoạt động diễn ra, không dùng に (vốn chỉ nơi tồn tại của đồ vật).",
+        ]
+      },
+      {
         "id": "6_6",
         "structure_jp": "Địa điểm で N(sự kiện) が あります",
         "structure_vi": "Nơi diễn ra sự kiện, hoạt động",
         "chips": [
+          "Địa điểm",
           "で",
-          "イベント",
           "あります"
         ],
-        "formula": "Địa điểm + で + N (sự kiện, hoạt động: lễ hội, tiệc, thi cử...) + があります",
-        "explanation": "Dùng trợ từ で để chỉ địa điểm nơi diễn ra, tổ chức một sự kiện hoặc hoạt động.",
-        "usage": "Khác với「Địa điểm に N があります」chỉ nơi tồn tại của đồ vật, khi danh từ là sự kiện (お祭り, 試験, パーティー, コンサート, 試合) thì phải dùng trợ từ で."
-      },
-      {
-        "color": "#98fb98",
+        "formula": "Địa điểm + で + Sự kiện / Hoạt động (N) + が + あります",
+        "explanation": "Diễn tả nơi diễn ra một sự kiện, hoạt động, lễ hội, trận thi đấu hoặc bữa tiệc.",
+        "usage": "スタジアムで野球の試合があります là ở sân vận động có trận thi đấu bóng chày.",
+        "note": "Khác với [Địa điểm + に + Đồ vật + が あります] (chỉ sự tồn tại tĩnh), cấu trúc [Địa điểm + で + Sự kiện + が あります] dùng trợ từ で để chỉ nơi diễn ra hành động, sự kiện.",
+        "color": "#87cefa",
         "examples": [
           {
-            "jp": "私の部屋にCDが1まいあります。",
-            "reading": "わたしのへやにCDがいちまいあります。",
-            "romaji": "Watashi no heya ni shiidii ga ichimai arimasu.",
-            "vi": "Trong phòng tôi có 1 cái đĩa CD."
+            "jp": "スタジアムで野球の試合があります。",
+            "reading": "スタジアムで やきゅうの しあいが あります。",
+            "romaji": "Sutajiamu de yakyuu no shiai ga arimasu.",
+            "vi": "Ở sân vận động có trận thi đấu bóng chày."
           },
           {
-            "jp": "デパートで白いシャツを2枚買いました。",
-            "reading": "デパートでしろいシャツをにまいかいました。",
-            "romaji": "Depaato de shiroi shatsu o nimai kaimashita.",
-            "vi": "Tôi đã mua 2 chiếc áo sơ mi trắng ở trung tâm thương mại."
+            "jp": "日曜日、公園でジャズのコンサートがあります。",
+            "reading": "にちようび、こうえんで ジャズの コンサートが あります。",
+            "romaji": "Nichiyoubi, kouen de jazu no konsaato ga arimasu.",
+            "vi": "Chủ nhật có buổi hòa nhạc jazz ở công viên."
           },
           {
-            "jp": "郵便局で84円の切手を5まい買いました。",
-            "reading": "ゆうびんきょくではちじゅうよんえんのきってをごまいかいました。",
-            "romaji": "Yuubinkyoku de hachijuuyonen no kitte o gomai kaimashita.",
-            "vi": "Tôi đã mua 5 con tem 84 yên ở bưu điện."
+            "jp": "デパートで服のセールがあります。",
+            "reading": "デパートで ふくの セールが あります。",
+            "romaji": "Depaato de fuku no seeru ga arimasu.",
+            "vi": "Ở trung tâm thương mại có đợt bán hạ giá quần áo."
           },
           {
-            "jp": "映画のチケットが2枚ありますから、いっしょに行きませんか。",
-            "reading": "えいがのチケットがにまいありますから、いっしょにいきませんか。",
-            "romaji": "Eiga no chiketto ga nimai arimasu kara, isshoni ikimasen ka.",
-            "vi": "Tôi có 2 vé xem phim, cùng đi với tôi không?"
+            "jp": "映画館で映画のイベントがあります。",
+            "reading": "えいがかんで えいがの イベントが あります。",
+            "romaji": "Eigakan de eiga no ibento ga arimasu.",
+            "vi": "Ở rạp chiếu phim có sự kiện điện ảnh."
           },
           {
-            "jp": "この紙を3枚コピーしてください。",
-            "reading": "このかみをさんまいコピーしてください。",
-            "romaji": "Kono kami o sanmai kopii shite kudasai.",
-            "vi": "Hãy photocopy 3 tờ giấy này giúp tôi."
+            "jp": "居酒屋で楽しいパーティーがあります。",
+            "reading": "いざかやで たのしい パーティーが あります。",
+            "romaji": "Izakaya de tanoshii paatii ga arimasu.",
+            "vi": "Ở quán rượu có bữa tiệc vui vẻ."
           }
-        ],
-        "note": "Vật mỏng dẹt phẳng (áo sơ mi, đĩa CD, vé, tem, tờ giấy, bức ảnh) dùng lượng từ 枚 (まい). Đếm máy móc/xe cộ dùng 台 (だい), đếm vật dài dùng 本 (ほん).",
+        ]
+      },
+      {
         "id": "6_7",
         "structure_jp": "N が / を 〜まい あります / 買いました",
         "structure_vi": "Đếm số lượng vật mỏng, dẹt (tờ, cái, chiếc, đĩa)",
         "chips": [
+          "〜まい",
           "枚",
-          "まい",
-          "あります",
-          "買いました"
+          "vật mỏng"
         ],
-        "formula": "Danh từ (vật mỏng, dẹt) + が / を + Số từ + 枚 (まい) + あります / 買いました / ください",
-        "explanation": "Lượng từ「枚 (まい)」dùng để đếm các vật mỏng, phẳng như tờ giấy, cái áo sơ mi, đĩa CD, vé, tem, bưu thiếp, ảnh.",
-        "usage": "CD が 1まい あります là tôi có 1 đĩa CD. シャツを 2まい 買いました là tôi đã mua 2 cái áo sơ mi. 切手を 5まい ください là cho tôi 5 con tem."
+        "formula": "[Vật mỏng] + が / を + [Số lượng] + 枚 (まい) + [Động từ]",
+        "explanation": "Đơn vị đếm 枚 (まい) dùng cho các vật thể mỏng, dẹt như vé (チケット), giấy (紙), áo sơ mi (シャツ), đĩa CD (CD), con tem (切手).",
+        "usage": "コンサートのチケットを2枚買いました là tôi đã mua 2 vé xem hòa nhạc.",
+        "note": "Số đếm đặt sau trợ từ hoặc trước động từ: チケットが2枚あります hoặc 2枚のチケット.",
+        "color": "#ffd700",
+        "examples": [
+          {
+            "jp": "コンサートのチケットを2枚買いました。",
+            "reading": "コンサートの チケットを にまい かいました。",
+            "romaji": "Konsaato no chiketto o nimai kaimashita.",
+            "vi": "Tôi đã mua 2 vé xem buổi hòa nhạc."
+          },
+          {
+            "jp": "映画のチケットが2枚ありますから、いっしょに行きませんか。",
+            "reading": "えいがの チケットが にまい ありますから、いっしょに いきませんか。",
+            "romaji": "Eiga no chiketto ga nimai arimasu kara, isshoni ikimasen ka.",
+            "vi": "Tôi có 2 vé xem phim, cùng đi với tôi nhé?"
+          },
+          {
+            "jp": "デパートのセールで白いシャツを3枚買いました。",
+            "reading": "デパートの セールで しろい シャツを さんまい かいました。",
+            "romaji": "Depaato no seeru de shiroi shatsu o sanmai kaimashita.",
+            "vi": "Tôi đã mua 3 chiếc áo sơ mi trắng ở đợt hạ giá của TTTM."
+          },
+          {
+            "jp": "駅で観光の地図を1枚もらいました。",
+            "reading": "えきで かんこうの ちずを いちまい もらいました。",
+            "romaji": "Eki de kankou no chizu o ichimai moraimashita.",
+            "vi": "Tôi đã nhận 1 tờ bản đồ du lịch ở nhà ga."
+          },
+          {
+            "jp": "私の部屋にCDが1まいあります。",
+            "reading": "わたしの へやに シーディーが いちまい あります。",
+            "romaji": "Watashi no heya ni shiidii ga ichimai arimasu.",
+            "vi": "Trong phòng tôi có 1 cái đĩa CD."
+          }
+        ]
       }
     ]
   },
@@ -1998,34 +2121,40 @@ export const grammar: GrammarLesson[] = [
         "color": "#ffb6c1",
         "examples": [
           {
-            "jp": "手紙を書いて、郵便局へ行きます。",
-            "reading": "てがみを かいて、ゆうびんきょくへ いきます。",
-            "romaji": "Tegami o kaite, yuubinkyoku e ikimasu.",
-            "vi": "Viết thư xong rồi đi đến bưu điện."
+            "jp": "台所でコップを洗って、テーブルに置きます。",
+            "reading": "だいどころで コップを あらって、テーブルに おきます。",
+            "romaji": "Daidokoro de koppu o aratte, teeburu ni okimasu.",
+            "vi": "Rửa cốc trong bếp rồi để lên bàn."
           },
           {
-            "jp": "毎朝7時に起きて、朝ごはんを食べます。",
-            "reading": "まいあさ しちじに おきて、あさごはんを たべます。",
-            "romaji": "Maiasa shichiji ni okite, asagohan o tabemasu.",
-            "vi": "Mỗi sáng tôi thức dậy lúc 7 giờ rồi ăn sáng."
+            "jp": "ナイフで肉を切って、皿に置きます。",
+            "reading": "ナイフで にくを きって、さらに おきます。",
+            "romaji": "Naifu de niku o kitte, sara ni okimasu.",
+            "vi": "Dùng dao cắt thịt rồi để lên đĩa."
           },
           {
-            "jp": "友達に会って、映画を見ました。",
-            "reading": "ともだちに あって、えいがを みました。",
-            "romaji": "Tomodachi ni atte, eiga o mimashita.",
-            "vi": "Tôi đã gặp bạn rồi xem phim."
+            "jp": "部屋でギターを弾いて、歌を歌います。",
+            "reading": "へやで ギターを ひいて、うたを うたいます。",
+            "romaji": "Heya de gitaa o hiite, uta o utaimasu.",
+            "vi": "Chơi đàn guitar trong phòng rồi hát bài hát."
           },
           {
-            "jp": "図書館で本を借りて、家で読みます。",
-            "reading": "としょかんで ほんを かりて、いえで よみます。",
-            "romaji": "Toshokan de hon o karite, ie de yomimasu.",
-            "vi": "Tôi mượn sách ở thư viện rồi đọc ở nhà."
+            "jp": "ポストに手紙を入れて、バス停へ行きます。",
+            "reading": "ポストに てがみを いれて、バスていへ いきます。",
+            "romaji": "Posuto ni tegami o irete, basutei e ikimasu.",
+            "vi": "Bỏ thư vào hòm thư rồi đi đến trạm xe buýt."
           },
           {
-            "jp": "急いで駅へ行って、電車に乗りました。",
-            "reading": "いそいで えきへ いって、でんしゃに のりました。",
-            "romaji": "Isoide eki e itte, densha ni norimashita.",
-            "vi": "Tôi khẩn trương đi ra ga rồi lên tàu."
+            "jp": "部屋の窓を開けて、外を見ます。",
+            "reading": "へやの まどを あけて、そとを みます。",
+            "romaji": "Heya no mado o akete, soto o mimasu.",
+            "vi": "Mở cửa sổ phòng rồi nhìn ra ngoài."
+          },
+          {
+            "jp": "ここに名前と住所を書いて、出してください。",
+            "reading": "ここに なまえと じゅうしょを かいて、だして ください。",
+            "romaji": "Koko ni namae to juusho o kaite, dashite kudasai.",
+            "vi": "Viết tên và địa chỉ vào đây rồi nộp."
           }
         ]
       },
@@ -2047,34 +2176,34 @@ export const grammar: GrammarLesson[] = [
         "color": "#ffd700",
         "examples": [
           {
-            "jp": "庭に犬がいます。",
-            "reading": "にわに いぬが います。",
-            "romaji": "Niwa ni inu ga imasu.",
-            "vi": "Ở trong sân có một con chó."
+            "jp": "バス停の近くに可愛い犬がいます。",
+            "reading": "バスていの ちかくに かわいい いぬが います。",
+            "romaji": "Basutei no chikaku ni kawaii inu ga imasu.",
+            "vi": "Ở gần trạm xe buýt có một con chó dễ thương."
           },
           {
-            "jp": "教室に先生と学生がいます。",
-            "reading": "きょうしつに せんせいと がくせいが います。",
-            "romaji": "Kyoushitsu ni sensei to gakusei ga imasu.",
-            "vi": "Trong phòng học có giáo viên và sinh viên."
+            "jp": "木の下に犬がいます。",
+            "reading": "きの したに いぬが います。",
+            "romaji": "Ki no shita ni inu ga imasu.",
+            "vi": "Dưới gốc cây có một con chó."
           },
           {
-            "jp": "部屋に猫が2匹います。",
-            "reading": "へやに ねこが にひき います。",
-            "romaji": "Heya ni neko ga nihiki imasu.",
-            "vi": "Trong phòng có 2 con mèo."
+            "jp": "改札の前に友達がいます。",
+            "reading": "かいさつの まえに ともだちが います。",
+            "romaji": "Kaisatsu no mae ni tomodachi ga imasu.",
+            "vi": "Ở trước cửa soát vé có bạn tôi."
           },
           {
-            "jp": "あそこに誰がいますか。田中さんがいます。",
-            "reading": "あそこに だれが いますか。たなかさんが います。",
-            "romaji": "Asoko ni dare ga imasu ka. Tanaka-san ga imasu.",
-            "vi": "Ở đằng kia có ai thế? Có anh Tanaka."
+            "jp": "交番の隣に警察官がいます。",
+            "reading": "こうばんの となりに けいさつかんが います。",
+            "romaji": "Kouban no tonari ni keisatsukan ga imasu.",
+            "vi": "Ở bên cạnh đồn cảnh sát có cảnh sát."
           },
           {
-            "jp": "公園に子供がたくさんいます。",
-            "reading": "こうえんに こどもが たくさん います。",
-            "romaji": "Kouen ni kodomo ga takusan imasu.",
-            "vi": "Ở công viên có rất nhiều trẻ em."
+            "jp": "アパートの前に子供がたくさんいます。",
+            "reading": "アパートの まえに こどもが たくさん います。",
+            "romaji": "Apaato no mae ni kodomo ga takusan imasu.",
+            "vi": "Ở trước nhà chung cư có rất nhiều trẻ em."
           }
         ]
       },
@@ -2093,10 +2222,28 @@ export const grammar: GrammarLesson[] = [
         "color": "#98fb98",
         "examples": [
           {
-            "jp": "ちょっと待ってください。",
-            "reading": "ちょっと まって ください。",
-            "romaji": "Chotto matte kudasai.",
-            "vi": "Xin vui lòng chờ một chút."
+            "jp": "すみませんが、塩を取ってください。",
+            "reading": "すみませんが、しおを とって ください。",
+            "romaji": "Sumimasen ga, shio o totte kudasai.",
+            "vi": "Xin lỗi, xin hãy lấy giúp tôi lọ muối."
+          },
+          {
+            "jp": "寒いですから、窓を閉めてください。",
+            "reading": "さむいですから、まどを しめて ください。",
+            "romaji": "Samui desu kara, mado o shimete kudasai.",
+            "vi": "Vì lạnh nên xin hãy đóng cửa sổ lại giúp tôi."
+          },
+          {
+            "jp": "スプーンとフォークを使ってください。",
+            "reading": "スプーンと フォークを つかって ください。",
+            "romaji": "Supuun to fooku o tsukatte kudasai.",
+            "vi": "Xin hãy dùng thìa và nĩa."
+          },
+          {
+            "jp": "この漢字の読み方を教えてください。",
+            "reading": "この かんじの よみかたを おしえて ください。",
+            "romaji": "Kono kanji no yomikata o oshiete kudasai.",
+            "vi": "Xin hãy chỉ cho tôi cách đọc chữ Hán này."
           },
           {
             "jp": "窓を開けてください。",
@@ -2105,22 +2252,10 @@ export const grammar: GrammarLesson[] = [
             "vi": "Xin hãy mở cửa sổ giúp tôi."
           },
           {
-            "jp": "ここに名前と住所を書いてください。",
-            "reading": "ここに なまえと じゅうしょを かいて ください。",
-            "romaji": "Koko ni namae to juusho o kaite kudasai.",
-            "vi": "Xin hãy viết tên và địa chỉ vào đây."
-          },
-          {
-            "jp": "日本語で話してください。",
-            "reading": "にほんごで はなして ください。",
-            "romaji": "Nihongo de hanashite kudasai.",
-            "vi": "Xin hãy nói bằng tiếng Nhật."
-          },
-          {
-            "jp": "この本を読んでください。",
-            "reading": "このほんを よんで ください。",
-            "romaji": "Kono hon o yonde kudasai.",
-            "vi": "Xin hãy đọc quyển sách này."
+            "jp": "ちょっと待ってください。",
+            "reading": "ちょっと まって ください。",
+            "romaji": "Chotto matte kudasai.",
+            "vi": "Xin vui lòng chờ một chút."
           }
         ]
       },
@@ -2137,33 +2272,15 @@ export const grammar: GrammarLesson[] = [
         ],
         "formula": "• Khẳng định: V[thể て] + います (Đang làm...)\n• Phủ định: V[thể て] + いません (Đang không làm...)\n• Câu hỏi: 今、何をしていますか。(Bây giờ bạn đang làm gì?)",
         "explanation": "Thì hiện tại tiếp diễn (Vて います) dùng để diễn tả một hành động đang trực tiếp diễn ra tại thời điểm nói. Ngoài ra, cấu trúc này còn dùng để diễn tả trạng thái kéo dài là kết quả của hành động trước đó, hoặc thói quen, nghề nghiệp duy trì thường xuyên.",
-        "usage": "1. Hành động đang xảy ra: 今、日本語を勉強しています (Bây giờ tôi đang học tiếng Nhật); 外で雨が降っています (Bên ngoài trời đang mưa).\n2. Câu hỏi tiếp diễn: A: 今、何をしていますか。B: テレビを見ています。(A: Bây giờ bạn đang làm gì? B: Tôi đang xem tivi).\n3. Phủ định tiếp diễn: 今、ゲームをしていません。勉強しています。(Bây giờ tôi không chơi game, tôi đang học bài).\n4. Trạng thái tiếp diễn / kết quả: 田中さんは結婚しています (Anh Tanaka đã kết hôn); ハノイに住んでいます (Đang sống ở Hà Nội).",
+        "usage": "1. Hành động đang xảy ra: 田中さんは今、電話をかけています (Anh Tanaka đang gọi điện thoại); 外で雨が降っています (Bên ngoài trời đang mưa).\n2. Câu hỏi tiếp diễn: A: 今、何をしていますか。B: 台所で料理を作っています。(A: Bây giờ bạn đang làm gì? B: Tôi đang nấu ăn trong bếp).\n3. Phủ định tiếp diễn: 今、ゲームをしていません。勉強しています。(Bây giờ tôi không chơi game, tôi đang học bài).\n4. Trạng thái tiếp diễn / kết quả: 田中さんは結婚しています (Anh Tanaka đã kết hôn); ハノイに住んでいます (Đang sống ở Hà Nội).",
         "note": "Phủ định của Vています là Vていません (không dùng Vてじゃありません/Vてではありません). Trong văn nói giao tiếp thân mật của người Nhật, âm [い] thường được lược bỏ: 勉強してる (benkyou shiteru).",
         "color": "#dda0dd",
         "examples": [
           {
-            "jp": "今、日本語を勉強しています。",
-            "reading": "いま、にほんごを べんきょうして います。",
-            "romaji": "Ima, nihongo o benkyou shite imasu.",
-            "vi": "Bây giờ tôi đang học tiếng Nhật."
-          },
-          {
-            "jp": "外で雨が降っています。",
-            "reading": "そとで あめが ふって います。",
-            "romaji": "Soto de ame ga futte imasu.",
-            "vi": "Bên ngoài trời đang mưa."
-          },
-          {
-            "jp": "A：今、何をしていますか。B：本を読んでいます。",
-            "reading": "A：いま、なにを して いますか。B：ほんを よんで います。",
-            "romaji": "A: Ima, nani o shite imasu ka. B: Hon o yonde imasu.",
-            "vi": "A: Bây giờ bạn đang làm gì? B: Tôi đang đọc sách."
-          },
-          {
-            "jp": "田中さんは電話をかけています。",
-            "reading": "たなかさんは でんわを かけて います。",
-            "romaji": "Tanaka-san wa denwa o kakete imasu.",
-            "vi": "Anh Tanaka đang gọi điện thoại."
+            "jp": "田中さんは今、電話をかけています。",
+            "reading": "たなかさんは いま、でんわを かけて います。",
+            "romaji": "Tanaka-san wa ima, denwa o kakete imasu.",
+            "vi": "Anh Tanaka bây giờ đang gọi điện thoại."
           },
           {
             "jp": "母は台所で料理を作っています。",
@@ -2172,10 +2289,28 @@ export const grammar: GrammarLesson[] = [
             "vi": "Mẹ tôi đang nấu ăn trong bếp."
           },
           {
-            "jp": "今、ゲームをしていません。勉強しています。",
-            "reading": "いま、ゲームを して いません。べんきょうして います。",
-            "romaji": "Ima, geemu o shite imasen. Benkyou shite imasu.",
-            "vi": "Bây giờ tôi không chơi game, tôi đang học bài."
+            "jp": "弟は部屋でギターを弾いています。",
+            "reading": "おとうとは へやで ギターを ひいて います。",
+            "romaji": "Otouto wa heya de gitaa o hiite imasu.",
+            "vi": "Em trai tôi đang chơi đàn guitar trong phòng."
+          },
+          {
+            "jp": "今、電子レンジを使っています。",
+            "reading": "いま、でんしレンジを つかって います。",
+            "romaji": "Ima, denshi renji o tsukatte imasu.",
+            "vi": "Bây giờ tôi đang dùng lò vi sóng."
+          },
+          {
+            "jp": "冷蔵庫から冷たいジュースを出しています。",
+            "reading": "れいぞうこから つめたい ジュースを だして います。",
+            "romaji": "Reizouko kara tsumetai juusu o dashite imasu.",
+            "vi": "Tôi đang lấy nước ngọt lạnh từ trong tủ lạnh ra."
+          },
+          {
+            "jp": "外で冷たい雨が降っています。",
+            "reading": "そとで つめたい あめが ふって います。",
+            "romaji": "Soto de tsumetai ame ga futte imasu.",
+            "vi": "Bên ngoài trời đang mưa lạnh."
           }
         ]
       },
@@ -2194,34 +2329,34 @@ export const grammar: GrammarLesson[] = [
         "color": "#87cefa",
         "examples": [
           {
-            "jp": "荷物を持ちましょうか。",
-            "reading": "にもつを もちましょうか。",
-            "romaji": "Nimotsu o mochimashouka.",
-            "vi": "Để tôi xách hành lý giúp bạn nhé?"
+            "jp": "重そうですね。荷物を持ちましょうか。",
+            "reading": "おもそうですね。にもつを もちましょうか。",
+            "romaji": "Omosou desu ne. Nimotsu o mochimashouka.",
+            "vi": "Trông có vẻ nặng nhỉ. Để tôi xách hành lý giúp bạn nhé?"
           },
           {
-            "jp": "窓を閉めましょうか。",
-            "reading": "まどを しめましょうか。",
-            "romaji": "Mado o shimemashouka.",
-            "vi": "Để tôi đóng cửa sổ giúp bạn nhé?"
+            "jp": "暑いですね。窓を開けましょうか。",
+            "reading": "あついですね。まどを あけましょうか。",
+            "romaji": "Atsui desu ne. Mado o akemashouka.",
+            "vi": "Trời nóng nhỉ. Để tôi mở cửa sổ giúp bạn nhé?"
           },
           {
-            "jp": "手伝いましょうか。",
-            "reading": "てつだいましょうか。",
-            "romaji": "Tetsudaimashouka.",
-            "vi": "Để tôi giúp bạn một tay nhé?"
+            "jp": "寒いですから、窓を閉めましょうか。",
+            "reading": "さむいですから、まどを しめましょうか。",
+            "romaji": "Samui desu kara, mado o shimemashouka.",
+            "vi": "Vì trời lạnh, để tôi đóng cửa sổ giúp bạn nhé?"
           },
           {
-            "jp": "エアコンをつけましょうか。",
-            "reading": "エアコンを つけましょうか。",
-            "romaji": "Eeakon o tsukemashouka.",
-            "vi": "Để tôi bật điều hòa giúp bạn nhé?"
+            "jp": "台所の仕事を手伝いましょうか。",
+            "reading": "だいどころの しごとを てつだいましょうか。",
+            "romaji": "Daidokoro no shigoto o tetsudaimashouka.",
+            "vi": "Để tôi giúp một tay công việc nhà bếp nhé?"
           },
           {
-            "jp": "駅まで車で送りましょうか。",
-            "reading": "えきまで くるまで おくりましょうか。",
-            "romaji": "Eki made kuruma de okurimashouka.",
-            "vi": "Để tôi lái xe chở bạn ra ga nhé?"
+            "jp": "テーブルの上のお皿を洗いましょうか。",
+            "reading": "テーブルの うえの おさらを あらいましょうか。",
+            "romaji": "Teeburu no ue no osara o araimashouka.",
+            "vi": "Để tôi rửa đĩa trên bàn giúp bạn nhé?"
           }
         ]
       },
@@ -2241,34 +2376,34 @@ export const grammar: GrammarLesson[] = [
         "color": "#ffb6c1",
         "examples": [
           {
-            "jp": "この漢字の読み方を教えてください。",
-            "reading": "この かんじの よみかたを おしえて ください。",
-            "romaji": "Kono kanji no yomikata o oshiete kudasai.",
-            "vi": "Hãy chỉ cho tôi cách đọc chữ Hán này."
+            "jp": "この漢字の書き方を教えてください。",
+            "reading": "この かんじの かきかたを おしえて ください。",
+            "romaji": "Kono kanji no kakikata o oshiete kudasai.",
+            "vi": "Hãy chỉ cho tôi cách viết chữ Hán này."
           },
           {
-            "jp": "すしの作り方を習いました。",
-            "reading": "すしの つくりかたを ならいました。",
-            "romaji": "Sushi no tsukurikata o naraimashita.",
-            "vi": "Tôi đã học cách làm món sushi."
+            "jp": "電子レンジの使い方を教えてください。",
+            "reading": "でんしレンジの つかいかたを おしえて ください。",
+            "romaji": "Denshi renji no tsukaikata o oshiete kudasai.",
+            "vi": "Hãy chỉ cho tôi cách sử dụng lò vi sóng."
           },
           {
-            "jp": "パソコンの使い方を教えてください。",
-            "reading": "パソコンの つかいかたを おしえて ください。",
-            "romaji": "Pasokon no tsukaikata o oshiete kudasai.",
-            "vi": "Hãy chỉ cho tôi cách sử dụng máy tính."
-          },
-          {
-            "jp": "駅までの行き方が分かりません。",
-            "reading": "えきまでの いきかたが わかりません。",
-            "romaji": "Eki made no ikikata ga wakarimasen.",
-            "vi": "Tôi không biết cách đi đến nhà ga."
+            "jp": "ピザの作り方を習いました。",
+            "reading": "ピザの つくりかたを ならいました。",
+            "romaji": "Piza no tsukurikata o naraimashita.",
+            "vi": "Tôi đã học cách làm bánh pizza."
           },
           {
             "jp": "お箸の持ち方を見せてください。",
             "reading": "おはしの もちかたを みせて ください。",
             "romaji": "Ohashi no mochikata o misete kudasai.",
             "vi": "Hãy cho tôi xem cách cầm đũa."
+          },
+          {
+            "jp": "交番への行き方を教えてください。",
+            "reading": "こうばんへの いきかたを おしえて ください。",
+            "romaji": "Kouban e no ikikata o oshiete kudasai.",
+            "vi": "Hãy chỉ cho tôi cách đi đến đồn cảnh sát."
           }
         ]
       }
