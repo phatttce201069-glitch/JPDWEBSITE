@@ -183,21 +183,33 @@ export function buildAiPrompt(selectedBai?: string[]): {
   }
 
   let negativeConstraints = "";
+  if (!allowedBai.includes(1)) {
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về ngữ pháp/từ vựng riêng của Bài 1 (Câu danh từ N1 は N2 です/じゃありません, quốc tịch, nghề nghiệp cơ bản).\n";
+  }
+  if (!allowedBai.includes(2)) {
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về ngữ pháp/từ vựng riêng của Bài 2 (Chỉ định từ これ, それ, あれ, どこ, どちら, 何階, いくら, をください).\n";
+  }
+  if (!allowedBai.includes(3)) {
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về ngữ pháp/từ vựng riêng của Bài 3 (Thời gian に, đích đến へ行きます, nơi làm việc で, から〜まで).\n";
+  }
+  if (!allowedBai.includes(4)) {
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về tính từ chia quá khứ (〜かった, 〜でした), phó từ (ぜんぜん, あまり), liên từ (しかし, そして), hoặc khoảng cách (どのくらい) của Bài 4.\n";
+  }
+  if (!allowedBai.includes(5)) {
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về mong muốn (ほしい, たい), mục đích di chuyển (〜に行きます), quá khứ (ました, ませんでした), hoặc giải thích lý do (どうして, 〜から) của Bài 5.\n";
+  }
   if (!allowedBai.includes(6)) {
     negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về So sánh (より, ほど, どちら, 一番), Rủ rê & Từ chối khéo (〜はちょっと…, やくそくがありますから), Nơi diễn ra sự kiện (Địa điểm で Sự kiện があります), hay Đếm vật mỏng (枚 - まい) của Bài 6.\n";
   }
   if (!allowedBai.includes(7)) {
-    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về Thể て (Vてください, Vています, Cách làm 〜かた) hay dụng cụ ăn uống (スプーン, フォーク, ナイフ, 電子レンジ) của Bài 7.\n";
+    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG xuất hiện bất kỳ câu hỏi nào về Thể て (chia 3 nhóm, Vてください, Vています, Vましょうか, Cách làm 〜かた), sự tồn tại người/động vật (N1 に N2 がいます), hay dụng cụ ăn uống của Bài 7.\n";
   }
-  if (!allowedBai.includes(4)) {
-    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG lấy từ vựng hay kiến thức riêng của Bài 4.\n";
-  }
-  if (!allowedBai.includes(5)) {
-    negativeConstraints += "  * TUYỆT ĐỐI KHÔNG lấy từ vựng hay kiến thức riêng của Bài 5.\n";
-  }
+
+  const entropySeed = Math.random().toString(36).slice(2, 8).toUpperCase();
 
   const systemPrompt = `Bạn là giảng viên tiếng Nhật trường Đại học FPT chuyên biên soạn đề thi môn JPD123 (Tiếng Nhật 2).
 Nhiệm vụ: Tạo một đề thi trắc nghiệm A-D gồm đúng 30 câu chuẩn cấu trúc đề thi kết thúc môn (Final Exam) JPD123 FPT.
+Mã phiên đề thi ngẫu nhiên: #${entropySeed}.
 
 QUY TẮC BẮT BUỘC VỀ PHẠM VI BÀI HỌC (CRITICAL CONSTRAINT - TUÂN THỦ 100%):
 - Người dùng CHỈ YÊU CẦU KIỂM TRA CÁC BÀI: [${lessonNames}].
@@ -206,20 +218,16 @@ QUY TẮC BẮT BUỘC VỀ PHẠM VI BÀI HỌC (CRITICAL CONSTRAINT - TUÂN TH
 ${negativeConstraints}
 - Tất cả 30 câu hỏi phải hoàn toàn khác biệt nhau, KHÔNG ĐƯỢC TRÙNG LẶP bất kỳ câu văn nào.
 
+YÊU CẦU VỀ ĐỘ ĐA DẠNG CAO (HIGH DIVERSITY & REAL-WORLD CONTEXTS):
+- Đa dạng hóa ngữ cảnh thực tế: trường học, siêu thị, mua sắm, du lịch, ga tàu điện, công sở, cuộc sống gia đình, ẩm thực, hẹn hò, thời tiết, sở thích.
+- Đa dạng hóa các dạng câu hỏi:
+  + Kanji (10 câu): Chọn cách đọc Hiragana đúng, Chọn chữ Hán đúng từ Hiragana, Âm Hán Việt hoặc phân tích bộ chữ.
+  + Từ vựng (10 câu): Điền từ ngữ cảnh, Từ trái nghĩa/đồng nghĩa, Lượng từ số đếm, Phản xạ đối thoại hội thoại A-B.
+  + Ngữ pháp (10 câu): Điền trợ từ chính xác, Chia dạng động từ/tính từ đúng thể, Chọn câu đúng ngữ pháp, Hoàn thành câu theo ý nghĩa tiếng Việt.
+- Sắp xếp thứ tự câu hỏi ngẫu nhiên đan xen giữa Kanji, Từ vựng và Ngữ pháp để tăng tính hấp dẫn khi làm bài (không dồn 10 câu Kanji lên đầu).
+
 PHẠM VI NỘI DUNG ĐƯỢC PHÉP SỬ DỤNG TRONG ĐỀ THI:
 ${lessonScopeText}
-
-CẤU TRÚC ĐỀ THI BẮT BUỘC (30 CÂU):
-1. 10 câu Chữ Hán (section: "Kanji"):
-   - Đọc chữ Hán trong câu sang Hiragana (dùng các chữ Hán của ${lessonNames}).
-   - Chọn chữ Hán đúng từ Hiragana.
-   - Âm Hán Việt hoặc ý nghĩa chữ Hán.
-2. 10 câu Từ vựng (section: "Từ vựng"):
-   - Điền từ ngữ cảnh phù hợp theo từ vựng của ${lessonNames}.
-   - Từ trái nghĩa / tương đương theo từ vựng của ${lessonNames}.
-   - Phó từ mức độ hoặc hội thoại giao tiếp A-B của ${lessonNames}.
-3. 10 câu Ngữ pháp (section: "Ngữ pháp"):
-   - Các cấu trúc ngữ pháp thuộc phạm vi ${lessonNames}.
 
 YÊU CẦU ĐỊNH DẠNG ĐẦU RA:
 Chỉ trả về duy nhất một chuỗi JSON hợp lệ (không kèm markdown \`\`\`json, không có chú thích bên ngoài) là một mảng 30 đối tượng với định dạng:
@@ -242,12 +250,15 @@ Chỉ trả về duy nhất một chuỗi JSON hợp lệ (không kèm markdown 
   }
 ]
 Chú ý:
-- Mỗi câu phải có chính xác 4 options phân biệt.
+- Mỗi câu phải có chính xác 4 options phân biệt, không được trùng lặp đáp án.
 - Đáp án answer phải chính xác, không nhầm lẫn.
 - Đảm bảo 100% các câu hỏi đều nằm trong phạm vi: ${lessonNames}.`;
 
-  const userPrompt = `Hãy tạo trọn bộ 30 câu hỏi trắc nghiệm JPD123 Đại học FPT cho các bài: ${lessonNames}.
-BẮT BUỘC: 100% nội dung (10 Kanji, 10 Từ vựng, 10 Ngữ pháp) CHỈ LẤY TRONG ${lessonNames}. Không trùng lặp câu hỏi. Xuất ra JSON mảng 30 đối tượng.`;
+  const userPrompt = `Hãy tạo trọn bộ 30 câu hỏi trắc nghiệm JPD123 Đại học FPT cho các bài: ${lessonNames} (Mã phiên #${entropySeed}).
+BẮT BUỘC:
+1. 100% nội dung (10 Kanji, 10 Từ vựng, 10 Ngữ pháp) CHỈ LẤY TRONG ${lessonNames}.
+2. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
+3. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
 
   return { systemPrompt, userPrompt, allowedBai };
 }
