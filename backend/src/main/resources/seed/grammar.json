@@ -1974,9 +1974,9 @@
   },
   {
     "id": "7",
-    "title": "Bài 7: Động từ thể て và Mẫu câu giao tiếp",
+    "title": "Bài 7: Chia động từ thể て, Thì tiếp diễn & Giao tiếp cơ bản",
     "subtitle": "JPD123 – Bài 7",
-    "description": "Học về sự tồn tại của người và động vật (います), thể て (ください / います), đề nghị giúp đỡ (ましょうか) và cách làm (方).",
+    "description": "Nắm vững quy tắc chia động từ thể て (3 nhóm), thì hiện tại tiếp diễn (Vています), sự tồn tại của người/động vật (います), câu yêu cầu lịch sự (Vてください), đề nghị giúp đỡ (Vましょうか) và cách làm (方).",
     "points": [
       {
         "id": "7_1",
@@ -2042,7 +2042,7 @@
         "explanation": "Diễn tả sự hiện diện, tồn tại của người hoặc động vật tại một địa điểm cụ thể.",
         "usage": "Dùng います cho người và động vật (sinh vật cử động được), khác với あります dùng cho đồ vật, cây cối, sự kiện. Trợ từ に đi với nơi chốn, が đi với chủ thể.",
         "note": "Phủ định: いません (không có). Câu hỏi: N1 に だれ／なに が いますか。Đồ vật không dùng います mà dùng あります.",
-        "color": "#ffb6c1",
+        "color": "#ffd700",
         "examples": [
           {
             "jp": "庭に犬がいます。",
@@ -2088,7 +2088,7 @@
         "explanation": "Dùng để yêu cầu, nhờ vả hoặc đề nghị ai đó làm việc gì một cách lịch sự.",
         "usage": "Chuyển động từ sang thể て rồi thêm ください. Nhóm 1: う・つ・る→って, む・ぶ・ぬ→んで, く→いて (行く→行って), ぐ→いで, す→して. Nhóm 2: bỏ る thêm て. Nhóm 3: する→して, 来る→来て.",
         "note": "Dùng để nhờ cậy hoặc chỉ dẫn một cách lịch sự. Khi muốn nhờ người trên hoặc cấp trên thì tránh dùng ください trực tiếp mà dùng mẫu lịch sự hơn.",
-        "color": "#ffd700",
+        "color": "#98fb98",
         "examples": [
           {
             "jp": "ちょっと待ってください。",
@@ -2137,7 +2137,7 @@
         "explanation": "Thì hiện tại tiếp diễn (Vて います) dùng để diễn tả một hành động đang trực tiếp diễn ra tại thời điểm nói. Ngoài ra, cấu trúc này còn dùng để diễn tả trạng thái kéo dài là kết quả của hành động trước đó, hoặc thói quen, nghề nghiệp duy trì thường xuyên.",
         "usage": "1. Hành động đang xảy ra: 今、日本語を勉強しています (Bây giờ tôi đang học tiếng Nhật); 外で雨が降っています (Bên ngoài trời đang mưa).\n2. Câu hỏi tiếp diễn: A: 今、何をしていますか。B: テレビを見ています。(A: Bây giờ bạn đang làm gì? B: Tôi đang xem tivi).\n3. Phủ định tiếp diễn: 今、ゲームをしていません。勉強しています。(Bây giờ tôi không chơi game, tôi đang học bài).\n4. Trạng thái tiếp diễn / kết quả: 田中さんは結婚しています (Anh Tanaka đã kết hôn); ハノイに住んでいます (Đang sống ở Hà Nội).",
         "note": "Phủ định của Vています là Vていません (không dùng Vてじゃありません/Vてではありません). Trong văn nói giao tiếp thân mật của người Nhật, âm [い] thường được lược bỏ: 勉強してる (benkyou shiteru).",
-        "color": "#98fb98",
+        "color": "#dda0dd",
         "examples": [
           {
             "jp": "今、日本語を勉強しています。",
@@ -2189,7 +2189,7 @@
         "explanation": "Người nói chủ động đề nghị làm một hành động nào đó để giúp đỡ cho người nghe.",
         "usage": "Đưa ra lời đề nghị giúp đỡ nhiệt tình. Đáp lại: đồng ý thì dùng「ええ、お願いします / すみません、お願いします」; từ chối khéo thì dùng「いいえ、けっこうです / 大丈夫です」.",
         "note": "Khác với「V ましょう」(Chúng ta cùng làm nhé),「V ましょうか」hàm ý người nói sẽ thực hiện hành động đó giúp đối phương.",
-        "color": "#dda0dd",
+        "color": "#87cefa",
         "examples": [
           {
             "jp": "荷物を持ちましょうか。",
