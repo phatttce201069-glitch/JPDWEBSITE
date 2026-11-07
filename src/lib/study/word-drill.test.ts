@@ -11,7 +11,7 @@ import {
 import { vocabulary } from "./content.ts";
 
 test("word-drill: buildWordQuizQuestions generates distinct questions and does not repeat", () => {
-  const lesson1Words = vocabulary.filter((w) => w.lesson === "JPD113 - Bài 1");
+  const lesson1Words = vocabulary.filter((w) => w.lesson.startsWith("JPD113 - Bài 1"));
   assert.ok(lesson1Words.length >= 20, "Lesson 1 should have plenty of words");
 
   // Round 1: 10 questions
@@ -59,7 +59,7 @@ test("word-drill: handles small word pools (e.g. JPD123 with 3 words) with rich 
 });
 
 test("word-drill: creates varied question formats across forms", () => {
-  const lesson1Words = vocabulary.filter((w) => w.lesson === "JPD113 - Bài 1");
+  const lesson1Words = vocabulary.filter((w) => w.lesson.startsWith("JPD113 - Bài 1"));
 
   // meaning
   const meaningQuestions = buildWordQuizQuestions(lesson1Words, "meaning", { count: 5 });
@@ -95,7 +95,7 @@ test("word-drill: creates varied question formats across forms", () => {
 });
 
 test("word-drill: buildMatchRounds rotates words and shuffles", () => {
-  const lesson1Words = vocabulary.filter((w) => w.lesson === "JPD113 - Bài 1");
+  const lesson1Words = vocabulary.filter((w) => w.lesson.startsWith("JPD113 - Bài 1"));
   const match1 = buildMatchRounds(lesson1Words);
   assert.ok(match1.rounds.length >= 1);
   assert.ok(match1.rounds[0].length >= 2);
