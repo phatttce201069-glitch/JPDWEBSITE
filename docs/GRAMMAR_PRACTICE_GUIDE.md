@@ -16,6 +16,14 @@ Trong chương trình tiếng Nhật JPD123 (Bài 4 đến Bài 7) và JPD113 (B
   6. `6_6`: Địa điểm diễn ra sự kiện (`Địa điểm で N(sự kiện) が あります`)
   7. `6_7`: Lượng từ đếm vật mỏng dẹt (`N が / を 〜まい あります / 買いました`)
 
+- *Ví dụ ở Bài 7*: Bao gồm 6 phần ngữ pháp cốt lõi:
+  1. `7_1`: Quy tắc chia động từ sang thể て Nhóm 1, 2, 3 (`Vて: Chia động từ sang thể て`)
+  2. `7_2`: Sự tồn tại của người/động vật (`N1 に N2 (Người/Động vật) が います`)
+  3. `7_3`: Câu nhờ vả, yêu cầu lịch sự (`Vて ください`)
+  4. `7_4`: Thì hiện tại tiếp diễn (`Vて います (Thì tiếp diễn)`)
+  5. `7_5`: Đề nghị giúp đỡ (`V ましょうか`)
+  6. `7_6`: Cách thực hiện hành động (`Vます かた`)
+
 Trước đây, tính năng luyện trắc nghiệm chỉ hỗ trợ làm toàn bộ bài (trộn ngẫu nhiên tất cả các phần). Tính năng mới cho phép:
 - Người học yếu phần nào (ví dụ hay nhầm giữa `より` và `ほど`) có thể **tập trung luyện riêng phần đó**.
 - Rút ngắn thời gian ôn tập trọng điểm trước giờ thi hoặc kiểm tra trên lớp (Progress Test).
@@ -72,7 +80,7 @@ Khi nhận tham số `pointId` (ví dụ `"6_1"`):
 ## 🧪 Kiểm Thử & Đảm Bảo Chất Lượng (QA)
 
 - Unit test toàn diện tại [`src/lib/study/grammar-drill.test.ts`](file:///d:/Download/CJqDgkBrTmNaokhl-grok-workspace/src/lib/study/grammar-drill.test.ts).
-- Kiểm tra 100% các bài học từ Bài 1 đến Bài 7 và các chuyên đề trọng điểm Bài 6.
+- Kiểm tra 100% các bài học từ Bài 1 đến Bài 7 và các chuyên đề trọng điểm Bài 6 và Bài 7 (Chia động từ thể て, Thì tiếp diễn Vています).
 - Chạy kiểm tra tự động bằng lệnh:
   ```bash
   npm test
