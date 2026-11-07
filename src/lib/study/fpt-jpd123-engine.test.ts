@@ -392,6 +392,97 @@ test("getAnswerMeaning and Hiragana readings work accurately for exam questions"
   assert.equal(reading, "ともだちとえいがをみる（　）がありますから、はやくかえります。");
 });
 
+test("buildFptJpd123Exam with single lesson 7 produces 30 non-repeating questions solely from Bài 7", () => {
+  const paper = buildFptJpd123Exam(["7"]);
+
+  assert.equal(paper.length, 30, "Đề thi Bài 7 phải có đủ 30 câu hỏi");
+  assert.equal(new Set(paper.map((q) => q.sentence)).size, 30, "30 câu hỏi không được trùng lặp");
+
+  const kanjiCount = paper.filter((q) => q.section === "Kanji").length;
+  const vocabCount = paper.filter((q) => q.section === "Từ vựng").length;
+  const grammarCount = paper.filter((q) => q.section === "Ngữ pháp").length;
+
+  assert.equal(kanjiCount, 10, "Đề thi phải có đúng 10 câu Kanji");
+  assert.equal(vocabCount, 10, "Đề thi phải có đúng 10 câu Từ vựng");
+  assert.equal(grammarCount, 10, "Đề thi phải có đúng 10 câu Ngữ pháp");
+
+  // Đảm bảo 100% câu hỏi thuộc Bài 7 và không dính câu hỏi của Bài 4, 5, 6
+  for (const q of paper) {
+    const lesson = q.explanation?.lesson || "";
+    assert.ok(
+      lesson.includes("Bài 7"),
+      `Câu ${q.id} (${q.sentence}) phải thuộc Bài 7 nhưng lesson lại là: "${lesson}"`,
+    );
+    assert.ok(!lesson.includes("Bài 4"), `Câu ${q.id} không được thuộc Bài 4`);
+    assert.ok(!lesson.includes("Bài 5"), `Câu ${q.id} không được thuộc Bài 5`);
+    assert.ok(!lesson.includes("Bài 6"), `Câu ${q.id} không được thuộc Bài 6`);
+
+    // Tuyệt đối không chứa so sánh hay rủ rê của Bài 6
+    assert.ok(!q.sentence.includes("より"), `Câu ${q.id} không được chứa mẫu so sánh より của Bài 6`);
+    assert.ok(!q.sentence.includes("約束がありますから"), `Câu ${q.id} không được chứa từ chối khéo Bài 6`);
+  }
+});
+
+test("getDynamicLessonOutline dynamically extracts content for any lesson including newly added lessons", async () => {
+  const { getDynamicLessonOutline } = await import("./ai-service.ts");
+
+  const bai7Outline = getDynamicLessonOutline(7);
+  assert.ok(bai7Outline.kanji.length > 0, "Bài 7 phải có danh sách chữ Hán");
+  assert.ok(bai7Outline.vocab.length > 0, "Bài 7 phải có từ vựng");
+  assert.ok(bai7Outline.grammar.includes("N1 に N2") || bai7Outline.grammar.includes("います"), "Bài 7 phải có ngữ pháp N1 ni N2 ga imasu");
+  assert.ok(bai7Outline.grammar.includes("Vて います") || bai7Outline.grammar.includes("Vて ください"), "Bài 7 phải có ngữ pháp thể te");
+
+  const bai6Outline = getDynamicLessonOutline(6);
+  assert.ok(bai6Outline.grammar.includes("So sánh") || bai6Outline.grammar.includes("より"), "Bài 6 phải có ngữ pháp so sánh");
+
+  // Kiểm tra bài 1
+  const bai1Outline = getDynamicLessonOutline(1);
+  assert.ok(bai1Outline.vocab.length > 0, "Bài 1 phải trích xuất được từ vựng");
+  assert.ok(bai1Outline.grammar.length > 0, "Bài 1 phải trích xuất được ngữ pháp");
+});
+
+test("isQuestionAllowedForLessons strictly isolates selected lessons and rejects leakages", async () => {
+  const { isQuestionAllowedForLessons } = await import("./ai-service.ts");
+
+  // Khi chỉ chọn Bài 7
+  const validBai7Question = {
+    id: "q1",
+    section: "Ngữ pháp" as const,
+    prompt: "Chọn trợ từ đi với mẫu câu tồn tại người/động vật:",
+    promptJp: "文法的に正しい言葉・助詞を一つ選びなさい。",
+    sentence: "庭（　）可愛い犬がいます。",
+    options: ["に", "で", "へ", "を"],
+    answer: "に",
+    explanation: {
+      lesson: "Bài 7 - N1 に N2 が います",
+      meaning: "Trong sân có con chó dễ thương.",
+      reason: "Chỉ vị trí tồn tại của người/động vật đi với trợ từ に.",
+    },
+  };
+
+  const leakedBai6Question = {
+    id: "q2",
+    section: "Ngữ pháp" as const,
+    prompt: "Chọn từ điền vào câu so sánh hơn:",
+    promptJp: "文法的に正しい言葉・助詞を一つ選びなさい。",
+    sentence: "夏は冬（　）暑いです。",
+    options: ["より", "ほど", "のほうが", "で"],
+    answer: "より",
+    explanation: {
+      lesson: "Bài 6 - So sánh hơn",
+      meaning: "Mùa hè nóng hơn mùa đông.",
+      reason: "Mẫu câu so sánh hơn N1 は N2 より tính từ.",
+    },
+  };
+
+  assert.equal(isQuestionAllowedForLessons(validBai7Question, [7]), true, "Câu hỏi Bài 7 phải hợp lệ khi chọn Bài 7");
+  assert.equal(isQuestionAllowedForLessons(leakedBai6Question, [7]), false, "Câu hỏi Bài 6 phải bị loại bỏ khi chỉ chọn Bài 7");
+
+  // Khi chỉ chọn Bài 6
+  assert.equal(isQuestionAllowedForLessons(leakedBai6Question, [6]), true, "Câu hỏi Bài 6 phải hợp lệ khi chọn Bài 6");
+  assert.equal(isQuestionAllowedForLessons(validBai7Question, [6]), false, "Câu hỏi Bài 7 phải bị loại bỏ khi chỉ chọn Bài 6");
+});
+
 
 
 

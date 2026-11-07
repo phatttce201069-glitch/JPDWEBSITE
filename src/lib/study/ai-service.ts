@@ -266,7 +266,7 @@ BẮT BUỘC:
 /**
  * Kiểm tra xem một câu hỏi từ AI có tuân thủ đúng danh sách bài học được chọn hay không
  */
-function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boolean {
+export function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[]): boolean {
   // 1. Kiểm tra lesson trong explanation nếu có
   if (q.explanation?.lesson) {
     if (
