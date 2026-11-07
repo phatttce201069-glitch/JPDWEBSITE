@@ -2124,16 +2124,19 @@
       },
       {
         "id": "7_4",
-        "structure_jp": "Vて います",
-        "structure_vi": "Đang làm V",
+        "structure_jp": "Vて います (Thì tiếp diễn)",
+        "structure_vi": "Thì tiếp diễn: Đang làm V",
         "chips": [
-          "Vて",
-          "います"
+          "Vて います",
+          "Thì tiếp diễn",
+          "Đang làm gì",
+          "Trạng thái",
+          "Phủ định Vていません"
         ],
-        "formula": "V (thể て) + います",
-        "explanation": "Diễn tả hành động đang diễn ra tại thời điểm nói (thì hiện tại tiếp diễn).",
-        "usage": "Ghép động từ thể て với います. Thường dùng trả lời cho câu hỏi「今、何をしていますか」(Bây giờ bạn đang làm gì?). Phủ định là「Vて いません」(Đang không làm).",
-        "note": "Ngoài hành động đang diễn ra, mẫu câu này còn dùng để chỉ trạng thái kéo dài (như kết hôn, sống ở đâu, có công việc).",
+        "formula": "• Khẳng định: V[thể て] + います (Đang làm...)\n• Phủ định: V[thể て] + いません (Đang không làm...)\n• Câu hỏi: 今、何をしていますか。(Bây giờ bạn đang làm gì?)",
+        "explanation": "Thì hiện tại tiếp diễn (Vて います) dùng để diễn tả một hành động đang trực tiếp diễn ra tại thời điểm nói. Ngoài ra, cấu trúc này còn dùng để diễn tả trạng thái kéo dài là kết quả của hành động trước đó, hoặc thói quen, nghề nghiệp duy trì thường xuyên.",
+        "usage": "1. Hành động đang xảy ra: 今、日本語を勉強しています (Bây giờ tôi đang học tiếng Nhật); 外で雨が降っています (Bên ngoài trời đang mưa).\n2. Câu hỏi tiếp diễn: A: 今、何をしていますか。B: テレビを見ています。(A: Bây giờ bạn đang làm gì? B: Tôi đang xem tivi).\n3. Phủ định tiếp diễn: 今、ゲームをしていません。勉強しています。(Bây giờ tôi không chơi game, tôi đang học bài).\n4. Trạng thái tiếp diễn / kết quả: 田中さんは結婚しています (Anh Tanaka đã kết hôn); ハノイに住んでいます (Đang sống ở Hà Nội).",
+        "note": "Phủ định của Vています là Vていません (không dùng Vてじゃありません/Vてではありません). Trong văn nói giao tiếp thân mật của người Nhật, âm [い] thường được lược bỏ: 勉強してる (benkyou shiteru).",
         "color": "#98fb98",
         "examples": [
           {
@@ -2149,6 +2152,12 @@
             "vi": "Bên ngoài trời đang mưa."
           },
           {
+            "jp": "A：今、何をしていますか。B：本を読んでいます。",
+            "reading": "A：いま、なにを して いますか。B：ほんを よんで います。",
+            "romaji": "A: Ima, nani o shite imasu ka. B: Hon o yonde imasu.",
+            "vi": "A: Bây giờ bạn đang làm gì? B: Tôi đang đọc sách."
+          },
+          {
             "jp": "田中さんは電話をかけています。",
             "reading": "たなかさんは でんわを かけて います。",
             "romaji": "Tanaka-san wa denwa o kakete imasu.",
@@ -2161,10 +2170,10 @@
             "vi": "Mẹ tôi đang nấu ăn trong bếp."
           },
           {
-            "jp": "テレビを見ています。",
-            "reading": "テレビを みて います。",
-            "romaji": "Terebi o mite imasu.",
-            "vi": "Tôi đang xem tivi."
+            "jp": "今、ゲームをしていません。勉強しています。",
+            "reading": "いま、ゲームを して いません。べんきょうして います。",
+            "romaji": "Ima, geemu o shite imasen. Benkyou shite imasu.",
+            "vi": "Bây giờ tôi không chơi game, tôi đang học bài."
           }
         ]
       },
