@@ -377,11 +377,12 @@ const POINT_KEY_MAPPINGS: Record<string, string[]> = {
   "6_7": ["mai", "mai-cd", "mai-shatsu"],
 
   // Bài 7
-  "7_1": ["iru", "in-park", "ask-who-iru", "sit-iru"],
-  "7_2": ["te", "ok-te", "sit-te", "te-kudasai-fill", "order-te-kudasai"],
-  "7_3": ["teiru", "ask-teiru", "sit-teiru"],
-  "7_4": ["mashouka", "help-mashouka", "sit-mashouka"],
-  "7_5": ["kata1", "kata2", "kata3", "sit-kata"],
+  "7_1": ["conj-kaku", "conj-iku", "conj-nomu", "conj-matsu", "conj-taberu", "conj-suru", "conj-kuru", "conj-hanasu", "conj-isogu", "order-te"],
+  "7_2": ["iru", "in-park", "ask-who-iru", "sit-iru"],
+  "7_3": ["te", "ok-te", "sit-te", "te-kudasai-fill", "order-te-kudasai"],
+  "7_4": ["teiru", "ask-teiru", "sit-teiru"],
+  "7_5": ["mashouka", "help-mashouka", "sit-mashouka"],
+  "7_6": ["kata1", "kata2", "kata3", "sit-kata"],
 };
 
 function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoint): ExamQuestion[] {
@@ -427,6 +428,11 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
     てください: ["ましょうか", "ませんか", "ました", "てくださいません"],
     ています: ["ました", "ません", "てください", "たいです"],
     ましょうか: ["ましょう", "ませんか", "ました", "てください"],
+    書いて: ["書きて", "書って", "書いで"],
+    起きて: ["起きって", "起きて", "起いた"],
+    会って: ["会いて", "会いで", "会して"],
+    借りて: ["借りって", "借って", "借んで"],
+    行って: ["行いて", "行いで", "行て"],
     どこ: ["だれ", "なに", "いつ", "いくら"],
     いくら: ["どこ", "なんがい", "だれ", "いつ"],
     何階: ["どこ", "いくら", "なんさい", "だれ"],
@@ -457,11 +463,12 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
   else if (point.id === "5_4") targetKeywords.push("ました");
   else if (point.id === "5_6") targetKeywords.push("から");
   else if (point.id === "5_7") targetKeywords.push("と");
-  else if (point.id === "7_1") targetKeywords.push("います", "に", "が");
-  else if (point.id === "7_2") targetKeywords.push("ください", "て");
-  else if (point.id === "7_3") targetKeywords.push("ています");
-  else if (point.id === "7_4") targetKeywords.push("ましょうか");
-  else if (point.id === "7_5") targetKeywords.push("読み方", "作り方", "使い方", "行き方", "持ち方", "方");
+  else if (point.id === "7_1") targetKeywords.push("書いて", "起きて", "会って", "借りて", "行って");
+  else if (point.id === "7_2") targetKeywords.push("います", "に", "が");
+  else if (point.id === "7_3") targetKeywords.push("ください", "て");
+  else if (point.id === "7_4") targetKeywords.push("ています");
+  else if (point.id === "7_5") targetKeywords.push("ましょうか");
+  else if (point.id === "7_6") targetKeywords.push("読み方", "作り方", "使い方", "行き方", "持ち方", "方");
 
   const allLessonExamples = lesson.points.flatMap((p) => p.examples);
 
@@ -971,7 +978,59 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
     push("mai-shatsu", FILL, "デパートでしろいシャツを2（　　）かいました。", "まい", ["だい", "こ", "かい"]);
   }
   if (bai === "7") {
-    // 7_1: N1 に N2 (Người/Động vật) が います
+    // 7_1: Chia động từ sang thể て (Nhóm 1, 2, 3)
+    push("conj-kaku", FILL, "動詞「書きます」のて形を選びなさい。\n手紙を（　　）、郵便局へ行きます。", "書いて", [
+      "書きて",
+      "書って",
+      "書いで",
+    ]);
+    push("conj-iku", FILL, "【注意・例外】動詞「行きます」の正しい「て形」を選びなさい。\n急いで駅へ（　　）、電車に乗りました。", "行って", [
+      "行いて",
+      "行いで",
+      "行て",
+    ]);
+    push("conj-nomu", FILL, "動詞「飲みます」のて形を選びなさい。\n薬を（　　）、寝ます。", "飲んで", [
+      "飲みて",
+      "飲って",
+      "飲いて",
+    ]);
+    push("conj-matsu", FILL, "動詞「待ちます」のて形を選びなさい。\nここで少し（　　）ください。", "待って", [
+      "待ちて",
+      "待んで",
+      "待いて",
+    ]);
+    push("conj-taberu", FILL, "動詞「食べます（グループ2）」のて形を選びなさい。\n朝ごはんを（　　）、学校へ行きます。", "食べて", [
+      "食って",
+      "食べんで",
+      "食べして",
+    ]);
+    push("conj-suru", FILL, "動詞「します（グループ3）」のて形を選びなさい。\n宿題を（　　）、早く寝ます。", "して", [
+      "しって",
+      "すて",
+      "した",
+    ]);
+    push("conj-kuru", FILL, "動詞「来ます（グループ3）」のて形を選びなさい。\n友だちがうちに（　　）、いっしょにごはんを食べました。", "来て", [
+      "来って",
+      "来んで",
+      "来いた",
+    ]);
+    push("conj-hanasu", FILL, "動詞「話します」のて形を選びなさい。\n先生と（　　）、安心しました。", "話して", [
+      "話しって",
+      "話いで",
+      "話して",
+    ]);
+    push("conj-isogu", FILL, "動詞「急ぎます」のて形を選びなさい。\n（　　）タクシーに乗りました。", "急いで", [
+      "急いて",
+      "急って",
+      "急ぎて",
+    ]);
+    push("order-te", ORDER, "あさごはん　／　を　／　たべて　／　いきます", "あさごはんをたべていきます。", [
+      "たべてあさごはんをいきます。",
+      "あさごはんたべてをいきます。",
+      "いきますあさごはんをたべて。",
+    ]);
+
+    // 7_2: N1 に N2 (Người/Động vật) が います
     push("iru", FILL, "きむらさんは こうえん（　　）います。", "に", ["で", "へ", "を"]);
     push("in-park", FILL, "にわ（　　）いぬがいます。", "に", ["で", "へ", "を"]);
     push("ask-who-iru", MATCH_Q, "B：あそこに たなかさんが います。", "あそこに だれが いますか。", [
@@ -985,7 +1044,7 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
       "にわにいぬをいます。",
     ]);
 
-    // 7_2: Vて ください
+    // 7_3: Vて ください
     push("te", FILL, "ここになまえを（　　）ください。", "かいて", ["のんで", "かけて", "かって"]);
     push("te-kudasai-fill", FILL, "ちょっと（　　）ください。", "まって", ["まちます", "まつ", "まった"]);
     push("ok-te", GRAM_OK, "て形の頼み方", "なまえをかいてください。", [
@@ -1004,7 +1063,7 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
       "くださいまどをあけて。",
     ]);
 
-    // 7_3: Vて います
+    // 7_4: Vて います (Thì tiếp diễn)
     push("teiru", FILL, "山口さんは今あそこで本を（　　）。", "よんでいます", ["かけています", "すっています", "おしえています"]);
     push("ask-teiru", MATCH_Q, "B：いま、にほんごをべんきょうしています。", "いま、なにをしていますか。", [
       "いま、どこへいきますか。",
@@ -1017,7 +1076,7 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
       "そとであめがふりました。",
     ]);
 
-    // 7_4: V ましょうか
+    // 7_5: V ましょうか
     push("mashouka", FILL, "おもそうですね。にもつを（　　）か。", "もちましょう", ["もってください", "もちました", "もっています"]);
     push("help-mashouka", FILL, "A：エアコンを（　　）。\nB：ええ、おねがいします。", "つけましょうか", [
       "つけましょう",
@@ -1030,7 +1089,7 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
       "てつだいません。",
     ]);
 
-    // 7_5: Vます かた
+    // 7_6: Vます かた
     push("kata1", FILL, "A：カレーの（　　）をおしえてください。\nB：いいですよ。", "つくりかた", ["しかた", "つかいかた", "とりかた"]);
     push("kata2", FILL, "えきまでの（　　）をおしえてください。", "いきかた", ["よみかた", "つくりかた", "もちかた"]);
     push("kata3", FILL, "このかんじの（　　）をおしえてください。", "よみかた", ["いきかた", "つくりかた", "つかいかた"]);
