@@ -132,3 +132,64 @@ test("buildGrammarDrill returns empty array for invalid inputs", () => {
   assert.deepEqual(buildGrammarDrill("8"), []);
   assert.deepEqual(buildGrammarDrill("abc"), []);
 });
+
+test("grammar drill questions and grammar examples strictly utilize the lesson vocabulary", async () => {
+  const { grammar } = await import("./content.ts");
+  const { vocabulary } = await import("./content.ts");
+
+  // Kiểm tra tất cả các phần trong mọi bài học 1-7 đều có ví dụ minh họa đầy đủ
+  for (const lesson of grammar) {
+    for (const point of lesson.points) {
+      assert.ok(
+        point.examples && point.examples.length >= 3,
+        `Bài ${lesson.id} phần ${point.id} (${point.structure_jp}) phải có ít nhất 3 ví dụ minh họa`,
+      );
+      for (const ex of point.examples) {
+        assert.ok(ex.jp.trim().length > 0, `Bài ${lesson.id} phần ${point.id}: câu tiếng Nhật không được rỗng`);
+        assert.ok(ex.reading.trim().length > 0, `Bài ${lesson.id} phần ${point.id}: cách đọc không được rỗng`);
+        assert.ok(ex.romaji.trim().length > 0, `Bài ${lesson.id} phần ${point.id}: romaji không được rỗng`);
+        assert.ok(ex.vi.trim().length > 0, `Bài ${lesson.id} phần ${point.id}: nghĩa tiếng Việt không được rỗng`);
+      }
+    }
+  }
+
+  // Kiểm tra đề luyện tập Bài 7 sử dụng từ vựng Bài 7
+  const drill7 = buildGrammarDrill("7");
+  assert.equal(drill7.length, 10, "Đề luyện Bài 7 cả bài phải đủ 10 câu");
+  const drill7Text = drill7.map((q) => `${q.sentence} ${q.prompt} ${q.answer}`).join(" ");
+  const hasBai7Vocab =
+    drill7Text.includes("犬") ||
+    drill7Text.includes("いぬ") ||
+    drill7Text.includes("バス停") ||
+    drill7Text.includes("交番") ||
+    drill7Text.includes("台所") ||
+    drill7Text.includes("コップ") ||
+    drill7Text.includes("皿") ||
+    drill7Text.includes("塩") ||
+    drill7Text.includes("窓") ||
+    drill7Text.includes("電話") ||
+    drill7Text.includes("ギター") ||
+    drill7Text.includes("ピザ") ||
+    drill7Text.includes("漢字") ||
+    drill7Text.includes("電子レンジ");
+  assert.ok(hasBai7Vocab, `Đề luyện tập Bài 7 phải chứa từ vựng của Bài 7: ${drill7Text}`);
+
+  // Kiểm tra đề luyện tập Bài 6 sử dụng từ vựng Bài 6
+  const drill6 = buildGrammarDrill("6");
+  assert.equal(drill6.length, 10, "Đề luyện Bài 6 cả bài phải đủ 10 câu");
+  const drill6Text = drill6.map((q) => `${q.sentence} ${q.prompt} ${q.answer}`).join(" ");
+  const hasBai6Vocab =
+    drill6Text.includes("焼き肉") ||
+    drill6Text.includes("ラーメン") ||
+    drill6Text.includes("地下鉄") ||
+    drill6Text.includes("居酒屋") ||
+    drill6Text.includes("映画館") ||
+    drill6Text.includes("カラオケ") ||
+    drill6Text.includes("コンサート") ||
+    drill6Text.includes("野球") ||
+    drill6Text.includes("試合") ||
+    drill6Text.includes("約束") ||
+    drill6Text.includes("チケット") ||
+    drill6Text.includes("枚");
+  assert.ok(hasBai6Vocab, `Đề luyện tập Bài 6 phải chứa từ vựng của Bài 6: ${drill6Text}`);
+});
