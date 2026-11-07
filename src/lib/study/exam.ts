@@ -380,7 +380,7 @@ const POINT_KEY_MAPPINGS: Record<string, string[]> = {
   "7_1": ["conj-kaku", "conj-iku", "conj-nomu", "conj-matsu", "conj-taberu", "conj-suru", "conj-kuru", "conj-hanasu", "conj-isogu", "order-te"],
   "7_2": ["iru", "in-park", "ask-who-iru", "sit-iru"],
   "7_3": ["te", "ok-te", "sit-te", "te-kudasai-fill", "order-te-kudasai"],
-  "7_4": ["teiru", "ask-teiru", "sit-teiru"],
+  "7_4": ["teiru", "ask-teiru", "sit-teiru", "rain-teiru", "neg-teiru", "work-teiru", "ask-what-doing"],
   "7_5": ["mashouka", "help-mashouka", "sit-mashouka"],
   "7_6": ["kata1", "kata2", "kata3", "sit-kata"],
 };
@@ -427,6 +427,10 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
     ください: ["ましょう", "ました", "ません", "たいです"],
     てください: ["ましょうか", "ませんか", "ました", "てくださいません"],
     ています: ["ました", "ません", "てください", "たいです"],
+    ていません: ["ませんでした", "ません", "てください", "たいです"],
+    ふっています: ["ふります", "ふりました", "ふってください"],
+    していません: ["しませんでした", "しません", "して"],
+    はたらいています: ["はたらきます", "はたらきました", "はたらいてください"],
     ましょうか: ["ましょう", "ませんか", "ました", "てください"],
     書いて: ["書きて", "書って", "書いで"],
     起きて: ["起きって", "起きて", "起いた"],
@@ -466,7 +470,7 @@ function generateQuestionsFromExamples(lesson: GrammarLesson, point: GrammarPoin
   else if (point.id === "7_1") targetKeywords.push("書いて", "起きて", "会って", "借りて", "行って");
   else if (point.id === "7_2") targetKeywords.push("います", "に", "が");
   else if (point.id === "7_3") targetKeywords.push("ください", "て");
-  else if (point.id === "7_4") targetKeywords.push("ています");
+  else if (point.id === "7_4") targetKeywords.push("ています", "ていません");
   else if (point.id === "7_5") targetKeywords.push("ましょうか");
   else if (point.id === "7_6") targetKeywords.push("読み方", "作り方", "使い方", "行き方", "持ち方", "方");
 
@@ -1074,6 +1078,26 @@ function patternQuestions(course: ExamCourse, bai: string, words: Word[]) {
       "そとであめがふります。",
       "そとであめをふっています。",
       "そとであめがふりました。",
+    ]);
+    push("rain-teiru", FILL, "そとで　あめが（　　）。", "ふっています", [
+      "ふります",
+      "ふりました",
+      "ふってください",
+    ]);
+    push("neg-teiru", FILL, "いま、ゲームを（　　）。べんきょうしています。", "していません", [
+      "しませんでした",
+      "しません",
+      "して",
+    ]);
+    push("work-teiru", FILL, "ちちは　いま　かいしゃで（　　）。", "はたらいています", [
+      "はたらきます",
+      "はたらきました",
+      "はたらいてください",
+    ]);
+    push("ask-what-doing", MATCH_Q, "B：テレビを見ています。", "いま、何をしていますか。", [
+      "どこへいきますか。",
+      "だれにあいましたか。",
+      "なんじにおきましたか。",
     ]);
 
     // 7_5: V ましょうか
