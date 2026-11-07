@@ -1,5 +1,6 @@
 import type { ExamQuestion } from "./exam.ts";
 import { buildFptJpd123Exam, shuffle } from "./fpt-jpd123-engine.ts";
+import { grammar, vocabulary } from "./content.ts";
 
 export type AiProvider = "built-in" | "gemini" | "xai" | "openai" | "groq";
 
@@ -42,6 +43,21 @@ export function saveAiSettings(settings: AiSettings) {
  * Ma trận kiến thức theo từng bài chuẩn môn JPD123 Đại học FPT
  */
 const LESSON_OUTLINES: Record<number, { kanji: string; vocab: string; grammar: string }> = {
+  1: {
+    kanji: "私, 人, 学, 生, 先, 輩, 友, 達, 本, 日",
+    vocab: "Chào hỏi, nghề nghiệp (学生, 先生, 会社員, 医者, エンジニア), quốc tịch (ベトナム人, 日本人, アメリカ人), tuổi tác (〜歳, はたち)",
+    grammar: "Câu danh từ (N1 は N2 です / じゃありません / ですか), trợ từ の (sở hữu, trực thuộc), trợ từ も (cũng), trợ từ と (và)",
+  },
+  2: {
+    kanji: "何, 階, 円, 百, 千, 万, 店, 買, 車, 語",
+    vocab: "Địa điểm trong trường/công ty (教室, 食堂, 事務所, 会議室, 受付, トイレ), đồ vật (ペン, 本, 傘, 時計, 鞄), số đếm tiền tệ & số tầng (何階, いくら, 円)",
+    grammar: "Chỉ định từ (これ, それ, あれ, この, その, あの), hỏi vị trí (どこ, どちら), hỏi nguồn gốc xuất xứ (どこの), hỏi giá tiền (いくら), gọi món/mua sắm (N を ください)",
+  },
+  3: {
+    kanji: "行, 来, 帰, 食, 飲, 見, 聞, 読, 書, 時, 分, 半",
+    vocab: "Thời gian (今, 〜時, 〜分, 午前, 午後, 毎日, 朝, 昼, 晩), các thứ trong tuần (月〜日曜日), động từ sinh hoạt (起きます, 寝ます, 働きます, 休みます, 勉強します, 食べます, 飲みます)",
+    grammar: "Động từ lịch sự (Vます / Vません), trợ từ へ (nơi đến: 行きます/来ます/帰ります), trợ từ を (tân ngữ tác động), trợ từ で (nơi diễn ra hành động), trợ từ に (thời điểm cụ thể), trợ từ から〜まで (từ... đến...)",
+  },
   4: {
     kanji: "東, 京, 名, 前, 国, 男, 女, 区, 市, 料理, 映画, 暑い, 新しい, 広い, 狭い, 近い, 遠い, 古い, 買う, 難",
     vocab: "Phương hướng (北, 南, 東, 西), phương tiện & giao thông (車, 新幹線, 電車, 飛行機, 駅, 町, 歩いて), thời gian/khoảng cách (〜時間, どのくらい), địa điểm du lịch (温泉, 川, 山, 寺, 神社, 桜, 建物), tính từ miêu tả (暑い, 寒い, 暖かい, 涼しい, 遠い, 近い, 大きい, 小さい, 高い, 安い, 新しい, 古い, 広い, 狭い, いい/よい, きれい, 静か, 賑やか, 有名), phó từ & liên từ (とても, すこし, あまり, ぜんぜん, が, しかし, そして)",
@@ -58,11 +74,87 @@ const LESSON_OUTLINES: Record<number, { kanji: string; vocab: string; grammar: s
     grammar: "1. So sánh hơn (A は B より Adj です), so sánh lựa chọn (A と B と どちらが...), trả lời so sánh (A のほうが...), so sánh nhất (N の中で A が いちばん...), so sánh không bằng (A は B ほど...くない). 2. Rủ rê & Đáp lại / Từ chối khéo: rủ rê (いっしょに Vませんか), đồng ý (Vましょう), từ chối khéo (すみません。〜はちょっと…), đưa ra lý do từ chối (N がありますから / やくそくがありますから). 3. Nơi diễn ra sự kiện: [Địa điểm] で [Sự kiện: お祭り/パーティー/試験] があります. 4. Đếm số lượng vật mỏng: Lượng từ 枚 (まい) - N が/を 〜まい あります/買いました (CDが1まいあります, シャツを2枚買いました).",
   },
   7: {
-    kanji: "肉, 料, 理, 野, 半, 大, 小, 病, 院, 電, 気, 開, 閉",
-    vocab: "Dụng cụ ăn uống (スプーン, フォーク, ナイフ, はし, コップ, お皿, 冷蔵庫, 電子レンジ), gia vị & nấu ăn (砂糖, 塩, 醤油, 肉, 野菜), phó từ (もう, まだ, ぜひ)",
-    grammar: "Động từ thể て (Vてください - yêu cầu lịch sự, Vています - đang diễn ra), cách làm V[bỏ ます]+かた (作り方, 使い方, 読み方), trợ từ で (công cụ/phương tiện)",
+    kanji: "肉, 料, 理, 野, 半, 大, 小, 病, 院, 電, 気, 開, 閉, 待, 書, 読, 話, 泳, 行, 来",
+    vocab: "Quy tắc chia động từ thể て (Nhóm 1, 2, 3), dụng cụ ăn uống (スプーン, フォーク, ナイフ, はし, コップ, お皿, 冷蔵庫, 電子レンジ), gia vị & nấu ăn (砂糖, 塩, 醤油, 肉, 野菜), phó từ (もう, まだ, ぜひ), từ vựng giao tiếp",
+    grammar: "1. Quy tắc chia thể て (Vて: Nhóm 1, 2, 3 và ngoại lệ 行く→行って). 2. Sự tồn tại người/động vật (N1 に N2 が います). 3. Yêu cầu lịch sự (Vてください). 4. Thì hiện tại tiếp diễn (Vています / Vていません / 何をしていますか). 5. Đề nghị giúp đỡ (Vましょうか). 6. Cách làm (V[bỏ ます]+かた: 作り方, 使い方, 読み方, 行き方).",
   },
 };
+
+export type DynamicLessonOutline = {
+  kanji: string;
+  vocab: string;
+  grammar: string;
+};
+
+/**
+ * Trích xuất động nội dung bài học từ dữ liệu nguồn (grammar.ts và vocabulary.ts)
+ * Đảm bảo hệ thống bắt chính xác 100% nội dung bài được chọn kể cả khi có thêm bài mới.
+ */
+export function getDynamicLessonOutline(bai: number | string): DynamicLessonOutline {
+  const baiStr = String(bai);
+  const baiNum = Number(bai);
+
+  // 1. Trích xuất ngữ pháp chi tiết từ grammar.ts
+  const gLesson = grammar.find((l) => l.id === baiStr);
+  let grammarText = "";
+  if (gLesson) {
+    const pointsText = gLesson.points
+      .map(
+        (p) =>
+          `* ${p.structure_jp} (${p.structure_vi}): ${p.formula}. Lưu ý: ${p.note || p.explanation}. Ví dụ: ${p.examples.map((ex) => ex.jp).join(" / ")}`,
+      )
+      .join("\n");
+    grammarText = `${gLesson.title} - ${gLesson.description}\n${pointsText}`;
+  } else if (LESSON_OUTLINES[baiNum]?.grammar) {
+    grammarText = LESSON_OUTLINES[baiNum].grammar;
+  }
+
+  // 2. Trích xuất từ vựng từ vocabulary.ts
+  const words = vocabulary.filter(
+    (w) => w.lesson && (w.lesson.includes(`Bài ${baiStr}`) || w.lesson.includes(`第${baiStr}課`)),
+  );
+  let vocabText = "";
+  if (words.length > 0) {
+    vocabText = words
+      .map((w) => `${w.word} (${w.reading}: ${w.meaning})`)
+      .slice(0, 50)
+      .join(", ");
+  }
+  if (LESSON_OUTLINES[baiNum]?.vocab) {
+    vocabText = vocabText
+      ? `${LESSON_OUTLINES[baiNum].vocab}; Các từ bổ sung: ${vocabText}`
+      : LESSON_OUTLINES[baiNum].vocab;
+  }
+
+  // 3. Trích xuất chữ Hán (Kanji) từ từ vựng và câu ví dụ ngữ pháp
+  const kanjiSet = new Set<string>();
+  if (LESSON_OUTLINES[baiNum]?.kanji) {
+    for (const char of LESSON_OUTLINES[baiNum].kanji.split(/[,\s]+/)) {
+      if (char.trim()) kanjiSet.add(char.trim());
+    }
+  }
+  for (const w of words) {
+    for (const char of w.word) {
+      if (/[一-龯]/.test(char)) kanjiSet.add(char);
+    }
+  }
+  if (gLesson) {
+    for (const p of gLesson.points) {
+      for (const ex of p.examples) {
+        for (const char of ex.jp) {
+          if (/[一-龯]/.test(char)) kanjiSet.add(char);
+        }
+      }
+    }
+  }
+  const kanjiText = [...kanjiSet].slice(0, 45).join(", ");
+
+  return {
+    kanji: kanjiText || LESSON_OUTLINES[baiNum]?.kanji || "Chữ Hán thuộc phạm vi bài học",
+    vocab: vocabText || LESSON_OUTLINES[baiNum]?.vocab || "Từ vựng thuộc phạm vi bài học",
+    grammar: grammarText || LESSON_OUTLINES[baiNum]?.grammar || "Ngữ pháp thuộc phạm vi bài học",
+  };
+}
 
 /**
  * Tạo Dynamic Prompt dựa chính xác theo các bài được chọn
@@ -74,22 +166,20 @@ export function buildAiPrompt(selectedBai?: string[]): {
 } {
   const allowedBai =
     selectedBai && selectedBai.length > 0
-      ? selectedBai.map(Number).filter((n) => !isNaN(n) && n >= 1 && n <= 7)
+      ? selectedBai.map(Number).filter((n) => !isNaN(n) && n >= 1)
       : [4, 5, 6, 7];
 
   const lessonNames = allowedBai.map((b) => `Bài ${b}`).join(", ");
 
   let lessonScopeText = "";
   for (const b of allowedBai) {
-    const info = LESSON_OUTLINES[b];
-    if (info) {
-      lessonScopeText += `
+    const info = getDynamicLessonOutline(b);
+    lessonScopeText += `
 --- NỘI DUNG BÀI ${b} ---
 + Chữ Hán (Kanji): ${info.kanji}
 + Từ vựng: ${info.vocab}
 + Ngữ pháp: ${info.grammar}
 `;
-    }
   }
 
   let negativeConstraints = "";
