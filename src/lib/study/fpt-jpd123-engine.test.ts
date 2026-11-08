@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { buildFptJpd123Exam } from "./fpt-jpd123-engine.ts";
 import { buildAiPrompt, explainKanjiWithAi, explainQuestionWithAi } from "./ai-service.ts";
 import { alphabet } from "../../data/alphabet.ts";
-import { getQuestionExplanation, analyzeDistractors } from "./explanation.ts";
+import { getQuestionExplanation, analyzeDistractors, getFullSentenceTranslation } from "./explanation.ts";
 import { analyzeExamPerformance } from "./exam-diagnostic.ts";
 
 test("buildFptJpd123Exam generates a valid FPT JPD123 exam", () => {
@@ -651,6 +651,59 @@ test("analyzeExamPerformance produces accurate diagnostics and actionable study 
   const failingReport = analyzeExamPerformance(paper, failingAnswers);
   assert.equal(failingReport.passed, false);
   assert.equal(failingReport.aiSenseiAdvice.level, "retake");
+});
+
+test("getFullSentenceTranslation and getQuestionExplanation translate entire completed sentences", () => {
+  // Test case from user request & screenshot: 友達と映画を見る（　）がありますから、早く帰ります。
+  const vocabQ = {
+    id: "test-user-q",
+    section: "Từ vựng" as const,
+    promptJp: "文の意味に最も合う言葉を一つ選びなさい。",
+    prompt: "Chọn từ thích hợp nhất điền vào chỗ trống ( ).",
+    sentence: "友達と映画を見る（ ）がありますから、早く帰ります。",
+    options: ["にもつ", "やくそく", "しゅくだい", "きっぷ"],
+    answer: "やくそく",
+  };
+
+  const fullTrans = getFullSentenceTranslation(vocabQ);
+  assert.ok(fullTrans.includes("xem phim"), "Bản dịch phải chứa ngữ cảnh xem phim");
+  assert.ok(fullTrans.includes("hẹn") || fullTrans.includes("lời hứa"), "Bản dịch phải chứa từ hẹn/hứa");
+  assert.ok(fullTrans.includes("về sớm") || fullTrans.includes("sớm"), "Bản dịch phải chứa về sớm");
+
+  const explanation = getQuestionExplanation(vocabQ);
+  assert.ok(explanation.meaning.includes("xem phim"), "explanation.meaning phải là câu hoàn chỉnh có xem phim");
+  assert.ok(
+    !explanation.meaning.startsWith("Ý nghĩa đáp án: \"やくそく\" có nghĩa là"),
+    "Không được chỉ dịch mỗi từ đáp án đơn lẻ"
+  );
+
+  // Test across multiple exams (JPD113 and JPD123)
+  const papers = [
+    buildFptJpd123Exam([1]),
+    buildFptJpd123Exam([2]),
+    buildFptJpd123Exam([3]),
+    buildFptJpd123Exam([4]),
+    buildFptJpd123Exam([5]),
+    buildFptJpd123Exam([6]),
+    buildFptJpd123Exam([7]),
+  ];
+
+  for (const paper of papers) {
+    for (const q of paper) {
+      const trans = getFullSentenceTranslation(q);
+      assert.ok(trans && trans.length > 5, `Câu hỏi ${q.sentence} phải có bản dịch đầy đủ`);
+      assert.ok(
+        !trans.startsWith("Ý nghĩa") && !trans.startsWith("Cách đọc"),
+        `Bản dịch ${trans} phải là câu hoàn chỉnh, không phải chỉ dịch đáp án`
+      );
+      const exp = getQuestionExplanation(q);
+      assert.ok(exp.meaning && exp.meaning.length > 5, `Explanation của ${q.sentence} phải có meaning`);
+      assert.ok(
+        !exp.meaning.startsWith("Ý nghĩa") && !exp.meaning.startsWith("Cách đọc"),
+        `Meaning ${exp.meaning} phải là câu hoàn chỉnh, không phải chỉ dịch đáp án`
+      );
+    }
+  }
 });
 
 

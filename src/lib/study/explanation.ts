@@ -236,6 +236,337 @@ export function getCompletedSentence(question: ExamQuestion): string {
 }
 
 /**
+ * Chuẩn hóa chuỗi câu tiếng Nhật để so khớp chính xác bỏ qua sự khác biệt về khoảng trắng, dấu ngoặc
+ */
+export function normalizeSentenceKey(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/\\n/g, " ")
+    .replace(/\r?\n/g, " ")
+    .replace(/[（(]\s*[）)]/g, "（　）")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Kiểm tra xem một chuỗi đã là bản dịch nguyên câu tiếng Việt hay chưa
+ */
+export function isCompleteSentenceTranslation(str: string): boolean {
+  if (!str || str.length < 5) return false;
+  if (
+    str.startsWith("Ý nghĩa") ||
+    str.startsWith("Cách đọc") ||
+    str.startsWith("Chữ Hán chuẩn xác") ||
+    str.startsWith("Âm Hán") ||
+    str.startsWith("Từ cần điền") ||
+    str.startsWith("Cấu trúc cần chọn")
+  ) {
+    return false;
+  }
+  // Có chứa ký tự tiếng Việt có dấu thể hiện câu dịch nghĩa
+  return /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(str);
+}
+
+/**
+ * Từ điển dịch nghĩa trọn vẹn CẢ CÂU HOÀN CHỈNH sang tiếng Việt cho 100% các câu hỏi đề thi
+ */
+export const SENTENCE_TRANSLATIONS: Record<string, string> = {
+  // =========================================================================
+  // KANJI BÀI 1 - 3 (JPD113)
+  // =========================================================================
+  "（私）はFPT大学の学生です。___わたし": "Tôi là sinh viên trường Đại học FPT.",
+  "あの方は日本語の（先生）です。___せんせい": "Vị kia là giáo viên tiếng Nhật.",
+  "田中さんは東京（大学）の学生です。___だいがく": "Anh Tanaka là sinh viên trường Đại học Tokyo.",
+  "アンさんは（学生）じゃありません。___がくせい": "Bạn An không phải là học sinh/sinh viên.",
+  "さとうさんは（日本人）です。___にほんじん": "Chị Sato là người Nhật Bản.",
+  "リーさんは（中国人）ですか。___ちゅうごくじん": "Bạn Lee có phải là người Trung Quốc không?",
+  "教室に日本語の（本）があります。___ほん": "Trong phòng học có sách tiếng Nhật.",
+  "私の妹は今年（二十歳）になります。___はたち": "Em gái tôi năm nay tròn 20 tuổi.",
+  "あなたの（誕生日）は何月ですか。___たんじょうび": "Sinh nhật của bạn là vào tháng mấy?",
+  "アンさんの弟は（何歳）ですか。___なんさい": "Em trai bạn An bao nhiêu tuổi?",
+  "あの方の（お名前）は何ですか。___おなまえ": "Tên của vị kia là gì thế ạ?",
+  "受付に（男の人）がいます。___おとこのひと": "Ở quầy tiếp tân có một người đàn ông.",
+  "あそこに（女の人）がいます。___おんなのひと": "Ở đằng kia có một người phụ nữ.",
+  "教室に（男の子）が三人います。___おとこのこ": "Trong lớp học có ba bé trai.",
+  "庭に（女の子）が二人います。___おんなのこ": "Ở ngoài sân có hai bé gái.",
+  "林さんは（会社員）です。___かいしゃいん": "Anh Hayashi là nhân viên công ty.",
+  "父は（医者）です。___いしゃ": "Bố tôi là bác sĩ.",
+  "兄は（エンジニア）です。___えんじにあ": "Anh trai tôi là kỹ sư.",
+  "（ベトナム人）の留学生です。___べとなむじん": "Là du học sinh người Việt Nam.",
+  "（アメリカ人）の友達がいます。___あめりかじん": "Tôi có người bạn là người Mỹ.",
+  "事務所は（何階）ですか。___なんがい": "Văn phòng nằm ở tầng mấy vậy?",
+  "この時計は（いくら）ですか。___いくら": "Chiếc đồng hồ này có giá bao nhiêu tiền?",
+  "このペンは（百円）です。___ひゃくえん": "Chiếc bút này có giá 100 Yên.",
+  "この鞄は（三千円）です。___さんぜんえん": "Chiếc cặp này có giá 3.000 Yên.",
+  "あのパソコンは（五万円）です。___ごまんえん": "Chiếc máy tính đằng kia có giá 50.000 Yên.",
+  "駅の近くに（店）がたくさんあります。___みせ": "Gần nhà ga có rất nhiều cửa hàng.",
+  "スーパーで果物を（買います）。___かいます": "Tôi mua hoa quả ở siêu thị.",
+  "父の（車）は新しいです。___くるま": "Chiếc xe ô tô của bố tôi còn mới.",
+  "（日本語）の辞書を買いました。___にほんご": "Tôi đã mua một cuốn từ điển tiếng Nhật.",
+  "毎日、何時に（起きます）か。___おきます": "Hàng ngày bạn thức dậy vào lúc mấy giờ?",
+  "毎晩、11時に（寝ます）。___ねます": "Mỗi tối tôi đều đi ngủ vào lúc 11 giờ.",
+  "月曜日から金曜日まで（働きます）。___はたらきます": "Tôi làm việc từ thứ Hai đến thứ Sáu.",
+  "日曜日、会社を（休みます）。___やすみます": "Chủ nhật tôi nghỉ làm ở công ty.",
+  "毎晩、日本語を（勉強します）。___べんきょうします": "Mỗi tối tôi đều học tiếng Nhật.",
+  "食堂で昼ご飯を（食べます）。___たべます": "Tôi ăn cơm trưa ở nhà ăn.",
+  "毎朝、牛乳を（飲みます）。___のみます": "Mỗi sáng tôi đều uống sữa bò.",
+  "図書館で本を（読みます）。___よみます": "Tôi đọc sách ở thư viện.",
+  "手紙を（書きます）。___かきます": "Tôi viết một lá thư.",
+  "部屋で音楽を（聞きます）。___ききます": "Tôi nghe nhạc trong phòng.",
+  "テレビで映画を（見ます）。___みます": "Tôi xem phim trên tivi.",
+  "午後8時にうちへ（帰ります）。___かえります": "Tôi trở về nhà vào lúc 8 giờ tối.",
+  "あした、友達が（来ます）。___きます": "Ngày mai bạn tôi sẽ đến chơi.",
+  "来週、京都へ（行きます）。___いきます": "Tuần sau tôi sẽ đi Kyoto.",
+
+  // =========================================================================
+  // KANJI BÀI 4 - 7 (JPD123)
+  // =========================================================================
+  "この（料理）はとてもおいしいです。___りょうり": "Món ăn này rất ngon.",
+  "週末に友達と（映画）を見に行きます。___えいが": "Cuối tuần tôi đi xem phim cùng với bạn bè.",
+  "きょうは天気が良くて、（暑い）ですね。___あつい": "Hôm nay thời tiết đẹp và trời nóng nhỉ.",
+  "きのう、デパートで（新しい）靴を買いました。___あたらしい": "Hôm qua tôi đã mua đôi giày mới ở trung tâm thương mại.",
+  "私の部屋はあまり（広くない）です。___ひろくない": "Phòng của tôi không được rộng rãi cho lắm.",
+  "学校の（近く）においしいラーメン屋があります。___ちかく": "Ở gần trường học có một quán mì ramen rất ngon.",
+  "東京の（東）のほうにきれいな川があります。___ひがし": "Ở phía Đông của Tokyo có một dòng sông rất đẹp.",
+  "日本の首都は（東京）です。___とうきょう": "Thủ đô của Nhật Bản là Tokyo.",
+  "テストの用紙に自分の（名前）を書きます。___なまえ": "Hãy viết tên của bạn vào tờ giấy thi.",
+  "駅の（前）で友達と待ち合わせをします。___まえ": "Tôi hẹn gặp bạn ở trước nhà ga.",
+  "アンさんの（国）はどちらですか。___くに": "Đất nước của bạn An là ở đâu (nước nào) vậy?",
+  "あそこにいる（男）の人は誰ですか。___おとこ": "Người đàn ông ở đằng kia là ai vậy?",
+  "あそこにいる（女）の人は日本語の先生です。___おんな": "Người phụ nữ ở đằng kia là giáo viên dạy tiếng Nhật.",
+  "冬の北海道はとても（寒い）です。___さむい": "Mùa đông ở Hokkaido rất lạnh.",
+  "あした、駅の（まえ）で会いましょう。___前": "Ngày mai chúng ta hãy gặp nhau ở trước nhà ga nhé.",
+  "私の（くに）はベトナムです。___国": "Đất nước của tôi là Việt Nam.",
+  "受付で（なまえ）を呼ばれました。___名前": "Tôi đã được gọi tên ở quầy tiếp tân.",
+  "〔東〕京___ĐÔNG": "Chữ Hán 東 (ĐÔNG) trong từ 東京 (Tokyo).",
+  "外〔国〕___QUỐC": "Chữ Hán 国 (QUỐC) trong từ 外国 (Nước ngoài).",
+  "〔男〕の人___NAM": "Chữ Hán 男 (NAM) trong cụm 男の人 (Người đàn ông).",
+  "〔女〕の人___NỮ": "Chữ Hán 女 (NỮ) trong cụm 女の人 (Người phụ nữ).",
+  "（先週）の土曜日に映画を見に行きました。___せんしゅう": "Thứ Bảy tuần trước tôi đã đi xem phim.",
+  "（毎日）日本語の単語を練習します。___まいにち": "Hàng ngày tôi đều luyện tập từ vựng tiếng Nhật.",
+  "明日の（午後）に友達が遊びに来ます。___ごご": "Chiều mai bạn tôi sẽ đến chơi.",
+  "今朝、（午前）8時に家を出ました。___ごぜん": "Sáng nay tôi đã rời khỏi nhà lúc 8 giờ sáng.",
+  "仕事の（後）で、ビールを飲みに行きます。___あと": "Sau khi xong việc, tôi sẽ đi uống bia.",
+  "日曜日に動物園でパンダを（見ました）。___みました": "Chủ nhật tôi đã nhìn thấy gấu trúc ở sở thú.",
+  "昨日の晩、友達と日本料理を（食べました）。___たべました": "Tối hôm qua tôi đã ăn món Nhật cùng bạn bè.",
+  "冷たいお茶を（飲みました）。___のみました": "Tôi đã uống một ly trà lạnh.",
+  "おいしい（食べ物）をたくさん買いました。___たべもの": "Tôi đã mua rất nhiều đồ ăn ngon.",
+  "明日は会社の（休み）の日です。___やすみ": "Ngày mai là ngày nghỉ của công ty.",
+  "毎朝、（みず）を一杯飲みます。___水": "Mỗi sáng tôi đều uống một cốc nước.",
+  "週末に家族と（りょこう）に行きます。___旅行": "Cuối tuần tôi sẽ đi du lịch cùng gia đình.",
+  "（せんしゅう）の試験はどうでしたか。___先週": "Kỳ thi tuần trước của bạn thế nào rồi?",
+  "（ごご）3時に郵便局へ行きます。___午後": "3 giờ chiều tôi sẽ đi đến bưu điện.",
+  "〔先〕生___TIÊN": "Chữ Hán 先 (TIÊN) trong từ 先生 (Giáo viên / Thầy cô).",
+  "今〔週〕___CHU": "Chữ Hán 週 (CHU) trong từ 今週 (Tuần này).",
+  "〔休〕み___HƯU": "Chữ Hán 休 (HƯU) trong từ 休み (Nghỉ ngơi / Ngày nghỉ).",
+  "買い〔物〕___VẬT": "Chữ Hán 物 (VẬT) trong từ 買い物 (Mua sắm).",
+  "（今日）はきのうよりずっと暖かいです。___きょう": "Hôm nay ấm áp hơn hôm qua rất nhiều.",
+  "午後5時に（会社）を出ます。___かいしゃ": "5 giờ chiều tôi rời công ty về.",
+  "毎朝、駅で（新聞）を買って読みます。___しんぶん": "Mỗi sáng tôi đều mua báo ở ga để đọc.",
+  "喫茶店で友達と（あいました）。___会いました": "Tôi đã gặp bạn bè ở quán cà phê.",
+  "午後6時に家へ（かえります）。___帰ります": "6 giờ chiều tôi trở về nhà.",
+  "会〔社〕___XÃ": "Chữ Hán 社 (XÃ) trong từ 会社 (Công ty).",
+  "新〔聞〕___VĂN": "Chữ Hán 聞 (VĂN) trong từ 新聞 (Tờ báo).",
+  "会〔話〕___THOẠI": "Chữ Hán 話 (THOẠI) trong từ 会話 (Hội thoại / Đàm thoại).",
+  "辞〔書〕___THƯ": "Chữ Hán 書 (THƯ) trong từ 辞書 (Từ điển).",
+  "日曜日、家族と（海）へ行きました。___うみ": "Chủ nhật tôi đã đi biển cùng với gia đình.",
+  "休みの日に高い（山）に登りました。___やま": "Vào ngày nghỉ tôi đã leo lên một ngọn núi cao.",
+  "この（川）で魚をつりましょう。___かわ": "Chúng ta hãy câu cá ở dòng sông này nhé.",
+  "あしたはいい（天気）になるといいですね。___てんき": "Ngày mai thời tiết đẹp thì thật là tốt nhỉ.",
+  "成田（空港）まで電車で行きます。___くうこう": "Tôi đi tàu điện đến sân bay Narita.",
+  "きょうは（風）が強くて、寒いです。___かぜ": "Hôm nay gió to và trời lạnh.",
+  "スーパーで新鮮な（野菜）を買いました。___やさい": "Tôi đã mua rau tươi ở siêu thị.",
+  "毎日、牛肉や豚（肉）を食べます。___にく": "Hàng ngày tôi đều ăn thịt bò và thịt lợn.",
+  "冬の北海道は（雪）がたくさん降ります。___ゆき": "Mùa đông ở Hokkaido tuyết rơi rất nhiều.",
+  "夏休みに友達と（旅行）に行きます。___りょこう": "Kỳ nghỉ hè tôi sẽ đi du lịch cùng bạn bè.",
+  "すき焼きに牛肉と（やさい）を入れます。___野菜": "Cho thịt bò và rau vào món lẩu Sukiyaki.",
+  "豚（にく）と鶏肉を半分ずつ買いました。___肉": "Tôi đã mua thịt lợn và thịt gà mỗi loại một nửa.",
+  "牛〔肉〕___NHỤC": "Chữ Hán 肉 (NHỤC) trong từ 牛肉 (Thịt bò).",
+  "〔半〕分___BÁN": "Chữ Hán 半 (BÁN) trong từ 半分 (Một nửa).",
+
+  // =========================================================================
+  // TỪ VỰNG BÀI 4 - 7 (JPD123)
+  // =========================================================================
+  "日本の（北）にある北海道は、冬に雪がたくさん降ります。___きた": "Hokkaido ở phía Bắc Nhật Bản, mùa đông tuyết rơi rất nhiều.",
+  "ハノイはベトナムの北にあります。ホーチミンは（　　）にあります。___みなみ": "Hà Nội ở miền Bắc Việt Nam, còn TP. Hồ Chí Minh thì ở miền Nam.",
+  "富士山は日本でとても（　　）山です。___ゆうめいな": "Núi Phú Sĩ là ngọn núi rất nổi tiếng ở Nhật Bản.",
+  "休みの日のショッピングモールは人が多くて、とても（　　）です。___にぎやか": "Trung tâm mua sắm vào ngày nghỉ rất đông người và vô cùng náo nhiệt.",
+  "夜の図書館は人が少なくて、とても（　　）です。___しずか": "Thư viện vào ban đêm ít người nên rất yên tĩnh.",
+  "山へ行って温かい（　　）に入りました。とても気持ちよかったです。___おんせん": "Tôi đã đi lên núi và ngâm mình trong suối nước nóng ấm áp, cảm giác vô cùng sảng khoái.",
+  "この町にはきれいな（　　）が流れていて、魚がたくさんいます。___かわ": "Thị trấn này có một dòng sông trong lành chảy qua và có rất nhiều cá.",
+  "京都には古い（　　）や神社がたくさんあります。___おてら": "Ở Kyoto có rất nhiều ngôi chùa cổ và đền thần.",
+  "東京から大阪まで（　　）で約2時間半です。___しんかんせん": "Từ Tokyo đến Osaka đi bằng tàu cao tốc Shinkansen mất khoảng 2 tiếng rưỡi.",
+  "うちから駅まで遠くないですから、（　　）行きます。___あるいて": "Từ nhà đến ga không xa nên tôi đi bộ đến đó.",
+  "この本は〔新しい〕です。___ふるい": "Cuốn sách này đã cũ (Trái nghĩa với 新しい - mới là 古い - cũ).",
+  "部屋の中はとても〔静か〕です。___にぎやか": "Trong phòng rất náo nhiệt (Trái nghĩa với 静か - yên tĩnh là 賑やか - náo nhiệt).",
+  "A：ダナンはどうですか。\nB：物価が安くて、とても（　　）町ですよ。___いい": "A: Đà Nẵng thế nào? - B: Vật giá rẻ và là một thành phố rất tuyệt vời đấy.",
+  "A：ダナンはどうですか。\\nB：物価が安くて、とても（　　）町ですよ。___いい": "A: Đà Nẵng thế nào? - B: Vật giá rẻ và là một thành phố rất tuyệt vời đấy.",
+  "先週、新しい（　　）を買いました。レポートを書くときに使います。___パソコン": "Tuần trước tôi đã mua một chiếc máy tính xách tay mới, dùng khi viết báo cáo.",
+  "休みの日、天気がよかったですから、公園へ（　　）に行きました。___さんぽ": "Vào ngày nghỉ, vì thời tiết đẹp nên tôi đã đi dạo ở công viên.",
+  "きのう、デパートへ行って（　　）をしました。___かいもの": "Hôm qua tôi đã đến trung tâm thương mại để mua sắm.",
+  "誕生日に友達からすてきな（　　）をもらいました。___プレゼント": "Vào ngày sinh nhật, tôi đã nhận được một món quà tuyệt vời từ bạn bè.",
+  "国にいる両親に（　　）を書きました。___てがみ": "Tôi đã viết một bức thư gửi cho bố mẹ ở quê nhà.",
+  "重い（　　）がありますから、タクシーで行きましょう。___にもつ": "Vì có hành lý nặng nên chúng ta hãy đi bằng taxi nhé.",
+  "週末はどこへも行きませんでした。（　　）でテレビを見ていました。___ひとり": "Cuối tuần tôi chẳng đi đâu cả, chỉ ở một mình xem tivi.",
+  "映画館で面白い（　　）を見ました。___えいが": "Tôi đã xem một bộ phim rất thú vị ở rạp chiếu phim.",
+  "喉が渇きましたから、冷たい（　　）が飲みたいです。___ジュース": "Vì khát nước nên tôi muốn uống nước trái cây mát lạnh.",
+  "新しい車を買うために、（　　）を貯めています。___おかね": "Để mua ô tô mới, tôi đang tích lũy tiền.",
+  "きのうは仕事が多くて、とても〔忙しかった〕です。___ひまだった": "Hôm qua công việc nhiều nên rất bận rộn (Trái nghĩa với 忙しかった - bận rộn là 暇だった - rảnh rỗi).",
+  "きのうの映画はとても〔楽しかった〕です。___つまらなかった": "Bộ phim hôm qua rất vui (Trái nghĩa với 楽しかった - vui vẻ/thú vị là つまらなかった - nhàm chán).",
+  "A：日曜日はどうして来ませんでしたか。\nB：（　　）熱がありましたから。___ちょっと": "A: Tại sao Chủ nhật bạn lại không đến? - B: Vì tôi hơi bị sốt một chút.",
+  "A：日曜日はどうして来ませんでしたか。\\nB：（　　）熱がありましたから。___ちょっと": "A: Tại sao Chủ nhật bạn lại không đến? - B: Vì tôi hơi bị sốt một chút.",
+  "A：先週の京都旅行は（　　）でしたか。\nB：天気が良くて、楽しかったです。___どう": "A: Chuyến du lịch Kyoto tuần trước của bạn như thế nào? - B: Thời tiết đẹp và rất vui.",
+  "A：先週の京都旅行は（　　）でしたか。\\nB：天気が良くて、楽しかったです。___どう": "A: Chuyến du lịch Kyoto tuần trước của bạn như thế nào? - B: Thời tiết đẹp và rất vui.",
+  "A：週末、一緒にサッカーを見に行きませんか。\nB：（　　）、行きましょう。___いいですね": "A: Cuối tuần này cùng đi xem bóng đá nhé? - B: Hay đấy, chúng ta cùng đi nào!",
+  "A：週末、一緒にサッカーを見に行きませんか。\\nB：（　　）、行きましょう。___いいですね": "A: Cuối tuần này cùng đi xem bóng đá nhé? - B: Hay đấy, chúng ta cùng đi nào!",
+  "ベトナムには雨季と乾季の2つの（　　）があります。___きせつ": "Việt Nam có 2 mùa là mùa mưa và mùa khô.",
+  "１年の中でどの（　　）がいちばん好きですか。___きせつ": "Trong một năm, bạn thích nhất mùa nào?",
+  "りんごとみかんと、（　　）が好きですか。___どちら": "Giữa táo và quýt, bạn thích loại nào hơn?",
+  "新幹線は普通の電車より（　　）速いです。___ずっと": "Tàu Shinkansen chạy nhanh hơn tàu điện thường rất nhiều.",
+  "きのうの夜は風が〔強かった〕です。___よわかった": "Đêm qua gió rất mạnh (Trái nghĩa với 強かった - mạnh là 弱かった - yếu).",
+  "ハノイの冬はダナンより〔寒い〕です。___あたたかい": "Mùa đông ở Hà Nội lạnh hơn Đà Nẵng (Trái nghĩa với 寒い - lạnh là 暖かい - ấm áp).",
+  "A：コーヒーとお茶と、どちらにしますか。\nB：（　　）のほうがいいです。___コーヒー": "A: Bạn chọn cà phê hay trà? - B: Tôi thích cà phê hơn.",
+  "A：コーヒーとお茶と、どちらにしますか。\\nB：（　　）のほうがいいです。___コーヒー": "A: Bạn chọn cà phê hay trà? - B: Tôi thích cà phê hơn.",
+  "今朝は濃い（　　）が出ていて、前がよく見えません。___きり": "Sáng nay có sương mù dày đặc nên phía trước nhìn không rõ.",
+  "きょうの天気予報は（　　）のち雨です。___くもり": "Dự báo thời tiết hôm nay là nhiều mây sau đó có mưa.",
+  "日本の秋は紅葉がとても（　　）季節です。___きれいな": "Mùa thu ở Nhật Bản là mùa lá đỏ chuyển màu vô cùng tuyệt đẹp.",
+  "ハノイの冬は風が吹いて、とても（　　）です。___さむい": "Mùa đông ở Hà Nội gió thổi nên rất lạnh.",
+  "きょうは空が青くて、とてもいい（　　）ですね。___てんき": "Hôm nay bầu trời xanh ngắt, thời tiết thật là đẹp nhỉ.",
+  "朝からずっと（　　）が降っていますから、傘を持って行きます。___あめ": "Từ sáng tới giờ trời mưa suốt nên tôi sẽ mang theo ô.",
+  "冬の富士山には白い（　　）がたくさん積もっています。___ゆき": "Núi Phú Sĩ vào mùa đông có rất nhiều tuyết trắng tích tụ.",
+  "夏休みに日本の伝統的な（　　）を見に行きました。___おまつり": "Vào kỳ nghỉ hè tôi đã đi xem lễ hội truyền thống của Nhật Bản.",
+  "日本の有名な歌手の（　　）を1枚買いました。___CD": "Tôi đã mua một chiếc đĩa CD của ca sĩ nổi tiếng Nhật Bản.",
+  "日曜日、スタジアムで有名な歌手の（　　）があります。___コンサート": "Chủ nhật sẽ có buổi hòa nhạc của ca sĩ nổi tiếng ở sân vận động.",
+  "映画館の（　　）を2枚買いました。___チケット": "Tôi đã mua 2 vé xem phim ở rạp.",
+  "あしたは（　　）がありますから、早く帰ります。___ようじ": "Ngày mai vì có việc bận nên tôi sẽ về sớm.",
+  "桜の花がきれいに咲く（　　）がいちばん好きです。___はる": "Tôi thích nhất mùa xuân khi hoa anh đào nở rộ tuyệt đẹp.",
+  "（　　）休みに家族と海へ泳ぎに行きました。___なつ": "Vào kỳ nghỉ hè, tôi đã cùng gia đình đi biển bơi lội.",
+  "（　　）になると、山の木の葉が赤や黄色になります。___あき": "Cứ hễ sang mùa thu, lá cây trên núi lại chuyển sang màu đỏ và vàng.",
+  "飛行機は新幹線より（　　）速いです。___ずっと": "Máy bay bay nhanh hơn tàu cao tốc Shinkansen rất nhiều.",
+  "友達と映画を見る（　　）がありますから、早く帰ります。___やくそく": "Vì tôi có cuộc hẹn đi xem phim với bạn nên tôi sẽ về sớm.",
+  "友達と映画を見る（　）がありますから、早く帰ります。___やくそく": "Vì tôi có cuộc hẹn đi xem phim với bạn nên tôi sẽ về sớm.",
+  "友達と映画を見る（ ）がありますから、早く帰ります。___やくそく": "Vì tôi có cuộc hẹn đi xem phim với bạn nên tôi sẽ về sớm.",
+  "今週の土曜日に友達の家で（　　）があります。___パーティー": "Thứ Bảy tuần này có bữa tiệc ở nhà bạn của tôi.",
+  "今週の土曜日に友達の家で（　）があります。___パーティー": "Thứ Bảy tuần này có bữa tiệc ở nhà bạn của tôi.",
+  "ハノイスタジアムでサッカーの（　　）があります。___しあい": "Có trận thi đấu bóng đá ở sân vận động Hà Nội.",
+  "スーパーでシャツを2（　　）買いました。___まい": "Tôi đã mua 2 chiếc áo sơ mi ở siêu thị.",
+  "郵便局で84円の切手を5（　　）買いました。___まい": "Tôi đã mua 5 con tem 84 Yên ở bưu điện.",
+  "ステーキは（　　）とフォークで食べます。___ナイフ": "Món bít tết thì ăn bằng dao và dĩa (nĩa).",
+  "冷たいスープは（　　）で飲みます。___スプーン": "Món súp nguội thì ăn (uống) bằng thìa.",
+  "日本料理は（　　）で食べます。___はし": "Món ăn Nhật Bản thì ăn bằng đũa.",
+
+  // =========================================================================
+  // NGỮ PHÁP BÀI 4 - 7 (JPD123)
+  // =========================================================================
+  "お客さんが来ますから、部屋を（　　）そうじします。___きれいに": "Vì có khách đến nên tôi dọn dẹp phòng thật sạch sẽ.",
+  "きのうのハノイはとても（　　）。___暑かったです": "Hôm qua Hà Nội đã rất nóng bức.",
+  "きょうはあまり天気が（　　）。___よくないです": "Hôm nay thời tiết không tốt lắm.",
+  "ホイアンはとても（　　）町です。___有名な": "Hội An là một thị trấn rất nổi tiếng.",
+  "図書館ですから、（　　）話します。___静かに": "Vì ở thư viện nên chúng ta hãy nói chuyện thật khẽ (yên lặng).",
+  "部屋は狭いです。（　　）、とてもきれいです。___しかし": "Căn phòng chật hẹp, tuy nhiên lại rất sạch sẽ và đẹp.",
+  "朝ご飯を食べました。（　　）、学校へ行きました。___そして": "Tôi đã ăn bữa sáng, sau đó tôi đi đến trường.",
+  "家から大学までバイクで（　　）かかりますか。___どのくらい": "Từ nhà đến trường đại học đi xe máy mất khoảng bao lâu?",
+  "京都から大阪まで電車（　　）30分かかります。___で": "Từ Kyoto đến Osaka đi bằng tàu điện mất khoảng 30 phút.",
+  "先週の日曜日は仕事がありましたから、（　　）。___暇じゃありませんでした": "Chủ nhật tuần trước vì có việc làm nên tôi đã không hề rảnh rỗi.",
+  "先生は黒板の字を（　　）書きました。___大きく": "Thầy giáo đã viết chữ trên bảng thật to.",
+  "日曜日、ハノイスタジアム（　　）サッカーの試合があります。___で": "Chủ nhật sẽ có trận đấu bóng đá diễn ra tại sân vận động Hà Nội.",
+  "Miêu tả một món ăn ngon nhưng hơi đắt:___この料理はおいしいですが、すこし高いです。": "Món ăn này ngon nhưng hơi đắt một chút.",
+  "デパートへ新しい靴を（　　）に行きました。___かい": "Tôi đã đến trung tâm thương mại để mua giày mới.",
+  "きょうは疲労しましたから、どこへも（　　）。___行きたくないです": "Hôm nay mệt mỏi nên tôi không muốn đi bất cứ đâu cả.",
+  "きのう、クラスの友達（　　）一緒に昼ご飯を食べました。___と": "Hôm qua tôi đã ăn trưa cùng với các bạn trong lớp.",
+  "あしたテストがあります（　　）、今晩早く寝ます。___から": "Vì ngày mai có bài kiểm tra nên tối nay tôi sẽ đi ngủ sớm.",
+  "きのうの晩、図書館で3時間（　　）。___勉強しました": "Tối hôm qua tôi đã học bài 3 tiếng đồng hồ ở thư viện.",
+  "今朝、時間がありませんでしたから、朝ご飯を（　　）。___食べませんでした": "Sáng nay vì không có thời gian nên tôi đã không ăn sáng.",
+  "日本の有名なアニメを（　　）。___見たいです": "Tôi muốn xem bộ phim hoạt hình anime nổi tiếng của Nhật Bản.",
+  "日曜日、友達とデパートへ買い物（　　）行きます。___に": "Chủ nhật tôi đi đến trung tâm thương mại cùng bạn bè để mua sắm.",
+  "きのうは一人（　　）映画館へ行きました。___で": "Hôm qua tôi đã đi rạp chiếu phim một mình.",
+  "先週の旅行はとても（　　）。___楽しかったです": "Chuyến du lịch tuần trước đã rất vui vẻ.",
+  "きのうのパーティーはどう（　　）。___でしたか": "Bữa tiệc tối qua như thế nào vậy?",
+  "今はお金（　　）ほしくないです。時間がほしいです。___は": "Bây giờ tôi không cần tiền, tôi muốn có thời gian hơn.",
+  "喫茶店へコーヒーを（　　）に行きましょう。___飲み": "Chúng ta hãy cùng đến quán cà phê để uống cà phê nhé.",
+  "日本料理とベトナム料理と、（　　）がおいしいですか。___どちら": "Món Nhật và món Việt thì món nào ngon hơn?",
+  "サッカーの（　　）がおもしろいです。___ほう": "Bóng đá thú vị hơn.",
+  "スポーツの中でサッカーが（　　）好きです。___いちばん": "Trong các môn thể thao, tôi thích bóng đá nhất.",
+  "私の部屋は田中さんの部屋（　　）広くないです。___ほど": "Phòng của tôi không rộng bằng phòng của anh Tanaka.",
+  "家族（　　）中で父がいちばん背が高いです。___の": "Trong gia đình, bố tôi là người cao nhất.",
+  "世界（　　）エベレストがいちばん高い山です。___で": "Trên thế giới, Everest là ngọn núi cao nhất.",
+  "Hỏi lựa chọn giữa trà và cà phê:___お茶とコーヒーと、どちらが好きですか。": "Trà và cà phê thì bạn thích món nào hơn?",
+  "ダナンはハノイより（　　）暖かいです。___ずっと": "Đà Nẵng ấm áp hơn Hà Nội rất nhiều.",
+  "ハノイとホーチミンと、（　　）がにぎやかですか。___どちら": "Hà Nội và TP. Hồ Chí Minh thì nơi nào náo nhiệt hơn?",
+  "果物の中でりんごが（　　）好きです。___いちばん": "Trong các loại hoa quả, tôi thích táo nhất.",
+  "冬は秋（　　）寒いです。___より": "Mùa đông lạnh hơn mùa thu.",
+  "日本語は英語（　　）難しくないです。___ほど": "Tiếng Nhật không khó bằng tiếng Anh.",
+  "電車より飛行機の（　　）が速いです。___ほう": "Máy bay nhanh hơn tàu điện.",
+  "富士山は日本で（　　）高い山です。___いちばん": "Núi Phú Sĩ là ngọn núi cao nhất ở Nhật Bản.",
+  "北海道は沖縄（　　）寒いです。___より": "Hokkaido lạnh hơn Okinawa.",
+  "ダナンはハノイ（　　）寒くないです。___ほど": "Đà Nẵng không lạnh bằng Hà Nội.",
+  "バスと電車と（　　）が速いですか。___どちら": "Xe buýt và tàu điện thì phương tiện nào nhanh hơn?",
+  "いっしょにお茶を（　　）。ええ、飲みましょう。___飲みませんか": "Cùng đi uống trà với tôi nhé? - Vâng, chúng ta cùng đi uống nào.",
+  "日曜日に映画を見に行きませんか。すみません、日曜日は（　　）…___ちょっと": "Chủ nhật này cùng đi xem phim nhé? - Xin lỗi, Chủ nhật thì tôi hơi bận một chút...",
+  "すみません、その窓を（　　）ください。___あけて": "Xin lỗi, xin hãy mở giùm tôi cánh cửa sổ đó với.",
+  "ここに住所と名前を（　　）ください。___かいて": "Xin hãy viết địa chỉ và họ tên vào đây.",
+  "食後、この薬を（　　）ください。___のんで": "Sau bữa ăn, xin hãy uống viên thuốc này.",
+  "このケーキを（　　）みてください。おいしいですよ。___たべて": "Bạn hãy ăn thử chiếc bánh ngọt này xem, ngon lắm đấy.",
+  "カレーライスはスプーン（　　）食べます。___で": "Món cơm cà ri thì ăn bằng thìa.",
+  "この漢字の（　　）を教えてください。___読み方": "Xin hãy chỉ cho tôi cách đọc của chữ Hán này.",
+  "少々ここで（　　）ください。___まって": "Xin hãy đợi ở đây một chút lát.",
+  "この本を（　　）ください。___よんで": "Xin hãy đọc cuốn sách này.",
+  "テレビを（　　）もいいですか。___見て": "Tôi xem tivi có được không ạ?",
+  "すみません、ここで写真を（　　）ください。___とって": "Xin lỗi, xin hãy chụp một bức ảnh ở đây giúp tôi.",
+  "田中さんは今、電話を（　　）います。___かけて": "Anh Tanaka hiện đang gọi điện thoại.",
+  "このパソコンの（　　）を教えてください。___使い方": "Xin hãy chỉ cho tôi cách sử dụng chiếc máy tính này.",
+  "教室でタバコを吸って（　　）いけません。___は": "Không được phép hút thuốc lá trong lớp học."
+};
+
+/**
+ * Trả về bản dịch nguyên câu tiếng Việt trọn vẹn của CẢ CÂU HOÀN CHỈNH sau khi điền đáp án
+ */
+export function getFullSentenceTranslation(question: ExamQuestion): string {
+  if (!question) return "";
+  const sentence = (question.sentence || "").trim();
+  const answer = (question.answer || "").trim();
+  const normSentence = normalizeSentenceKey(sentence);
+  const normKey = `${normSentence}___${answer}`;
+  const rawKey = `${sentence}___${answer}`;
+
+  // 1. Kiểm tra trực tiếp trong từ điển câu dịch SENTENCE_TRANSLATIONS
+  if (SENTENCE_TRANSLATIONS[normKey]) return SENTENCE_TRANSLATIONS[normKey];
+  if (SENTENCE_TRANSLATIONS[rawKey]) return SENTENCE_TRANSLATIONS[rawKey];
+  if (SENTENCE_TRANSLATIONS[normSentence]) return SENTENCE_TRANSLATIONS[normSentence];
+  if (SENTENCE_TRANSLATIONS[sentence]) return SENTENCE_TRANSLATIONS[sentence];
+
+  // 2. Kiểm tra trong EXACT_EXPLANATIONS nếu có bản dịch câu hoàn chỉnh
+  const exact = EXACT_EXPLANATIONS[rawKey] || EXACT_EXPLANATIONS[normKey] || EXACT_EXPLANATIONS[sentence] || EXACT_EXPLANATIONS[normSentence];
+  if (exact?.meaning && isCompleteSentenceTranslation(exact.meaning)) {
+    return exact.meaning;
+  }
+
+  // 3. Nếu question.explanation?.meaning đã có và là câu hoàn chỉnh
+  if (question.explanation?.meaning && isCompleteSentenceTranslation(question.explanation.meaning)) {
+    return question.explanation.meaning;
+  }
+
+  // 4. Nếu câu hỏi dạng chữ Hán ngoặc vuông: 〔東〕京, 外〔国〕, 〔男〕の人, 〔女〕の人
+  const bracketMatch = sentence.match(/〔([^〕]+)〕/);
+  if (bracketMatch) {
+    const char = bracketMatch[1];
+    if (question.prompt.includes("trái nghĩa") || question.prompt.includes("Trái nghĩa")) {
+      const oppMeaning = getAnswerMeaning(answer, question) || answer;
+      return `Từ "${sentence}" có từ trái nghĩa là "${answer}" (${oppMeaning}).`;
+    }
+    return `Chữ Hán「${char}」có âm Hán Việt là ${answer} (trong từ ${sentence.replace(/〔|〕/g, "")}).`;
+  }
+
+  // 5. Fallback thông minh: dịch kết hợp câu hoàn chỉnh và ý nghĩa đáp án
+  const ansMeaning = getAnswerMeaning(answer, question);
+  const completed = getCompletedSentence(question);
+  if (ansMeaning) {
+    return `Câu hoàn chỉnh: "${completed}" (Ý nghĩa đáp án: ${ansMeaning})`;
+  }
+  return `Câu hoàn chỉnh: "${completed}"`;
+}
+
+/**
  * Ngân hàng lời giải chuẩn hóa 100% khớp từng câu hỏi của đề thi JPD123 Đại học FPT
  */
 const EXACT_EXPLANATIONS: Record<string, QuestionExplanation> = {
@@ -992,6 +1323,13 @@ const EXACT_EXPLANATIONS: Record<string, QuestionExplanation> = {
  */
 export function getQuestionExplanation(question: ExamQuestion): QuestionExplanation {
   const baseExp = resolveBaseExplanation(question);
+  const fullSentenceTranslation = getFullSentenceTranslation(question);
+
+  let meaning = baseExp.meaning;
+  if (fullSentenceTranslation && (!meaning || !isCompleteSentenceTranslation(meaning))) {
+    meaning = fullSentenceTranslation;
+  }
+
   const wrongOptions =
     baseExp.wrongOptions && baseExp.wrongOptions.length > 0
       ? baseExp.wrongOptions
@@ -999,17 +1337,19 @@ export function getQuestionExplanation(question: ExamQuestion): QuestionExplanat
 
   return {
     ...baseExp,
+    meaning,
     wrongOptions,
   };
 }
 
 function resolveBaseExplanation(question: ExamQuestion): QuestionExplanation {
-  // 1. Nếu câu hỏi đã có sẵn explanation chuẩn (từ AI hoặc nguồn sinh đề), ưu tiên dùng
+  // 1. Nếu câu hỏi đã có sẵn explanation chuẩn (từ AI hoặc nguồn sinh đề), ưu tiên dùng nếu nghĩa là câu hoàn chỉnh
   if (
     question.explanation &&
     question.explanation.meaning &&
     question.explanation.reason &&
     question.explanation.meaning.length > 5 &&
+    isCompleteSentenceTranslation(question.explanation.meaning) &&
     // Đảm bảo không bị lọt template cũ của "Căn phòng này nhỏ"
     !question.explanation.meaning.includes("Căn phòng này nhỏ, nhưng sạch sẽ.")
   ) {
@@ -1029,23 +1369,32 @@ function resolveBaseExplanation(question: ExamQuestion): QuestionExplanation {
   }
 
   // 2. Tra cứu chuẩn xác theo bảng từ điển câu hỏi đề thi FPT JPD123
-  const directKey = `${question.sentence}___${question.answer}`;
+  const sentence = (question.sentence || "").trim();
+  const answer = (question.answer || "").trim();
+  const normSentence = normalizeSentenceKey(sentence);
+  const directKey = `${sentence}___${answer}`;
+  const normKey = `${normSentence}___${answer}`;
+
   if (EXACT_EXPLANATIONS[directKey]) {
     return EXACT_EXPLANATIONS[directKey];
+  }
+  if (EXACT_EXPLANATIONS[normKey]) {
+    return EXACT_EXPLANATIONS[normKey];
+  }
+  if (EXACT_EXPLANATIONS[sentence]) {
+    return EXACT_EXPLANATIONS[sentence];
+  }
+  if (EXACT_EXPLANATIONS[normSentence]) {
+    return EXACT_EXPLANATIONS[normSentence];
   }
 
   // 3. Tra cứu theo câu văn hoàn chỉnh
   for (const [key, explanation] of Object.entries(EXACT_EXPLANATIONS)) {
     const [sentencePart, answerPart] = key.split("___");
-    if (sentencePart === question.sentence && answerPart === question.answer) {
-      return explanation;
-    }
-  }
-
-  // Tra cứu theo câu văn (trường hợp answer có khoảng trắng hoặc biến thể nhỏ)
-  for (const [key, explanation] of Object.entries(EXACT_EXPLANATIONS)) {
-    const [sentencePart] = key.split("___");
-    if (sentencePart === question.sentence) {
+    if (
+      normalizeSentenceKey(sentencePart) === normSentence &&
+      (!answerPart || answerPart === answer)
+    ) {
       return explanation;
     }
   }
@@ -1073,15 +1422,13 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
     q.prompt.includes("chữ Hán") ||
     q.prompt.includes("漢字") ||
     q.prompt.includes("Kanji");
-  const isHanViet =
-    q.prompt.includes("Hán Việt") ||
-    q.prompt.includes("ý nghĩa");
 
   const lesson = determineLesson(q);
+  const fullMeaning = getFullSentenceTranslation(q);
 
   if (isReading) {
     return {
-      meaning: `Cách đọc Hiragana đúng trong câu: ${getCompletedSentence(q)}`,
+      meaning: fullMeaning,
       grammar: "Chữ Hán sơ cấp N5 - Cách đọc Hiragana theo âm On/Kun",
       lesson,
       tips: `Chú ý nhận diện trường âm (âm dài おう, えい), âm đục (tenten) và âm ngắt (xúc âm) của chữ.`,
@@ -1091,7 +1438,7 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
 
   if (isWriting) {
     return {
-      meaning: `Chữ Hán chuẩn xác tương ứng: ${getCompletedSentence(q)}`,
+      meaning: fullMeaning,
       grammar: "Chữ Hán sơ cấp N5 - Nhận diện mặt chữ Hán tương ứng với Hiragana",
       lesson,
       tips: "Quan sát kỹ các bộ thủ đặc trưng (bộ Mộc 木, Thủy 水, Kim 金, Môn 門, Nhật 日) để tránh chọn nhầm chữ gần giống.",
@@ -1100,7 +1447,7 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
   }
 
   return {
-    meaning: `Âm Hán Việt / Ý nghĩa chữ Hán: ${getCompletedSentence(q)}`,
+    meaning: fullMeaning,
     grammar: "Âm Hán Việt và cấu tạo chữ Hán N5",
     lesson,
     tips: "Âm Hán Việt là cầu nối tuyệt vời giúp sinh viên Việt Nam nhớ nhanh nghĩa của chữ Hán.",
@@ -1133,15 +1480,10 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
   }
 
   const ansMeaning = getAnswerMeaning(q.answer, q);
-  const completed = getCompletedSentence(q);
-
-  let meaning = ansMeaning
-    ? `Ý nghĩa cấu trúc/đáp án: "${q.answer}" có nghĩa là "${ansMeaning}".`
-    : `Cấu trúc cần chọn:「${q.answer}」.`;
-  meaning += ` Câu hoàn chỉnh: ${completed}`;
+  const fullMeaning = getFullSentenceTranslation(q);
 
   return {
-    meaning,
+    meaning: fullMeaning,
     grammar: grammarPoint,
     lesson,
     tips,
@@ -1155,17 +1497,10 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
 function buildVocabExplanation(q: ExamQuestion): QuestionExplanation {
   const lesson = determineLesson(q);
   const ansMeaning = getAnswerMeaning(q.answer, q);
-  const completed = getCompletedSentence(q);
-
-  let meaning = ansMeaning
-    ? `Ý nghĩa đáp án: "${q.answer}" có nghĩa là "${ansMeaning}".`
-    : `Từ cần điền:「${q.answer}」.`;
-  if (q.sentence) {
-    meaning += ` Câu hoàn chỉnh: ${completed}`;
-  }
+  const fullMeaning = getFullSentenceTranslation(q);
 
   return {
-    meaning,
+    meaning: fullMeaning,
     grammar: "Từ vựng chuyên đề & Ngữ cảnh giao tiếp thực tế",
     lesson,
     tips: "Liên hệ ngữ cảnh sinh hoạt hàng ngày (đồ dùng ăn uống, đồ đạc trong nhà, thời tiết, giao tiếp hỏi đáp) để loại trừ phương án sai.",
