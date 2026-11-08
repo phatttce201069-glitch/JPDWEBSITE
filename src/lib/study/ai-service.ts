@@ -250,7 +250,7 @@ Chỉ trả về duy nhất một chuỗi JSON hợp lệ (không kèm markdown 
     "options": ["Đáp án 1", "Đáp án 2", "Đáp án 3", "Đáp án 4"],
     "answer": "Đáp án đúng (phải trùng khớp chính xác 100% với 1 trong 4 lựa chọn trong options)",
     "explanation": {
-      "meaning": "Dịch nghĩa câu tiếng Nhật sang tiếng Việt",
+      "meaning": "Bản dịch nghĩa trọn vẹn của CẢ CÂU HOÀN CHỈNH (sau khi đã điền đáp án đúng vào câu). BẮT BUỘC dịch toàn bộ câu theo văn phong tiếng Việt tự nhiên, TUYỆT ĐỐI KHÔNG chỉ dịch mỗi từ đáp án đơn lẻ.",
       "grammar": "Cấu trúc ngữ pháp áp dụng",
       "lesson": "Thuộc bài nào (Ví dụ: JPD123 - Bài 4 hoặc JPD123 - Bài 5)",
       "tips": "Mẹo giải nhanh hoặc dấu hiệu nhận biết từ khóa",
@@ -263,11 +263,12 @@ Chú ý:
 - Đáp án answer phải chính xác, không nhầm lẫn.
 - Đảm bảo 100% các câu hỏi đều nằm trong phạm vi: ${lessonNames}.`;
 
-  const userPrompt = `Hãy tạo trọn bộ 30 câu hỏi trắc nghiệm JPD123 Đại học FPT cho các bài: ${lessonNames} (Mã phiên #${entropySeed}).
+  const userPrompt = `Hãy tạo trọn bộ 30 câu hỏi trắc nghiệm ${courseCode} Đại học FPT cho các bài: ${lessonNames} (Mã phiên #${entropySeed}).
 BẮT BUỘC:
 1. 100% nội dung (10 Kanji, 10 Từ vựng, 10 Ngữ pháp) CHỈ LẤY TRONG ${lessonNames}.
 2. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
-3. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
+3. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
+4. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
 
   return { systemPrompt, userPrompt, allowedBai };
 }
@@ -896,6 +897,7 @@ Yêu cầu bắt buộc: Trả về duy nhất 1 đối tượng JSON (không b�
 }
 
 export type QuestionAiExplanation = {
+  fullSentenceTranslation?: string;
   deepDive: string;
   whyOthersWrong: { option: string; reason: string }[];
   grammarRule: string;
@@ -911,8 +913,9 @@ export async function explainQuestionWithAi(
   userSelectedOption?: string,
 ): Promise<QuestionAiExplanation> {
   const settings = getAiSettings();
-  const { getQuestionExplanation } = await import("./explanation.ts");
+  const { getQuestionExplanation, getFullSentenceTranslation } = await import("./explanation.ts");
   const baseExp = getQuestionExplanation(question);
+  const fullSentenceTranslation = getFullSentenceTranslation(question) || baseExp.meaning;
 
   const fallbackTip =
     baseExp.tips ||
@@ -921,12 +924,13 @@ export async function explainQuestionWithAi(
   const fallbackRule =
     baseExp.grammar || "Cấu trúc ngữ pháp & Từ vựng tiếng Nhật chuẩn Đại học FPT";
 
-  const fallbackDeepDive = `Câu hỏi thuộc phần [${question.section}]: "${question.sentence}". Đáp án chính xác là "${question.answer}". ${baseExp.meaning} ${baseExp.reason}`;
+  const fallbackDeepDive = `Dịch câu hoàn chỉnh: "${fullSentenceTranslation}". Câu hỏi thuộc phần [${question.section}]: "${question.sentence}". Đáp án chính xác là "${question.answer}". ${baseExp.reason}`;
 
   const fallbackOthers = baseExp.wrongOptions || [];
 
   if (settings.provider === "built-in" || !settings.apiKey.trim()) {
     return {
+      fullSentenceTranslation,
       deepDive: fallbackDeepDive,
       whyOthersWrong: fallbackOthers,
       grammarRule: fallbackRule,
@@ -937,9 +941,10 @@ export async function explainQuestionWithAi(
 
   try {
     const systemPrompt = `Bạn là Giảng viên Tiếng Nhật Đại học FPT chuyên chấm thi và hướng dẫn sinh viên ôn tập môn JPD113 / JPD123.
-Nhiệm vụ: Giải thích cặn kẽ câu hỏi thi trắc nghiệm tiếng Nhật, chỉ rõ bản chất ngữ pháp, và phân tích chi tiết lý do sai của từng phương án gây nhiễu (distractor).
+Nhiệm vụ: Giải thích cặn kẽ câu hỏi thi trắc nghiệm tiếng Nhật, DỊCH NGHĨA TRỌN VẸN TOÀN BỘ CẢ CÂU HOÀN CHỈNH sau khi điền đáp án đúng (tuyệt đối không chỉ dịch mỗi từ vựng đáp án), chỉ rõ bản chất ngữ pháp, và phân tích chi tiết lý do sai của từng phương án gây nhiễu (distractor).
 Định dạng trả về: Duy nhất 1 JSON object hợp lệ:
 {
+  "fullSentenceTranslation": "Bản dịch nghĩa trọn vẹn, tự nhiên của TOÀN BỘ CẢ CÂU HOÀN CHỈNH sau khi điền đáp án đúng vào câu",
   "deepDive": "Phân tích ngữ cảnh câu hỏi, nghĩa câu hoàn chỉnh và lý do tại sao đáp án đúng là chính xác nhất",
   "whyOthersWrong": [
     { "option": "Lựa chọn sai", "reason": "Lý do ngữ pháp/từ vựng/âm đọc khiến phương án này sai" }
@@ -1021,6 +1026,8 @@ ${userSelectedOption ? `Sinh viên đã chọn: ${userSelectedOption}` : ""}`;
       const parsed = JSON.parse(cleaned);
       if (parsed && typeof parsed === "object") {
         return {
+          fullSentenceTranslation:
+            parsed.fullSentenceTranslation || fullSentenceTranslation,
           deepDive: parsed.deepDive || fallbackDeepDive,
           whyOthersWrong:
             Array.isArray(parsed.whyOthersWrong) && parsed.whyOthersWrong.length > 0
@@ -1037,6 +1044,7 @@ ${userSelectedOption ? `Sinh viên đã chọn: ${userSelectedOption}` : ""}`;
   }
 
   return {
+    fullSentenceTranslation,
     deepDive: fallbackDeepDive,
     whyOthersWrong: fallbackOthers,
     grammarRule: fallbackRule,

@@ -48,7 +48,7 @@ import {
   type AiSettings,
 } from "@/lib/study/ai-service";
 import { QuestionExplanationPanel } from "@/components/question-explanation";
-import { getAnswerMeaning } from "@/lib/study/explanation";
+import { getAnswerMeaning, getFullSentenceTranslation } from "@/lib/study/explanation";
 import { buildFptJpd123Exam } from "@/lib/study/fpt-jpd123-engine";
 import { analyzeExamPerformance } from "@/lib/study/exam-diagnostic";
 
@@ -1121,9 +1121,15 @@ function ExamPage() {
                           </span>
                         ) : null}
                       </p>
-                      {question.explanation?.meaning ? (
-                        <p className="text-xs text-stone italic">
-                          Dịch nghĩa: &quot;{question.explanation.meaning}&quot;
+                      {getFullSentenceTranslation(question) ? (
+                        <p className="text-xs text-ink/90 font-medium">
+                          <span className="text-stone font-normal">Dịch câu hoàn chỉnh: </span>
+                          <span className="italic">&quot;{getFullSentenceTranslation(question)}&quot;</span>
+                        </p>
+                      ) : question.explanation?.meaning ? (
+                        <p className="text-xs text-ink/90 font-medium">
+                          <span className="text-stone font-normal">Dịch câu hoàn chỉnh: </span>
+                          <span className="italic">&quot;{question.explanation.meaning}&quot;</span>
                         </p>
                       ) : null}
                     </div>
@@ -1308,10 +1314,15 @@ function ExamPage() {
                 </span>
               ) : null}
             </p>
-            {current.explanation?.meaning ? (
+            {getFullSentenceTranslation(current) ? (
               <p className="text-xs text-stone leading-relaxed">
-                <span className="font-medium text-ink">Dịch nghĩa: </span>
-                {current.explanation.meaning}
+                <span className="font-medium text-ink">Dịch câu hoàn chỉnh: </span>
+                <span className="text-ink italic">&quot;{getFullSentenceTranslation(current)}&quot;</span>
+              </p>
+            ) : current.explanation?.meaning ? (
+              <p className="text-xs text-stone leading-relaxed">
+                <span className="font-medium text-ink">Dịch câu hoàn chỉnh: </span>
+                <span className="text-ink italic">&quot;{current.explanation.meaning}&quot;</span>
               </p>
             ) : null}
           </div>

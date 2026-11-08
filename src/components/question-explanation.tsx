@@ -19,6 +19,8 @@ import type { ExamQuestion } from "@/lib/study/exam";
 import {
   getCompletedSentence,
   getQuestionExplanation,
+  getAnswerMeaning,
+  getFullSentenceTranslation,
   type QuestionExplanation,
 } from "@/lib/study/explanation";
 import {
@@ -45,6 +47,8 @@ export function QuestionExplanationPanel({
 
   const explanation: QuestionExplanation = getQuestionExplanation(question);
   const completedSentence = getCompletedSentence(question);
+  const fullSentenceVi = getFullSentenceTranslation(question) || explanation.meaning;
+  const answerMeaning = getAnswerMeaning(question.answer, question);
 
   async function handleAiExplain() {
     if (aiData) {
@@ -139,7 +143,7 @@ export function QuestionExplanationPanel({
               </p>
             )}
 
-            {/* Đề bài & Câu đúng */}
+            {/* Đề bài & Câu đúng & Dịch câu hoàn chỉnh */}
             <div className="rounded bg-sheet/80 p-2.5 border border-line space-y-1.5 text-xs">
               <div className="text-stone">
                 <span className="font-semibold text-stone">Đề bài: </span>
@@ -151,27 +155,45 @@ export function QuestionExplanationPanel({
                   {completedSentence}
                 </span>
               </div>
+              {fullSentenceVi && (
+                <div className="text-ink pt-1.5 border-t border-line/60">
+                  <span className="font-semibold text-emerald-800">Dịch cả câu hoàn chỉnh: </span>
+                  <span className="font-medium text-ink italic">&quot;{fullSentenceVi}&quot;</span>
+                </div>
+              )}
             </div>
 
-            {/* Badge đáp án đúng */}
-            <div className="pt-0.5 flex items-center gap-2">
+            {/* Badge đáp án đúng kèm nghĩa từ vựng */}
+            <div className="pt-0.5 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-900 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded text-xs">
                 <CheckCircle2 className="size-3.5 text-emerald-600" />
                 <span>Đáp án đúng: <strong>{question.answer}</strong></span>
               </span>
+              {answerMeaning && (
+                <span className="text-stone text-[11px] font-medium bg-mist/60 px-2 py-0.5 rounded border border-line">
+                  Nghĩa đáp án: <strong>{answerMeaning}</strong>
+                </span>
+              )}
             </div>
           </div>
 
           {/* 1. Dịch nghĩa */}
-          {explanation.meaning && (
+          {fullSentenceVi && (
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 font-medium text-stone">
                 <BookOpen className="size-3 text-stone" />
-                <span>Dịch nghĩa câu / từ:</span>
+                <span>Dịch nghĩa toàn bộ câu hoàn chỉnh:</span>
               </div>
-              <p className="text-ink pl-4 font-normal leading-normal text-[13px]">
-                {explanation.meaning}
-              </p>
+              <div className="pl-4 space-y-1">
+                <p className="text-ink font-medium leading-relaxed text-[13px] bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20 italic">
+                  &quot;{fullSentenceVi}&quot;
+                </p>
+                {answerMeaning && (
+                  <p className="text-stone text-[11px] pl-1">
+                    ➔ Ý nghĩa từ vựng/đáp án <strong>{question.answer}</strong>: {answerMeaning}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
@@ -266,10 +288,21 @@ export function QuestionExplanationPanel({
               {aiLoading ? (
                 <div className="py-6 text-center">
                   <Loader2 className="mx-auto size-6 animate-spin text-seal" />
-                  <p className="mt-2 text-xs text-stone">AI Giảng viên đang phân tích bản chất câu hỏi...</p>
+                  <p className="mt-2 text-xs text-stone">AI Giảng viên đang phân tích bản chất câu hỏi và dịch toàn câu...</p>
                 </div>
               ) : aiData ? (
                 <div className="space-y-3 text-xs">
+                  {aiData.fullSentenceTranslation && (
+                    <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/25 p-2.5">
+                      <span className="font-bold text-emerald-900 block mb-1">
+                        📖 Dịch nghĩa câu hoàn chỉnh từ AI Gia sư:
+                      </span>
+                      <p className="text-ink font-medium leading-relaxed italic">
+                        &quot;{aiData.fullSentenceTranslation}&quot;
+                      </p>
+                    </div>
+                  )}
+
                   <div className="rounded-lg bg-mist/60 p-2.5">
                     <span className="font-bold text-ink block mb-1">🔍 Phân tích chuyên sâu:</span>
                     <p className="text-stone leading-relaxed">{aiData.deepDive}</p>
