@@ -1,11 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertCircle,
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  BookOpen,
   Bot,
   CheckCircle2,
   CheckSquare,
   ChevronRight,
+  Compass,
+  GraduationCap,
   Languages,
   Layers,
   Loader2,
@@ -15,6 +21,7 @@ import {
   Sparkles,
   Square,
   Star,
+  TrendingUp,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,6 +50,7 @@ import {
 import { QuestionExplanationPanel } from "@/components/question-explanation";
 import { getAnswerMeaning } from "@/lib/study/explanation";
 import { buildFptJpd123Exam } from "@/lib/study/fpt-jpd123-engine";
+import { analyzeExamPerformance } from "@/lib/study/exam-diagnostic";
 
 export const Route = createFileRoute("/exam")({
   validateSearch: (search: Record<string, unknown>): ExamSearch => ({
@@ -738,49 +746,251 @@ function ExamPage() {
   const correct = answers.filter((answer, answerIndex) => answer === paper[answerIndex]?.answer).length;
 
   if (done) {
+    const report = analyzeExamPerformance(paper, answers);
     const missed = paper.filter((question, questionIndex) => answers[questionIndex] !== question.answer);
+
     return (
-      <div>
-        <p className="text-sm tracking-wide text-stone uppercase">Kết quả bài kiểm tra</p>
-        <p className="display mt-2 text-5xl tabular-nums">
-          {correct}
-          <span className="text-2xl text-stone">/{paper.length}</span>
-        </p>
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-stone text-sm">
-          {isAiExam && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 font-medium text-xs border border-amber-500/20">
-              <Bot className="size-3" />
-              Đề thi AI {search.course || "FPT"}
-            </span>
-          )}
-          <span>
-            {search.course === "starred"
-              ? `Từ vựng đã đánh dấu${selected.length ? ` · Bài ${selected.join(", ")}` : " · Tất cả"}`
-              : `${search.course} · Bài ${selected.join(", ")}`}
-            {left === 0 ? " · Hết giờ" : ""}
-          </span>
+      <div className="space-y-6">
+        {/* Score & Pass/Fail Header */}
+        <div className="rounded-2xl border border-line bg-sheet p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold tracking-wider text-stone uppercase">
+                Kết quả bài thi {isAiExam ? "AI FPT" : search.course || ""}
+              </p>
+              <div className="mt-2 flex items-baseline gap-3">
+                <span className="display text-6xl tabular-nums font-bold text-ink">
+                  {report.score10}
+                </span>
+                <span className="text-xl text-stone font-medium">/ 10 điểm</span>
+                <span className="text-sm text-stone tabular-nums">
+                  ({report.correct}/{report.total} câu · {report.accuracy}%)
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:items-end gap-2">
+              {report.passed ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-4 py-1.5 text-sm font-bold text-emerald-800">
+                  <CheckCircle2 className="size-4 text-emerald-600" />
+                  ĐẠT CHUẨN (PASS)
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-seal/15 border border-seal/30 px-4 py-1.5 text-sm font-bold text-seal">
+                  <AlertTriangle className="size-4 text-seal" />
+                  CẦN CẢI THIỆN (RETAKE)
+                </span>
+              )}
+              <div className="text-xs text-stone">
+                {search.course === "starred"
+                  ? `Từ vựng đã đánh dấu · ${selected.length ? `Bài ${selected.join(", ")}` : "Tất cả"}`
+                  : `${search.course || "FPT"} · ${selected.length ? `Bài ${selected.join(", ")}` : "Tất cả các bài"}`}
+                {left === 0 ? " · (Hết giờ làm bài)" : ""}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <ul className="mt-6 divide-y divide-line border-y border-line">
-          {(["Kanji", "Từ vựng", "Ngữ pháp"] as const).map((section) => {
-            const rows = paper
-              .map((question, questionIndex) => ({ question, questionIndex }))
-              .filter(({ question }) => question.section === section);
-            if (!rows.length) return null;
-            const hit = rows.filter(({ question, questionIndex }) => answers[questionIndex] === question.answer).length;
-            return (
-              <li key={section} className="flex items-center justify-between py-3 text-sm">
-                <span className="font-medium">{section}</span>
-                <span className="tabular-nums text-stone">
-                  {hit}/{rows.length}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+        {/* AI Sensei Performance Evaluation Card */}
+        <div className="rounded-2xl border-2 border-seal/25 bg-gradient-to-br from-seal/5 via-sheet to-transparent p-5 space-y-3.5 shadow-xs">
+          <div className="flex items-center justify-between border-b border-line pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="flex size-8 items-center justify-center rounded-xl bg-seal text-paper text-sm font-bold shadow-xs">
+                <GraduationCap className="size-4.5" />
+              </span>
+              <div>
+                <h3 className="font-bold text-ink text-sm sm:text-base">
+                  {report.aiSenseiAdvice.title}
+                </h3>
+                <p className="text-[11px] text-stone">
+                  Chẩn đoán năng lực & Tư vấn lộ trình từ Giảng viên AI Đại học FPT
+                </p>
+              </div>
+            </div>
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider",
+                report.aiSenseiAdvice.level === "distinction"
+                  ? "bg-emerald-500/15 text-emerald-800 border border-emerald-500/30"
+                  : report.aiSenseiAdvice.level === "credit"
+                    ? "bg-blue-500/15 text-blue-800 border border-blue-500/30"
+                    : report.aiSenseiAdvice.level === "pass"
+                      ? "bg-amber-500/15 text-amber-800 border border-amber-500/30"
+                      : "bg-seal/15 text-seal border border-seal/30",
+              )}
+            >
+              {report.aiSenseiAdvice.level}
+            </span>
+          </div>
+
+          <p className="text-sm text-ink leading-relaxed">
+            {report.aiSenseiAdvice.generalFeedback}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
+            <div className="rounded-xl border border-seal/20 bg-sheet p-3 space-y-1">
+              <span className="font-bold text-seal flex items-center gap-1.5 uppercase tracking-wide">
+                <AlertCircle className="size-3.5" />
+                Trọng tâm cần ôn gấp:
+              </span>
+              <p className="text-stone leading-relaxed">
+                {report.aiSenseiAdvice.urgentFocus}
+              </p>
+            </div>
+            <div className="rounded-xl border border-amber-500/20 bg-sheet p-3 space-y-1">
+              <span className="font-bold text-amber-800 flex items-center gap-1.5 uppercase tracking-wide">
+                <Sparkles className="size-3.5 text-amber-600" />
+                Bí quyết thi kết thúc môn:
+              </span>
+              <p className="text-stone leading-relaxed">
+                {report.aiSenseiAdvice.examTip}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Skill Diagnostic Cards (Kanji, Từ vựng, Ngữ pháp) */}
+        <div>
+          <h3 className="text-xs font-bold tracking-wider text-stone uppercase mb-3">
+            Báo cáo chi tiết 3 Kỹ năng (Chuẩn đề thi FPT)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {(["Kanji", "Từ vựng", "Ngữ pháp"] as const).map((cat) => {
+              const item = report.skills[cat];
+              return (
+                <div
+                  key={cat}
+                  className="rounded-xl border border-line bg-sheet p-4 space-y-2.5 shadow-2xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm text-ink">{cat}</span>
+                    <span
+                      className={cn(
+                        "rounded px-2 py-0.5 text-[11px] font-bold",
+                        item.status === "strong"
+                          ? "bg-emerald-500/10 text-emerald-800"
+                          : item.status === "moderate"
+                            ? "bg-amber-500/10 text-amber-800"
+                            : "bg-seal/10 text-seal",
+                      )}
+                    >
+                      {item.status === "strong"
+                        ? "Vững vàng"
+                        : item.status === "moderate"
+                          ? "Cần củng cố"
+                          : "Báo động yếu"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline justify-between">
+                    <span className="display text-2xl font-bold tabular-nums">
+                      {item.accuracy}%
+                    </span>
+                    <span className="text-xs text-stone tabular-nums">
+                      Đúng {item.correct} / {item.total} câu
+                    </span>
+                  </div>
+
+                  <div className="h-1.5 w-full rounded-full bg-mist overflow-hidden">
+                    <div
+                      className={cn(
+                        "h-full rounded-full transition-all",
+                        item.status === "strong"
+                          ? "bg-emerald-600"
+                          : item.status === "moderate"
+                            ? "bg-amber-500"
+                            : "bg-seal",
+                      )}
+                      style={{ width: `${item.accuracy}%` }}
+                    />
+                  </div>
+
+                  <p className="text-xs text-stone leading-relaxed pt-1">
+                    {item.summary}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Actionable Improvement Roadmap */}
+        {report.improvementRoadmap.length > 0 ? (
+          <div className="rounded-2xl border border-line bg-sheet p-5 space-y-4 shadow-xs">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <div className="flex items-center gap-2">
+                <Compass className="size-4 text-seal" />
+                <h3 className="font-bold text-sm text-ink">
+                  Kế hoạch cải thiện điểm số & Ôn tập trọng tâm
+                </h3>
+              </div>
+              <span className="text-xs text-stone">
+                {report.improvementRoadmap.length} chủ đề cần luyện tập
+              </span>
+            </div>
+
+            <p className="text-xs text-stone leading-relaxed">
+              Dưới đây là các phần kiến thức bạn đã chọn sai trong bài thi. Bấm vào nút hành động để chuyển thẳng tới bài học ôn tập tương ứng:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {report.improvementRoadmap.map((topic) => (
+                <div
+                  key={topic.topicKey}
+                  className="rounded-xl border border-line bg-paper p-3.5 flex flex-col justify-between space-y-3 hover:border-ink/50 transition-colors"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-xs text-ink">{topic.title}</span>
+                      <span
+                        className={cn(
+                          "rounded px-1.5 py-0.5 text-[10px] font-bold uppercase",
+                          topic.priority === "high"
+                            ? "bg-seal/10 text-seal border border-seal/20"
+                            : topic.priority === "medium"
+                              ? "bg-amber-500/10 text-amber-800 border border-amber-500/20"
+                              : "bg-mist text-stone",
+                        )}
+                      >
+                        {topic.priority === "high"
+                          ? "Ưu tiên cao"
+                          : topic.priority === "medium"
+                            ? "Cần ôn lại"
+                            : "Xem lại"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-stone line-clamp-2">
+                      {topic.detail}
+                    </p>
+                    <span className="text-[11px] text-seal font-medium block">
+                      ⚠️ Bạn đã sai {topic.mistakeCount} câu trong bài thi
+                    </span>
+                  </div>
+
+                  <a
+                    href={topic.actionUrl}
+                    className="flex w-full items-center justify-between rounded-lg border border-line bg-sheet px-3 py-2 text-xs font-semibold text-ink hover:bg-mist hover:border-ink cursor-pointer transition shadow-2xs"
+                  >
+                    <span>{topic.actionLabel}</span>
+                    <ArrowRight className="size-3.5 text-stone" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-center space-y-1">
+            <p className="font-bold text-emerald-900 text-sm">
+              🎉 Điểm số hoàn hảo! Không có câu hỏi nào bị sai.
+            </p>
+            <p className="text-xs text-stone">
+              Bạn đã làm đúng 100% các câu hỏi trong đề thi. Hãy tiếp tục thử thách với các đề AI ngẫu nhiên khác để mở rộng thêm vốn từ!
+            </p>
+          </div>
+        )}
 
         {/* Chuyển đổi bộ lọc: Các câu sai hoặc Toàn bộ đề thi */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3 pt-2">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -792,7 +1002,7 @@ function ExamPage() {
                   : "bg-sheet text-stone hover:text-ink border border-line",
               )}
             >
-              Các câu cần xem lại ({missed.length})
+              Các câu trả lời sai ({missed.length})
             </button>
             <button
               type="button"
@@ -818,27 +1028,27 @@ function ExamPage() {
               <span>{showKana ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
             </button>
             <span className="text-xs text-stone hidden sm:inline">
-              💡 Có đầy đủ: nghĩa, ngữ pháp, bài học, mẹo giải & lý do chọn
+              💡 Có giải thích chi tiết & phân tích phương án sai
             </span>
           </div>
         </div>
 
         {/* Danh sách câu hỏi kèm lời giải chi tiết */}
         {reviewFilter === "missed" && missed.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-line bg-sheet p-6 text-center space-y-2">
+          <div className="rounded-xl border border-line bg-sheet p-6 text-center space-y-2">
             <p className="font-medium text-ink">Xuất sắc! Bạn đã trả lời đúng tất cả các câu hỏi.</p>
             <p className="text-stone text-xs">
               Bạn có thể bấm vào nút &quot;Toàn bộ đề thi ({paper.length} câu)&quot; ở trên để đọc lại lời giải chi tiết và ôn tập thêm mẹo làm bài.
             </p>
           </div>
         ) : (
-          <div className="mt-4">
-            <h2 className="text-sm font-semibold tracking-wide text-stone uppercase">
+          <div>
+            <h2 className="text-sm font-semibold tracking-wide text-stone uppercase mb-3">
               {reviewFilter === "all"
-                ? `Toàn bộ ${paper.length} câu hỏi kèm lời giải chi tiết`
-                : `Các câu cần xem lại (${missed.length})`}
+                ? `Toàn bộ ${paper.length} câu hỏi kèm lời giải chi tiết & AI Tutor`
+                : `Các câu trả lời sai cần ôn tập (${missed.length} câu)`}
             </h2>
-            <ul className="mt-3 divide-y divide-line border-y border-line">
+            <ul className="divide-y divide-line border-y border-line">
               {(reviewFilter === "all" ? paper : missed).map((question) => {
                 const qIndex = paper.findIndex((p) => p.id === question.id);
                 const userAnswer = qIndex >= 0 ? answers[qIndex] : null;
@@ -918,8 +1128,11 @@ function ExamPage() {
                       ) : null}
                     </div>
 
-                    {/* Component Lời giải chi tiết */}
-                    <QuestionExplanationPanel question={question} />
+                    {/* Component Lời giải chi tiết với phân tích phương án sai & AI Tutor */}
+                    <QuestionExplanationPanel
+                      question={question}
+                      userSelectedOption={userAnswer || undefined}
+                    />
                   </li>
                 );
               })}
@@ -927,7 +1140,7 @@ function ExamPage() {
           </div>
         )}
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="pt-2 flex flex-wrap gap-2">
           <Button tone="ghost" onClick={() => setPaper(null)}>
             Đổi bài
           </Button>
@@ -946,18 +1159,6 @@ function ExamPage() {
             </Button>
           )}
         </div>
-
-        {/* AI Settings Modal */}
-        {showAiSettings && (
-          <AiSettingsModal
-            settings={aiSettings}
-            onClose={() => setShowAiSettings(false)}
-            onSave={handleSaveAiSettings}
-          />
-        )}
-
-        {/* AI Generating Overlay */}
-        {isGeneratingAi && <AiGeneratingOverlay step={generationStep} course={search.course || "FPT"} />}
       </div>
     );
   }
