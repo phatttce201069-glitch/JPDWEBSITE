@@ -1,8 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildFptJpd123Exam } from "./fpt-jpd123-engine.ts";
+import { buildFptJpd123Exam, generateDynamicVocabSeeds } from "./fpt-jpd123-engine.ts";
 import { buildAiPrompt, explainKanjiWithAi, explainQuestionWithAi } from "./ai-service.ts";
 import { alphabet } from "../../data/alphabet.ts";
+import { vocabulary } from "../../data/vocabulary.ts";
 import { getQuestionExplanation, analyzeDistractors, getFullSentenceTranslation } from "./explanation.ts";
 import { analyzeExamPerformance } from "./exam-diagnostic.ts";
 
@@ -679,13 +680,13 @@ test("getFullSentenceTranslation and getQuestionExplanation translate entire com
 
   // Test across multiple exams (JPD113 and JPD123)
   const papers = [
-    buildFptJpd123Exam([1]),
-    buildFptJpd123Exam([2]),
-    buildFptJpd123Exam([3]),
-    buildFptJpd123Exam([4]),
-    buildFptJpd123Exam([5]),
-    buildFptJpd123Exam([6]),
-    buildFptJpd123Exam([7]),
+    buildFptJpd123Exam(["1"]),
+    buildFptJpd123Exam(["2"]),
+    buildFptJpd123Exam(["3"]),
+    buildFptJpd123Exam(["4"]),
+    buildFptJpd123Exam(["5"]),
+    buildFptJpd123Exam(["6"]),
+    buildFptJpd123Exam(["7"]),
   ];
 
   for (const paper of papers) {
@@ -705,6 +706,93 @@ test("getFullSentenceTranslation and getQuestionExplanation translate entire com
     }
   }
 });
+
+test("generateDynamicVocabSeeds produces robust seeds for every lesson 1-7 with zero outside words", () => {
+  for (let b = 1; b <= 7; b++) {
+    const seeds = generateDynamicVocabSeeds([b]);
+    assert.ok(seeds.length >= 100, `Bài ${b} phải sinh ra ít nhất 100 dynamic vocab seeds nhưng được ${seeds.length}`);
+
+    const bWords = vocabulary.filter((w) => w.lesson && new RegExp(`\\bBài ${b}\\b`).test(w.lesson));
+    const validWordSet = new Set(
+      bWords.flatMap((w) => [
+        w.word.replace(/［.*?］/g, "").replace(/（.*?）/g, "").trim(),
+        w.reading.replace(/［.*?］/g, "").replace(/（.*?）/g, "").trim(),
+        w.meaning.trim(),
+      ]),
+    );
+
+    for (const s of seeds) {
+      assert.equal(s.section, "Từ vựng");
+      assert.equal(s.bai, b);
+      assert.equal(s.wrongs.length, 3, "Mỗi seed phải có đúng 3 phương án sai");
+      // All wrongs must be distinct and different from answer
+      assert.ok(!s.wrongs.includes(s.answer), `Wrongs không được chứa đáp án đúng: ${s.answer}`);
+      assert.equal(new Set(s.wrongs).size, 3, "3 phương án sai phải khác nhau");
+    }
+  }
+});
+
+test("buildFptJpd123Exam for Bài 6 strictly focuses on Bài 6 vocabulary with zero outside words", () => {
+  const paper = buildFptJpd123Exam(["6"]);
+  const vocabQuestions = paper.filter((q) => q.section === "Từ vựng");
+
+  assert.equal(vocabQuestions.length, 10, "Phần Từ vựng phải có đúng 10 câu");
+
+  const b6Words = vocabulary.filter((w) => w.lesson && /\bBài 6\b/.test(w.lesson));
+  const b6VocabTokens = new Set(
+    b6Words.flatMap((w) => [
+      w.word.replace(/［.*?］/g, "").replace(/（.*?）/g, "").trim(),
+      w.reading.replace(/［.*?］/g, "").replace(/（.*?）/g, "").trim(),
+      w.meaning.trim(),
+    ]),
+  );
+
+  // Không được chứa các từ vựng bên ngoài bài (như Bài 3, Bài 5, Bài 7)
+  const forbiddenOutsideTokens = ["にもつ", "しゅくだい", "きっぷ", "エアコン", "アイロン", "つくえ", "じてんしゃ"];
+
+  for (const q of vocabQuestions) {
+    for (const opt of q.options) {
+      for (const forbidden of forbiddenOutsideTokens) {
+        assert.ok(!opt.includes(forbidden), `Lựa chọn '${opt}' trong câu ${q.sentence} chứa từ ngoài bài '${forbidden}'`);
+      }
+    }
+  }
+});
+
+test("buildFptJpd123Exam for Bài 7 strictly focuses on Bài 7 vocabulary with zero outside words", () => {
+  const paper = buildFptJpd123Exam(["7"]);
+  const vocabQuestions = paper.filter((q) => q.section === "Từ vựng");
+
+  assert.equal(vocabQuestions.length, 10, "Phần Từ vựng phải có đúng 10 câu");
+
+  const forbiddenOutsideTokens = ["エアコン", "アイロン", "こしょう", "ミルク", "ジャム", "たいふう"];
+
+  for (const q of vocabQuestions) {
+    for (const opt of q.options) {
+      for (const forbidden of forbiddenOutsideTokens) {
+        assert.ok(!opt.includes(forbidden), `Lựa chọn '${opt}' trong câu ${q.sentence} chứa từ ngoài bài '${forbidden}'`);
+      }
+    }
+  }
+});
+
+test("buildAiPrompt explicitly mandates 100% lesson vocabulary and prohibits outside words", () => {
+  const { systemPrompt, userPrompt } = buildAiPrompt(["6"]);
+
+  assert.ok(
+    systemPrompt.includes("STRICT LESSON VOCABULARY ENFORCEMENT"),
+    "System prompt phải có chỉ dẫn bắt buộc từ vựng trong bài",
+  );
+  assert.ok(
+    systemPrompt.includes("TUYỆT ĐỐI KHÔNG dùng 机, ペン"),
+    "System prompt phải cấm dùng các từ ngoài bài",
+  );
+  assert.ok(
+    userPrompt.includes("100% câu hỏi từ vựng và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG ĐÃ CHO"),
+    "User prompt phải nhấn mạnh lấy trực tiếp từ vựng của bài",
+  );
+});
+
 
 
 

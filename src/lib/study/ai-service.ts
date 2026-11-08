@@ -110,20 +110,19 @@ export function getDynamicLessonOutline(bai: number | string): DynamicLessonOutl
     grammarText = LESSON_OUTLINES[baiNum].grammar;
   }
 
-  // 2. Trích xuất từ vựng từ vocabulary.ts
+  // 2. Trích xuất từ vựng từ vocabulary.ts (100% toàn bộ từ vựng chính thức của bài học)
   const words = vocabulary.filter(
-    (w) => w.lesson && (w.lesson.includes(`Bài ${baiStr}`) || w.lesson.includes(`第${baiStr}課`)),
+    (w) => w.lesson && (new RegExp(`\\bBài ${baiStr}\\b`).test(w.lesson) || w.lesson.includes(`第${baiStr}課`)),
   );
   let vocabText = "";
   if (words.length > 0) {
     vocabText = words
-      .map((w) => `${w.word} (${w.reading}: ${w.meaning})`)
-      .slice(0, 50)
+      .map((w) => `${w.word}${w.reading && w.reading !== w.word ? ` (${w.reading})` : ""}: ${w.meaning}`)
       .join(", ");
   }
   if (LESSON_OUTLINES[baiNum]?.vocab) {
     vocabText = vocabText
-      ? `${LESSON_OUTLINES[baiNum].vocab}; Các từ bổ sung: ${vocabText}`
+      ? `${LESSON_OUTLINES[baiNum].vocab}; Toàn bộ từ vựng trong bài: ${vocabText}`
       : LESSON_OUTLINES[baiNum].vocab;
   }
 
@@ -227,6 +226,16 @@ QUY TẮC BẮT BUỘC VỀ PHẠM VI BÀI HỌC (CRITICAL CONSTRAINT - TUÂN TH
 ${negativeConstraints}
 - Tất cả 30 câu hỏi phải hoàn toàn khác biệt nhau, KHÔNG ĐƯỢC TRÙNG LẶP bất kỳ câu văn nào.
 
+QUY TẮC BẮT BUỘC VỀ TỪ VỰNG TRONG BÀI (STRICT LESSON VOCABULARY ENFORCEMENT - TUYỆT ĐỐI KHÔNG DÙNG TỪ NGOÀI BÀI):
+- 100% CẢ 10 CÂU HỎI TỪ VỰNG (section "Từ vựng") VÀ TẤT CẢ 4 LỰA CHỌN (A, B, C, D) CỦA MỖI CÂU BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG CỦA CÁC BÀI ĐÃ CHỌN Ở PHÍA DƯỚI.
+- TUYỆT ĐỐI NGHIÊM CẤM đưa vào bất kỳ từ vựng nào nằm ngoài danh sách từ vựng của bài (ví dụ: TUYỆT ĐỐI KHÔNG dùng 机, ペン, 携帯電話, 病院, 猫, 犬, 荷物, 切符, 宿題 khi tạo đề cho Bài 6 hoặc Bài 7 nếu bài đó không có từ này).
+- Tất cả 3 phương án gây nhiễu sai (distractors / wrongs) cũng BẮT BUỘC phải là từ vựng thuộc danh sách từ vựng của các bài đã chọn.
+- Đánh mạnh và phủ rộng vào các từ vựng trong bài, kết hợp đa dạng các dạng câu hỏi:
+  + Điền từ vựng thích hợp vào câu ngữ cảnh bài học.
+  + Cho từ tiếng Nhật trong bài ➔ Chọn ý nghĩa tiếng Việt chính xác.
+  + Cho ý nghĩa tiếng Việt ➔ Chọn từ vựng tiếng Nhật tương ứng trong bài.
+  + Cho chữ Hán của từ vựng trong bài ➔ Chọn cách đọc Hiragana đúng.
+
 YÊU CẦU VỀ ĐỘ ĐA DẠNG CAO (HIGH DIVERSITY & REAL-WORLD CONTEXTS):
 - Đa dạng hóa ngữ cảnh thực tế: trường học, siêu thị, mua sắm, du lịch, ga tàu điện, công sở, cuộc sống gia đình, ẩm thực, hẹn hò, thời tiết, sở thích.
 - Đa dạng hóa các dạng câu hỏi:
@@ -266,9 +275,10 @@ Chú ý:
   const userPrompt = `Hãy tạo trọn bộ 30 câu hỏi trắc nghiệm ${courseCode} Đại học FPT cho các bài: ${lessonNames} (Mã phiên #${entropySeed}).
 BẮT BUỘC:
 1. 100% nội dung (10 Kanji, 10 Từ vựng, 10 Ngữ pháp) CHỈ LẤY TRONG ${lessonNames}.
-2. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
-3. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
-4. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
+2. ĐẶC BIỆT: 100% câu hỏi từ vựng và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG ĐÃ CHO CỦA BÀI, TUYỆT ĐỐI KHÔNG DÙNG TỪ BÊN NGOÀI BÀI.
+3. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
+4. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
+5. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
 
   return { systemPrompt, userPrompt, allowedBai };
 }
@@ -404,8 +414,24 @@ export function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[
   if (allowedBai.length === 1) {
     const singleBai = allowedBai[0];
     if (singleBai === 6) {
+      if (
+        q.sentence.includes("にもつ") ||
+        q.sentence.includes("しゅくだい") ||
+        q.sentence.includes("エアコン") ||
+        q.options.some((opt) => opt.includes("にもつ") || opt.includes("しゅくだい") || opt.includes("エアコン"))
+      ) {
+        return false;
+      }
       const isBai6Kanji = /[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(q.sentence + q.answer);
+      const isBai6VocabWord = vocabulary.some(
+        (w) =>
+          /\bBài 6\b/.test(w.lesson || "") &&
+          (q.sentence.includes(w.word) ||
+            q.answer.includes(w.word) ||
+            (w.reading && (q.sentence.includes(w.reading) || q.answer.includes(w.reading)))),
+      );
       const isBai6GrammarOrVocab =
+        isBai6VocabWord ||
         q.sentence.includes("より") ||
         q.sentence.includes("ほど") ||
         q.sentence.includes("どちら") ||
@@ -442,8 +468,23 @@ export function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[
         return false;
       }
     } else if (singleBai === 7) {
+      if (
+        q.sentence.includes("エアコン") ||
+        q.sentence.includes("アイロン") ||
+        q.options.some((opt) => opt.includes("エアコン") || opt.includes("アイロン"))
+      ) {
+        return false;
+      }
       const isBai7Kanji = /[肉料理野半大小病院電気開閉待書読話泳行来]/.test(q.sentence + q.answer);
+      const isBai7VocabWord = vocabulary.some(
+        (w) =>
+          /\bBài 7\b/.test(w.lesson || "") &&
+          (q.sentence.includes(w.word) ||
+            q.answer.includes(w.word) ||
+            (w.reading && (q.sentence.includes(w.reading) || q.answer.includes(w.reading)))),
+      );
       const isBai7GrammarOrVocab =
+        isBai7VocabWord ||
         q.sentence.includes("て") ||
         q.sentence.includes("てください") ||
         q.sentence.includes("ています") ||

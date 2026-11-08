@@ -1,5 +1,6 @@
 import { getQuestionExplanation } from "./explanation.ts";
 import { vocabulary } from "../../data/vocabulary.ts";
+import { grammar } from "../../data/grammar.ts";
 import { alphabet } from "../../data/alphabet.ts";
 
 export type ExamSection = "Kanji" | "Từ vựng" | "Ngữ pháp";
@@ -2029,7 +2030,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "デパートの2階へ行くために（　　）に乗ります。",
     answer: "エスカレーター",
-    wrongs: ["レジ", "メニュー", "テーブル"],
+    wrongs: ["レジ", "メニュー", "エレベーター"],
     bai: 2,
     explanation: {
       meaning: "Tôi đi thang cuốn để lên tầng 2 của trung tâm thương mại.",
@@ -2666,9 +2667,9 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     section: "Từ vựng",
     promptJp: HEADERS.VOCAB_FILL.promptJp,
     prompt: HEADERS.VOCAB_FILL.prompt,
-    sentence: "今朝は濃い（　　）が出ていて、前がよく見えません。",
-    answer: "きり",
-    wrongs: ["あめ", "ゆき", "かぜ"],
+    sentence: "きょうは（　　）が強く吹いていますから、傘がさせません。",
+    answer: "かぜ",
+    wrongs: ["あめ", "ゆき", "くもり"],
     bai: 6,
   },
   {
@@ -2677,7 +2678,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "きょうの天気予報は（　　）のち雨です。",
     answer: "くもり",
-    wrongs: ["ゆき", "たいふう", "かみなり"],
+    wrongs: ["ゆき", "かぜ", "はる"],
     bai: 6,
   },
 
@@ -2724,7 +2725,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "冬の富士山には白い（　　）がたくさん積もっています。",
     answer: "ゆき",
-    wrongs: ["あめ", "みず", "くも"],
+    wrongs: ["あめ", "かぜ", "くもり"],
     bai: 6,
   },
   {
@@ -2733,7 +2734,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "夏休みに日本の伝統的な（　　）を見に行きました。",
     answer: "おまつり",
-    wrongs: ["しけん", "かいぎ", "じゅぎょう"],
+    wrongs: ["コンサート", "パーティー", "しあい"],
     bai: 6,
   },
   {
@@ -2742,7 +2743,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "友達と映画を見る（　　）がありますから、早く帰ります。",
     answer: "やくそく",
-    wrongs: ["しゅくだい", "きっぷ", "にもつ"],
+    wrongs: ["ようじ", "チケット", "しあい"],
     bai: 6,
   },
   {
@@ -2751,7 +2752,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "今週の土曜日に友達の家で（　　）があります。",
     answer: "パーティー",
-    wrongs: ["つくえ", "くるま", "じてんしゃ"],
+    wrongs: ["コンサート", "おまつり", "しあい"],
     bai: 6,
   },
   {
@@ -2760,7 +2761,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "日本の有名な歌手の（　　）を1枚買いました。",
     answer: "CD",
-    wrongs: ["パン", "くつ", "かさ"],
+    wrongs: ["チケット", "シャツ", "みずぎ"],
     bai: 6,
   },
   {
@@ -2769,7 +2770,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "日曜日、スタジアムで有名な歌手の（　　）があります。",
     answer: "コンサート",
-    wrongs: ["じむしょ", "かいぎ", "びょういん"],
+    wrongs: ["おまつり", "パーティー", "しあい"],
     bai: 6,
   },
   {
@@ -2778,7 +2779,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "映画館の（　　）を2枚買いました。",
     answer: "チケット",
-    wrongs: ["ノート", "テーブル", "りんご"],
+    wrongs: ["CD", "ちず", "みずぎ"],
     bai: 6,
   },
   {
@@ -2787,7 +2788,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "あしたは（　　）がありますから、早く帰ります。",
     answer: "ようじ",
-    wrongs: ["きっぷ", "にもつ", "しゅくだい"],
+    wrongs: ["やくそく", "アルバイト", "しあい"],
     bai: 6,
   },
   {
@@ -2852,7 +2853,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "冷たいジュースを（　　）に入れて、みんなで乾杯しました。",
     answer: "コップ",
-    wrongs: ["おさら", "れいぞうこ", "電子レンジ"],
+    wrongs: ["おさら", "テーブル", "スプーン"],
     bai: 7,
   },
   {
@@ -2861,7 +2862,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "肉や野菜を腐らせないために、（　　）に入れます。",
     answer: "れいぞうこ",
-    wrongs: ["電子レンジ", "テーブル", "ベッド"],
+    wrongs: ["電子レンジ", "テーブル", "いす"],
     bai: 7,
   },
   {
@@ -2870,7 +2871,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "冷たいお弁当を（　　）で温めました。",
     answer: "電子レンジ",
-    wrongs: ["れいぞうこ", "エアコン", "せんたくき"],
+    wrongs: ["れいぞうこ", "テーブル", "コップ"],
     bai: 7,
   },
   {
@@ -2879,7 +2880,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "コーヒーに（　　）を入れて甘くします。",
     answer: "さとう",
-    wrongs: ["しお", "しょうゆ", "こしょう"],
+    wrongs: ["しお", "しょうゆ", "肉"],
     bai: 7,
   },
   {
@@ -2888,16 +2889,16 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "すしを食べるときは、（　　）をつけて食べます。",
     answer: "しょうゆ",
-    wrongs: ["さとう", "ミルク", "ジャム"],
+    wrongs: ["さとう", "しお", "コップ"],
     bai: 7,
   },
   {
     section: "Từ vựng",
     promptJp: HEADERS.VOCAB_FILL.promptJp,
     prompt: HEADERS.VOCAB_FILL.prompt,
-    sentence: "部屋がとても暑いですから、（　　）をつけてください。",
-    answer: "エアコン",
-    wrongs: ["テレビ", "れいぞうこ", "アイロン"],
+    sentence: "部屋がとても暗いですから、（　　）を開けてください。",
+    answer: "窓",
+    wrongs: ["テーブル", "れいぞうこ", "いす"],
     bai: 7,
   },
   {
@@ -2906,7 +2907,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: "Chọn phó từ mang ý nghĩa thúc giục, kính mời lịch sự 'nhất định':",
     sentence: "ベトナムのフォーはおいしいですよ。（　　）食べてみてください。",
     answer: "ぜひ",
-    wrongs: ["たぶん", "きっと", "あまり"],
+    wrongs: ["もう", "まだ", "たくさん"],
     bai: 7,
   },
   {
@@ -2915,7 +2916,7 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
     prompt: HEADERS.VOCAB_FILL.prompt,
     sentence: "A：もう宿題をしましたか。\nB：いいえ、（　　）していません。",
     answer: "まだ",
-    wrongs: ["もう", "すぐ", "ずっと"],
+    wrongs: ["もう", "ぜひ", "たくさん"],
     bai: 7,
   },
   {
@@ -3010,8 +3011,8 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
   "answer": "電子レンジ",
   "wrongs": [
     "冷蔵庫",
-    "エアコン",
-    "洗濯機"
+    "テーブル",
+    "コップ"
   ],
   "bai": 7
 },
@@ -3023,8 +3024,8 @@ export const VOCAB_SEEDS: QuestionSeed[] = [
   "answer": "冷蔵庫",
   "wrongs": [
     "電子レンジ",
-    "鞄",
-    "ポケット"
+    "テーブル",
+    "いす"
   ],
   "bai": 7
 },
@@ -4660,6 +4661,185 @@ export const GRAMMAR_SEEDS: QuestionSeed[] = [
 }
 ];
 
+function cleanWord(word: string): string {
+  return word.replace(/［.*?］/g, "").replace(/（.*?）/g, "").trim();
+}
+
+function cleanReading(reading: string): string {
+  return reading.replace(/［.*?］/g, "").replace(/（.*?）/g, "").trim();
+}
+
+/**
+ * Sinh ngân hàng câu hỏi từ vựng động (Dynamic Vocabulary Bank) trực tiếp từ bộ từ điển
+ * giáo trình chính thức (vocabulary.ts) cho các bài được chọn.
+ * Đảm bảo:
+ * - 100% câu hỏi từ vựng đánh trực tiếp vào từ vựng được học trong bài.
+ * - 100% các phương án gây nhiễu (distractors) cũng lấy từ từ vựng trong bài, KHÔNG dùng từ ngoài bài.
+ * - Phủ đều toàn bộ ~60-109 từ vựng mỗi bài qua 4 dạng câu hỏi cốt lõi:
+ *   1. Nghĩa tiếng Việt -> Từ vựng tiếng Nhật
+ *   2. Từ vựng tiếng Nhật -> Nghĩa tiếng Việt
+ *   3. Chữ Hán của từ vựng -> Cách đọc Hiragana
+ *   4. Điền từ vào chỗ trống trong câu ngữ cảnh của bài học
+ */
+export function generateDynamicVocabSeeds(allowedBai: number[]): QuestionSeed[] {
+  const seeds: QuestionSeed[] = [];
+
+  for (const bai of allowedBai) {
+    const re = new RegExp(`\\bBài ${bai}\\b`);
+    const words = vocabulary.filter((w) => w.lesson && re.test(w.lesson));
+    if (words.length < 4) continue;
+
+    const courseName = bai <= 3 ? "JPD113" : "JPD123";
+
+    // 1. Meaning matching: Nhật -> Việt
+    for (const w of words) {
+      const cw = cleanWord(w.word);
+      const cr = cleanReading(w.reading);
+      const cm = w.meaning.trim();
+      if (!cw || !cm) continue;
+
+      const otherMeanings = words
+        .filter((other) => other.id !== w.id && other.meaning.trim() !== cm)
+        .map((other) => other.meaning.trim());
+
+      if (otherMeanings.length >= 3) {
+        const wrongs = [...new Set(otherMeanings)].sort(() => Math.random() - 0.5).slice(0, 3);
+        seeds.push({
+          section: "Từ vựng",
+          promptJp: "言葉の意味として最も適切なものを一つ選びなさい。",
+          prompt: "Chọn ý nghĩa tiếng Việt chính xác của từ vựng sau:",
+          sentence: `「${cw}」${cr && cr !== cw ? `（${cr}）` : ""}`,
+          answer: cm,
+          wrongs,
+          bai,
+          explanation: {
+            meaning: `「${cw}」có nghĩa tiếng Việt là: ${cm}`,
+            grammar: `Từ vựng Bài ${bai}`,
+            lesson: `${courseName} - Bài ${bai} (Từ vựng)`,
+            tips: `Từ vựng trọng tâm Bài ${bai}: ${cw} = ${cm}`,
+            reason: `Trong chương trình ${courseName} - Bài ${bai}, từ 「${cw}」mang ý nghĩa là "${cm}". Các phương án khác là ý nghĩa của từ vựng khác trong bài.`,
+          },
+        });
+      }
+    }
+
+    // 2. Word recall: Việt -> Nhật
+    for (const w of words) {
+      const cw = cleanWord(w.word);
+      const cr = cleanReading(w.reading);
+      const cm = w.meaning.trim();
+      if (!cw || !cm) continue;
+
+      const otherWords = words
+        .filter((other) => other.id !== w.id && cleanWord(other.word) !== cw)
+        .map((other) => cleanWord(other.word));
+
+      if (otherWords.length >= 3) {
+        const wrongs = [...new Set(otherWords)].sort(() => Math.random() - 0.5).slice(0, 3);
+        seeds.push({
+          section: "Từ vựng",
+          promptJp: "下線部の意味を表す日本語として最も適切なものを一つ選びなさい。",
+          prompt: "Chọn từ tiếng Nhật đúng với ý nghĩa tiếng Việt sau:",
+          sentence: `Ý nghĩa: "${cm}"`,
+          answer: cw,
+          wrongs,
+          bai,
+          explanation: {
+            meaning: `"${cm}" trong tiếng Nhật là 「${cw}」${cr && cr !== cw ? `（${cr}）` : ""}.`,
+            grammar: `Từ vựng Bài ${bai}`,
+            lesson: `${courseName} - Bài ${bai} (Từ vựng)`,
+            tips: `Ghi nhớ từ vựng: ${cm} ➔ ${cw}`,
+            reason: `Đáp án đúng là 「${cw}」mang nghĩa là "${cm}". Các phương án còn lại là các từ vựng khác trong Bài ${bai}.`,
+          },
+        });
+      }
+    }
+
+    // 3. Hiragana reading check for kanji words
+    for (const w of words) {
+      const cw = cleanWord(w.word);
+      const cr = cleanReading(w.reading);
+      const cm = w.meaning.trim();
+      if (!cw || !cr || cr === cw || !/[一-龯]/.test(cw)) continue;
+
+      const otherReadings = words
+        .filter((other) => other.id !== w.id && cleanReading(other.reading) !== cr)
+        .map((other) => cleanReading(other.reading));
+
+      if (otherReadings.length >= 3) {
+        const wrongs = [...new Set(otherReadings)].sort(() => Math.random() - 0.5).slice(0, 3);
+        seeds.push({
+          section: "Từ vựng",
+          promptJp: "下線の言葉の読み方として最も適切なものを一つ選びなさい。",
+          prompt: "Chọn cách đọc Hiragana đúng của từ vựng sau:",
+          sentence: `「${cw}」`,
+          answer: cr,
+          wrongs,
+          bai,
+          explanation: {
+            meaning: `「${cw}」đọc là 「${cr}」, nghĩa là "${cm}".`,
+            grammar: `Cách đọc từ vựng Bài ${bai}`,
+            lesson: `${courseName} - Bài ${bai} (Từ vựng)`,
+            tips: `Âm đọc Hiragana của ${cw} là ${cr}`,
+            reason: `Từ 「${cw}」(${cm}) trong Bài ${bai} có cách đọc chuẩn Hiragana là 「${cr}」.`,
+          },
+        });
+      }
+    }
+
+    // 4. Fill in the blank from example sentences in lesson
+    const gLesson = grammar.find((g) => g.id === String(bai));
+    const lessonSentences: { jp: string; vi: string }[] = [];
+    if (gLesson) {
+      for (const p of gLesson.points) {
+        for (const ex of p.examples) {
+          lessonSentences.push(ex);
+        }
+      }
+    }
+    for (const w of words) {
+      if (w.example && w.example.trim()) {
+        lessonSentences.push({ jp: w.example.trim(), vi: "" });
+      }
+    }
+
+    for (const s of lessonSentences) {
+      for (const w of words) {
+        const cw = cleanWord(w.word);
+        if (cw.length >= 2 && s.jp.includes(cw)) {
+          const sentenceWithBlank = s.jp.replace(cw, "（　　）");
+          const otherSameTypeWords = words
+            .filter((other) => other.id !== w.id && cleanWord(other.word) !== cw)
+            .map((other) => cleanWord(other.word));
+
+          if (otherSameTypeWords.length >= 3) {
+            const wrongs = [...new Set(otherSameTypeWords)].sort(() => Math.random() - 0.5).slice(0, 3);
+            seeds.push({
+              section: "Từ vựng",
+              promptJp: "文の意味に最も合う言葉を一つ選びなさい。",
+              prompt: "Chọn từ thích hợp nhất điền vào chỗ trống（　　）:",
+              sentence: sentenceWithBlank,
+              answer: cw,
+              wrongs,
+              bai,
+              explanation: {
+                meaning: s.vi || `Điền 「${cw}」vào câu hoàn chỉnh: ${s.jp}`,
+                grammar: `Từ vựng ngữ cảnh Bài ${bai}`,
+                lesson: `${courseName} - Bài ${bai} (Từ vựng)`,
+                tips: `Từ khóa: ${cw} (${w.meaning})`,
+                reason: `Trong ngữ cảnh câu này, từ phù hợp nhất là 「${cw}」(${w.meaning}). Các lựa chọn còn lại không hợp ngữ cảnh.`,
+              },
+            });
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return seeds;
+}
+
 /**
  * Sinh đề thi JPD123 chuẩn Form Đại học FPT bằng thuật toán tạo đề đa dạng (High-Diversity AI Generator Engine).
  * Luôn đảm bảo:
@@ -4735,8 +4915,11 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
     });
   }
 
+  const dynamicVocabSeeds = generateDynamicVocabSeeds(baiFilter);
+  const vocabPool = [...dynamicVocabSeeds, ...VOCAB_SEEDS];
+
   const kanjiQuestions = pickSection(KANJI_SEEDS, 10, "fpt-kanji");
-  const vocabQuestions = pickSection(VOCAB_SEEDS, 10, "fpt-vocab");
+  const vocabQuestions = pickSection(vocabPool, 10, "fpt-vocab");
   const grammarQuestions = pickSection(GRAMMAR_SEEDS, 10, "fpt-gram");
 
   // Xáo trộn ngẫu nhiên thứ tự 30 câu hỏi (trộn đều Kanji, Từ vựng, Ngữ pháp)
