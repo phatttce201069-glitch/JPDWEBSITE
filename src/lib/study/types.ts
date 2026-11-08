@@ -37,6 +37,13 @@ export type LastPlace =
   | { to: "/grammar"; label: string; search: GrammarSearch }
   | { to: "/exam"; label: string; search: ExamSearch };
 
+/** Cấu trúc từ ghép của một ký tự Kanji */
+export type GlyphCompound = {
+  word: string;
+  reading: string;
+  meaning: string;
+};
+
 /** Cấu trúc một ký tự Kana hoặc Kanji */
 export type Glyph = {
   char: string;
@@ -46,6 +53,12 @@ export type Glyph = {
   romaji?: string;
   onyomi?: string;
   kunyomi?: string;
+  hanviet?: string;
+  meaning?: string;
+  mnemonic?: string;
+  radicals?: string;
+  strokes?: number;
+  compounds?: GlyphCompound[];
 };
 
 import type { VerbConjugationTableData } from "../../data/verb-conjugation.ts";
