@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Volume2 } from "lucide-react";
+import { Volume2, Lightbulb, BookOpen, Layers, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressLine } from "@/components/progress-line";
 import { QuizPanel, type QuizItem } from "@/components/quiz-panel";
@@ -35,9 +35,23 @@ function KanaPage() {
   const setKnown = useStudy((state) => state.setKanaKnown);
   const setLast = useStudy((state) => state.setLast);
 
+  const [kanjiCourse, setKanjiCourse] = useState<"all" | "jpd113" | "jpd123">("all");
+
   const glyphs = glyphsOf(search.script);
-  const rows = search.script === "kanji" ? [...new Set(glyphs.map((item) => item.row))] : [...KANA_ROWS];
-  const pool = search.row ? glyphs.filter((item) => item.row === search.row) : glyphs;
+
+  const courseFilteredGlyphs = useMemo(() => {
+    if (search.script !== "kanji" || kanjiCourse === "all") return glyphs;
+    if (kanjiCourse === "jpd113") {
+      return glyphs.filter((g) => g.row === "Bài 1" || g.row === "Bài 2" || g.row === "Bài 3");
+    }
+    return glyphs.filter((g) => g.row === "Bài 4" || g.row === "Bài 5" || g.row === "Bài 6" || g.row === "Bài 7");
+  }, [glyphs, search.script, kanjiCourse]);
+
+  const rows = search.script === "kanji"
+    ? [...new Set(courseFilteredGlyphs.map((item) => item.row))]
+    : [...KANA_ROWS];
+
+  const pool = search.row ? courseFilteredGlyphs.filter((item) => item.row === search.row) : courseFilteredGlyphs;
   const index = Math.min(search.at, Math.max(pool.length - 1, 0));
   const current = pool[index];
 
@@ -87,9 +101,54 @@ function KanaPage() {
 
       {search.mode === "chart" ? (
         <>
-          <div className="mt-5 flex flex-wrap gap-2">
+          {search.script === "kanji" ? (
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-stone uppercase tracking-wider mr-1">Giáo trình:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setKanjiCourse("all");
+                  setSearch({ row: "", at: 0 });
+                }}
+                className={cn(
+                  "min-h-9 px-3 rounded-full text-xs font-medium transition cursor-pointer",
+                  kanjiCourse === "all" ? "bg-ink text-paper" : "bg-sheet border border-line text-stone hover:text-ink"
+                )}
+              >
+                Tất cả ({glyphs.length} chữ)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setKanjiCourse("jpd113");
+                  setSearch({ row: "", at: 0 });
+                }}
+                className={cn(
+                  "min-h-9 px-3 rounded-full text-xs font-medium transition cursor-pointer",
+                  kanjiCourse === "jpd113" ? "bg-amber-600 text-white" : "bg-sheet border border-line text-stone hover:text-ink"
+                )}
+              >
+                JPD113 (Bài 1–3)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setKanjiCourse("jpd123");
+                  setSearch({ row: "", at: 0 });
+                }}
+                className={cn(
+                  "min-h-9 px-3 rounded-full text-xs font-medium transition cursor-pointer",
+                  kanjiCourse === "jpd123" ? "bg-seal text-paper" : "bg-sheet border border-line text-stone hover:text-ink"
+                )}
+              >
+                JPD123 (Bài 4–7)
+              </button>
+            </div>
+          ) : null}
+
+          <div className="mt-4 flex flex-wrap gap-2">
             <RowChip active={search.row === ""} onClick={() => setSearch({ row: "", at: 0 })}>
-              Tất cả
+              {search.script === "kanji" ? "Tất cả bài trong mục" : "Tất cả"}
             </RowChip>
             {rows.map((row) => (
               <RowChip key={row} active={search.row === row} onClick={() => setSearch({ row, at: 0 })}>
@@ -235,22 +294,88 @@ function GlyphButton({ glyph, known, onOpen }: { glyph: Glyph; known: boolean; o
 
 function KanjiList({ glyphs, known, onOpen }: { glyphs: Glyph[]; known: string[]; onOpen: (glyph: Glyph) => void }) {
   return (
-    <ul className="mt-6 divide-y divide-line border-y border-line">
-      {glyphs.map((glyph) => (
-        <li key={`${glyph.row}-${glyph.char}`}>
-          <button type="button" onClick={() => onOpen(glyph)} className="flex w-full items-center gap-4 py-3 text-left">
-            <span className="jp w-12 text-center text-3xl">{glyph.char}</span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm text-stone">
-                {glyph.onyomi} · {glyph.kunyomi}
-              </span>
-              <span className="block text-sm">{glyph.example}</span>
-            </span>
-            {known.includes(kanaKey(glyph.type, glyph.char)) ? <span className="size-1.5 rounded-full bg-seal" /> : null}
-          </button>
-        </li>
-      ))}
-    </ul>
+    <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {glyphs.map((glyph) => {
+        const isLearned = known.includes(kanaKey(glyph.type, glyph.char));
+        return (
+          <div
+            key={`${glyph.row}-${glyph.char}`}
+            className="group relative flex flex-col justify-between rounded-xl border border-line bg-sheet p-4 shadow-xs transition hover:border-ink hover:shadow-md"
+          >
+            <div>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="jp text-4xl font-semibold text-ink group-hover:text-seal transition-colors">
+                    {glyph.char}
+                  </span>
+                  <div>
+                    <span className="inline-block rounded bg-seal/10 px-2 py-0.5 text-xs font-bold tracking-wide text-seal uppercase">
+                      {glyph.hanviet || glyph.row}
+                    </span>
+                    <p className="mt-1 text-sm font-medium text-ink line-clamp-1">
+                      {glyph.meaning || glyph.example}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {glyph.strokes ? (
+                    <span className="rounded bg-mist px-1.5 py-0.5 font-mono text-[11px] text-stone">
+                      {glyph.strokes} nét
+                    </span>
+                  ) : null}
+                  {isLearned ? (
+                    <span className="flex size-5 items-center justify-center rounded-full bg-seal text-paper text-xs" title="Đã thuộc">
+                      ✓
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+
+              {glyph.radicals ? (
+                <p className="mt-2 text-xs text-stone line-clamp-1">
+                  <span className="font-semibold text-ink/75">Bộ:</span> {glyph.radicals}
+                </p>
+              ) : null}
+
+              {glyph.mnemonic ? (
+                <div className="mt-2.5 rounded-lg border border-amber-500/20 bg-amber-500/10 p-2.5 text-xs text-amber-950 dark:text-amber-200">
+                  <p className="line-clamp-2">
+                    <span className="font-bold">💡 Mẹo nhớ:</span> {glyph.mnemonic}
+                  </p>
+                </div>
+              ) : null}
+
+              {glyph.compounds && glyph.compounds.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {glyph.compounds.slice(0, 2).map((c, i) => (
+                    <span key={i} className="inline-flex items-center gap-1 rounded bg-mist px-2 py-0.5 text-[11px]">
+                      <span className="jp font-medium">{c.word}</span>
+                      <span className="text-seal font-mono">({c.reading})</span>
+                    </span>
+                  ))}
+                  {glyph.compounds.length > 2 ? (
+                    <span className="self-center text-[11px] text-stone">+{glyph.compounds.length - 2} từ nữa</span>
+                  ) : null}
+                </div>
+              ) : (
+                <p className="mt-2 text-xs text-stone">
+                  On: {glyph.onyomi || "-"} · Kun: {glyph.kunyomi || "-"}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onOpen(glyph)}
+              className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg border border-line bg-paper py-2 text-xs font-medium text-ink transition hover:border-ink hover:bg-mist cursor-pointer"
+            >
+              <span>Học chi tiết chữ này</span>
+              <span>→</span>
+            </button>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -273,14 +398,29 @@ function StudyGlyph({
   onNext: () => void;
   onKnown: (known: boolean) => void;
 }) {
+  if (glyph.type === "kanji") {
+    return (
+      <StudyKanjiGlyph
+        glyph={glyph}
+        index={index}
+        total={total}
+        known={known}
+        onBack={onBack}
+        onPrev={onPrev}
+        onNext={onNext}
+        onKnown={onKnown}
+      />
+    );
+  }
+
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [glyph.char, glyph.type]);
 
   return (
     <section className="mt-6">
       <div className="mb-3 flex items-center justify-between text-sm text-stone">
-        <button type="button" className="min-h-11" onClick={onBack}>
-          Bảng chữ
+        <button type="button" className="min-h-11 cursor-pointer" onClick={onBack}>
+          ← Bảng chữ cái
         </button>
         <span className="tabular-nums">
           {index + 1} / {total}
@@ -291,28 +431,19 @@ function StudyGlyph({
         <p className="jp text-8xl leading-none font-medium">{glyph.char}</p>
         <button
           type="button"
-          className="mx-auto mt-6 flex min-h-11 items-center gap-2 text-sm text-stone hover:text-ink"
+          className="mx-auto mt-6 flex min-h-11 items-center gap-2 text-sm text-stone hover:text-ink cursor-pointer"
           onClick={() => speakJapanese(glyph.char)}
         >
           <Volume2 className="size-4" />
-          Nghe
+          Nghe phát âm
         </button>
         <div className="mt-6 border-t border-line pt-5">
-          <button type="button" className="min-h-11 w-full" onClick={() => setOpen((value) => !value)}>
+          <button type="button" className="min-h-11 w-full cursor-pointer" onClick={() => setOpen((value) => !value)}>
             {open ? (
-              glyph.type === "kanji" ? (
-                <>
-                  <p className="text-lg">
-                    Âm On {glyph.onyomi} · Âm Kun {glyph.kunyomi}
-                  </p>
-                  <p className="mt-1 text-stone">{glyph.example}</p>
-                </>
-              ) : (
-                <>
-                  <p className="display text-3xl tracking-wide">{glyph.romaji}</p>
-                  <p className="mt-1 text-stone">{glyph.example}</p>
-                </>
-              )
+              <>
+                <p className="display text-3xl tracking-wide">{glyph.romaji}</p>
+                <p className="mt-1 text-stone">{glyph.example}</p>
+              </>
             ) : (
               <p className="text-stone">Chạm để xem cách đọc</p>
             )}
@@ -328,7 +459,162 @@ function StudyGlyph({
         </Button>
       </div>
       <Button className="mt-2 w-full" tone={known ? "line" : "seal"} onClick={() => onKnown(!known)}>
-        {known ? "Bỏ đánh dấu đã nhớ" : "Đã nhớ"}
+        {known ? "Bỏ đánh dấu đã nhớ" : "Đã nhớ chữ này"}
+      </Button>
+    </section>
+  );
+}
+
+function StudyKanjiGlyph({
+  glyph,
+  index,
+  total,
+  known,
+  onBack,
+  onPrev,
+  onNext,
+  onKnown,
+}: {
+  glyph: Glyph;
+  index: number;
+  total: number;
+  known: boolean;
+  onBack: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onKnown: (known: boolean) => void;
+}) {
+  return (
+    <section className="mt-6 max-w-2xl mx-auto">
+      <div className="mb-3 flex items-center justify-between text-sm text-stone">
+        <button type="button" className="min-h-11 font-medium hover:text-ink cursor-pointer" onClick={onBack}>
+          ← Danh sách Kanji ({glyph.row})
+        </button>
+        <span className="tabular-nums font-mono">
+          {index + 1} / {total}
+        </span>
+      </div>
+      <ProgressLine value={index + 1} max={total} />
+
+      {/* Main Kanji Hero Card */}
+      <div className="mt-5 rounded-2xl border border-line bg-sheet p-6 text-center shadow-xs">
+        <div className="flex justify-between items-start">
+          <span className="rounded-md bg-mist px-2.5 py-1 text-xs font-semibold text-stone font-mono">
+            {glyph.row} · {glyph.strokes || 0} nét
+          </span>
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-full border border-line bg-paper px-3 py-1 text-xs text-stone hover:text-ink cursor-pointer transition"
+            onClick={() => speakJapanese(glyph.char)}
+          >
+            <Volume2 className="size-3.5" />
+            <span>Phát âm</span>
+          </button>
+        </div>
+
+        <p className="jp text-8xl md:text-9xl my-4 font-semibold text-ink tracking-tight">
+          {glyph.char}
+        </p>
+
+        <div className="mt-2 inline-flex flex-col items-center">
+          <span className="rounded-full bg-seal/10 px-4 py-1 text-base font-bold text-seal tracking-wider uppercase">
+            Âm Hán Việt: {glyph.hanviet || "---"}
+          </span>
+          <p className="mt-2 text-lg font-medium text-ink">
+            {glyph.meaning || glyph.example}
+          </p>
+        </div>
+
+        {glyph.radicals ? (
+          <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-mist/80 px-3.5 py-1.5 text-xs text-stone">
+            <span className="font-semibold text-ink">🧩 Cấu tạo bộ thủ:</span>
+            <span>{glyph.radicals}</span>
+          </div>
+        ) : null}
+      </div>
+
+      {/* Mnemonic Memory Hook */}
+      {glyph.mnemonic ? (
+        <div className="mt-4 rounded-xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent p-5">
+          <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-semibold text-sm">
+            <Lightbulb className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+            <span>Mẹo liên tưởng hình ảnh & Ghi nhớ siêu tốc</span>
+          </div>
+          <p className="mt-2 text-sm leading-relaxed text-amber-950 dark:text-amber-100 font-medium">
+            {glyph.mnemonic}
+          </p>
+        </div>
+      ) : null}
+
+      {/* Onyomi & Kunyomi */}
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="rounded-xl border border-line bg-sheet p-4">
+          <span className="text-xs font-bold text-stone uppercase tracking-wide">
+            Âm On (Onyomi - Ghép từ)
+          </span>
+          <p className="mt-1.5 text-base font-semibold jp text-ink">
+            {glyph.onyomi || "—"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-line bg-sheet p-4">
+          <span className="text-xs font-bold text-stone uppercase tracking-wide">
+            Âm Kun (Kunyomi - Đứng một mình)
+          </span>
+          <p className="mt-1.5 text-base font-semibold jp text-ink">
+            {glyph.kunyomi || "—"}
+          </p>
+        </div>
+      </div>
+
+      {/* Compounds List */}
+      {glyph.compounds && glyph.compounds.length > 0 ? (
+        <div className="mt-4 rounded-xl border border-line bg-sheet p-5">
+          <div className="flex items-center gap-2 text-ink font-semibold text-sm mb-3">
+            <BookOpen className="size-4 text-seal" />
+            <span>Từ vựng thực tế trong giáo trình FPT:</span>
+          </div>
+          <div className="divide-y divide-line/60">
+            {glyph.compounds.map((compound, idx) => (
+              <div key={idx} className="flex items-center justify-between py-2.5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
+                  <div className="flex items-baseline gap-2">
+                    <span className="jp text-lg font-bold text-ink">{compound.word}</span>
+                    <span className="text-xs text-seal font-mono font-medium">[{compound.reading}]</span>
+                  </div>
+                  <span className="text-xs text-stone sm:border-l sm:border-line sm:pl-3">
+                    {compound.meaning}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => speakJapanese(compound.word)}
+                  className="rounded-full p-1.5 text-stone hover:bg-mist hover:text-ink cursor-pointer transition"
+                  title={`Nghe phát âm ${compound.word}`}
+                >
+                  <Volume2 className="size-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Navigation & Known Toggle */}
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <Button onClick={onPrev} disabled={index === 0}>
+          ← Chữ trước
+        </Button>
+        <Button onClick={onNext} disabled={index >= total - 1}>
+          Chữ sau →
+        </Button>
+      </div>
+
+      <Button
+        className="mt-3 w-full"
+        tone={known ? "line" : "seal"}
+        onClick={() => onKnown(!known)}
+      >
+        {known ? "✓ Bỏ đánh dấu đã thuộc" : "Đánh dấu: Đã thuộc chữ này"}
       </Button>
     </section>
   );
