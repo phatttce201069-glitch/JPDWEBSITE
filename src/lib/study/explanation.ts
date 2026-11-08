@@ -1,12 +1,18 @@
 import type { ExamQuestion, ExamSection } from "./exam.ts";
 import { vocabulary, alphabet } from "./content.ts";
 
+export type WrongOptionAnalysis = {
+  option: string;
+  reason: string;
+};
+
 export type QuestionExplanation = {
   meaning: string;    // Dịch nghĩa câu & từ hoàn chỉnh
   grammar?: string;   // Cấu trúc ngữ pháp áp dụng
   lesson?: string;    // Thuộc bài nào (Ví dụ: JPD123 - Bài 5)
   tips?: string;      // Mẹo giải nhanh / Dấu hiệu nhận biết
   reason: string;     // Lý do chọn đáp án đúng & phân tích đáp án gây nhiễu
+  wrongOptions?: WrongOptionAnalysis[]; // Phân tích chi tiết lý do từng phương án còn lại bị sai
 };
 
 /**
@@ -985,6 +991,19 @@ const EXACT_EXPLANATIONS: Record<string, QuestionExplanation> = {
  * Tự động tạo hoặc tra cứu lời giải chi tiết thông minh và chuẩn xác 100% cho từng câu hỏi
  */
 export function getQuestionExplanation(question: ExamQuestion): QuestionExplanation {
+  const baseExp = resolveBaseExplanation(question);
+  const wrongOptions =
+    baseExp.wrongOptions && baseExp.wrongOptions.length > 0
+      ? baseExp.wrongOptions
+      : analyzeDistractors(question);
+
+  return {
+    ...baseExp,
+    wrongOptions,
+  };
+}
+
+function resolveBaseExplanation(question: ExamQuestion): QuestionExplanation {
   // 1. Nếu câu hỏi đã có sẵn explanation chuẩn (từ AI hoặc nguồn sinh đề), ưu tiên dùng
   if (
     question.explanation &&
@@ -1331,4 +1350,129 @@ function determineGrammarPoint(q: ExamQuestion): string {
   if (fullText.includes("かった") || fullText.includes("くない")) return "Chia tính từ đuôi い: Quá khứ かったです, Phủ định くないです";
   if (fullText.includes("でした") || fullText.includes("じゃありません")) return "Chia tính từ đuôi な: Quá khứ でした, Phủ định じゃありません";
   return "Cấu trúc câu ngữ pháp tiếng Nhật sơ cấp";
+}
+
+/**
+ * Phân tích lý do tại sao từng đáp án gây nhiễu (distractor) bị loại bỏ
+ */
+export function analyzeDistractors(question: ExamQuestion): WrongOptionAnalysis[] {
+  if (!question.options || question.options.length <= 1) return [];
+
+  const answer = (question.answer || "").trim();
+  const distractors = question.options.filter((opt) => opt && opt.trim() !== answer);
+
+  return distractors.map((opt) => {
+    const trimmed = opt.trim();
+    return {
+      option: trimmed,
+      reason: getSingleDistractorReason(trimmed, question),
+    };
+  });
+}
+
+function getSingleDistractorReason(option: string, question: ExamQuestion): string {
+  const ans = (question.answer || "").trim();
+  const ansMeaning = getAnswerMeaning(ans, question);
+  const optMeaning =
+    getAnswerMeaning(option, question) ||
+    vocabulary.find((v) => v.word === option || v.reading === option)?.meaning;
+
+  // 1. Phân tích cho câu hỏi Kanji
+  if (question.section === "Kanji") {
+    // Trường hợp chọn cách đọc Hiragana
+    const isReadingPrompt =
+      question.prompt.includes("cách đọc") ||
+      question.prompt.includes("読み方") ||
+      /[ぁ-ん]/.test(option);
+
+    if (isReadingPrompt) {
+      if (optMeaning) {
+        return `Sai ngữ nghĩa:「${option}」là cách đọc của từ mang nghĩa "${optMeaning}", không phải cách đọc của chữ Hán trong câu này.`;
+      }
+      // Sai trường âm (độ dài chênh lệch có nguyên âm trường âm)
+      if (Math.abs(option.length - ans.length) === 1 && /[ういおえ]/.test(option + ans)) {
+        return `Sai quy tắc trường âm: Thừa hoặc thiếu âm kéo dài (trường âm) so với âm chuẩn「${ans}」.`;
+      }
+      // Sai âm đục/âm ngắt
+      if (/[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっ]/.test(option) !== /[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっ]/.test(ans)) {
+        return `Sai biến âm: Sai về âm đục (dakuten) hoặc âm ngắt so với cách đọc chính xác「${ans}」.`;
+      }
+      return `Phát âm không đúng: Không phải là cách đọc On hay Kun hợp lệ của chữ Hán trong ngữ cảnh từ này.`;
+    }
+
+    // Trường hợp chọn chữ Hán từ Hiragana
+    if (optMeaning) {
+      return `Sai chữ Hán: Chữ「${option}」mang nghĩa là "${optMeaning}", không tương ứng với nghĩa của từ cần tìm.`;
+    }
+    return `Chữ Hán「${option}」có cấu tạo bộ thủ và ý nghĩa khác, không khớp với từ trong đề bài.`;
+  }
+
+  // 2. Phân tích cho câu hỏi Ngữ pháp
+  if (question.section === "Ngữ pháp") {
+    // Phân tích trợ từ đơn
+    if (option === "で") {
+      return "Sai trợ từ:「で」dùng chỉ nơi chốn diễn ra hành động, phương tiện hoặc nơi tổ chức sự kiện; không dùng cho vị trí hoặc động từ này.";
+    }
+    if (option === "に") {
+      return "Sai trợ từ:「に」chỉ thời điểm xác định, đích đến (行きます) hoặc vị trí tồn tại; không phù hợp với chức năng ngữ pháp của câu.";
+    }
+    if (option === "を") {
+      return "Sai trợ từ:「を」dùng chỉ đối tượng chịu tác động của ngoại động từ; không đi với động từ tự thân hoặc tính từ mong muốn này.";
+    }
+    if (option === "へ") {
+      return "Sai trợ từ:「へ」chỉ phương hướng di chuyển; không dùng chỉ thời gian, nơi chốn hành động hay đối tượng.";
+    }
+    if (option === "が") {
+      return "Sai trợ từ:「が」chỉ chủ ngữ ngữ pháp hoặc bổ ngữ cho tính từ/sở thích; câu này đòi hỏi trợ từ khác theo mẫu câu.";
+    }
+    if (option === "と") {
+      return "Sai trợ từ:「と」dùng để liên kết 'và' hoặc 'cùng với ai đó'; không tạo thành mẫu ngữ pháp hợp lệ ở đây.";
+    }
+    if (option === "より") {
+      return "Sai trợ từ so sánh:「より」chỉ dùng trong câu so sánh hơn (A hơn B); không đúng cấu trúc ở đây.";
+    }
+    if (option === "ほど") {
+      return "Sai trợ từ so sánh:「ほど」chỉ dùng trong câu so sánh kém và bắt buộc vị ngữ phải ở dạng phủ định.";
+    }
+    if (option === "から") {
+      return "Sai trợ từ:「から」chỉ điểm xuất phát (từ...) hoặc nêu nguyên nhân; không khớp với mẫu câu này.";
+    }
+    if (option === "まで") {
+      return "Sai trợ từ:「まで」chỉ giới hạn thời gian/không gian kết thúc (đến...).";
+    }
+
+    // Phân tích dạng chia động từ / tính từ
+    if (option.includes("ますたい")) {
+      return "Sai quy tắc kết hợp: Muốn diễn tả mong muốn phải bỏ ます rồi mới thêm たい (V[bỏ ます] + たいです), không ghép nguyên cả 'ますたい'.";
+    }
+    if (option.includes("るたい")) {
+      return "Sai quy tắc kết hợp: Thể từ điển không ghép trực tiếp với たい.";
+    }
+    if (option.includes("いでした")) {
+      return "Sai quy tắc chia tính từ: Tính từ đuôi い ở quá khứ phải đổi thành 〜かったです, không bao giờ dùng 〜いでした.";
+    }
+    if (option.includes("くないでした")) {
+      return "Sai quy tắc chia: Phủ định quá khứ của tính từ đuôi い phải là 〜くなかったです.";
+    }
+    if (option.includes("ました") && ans.includes("たい")) {
+      return "Sai thì/ngữ cảnh:「ました」diễn tả hành động đã hoàn thành trong quá khứ, trong khi câu diễn tả mong muốn (たいです).";
+    }
+    if (option.includes("たい") && ans.includes("ほしい")) {
+      return "Sai mẫu câu: Vたい dùng cho mong muốn 'hành động động từ', còn Nがほしい dùng cho mong muốn 'sở hữu danh từ'.";
+    }
+    if (option.includes("ほしい") && ans.includes("たい")) {
+      return "Sai mẫu câu: Nがほしい dùng cho danh từ, còn ở đây có động từ nên phải dùng Vたい.";
+    }
+
+    if (optMeaning) {
+      return `Sai mẫu câu: Cấu trúc「${option}」có nghĩa là "${optMeaning}", không phù hợp với ngữ cảnh ngữ pháp yêu cầu.`;
+    }
+    return `Dạng thức ngữ pháp của「${option}」không đúng quy tắc kết hợp hoặc không đúng ý nghĩa của câu.`;
+  }
+
+  // 3. Phân tích cho câu hỏi Từ vựng
+  if (optMeaning) {
+    return `Sai ngữ cảnh: Từ「${option}」có nghĩa là "${optMeaning}", không hợp lý với tình huống và ý nghĩa của câu văn.`;
+  }
+  return `Từ vựng「${option}」không phù hợp với ý nghĩa và ngữ cảnh của câu.`;
 }
