@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Volume2, Lightbulb, BookOpen, Layers, CheckCircle2 } from "lucide-react";
+import { Volume2, Lightbulb, BookOpen, Layers, CheckCircle2, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressLine } from "@/components/progress-line";
 import { QuizPanel, type QuizItem } from "@/components/quiz-panel";
@@ -15,6 +15,7 @@ import {
 } from "@/lib/study/content";
 import { kanaKey, useStudy } from "@/lib/study/store";
 import { speakJapanese } from "@/lib/study/speech";
+import { explainKanjiWithAi, type KanjiAiExplanation } from "@/lib/study/ai-service";
 import type { Glyph, KanaSearch, Script } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
 
@@ -484,6 +485,31 @@ function StudyKanjiGlyph({
   onNext: () => void;
   onKnown: (known: boolean) => void;
 }) {
+  const [aiData, setAiData] = useState<KanjiAiExplanation | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [showAi, setShowAi] = useState(false);
+
+  useEffect(() => {
+    setAiData(null);
+    setShowAi(false);
+    setAiLoading(false);
+  }, [glyph.char]);
+
+  async function handleAiExplain() {
+    if (aiData) {
+      setShowAi((prev) => !prev);
+      return;
+    }
+    setShowAi(true);
+    setAiLoading(true);
+    try {
+      const result = await explainKanjiWithAi(glyph);
+      setAiData(result);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
   return (
     <section className="mt-6 max-w-2xl mx-auto">
       <div className="mb-3 flex items-center justify-between text-sm text-stone">
@@ -545,6 +571,98 @@ function StudyKanjiGlyph({
           </p>
         </div>
       ) : null}
+
+      {/* AI Assistant Button */}
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={handleAiExplain}
+          disabled={aiLoading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-seal/30 bg-seal/5 py-3 text-sm font-semibold text-seal transition hover:bg-seal/10 cursor-pointer"
+        >
+          {aiLoading ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              <span>AI Giảng viên đang phân tích chữ {glyph.char}...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="size-4 text-seal" />
+              <span>{showAi && aiData ? "Ẩn phân tích AI" : `✨ AI Gia sư: Phân tích chuyên sâu chữ ${glyph.char}`}</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* AI Tutor Analysis Card */}
+      {showAi && (
+        <div className="mt-4 rounded-2xl border-2 border-seal/30 bg-sheet p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-line pb-3">
+            <div className="flex items-center gap-2">
+              <span className="flex size-7 items-center justify-center rounded-lg bg-seal text-paper font-bold text-xs">
+                AI
+              </span>
+              <div>
+                <h4 className="text-sm font-bold text-ink">AI Gia sư Kanji FPT</h4>
+                <p className="text-[11px] text-stone">Phân tích tượng hình, bộ thủ và mẹo thi độc quyền</p>
+              </div>
+            </div>
+            {aiData?.isAiGenerated ? (
+              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                Live AI
+              </span>
+            ) : (
+              <span className="rounded-full bg-mist px-2 py-0.5 text-[11px] font-medium text-stone">
+                FPT Sensei Knowledge
+              </span>
+            )}
+          </div>
+
+          {aiLoading ? (
+            <div className="py-8 text-center">
+              <Loader2 className="mx-auto size-8 animate-spin text-seal" />
+              <p className="mt-3 text-sm text-stone font-medium">Đang kết nối kho dữ liệu Hán tự FPT...</p>
+            </div>
+          ) : aiData ? (
+            <div className="space-y-3.5 text-left text-sm">
+              <div className="rounded-xl bg-mist/60 p-3.5">
+                <span className="text-xs font-bold text-ink uppercase tracking-wide block mb-1">
+                  🏛️ Nguồn gốc tượng hình & Ý nghĩa sâu xa
+                </span>
+                <p className="text-stone leading-relaxed">{aiData.story}</p>
+              </div>
+
+              <div className="rounded-xl bg-mist/60 p-3.5">
+                <span className="text-xs font-bold text-ink uppercase tracking-wide block mb-1">
+                  🧩 Phân tích bộ thủ & Cấu tạo nét
+                </span>
+                <p className="text-stone leading-relaxed">{aiData.radicalBreakdown}</p>
+              </div>
+
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3.5 text-amber-950 dark:text-amber-100">
+                <span className="text-xs font-bold uppercase tracking-wide block mb-1 text-amber-800 dark:text-amber-300">
+                  💡 Bí quyết ghi nhớ siêu tốc
+                </span>
+                <p className="leading-relaxed font-medium">{aiData.mnemonicSecret}</p>
+              </div>
+
+              <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-950 dark:text-rose-100">
+                <span className="text-xs font-bold uppercase tracking-wide block mb-1 text-rose-800 dark:text-rose-300">
+                  ⚠️ Phân biệt chữ dễ nhầm lẫn trong bài thi
+                </span>
+                <p className="leading-relaxed">{aiData.confusingPairs}</p>
+              </div>
+
+              <div className="rounded-xl bg-seal/10 p-3.5 text-ink">
+                <span className="text-xs font-bold uppercase tracking-wide block mb-1 text-seal">
+                  🎯 Lời khuyên thực chiến cho đề thi FPT
+                </span>
+                <p className="leading-relaxed">{aiData.usageAdvice}</p>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {/* Onyomi & Kunyomi */}
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">

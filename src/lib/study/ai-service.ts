@@ -1,6 +1,7 @@
 import type { ExamQuestion } from "./exam.ts";
 import { buildFptJpd123Exam, shuffle } from "./fpt-jpd123-engine.ts";
 import { grammar, vocabulary } from "./content.ts";
+import type { Glyph } from "./types.ts";
 
 export type AiProvider = "built-in" | "gemini" | "xai" | "openai" | "groq";
 
@@ -716,4 +717,180 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
       error: `Không thể kết nối AI (${message}). Hệ thống đã tự động kích hoạt bộ đề thi chuẩn ${courseCode} FPT thay thế.`,
     };
   }
+}
+
+export type KanjiAiExplanation = {
+  character: string;
+  hanviet: string;
+  story: string;
+  radicalBreakdown: string;
+  mnemonicSecret: string;
+  confusingPairs: string;
+  usageAdvice: string;
+  isAiGenerated: boolean;
+};
+
+const COMMON_CONFUSING_KANJI: Record<string, string> = {
+  "日": "Cần phân biệt với 白 (Bạch - trắng, có thêm nét phẩy trên đầu), 目 (Mục - mắt, có 2 vạch ngang ở giữa) và 田 (Điền - ruộng vuông chia tư).",
+  "月": "Cần phân biệt với 日 (Nhật - ngày) và 夕 (Tịch - chiều tà, nét chéo thay vì đứng thẳng).",
+  "人": "Cần phân biệt với 入 (Nhập - đi vào, nét phải đè nét trái) và 八 (Bát - số 8, hai nét tách rời nhau).",
+  "大": "Cần phân biệt với 犬 (Khuyển - chó, có thêm dấu chấm trên vai phải) và 太 (Thái - béo mập, có dấu chấm ở giữa háng).",
+  "待": "Cần phân biệt với 持 (Trì - mang/cầm): 待 dùng bộ Xích 彳 (bước chân đi chậm đợi chờ), còn 持 dùng bộ Thủ 扌 (bàn tay cầm nắm).",
+  "持": "Cần phân biệt với 待 (Đãi - chờ đợi): 持 có bộ Thủ 扌 (tay cầm đồ vật), còn 待 có bộ Xích 彳.",
+  "読": "Cần phân biệt với 話 (Thoại - nói): Cả hai cùng có bộ Ngôn 言, nhưng 読 có phần bên phải là bộ Mại 売 (đọc sách đã mua), còn 話 có phần bên phải là chữ Thiệt 舌 (cái lưỡi nói chuyện).",
+  "話": "Cần phân biệt với 読 (Độc - đọc): 話 dùng chữ Thiệt 舌 (cái lưỡi phát ra lời nói), 読 dùng chữ Mại 売.",
+  "買": "Cần phân biệt với 売 (Mại - bán): 買 (Mua) có bộ Bối 貝 (vỏ sò/tiền tệ) và lưới gom hàng hóa. 売 (Bán) có bộ Thập 十 ở trên đầu.",
+  "食": "Cần phân biệt với 飲 (Ẩm - uống) và 良 (Lương - tốt): Chữ 食 vẽ cái liễn đậy nắp đựng thức ăn thịnh soạn.",
+  "飲": "Cần phân biệt với 食 (Thực - ăn): 飲 có bộ Khiếm 欠 bên phải mô tả người há to miệng ngửa cổ uống nước.",
+  "行": "Cần phân biệt với 待 (chờ) và 街 (phố): 行 là hình ảnh ngã tư đường thông suốt, người đi lại tấp nập.",
+  "来": "Cần phân biệt với 未 (Chưa) và 末 (Cuối): Chữ 来 (Lai) có hai chấm hai bên thân cây lúa mì biểu thị lúa từ phương xa tới.",
+  "見": "Cần phân biệt với 貝 (Bối - tiền của): 見 là con mắt Mục 目 trên đôi chân Nhân 儿 (mắt nhìn thấy rõ).",
+  "聞": "Cần phân biệt với 問 (Vấn - hỏi): 聞 có chữ Nhĩ 耳 (tai) nằm trong cửa Môn 門 để lắng nghe; còn 問 có chữ Khẩu 口 (miệng) để hỏi han.",
+  "書": "Cần phân biệt với 昼 (Trưa) và 画 (Họa): Chữ 書 (Thư) ở trên là bàn tay cầm cây bút lông Duật 聿 viết lên trang giấy.",
+  "車": "Cần phân biệt với 東 (Đông): 車 (Xa) là hình ảnh chiếc xe ngựa nhìn từ trên cao với trục bánh xe.",
+  "東": "Cần phân biệt với 車 (Xe) và 重 (Nặng): 東 là mặt trời 日 mọc lấp ló đằng sau thân cây Mộc 木 ở hướng Đông.",
+  "国": "Cần phân biệt với 園 (Viên) và 図 (Đồ): Chữ 国 có chữ Ngọc 玉 quý giá được bao bọc kín trong bờ cõi thành lũy Vi 囗.",
+  "新": "Cần phân biệt với 親 (Thân - bố mẹ): 新 (Tân - mới) có chiếc rìu Cân 斤 chặt cây Mộc 木 trên ngọn đồi Lập 立.",
+  "古": "Cần phân biệt với 吉 (Cát): Chữ 古 có chữ Thập 十 (10 đời) truyền qua miệng Khẩu 口 là chuyện xưa cổ.",
+};
+
+/**
+ * Trợ lý AI phân tích chuyên sâu chữ Kanji: nguồn gốc, bộ thủ, mẹo nhớ siêu tốc, phân biệt chữ dễ nhầm
+ */
+export async function explainKanjiWithAi(glyph: Glyph): Promise<KanjiAiExplanation> {
+  const settings = getAiSettings();
+  const char = glyph.char;
+  const hanviet = glyph.hanviet || "Hán tự";
+  const meaning = glyph.meaning || glyph.example || "";
+  const radicals = glyph.radicals || "Bộ thủ nguyên bản";
+  const mnemonic = glyph.mnemonic || "Tập trung quan sát các nét cơ bản để nhớ chữ.";
+
+  const confusing =
+    COMMON_CONFUSING_KANJI[char] ||
+    `Chú ý các nét phẩy và độ dài của các nét ngang trong chữ ${char} để tránh nhầm với các chữ có bộ ${radicals}.`;
+
+  const fallbackStory = `Chữ "${char}" (Âm Hán Việt: ${hanviet}) mang ý nghĩa cốt lõi là "${meaning}". Trong văn hóa Á Đông và chữ tượng hình cổ xưa, chữ này mô phỏng hình ảnh ${mnemonic.toLowerCase().replace(/hình ảnh|chữ vẽ|hình vẽ/g, "").trim()}.`;
+
+  const fallbackAdvice = `Trong bài thi trắc nghiệm FPT (JPD113/JPD123), chữ "${char}" thường xuất hiện ở dạng: (1) Chọn cách đọc Hiragana khi ghép từ (âm On: ${glyph.onyomi || "—"}); hoặc (2) Cách đọc khi đứng một mình (âm Kun: ${glyph.kunyomi || "—"}). Đặc biệt lưu ý các từ ghép tiêu biểu: ${glyph.compounds?.map((c) => `${c.word} (${c.reading})`).join(", ") || glyph.example}.`;
+
+  // Nếu không có API key thì dùng kiến thức chuẩn đã được tổng hợp
+  if (settings.provider === "built-in" || !settings.apiKey.trim()) {
+    return {
+      character: char,
+      hanviet,
+      story: fallbackStory,
+      radicalBreakdown: `Chữ ${char} được cấu tạo từ: ${radicals}. Tổng số nét viết là ${glyph.strokes || "?"} nét.`,
+      mnemonicSecret: mnemonic,
+      confusingPairs: confusing,
+      usageAdvice: fallbackAdvice,
+      isAiGenerated: false,
+    };
+  }
+
+  // Gọi LLM thực tế
+  try {
+    const systemPrompt = `Bạn là Giảng viên Tiếng Nhật cao cấp của Đại học FPT, chuyên gia về Hán tự Kanji và phương pháp ghi nhớ hình tượng (mnemonics).
+Nhiệm vụ: Giải thích chi tiết, tượng hình và sư phạm cho sinh viên về chữ Hán "${char}".
+Yêu cầu bắt buộc: Trả về duy nhất 1 đối tượng JSON (không bọc trong markdown hay text nào khác) với cấu trúc:
+{
+  "story": "Nguồn gốc tượng hình, ý nghĩa sâu xa và sự hình thành của chữ",
+  "radicalBreakdown": "Phân tích chi tiết bộ thủ và các nét cấu thành",
+  "mnemonicSecret": "Mẹo liên tưởng hình ảnh độc đáo, câu chuyện hài hước hoặc hình tượng giúp nhớ vĩnh viễn",
+  "confusingPairs": "Cách phân biệt chữ này với các chữ Kanji khác dễ nhầm lẫn trong bài thi",
+  "usageAdvice": "Lời khuyên thực chiến cho sinh viên khi làm bài thi trắc nghiệm tiếng Nhật FPT"
+}`;
+
+    const userPrompt = `Hãy giải thích chữ Kanji "${char}" (Âm Hán Việt: ${hanviet}, Nghĩa: ${meaning}, Bộ thủ: ${radicals}, Mẹo nhớ: ${mnemonic}).`;
+
+    let rawText = "";
+    if (settings.provider === "gemini") {
+      const model = settings.model || "gemini-1.5-flash";
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${settings.apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+            generationConfig: { responseMimeType: "application/json", temperature: 0.6 },
+          }),
+        },
+      );
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+      }
+    } else if (settings.provider === "xai") {
+      const model = settings.model || "grok-4.5";
+      const res = await fetch("https://api.x.ai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${settings.apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.6,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data?.choices?.[0]?.message?.content ?? "";
+      }
+    } else {
+      const endpoint =
+        settings.provider === "groq"
+          ? "https://api.groq.com/openai/v1/chat/completions"
+          : "https://api.openai.com/v1/chat/completions";
+      const model =
+        settings.model || (settings.provider === "groq" ? "llama-3.3-70b-versatile" : "gpt-4o-mini");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${settings.apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.6,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data?.choices?.[0]?.message?.content ?? "";
+      }
+    }
+
+    if (rawText) {
+      const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+      const parsed = JSON.parse(cleaned);
+      if (parsed && typeof parsed === "object") {
+        return {
+          character: char,
+          hanviet,
+          story: parsed.story || fallbackStory,
+          radicalBreakdown: parsed.radicalBreakdown || `Cấu tạo: ${radicals}`,
+          mnemonicSecret: parsed.mnemonicSecret || mnemonic,
+          confusingPairs: parsed.confusingPairs || confusing,
+          usageAdvice: parsed.usageAdvice || fallbackAdvice,
+          isAiGenerated: true,
+        };
+      }
+    }
+  } catch (e) {
+    console.warn("[AI Kanji Tutor] LLM request failed, using structured fallback:", e);
+  }
+
+  return {
+    character: char,
+    hanviet,
+    story: fallbackStory,
+    radicalBreakdown: `Chữ ${char} được cấu tạo từ: ${radicals}. Số nét: ${glyph.strokes || "?"} nét.`,
+    mnemonicSecret: mnemonic,
+    confusingPairs: confusing,
+    usageAdvice: fallbackAdvice,
+    isAiGenerated: false,
+  };
 }
