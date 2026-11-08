@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildFptJpd123Exam } from "./fpt-jpd123-engine.ts";
-import { buildAiPrompt } from "./ai-service.ts";
+import { buildAiPrompt, explainKanjiWithAi, explainQuestionWithAi } from "./ai-service.ts";
+import { alphabet } from "../../data/alphabet.ts";
+import { getQuestionExplanation, analyzeDistractors } from "./explanation.ts";
+import { analyzeExamPerformance } from "./exam-diagnostic.ts";
 
 test("buildFptJpd123Exam generates a valid FPT JPD123 exam", () => {
   const paper = buildFptJpd123Exam();
@@ -544,6 +547,112 @@ test("buildAiPrompt for JPD113 scopes to Bài 1, 2, 3 and sets course title to J
   assert.ok(systemPrompt.includes("Bài 1, Bài 2, Bài 3"), "Phải liệt kê Bài 1, Bài 2, Bài 3");
   assert.ok(systemPrompt.includes("TUYỆT ĐỐI KHÔNG xuất hiện câu hỏi về tính từ chia quá khứ"), "Phải cấm Bài 4");
 });
+
+test("all 77 Kanji in alphabet dataset have complete enriched fields (hanviet, meaning, radicals, mnemonic, strokes, compounds)", () => {
+  const kanjiList = alphabet.filter((g) => g.type === "kanji");
+  assert.equal(kanjiList.length, 77, "Tổng cộng phải có đúng 77 chữ Kanji từ Bài 1 đến Bài 7");
+
+  for (const k of kanjiList) {
+    assert.ok(k.hanviet && k.hanviet.trim().length > 0, `Kanji ${k.char} thiếu âm Hán Việt`);
+    assert.ok(k.meaning && k.meaning.trim().length > 0, `Kanji ${k.char} thiếu nghĩa tiếng Việt`);
+    assert.ok(k.radicals && k.radicals.trim().length > 0, `Kanji ${k.char} thiếu thông tin bộ thủ cấu tạo`);
+    assert.ok(k.mnemonic && k.mnemonic.trim().length > 0, `Kanji ${k.char} thiếu mẹo nhớ hình tượng`);
+    assert.ok(k.strokes && k.strokes > 0, `Kanji ${k.char} thiếu số nét`);
+    assert.ok(k.compounds && k.compounds.length > 0, `Kanji ${k.char} thiếu danh sách từ ghép`);
+    for (const c of k.compounds) {
+      assert.ok(c.word && c.word.length > 0, `Từ ghép trong chữ ${k.char} thiếu từ Kanji`);
+      assert.ok(c.reading && c.reading.length > 0, `Từ ghép trong chữ ${k.char} thiếu cách đọc Hiragana`);
+      assert.ok(c.meaning && c.meaning.length > 0, `Từ ghép trong chữ ${k.char} thiếu nghĩa tiếng Việt`);
+    }
+  }
+});
+
+test("explainKanjiWithAi returns comprehensive structured analysis", async () => {
+  const kanjiList = alphabet.filter((g) => g.type === "kanji");
+  const sample = kanjiList[0]; // e.g. 私 or 日
+  const exp = await explainKanjiWithAi(sample);
+
+  assert.equal(exp.character, sample.char);
+  assert.equal(exp.hanviet, sample.hanviet);
+  assert.ok(exp.story.length > 10, "Phải có câu chuyện nguồn gốc tượng hình");
+  assert.ok(exp.radicalBreakdown.length > 5, "Phải có phân tích bộ thủ nét");
+  assert.ok(exp.mnemonicSecret.length > 10, "Phải có mẹo ghi nhớ hình ảnh");
+  assert.ok(exp.confusingPairs.length > 5, "Phải có phân biệt chữ dễ nhầm lẫn");
+  assert.ok(exp.usageAdvice.length > 10, "Phải có lời khuyên áp dụng trong bài thi FPT");
+});
+
+test("analyzeDistractors generates insightful distractor explanations for all question formats", () => {
+  const paper = buildFptJpd123Exam();
+  for (const q of paper.slice(0, 10)) {
+    const distractors = analyzeDistractors(q);
+    assert.equal(distractors.length, 3, `Câu ${q.id} phải có 3 đáp án sai`);
+    for (const d of distractors) {
+      assert.ok(d.option.length > 0, `Phương án sai không được rỗng`);
+      assert.notEqual(d.option, q.answer, `Phương án sai không được trùng với đáp án đúng`);
+      assert.ok(d.reason.length > 5, `Phải có phân tích lý do sai cho phương án ${d.option}`);
+    }
+  }
+});
+
+test("getQuestionExplanation automatically attaches wrongOptions breakdown", () => {
+  const paper = buildFptJpd123Exam();
+  const q = paper[0];
+  const explanation = getQuestionExplanation(q);
+
+  assert.ok(explanation.meaning.length > 0, "Có nghĩa hoàn chỉnh");
+  assert.ok(explanation.reason.length > 0, "Có lý do chọn đáp án đúng");
+  assert.ok(explanation.wrongOptions, "Có mảng wrongOptions");
+  assert.equal(explanation.wrongOptions?.length, 3, "Có đúng 3 phương án sai được phân tích");
+});
+
+test("explainQuestionWithAi produces rich teacher explanations", async () => {
+  const paper = buildFptJpd123Exam();
+  const q = paper[0];
+  const aiTutor = await explainQuestionWithAi(q, q.options.find((o) => o !== q.answer));
+
+  assert.ok(aiTutor.deepDive.length > 10, "Có phân tích chuyên sâu");
+  assert.ok(aiTutor.grammarRule.length > 5, "Có điểm ngữ pháp áp dụng");
+  assert.ok(aiTutor.senseiTip.length > 10, "Có mẹo phản xạ trong bài thi");
+  assert.ok(aiTutor.whyOthersWrong.length >= 3, "Có phân tích các đáp án sai");
+});
+
+test("analyzeExamPerformance produces accurate diagnostics and actionable study roadmap", () => {
+  const paper = buildFptJpd123Exam();
+
+  // Case 1: 100% correct (30/30)
+  const perfectAnswers = paper.map((q) => q.answer);
+  const perfectReport = analyzeExamPerformance(paper, perfectAnswers);
+  assert.equal(perfectReport.score10, 10);
+  assert.equal(perfectReport.correct, 30);
+  assert.equal(perfectReport.incorrect, 0);
+  assert.equal(perfectReport.passed, true);
+  assert.equal(perfectReport.aiSenseiAdvice.level, "distinction");
+  assert.equal(perfectReport.improvementRoadmap.length, 0);
+
+  // Case 2: Mixed performance (first 15 correct, last 15 incorrect)
+  const mixedAnswers = paper.map((q, i) => (i < 15 ? q.answer : q.options.find((o) => o !== q.answer) || null));
+  const mixedReport = analyzeExamPerformance(paper, mixedAnswers);
+  assert.equal(mixedReport.correct, 15);
+  assert.equal(mixedReport.incorrect, 15);
+  assert.equal(mixedReport.score10, 5);
+  assert.equal(mixedReport.passed, true);
+  assert.ok(mixedReport.mistakes.length === 15);
+  assert.ok(mixedReport.improvementRoadmap.length > 0, "Phải có lộ trình ôn tập cải thiện");
+
+  // Every topic in roadmap must have actionable links
+  for (const topic of mixedReport.improvementRoadmap) {
+    assert.ok(topic.actionUrl.startsWith("/grammar") || topic.actionUrl.startsWith("/kana") || topic.actionUrl.startsWith("/words"));
+    assert.ok(topic.actionLabel.length > 0);
+    assert.ok(topic.mistakeCount > 0);
+  }
+
+  // Case 3: Retake performance (5 correct, 25 incorrect)
+  const failingAnswers = paper.map((q, i) => (i < 5 ? q.answer : null));
+  const failingReport = analyzeExamPerformance(paper, failingAnswers);
+  assert.equal(failingReport.passed, false);
+  assert.equal(failingReport.aiSenseiAdvice.level, "retake");
+});
+
 
 
 
