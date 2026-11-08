@@ -11,6 +11,9 @@ import {
   Tag,
   Target,
   Zap,
+  XCircle,
+  Loader2,
+  GraduationCap,
 } from "lucide-react";
 import type { ExamQuestion } from "@/lib/study/exam";
 import {
@@ -18,37 +21,86 @@ import {
   getQuestionExplanation,
   type QuestionExplanation,
 } from "@/lib/study/explanation";
+import {
+  explainQuestionWithAi,
+  type QuestionAiExplanation,
+} from "@/lib/study/ai-service";
 import { cn } from "@/lib/cn";
 
 export function QuestionExplanationPanel({
   question,
   defaultOpen = false,
   compact = false,
+  userSelectedOption,
 }: {
   question: ExamQuestion;
   defaultOpen?: boolean;
   compact?: boolean;
+  userSelectedOption?: string;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [aiData, setAiData] = useState<QuestionAiExplanation | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [showAi, setShowAi] = useState(false);
+
   const explanation: QuestionExplanation = getQuestionExplanation(question);
   const completedSentence = getCompletedSentence(question);
 
+  async function handleAiExplain() {
+    if (aiData) {
+      setShowAi((prev) => !prev);
+      return;
+    }
+    setShowAi(true);
+    setAiLoading(true);
+    try {
+      const res = await explainQuestionWithAi(question, userSelectedOption);
+      setAiData(res);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
   return (
     <div className="mt-3 w-full">
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={cn(
-          "inline-flex items-center gap-2 rounded-lg text-xs font-medium transition-all cursor-pointer",
-          isOpen
-            ? "bg-amber-500/15 text-amber-900 border border-amber-500/30 px-3.5 py-1.5"
-            : "bg-sheet hover:bg-stone/5 text-stone hover:text-ink border border-line px-3 py-1.5",
-        )}
-      >
-        <Lightbulb className={cn("size-3.5 shrink-0", isOpen ? "fill-amber-500 text-amber-500" : "text-amber-600")} />
-        <span>{isOpen ? "Thu gọn lời giải chi tiết" : "💡 Xem lời giải chi tiết (Nghĩa, ngữ pháp, mẹo giải)"}</span>
-        {isOpen ? <ChevronUp className="size-3.5 opacity-70" /> : <ChevronDown className="size-3.5 opacity-70" />}
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-lg text-xs font-medium transition-all cursor-pointer",
+            isOpen
+              ? "bg-amber-500/15 text-amber-900 border border-amber-500/30 px-3.5 py-1.5"
+              : "bg-sheet hover:bg-stone/5 text-stone hover:text-ink border border-line px-3 py-1.5",
+          )}
+        >
+          <Lightbulb className={cn("size-3.5 shrink-0", isOpen ? "fill-amber-500 text-amber-500" : "text-amber-600")} />
+          <span>{isOpen ? "Thu gọn lời giải chi tiết" : "💡 Xem lời giải & Phân tích đáp án sai"}</span>
+          {isOpen ? <ChevronUp className="size-3.5 opacity-70" /> : <ChevronDown className="size-3.5 opacity-70" />}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (!isOpen) setIsOpen(true);
+            handleAiExplain();
+          }}
+          disabled={aiLoading}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-seal/30 bg-seal/10 px-3 py-1.5 text-xs font-semibold text-seal hover:bg-seal/15 cursor-pointer transition shadow-xs"
+        >
+          {aiLoading ? (
+            <>
+              <Loader2 className="size-3.5 animate-spin" />
+              <span>AI Giảng viên đang phân tích...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="size-3.5 text-seal" />
+              <span>{showAi && aiData ? "Ẩn AI Gia sư" : "✨ AI Gia sư giải thích chuyên sâu"}</span>
+            </>
+          )}
+        </button>
+      </div>
 
       {isOpen && (
         <div className="mt-2.5 rounded-xl border border-amber-500/25 bg-amber-500/5 p-4 text-xs leading-relaxed space-y-3.5 shadow-xs animate-in fade-in-50 duration-200">
@@ -66,7 +118,7 @@ export function QuestionExplanationPanel({
             )}
           </div>
 
-          {/* Hộp hiển thị câu hỏi & câu hoàn chỉnh (User request: có cả câu hỏi để dễ hình dung) */}
+          {/* Hộp hiển thị câu hỏi & câu hoàn chỉnh */}
           <div className="rounded-lg bg-paper p-3 border border-amber-500/20 space-y-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 font-semibold text-amber-950 text-xs">
@@ -159,6 +211,78 @@ export function QuestionExplanationPanel({
               <p className="text-ink pl-4 text-xs leading-relaxed font-normal">
                 {explanation.reason}
               </p>
+            </div>
+          )}
+
+          {/* 5. Phân tích lý do tại sao các phương án khác bị sai */}
+          {explanation.wrongOptions && explanation.wrongOptions.length > 0 && (
+            <div className="space-y-2 pt-1 border-t border-amber-500/15">
+              <div className="flex items-center gap-1.5 font-semibold text-rose-900 text-xs">
+                <XCircle className="size-3.5 text-rose-500" />
+                <span>Phân tích lý do các đáp án còn lại bị sai:</span>
+              </div>
+              <div className="grid gap-2 pl-1">
+                {explanation.wrongOptions.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg bg-paper border border-rose-500/20 p-2.5 text-xs flex items-start gap-2.5 shadow-2xs"
+                  >
+                    <span className="font-bold text-rose-700 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 shrink-0 font-mono text-[11px]">
+                      {item.option}
+                    </span>
+                    <span className="text-stone leading-relaxed">
+                      {item.reason}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 6. AI Tutor Card */}
+          {showAi && (
+            <div className="rounded-xl border-2 border-seal/30 bg-sheet p-4 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between border-b border-line pb-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="flex size-6 items-center justify-center rounded-md bg-seal text-paper text-xs font-bold">
+                    <GraduationCap className="size-3.5" />
+                  </span>
+                  <div>
+                    <h5 className="font-bold text-xs text-ink">AI Gia sư Đại học FPT</h5>
+                    <p className="text-[10px] text-stone">Phân tích chuyên sâu 1-1 cho câu hỏi này</p>
+                  </div>
+                </div>
+                {aiData?.isAiGenerated ? (
+                  <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-800">
+                    Live AI
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-mist px-2 py-0.5 text-[10px] font-medium text-stone">
+                    FPT Sensei Knowledge
+                  </span>
+                )}
+              </div>
+
+              {aiLoading ? (
+                <div className="py-6 text-center">
+                  <Loader2 className="mx-auto size-6 animate-spin text-seal" />
+                  <p className="mt-2 text-xs text-stone">AI Giảng viên đang phân tích bản chất câu hỏi...</p>
+                </div>
+              ) : aiData ? (
+                <div className="space-y-3 text-xs">
+                  <div className="rounded-lg bg-mist/60 p-2.5">
+                    <span className="font-bold text-ink block mb-1">🔍 Phân tích chuyên sâu:</span>
+                    <p className="text-stone leading-relaxed">{aiData.deepDive}</p>
+                  </div>
+
+                  <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-2.5 text-amber-950 dark:text-amber-100">
+                    <span className="font-bold text-amber-800 dark:text-amber-300 block mb-1">
+                      💡 Lời khuyên phản xạ trong phòng thi FPT:
+                    </span>
+                    <p className="leading-relaxed font-medium">{aiData.senseiTip}</p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
         </div>

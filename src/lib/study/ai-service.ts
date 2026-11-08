@@ -894,3 +894,153 @@ Yêu cầu bắt buộc: Trả về duy nhất 1 đối tượng JSON (không b�
     isAiGenerated: false,
   };
 }
+
+export type QuestionAiExplanation = {
+  deepDive: string;
+  whyOthersWrong: { option: string; reason: string }[];
+  grammarRule: string;
+  senseiTip: string;
+  isAiGenerated: boolean;
+};
+
+/**
+ * Trợ lý AI Gia sư giải thích chi tiết câu hỏi trắc nghiệm và phân tích lý do sai của từng đáp án
+ */
+export async function explainQuestionWithAi(
+  question: ExamQuestion,
+  userSelectedOption?: string,
+): Promise<QuestionAiExplanation> {
+  const settings = getAiSettings();
+  const { getQuestionExplanation } = await import("./explanation.ts");
+  const baseExp = getQuestionExplanation(question);
+
+  const fallbackTip =
+    baseExp.tips ||
+    "Chú ý nhận diện trợ từ đi kèm và thể động từ/tính từ trước chỗ trống để loại trừ nhanh phương án sai.";
+
+  const fallbackRule =
+    baseExp.grammar || "Cấu trúc ngữ pháp & Từ vựng tiếng Nhật chuẩn Đại học FPT";
+
+  const fallbackDeepDive = `Câu hỏi thuộc phần [${question.section}]: "${question.sentence}". Đáp án chính xác là "${question.answer}". ${baseExp.meaning} ${baseExp.reason}`;
+
+  const fallbackOthers = baseExp.wrongOptions || [];
+
+  if (settings.provider === "built-in" || !settings.apiKey.trim()) {
+    return {
+      deepDive: fallbackDeepDive,
+      whyOthersWrong: fallbackOthers,
+      grammarRule: fallbackRule,
+      senseiTip: fallbackTip,
+      isAiGenerated: false,
+    };
+  }
+
+  try {
+    const systemPrompt = `Bạn là Giảng viên Tiếng Nhật Đại học FPT chuyên chấm thi và hướng dẫn sinh viên ôn tập môn JPD113 / JPD123.
+Nhiệm vụ: Giải thích cặn kẽ câu hỏi thi trắc nghiệm tiếng Nhật, chỉ rõ bản chất ngữ pháp, và phân tích chi tiết lý do sai của từng phương án gây nhiễu (distractor).
+Định dạng trả về: Duy nhất 1 JSON object hợp lệ:
+{
+  "deepDive": "Phân tích ngữ cảnh câu hỏi, nghĩa câu hoàn chỉnh và lý do tại sao đáp án đúng là chính xác nhất",
+  "whyOthersWrong": [
+    { "option": "Lựa chọn sai", "reason": "Lý do ngữ pháp/từ vựng/âm đọc khiến phương án này sai" }
+  ],
+  "grammarRule": "Quy tắc ngữ pháp hoặc điểm kiến thức cốt lõi áp dụng trong câu",
+  "senseiTip": "Bí quyết phản xạ nhanh khi gặp dạng câu hỏi này trong bài thi trắc nghiệm kết thúc môn"
+}`;
+
+    const userPrompt = `Đề bài: ${question.sentence}
+Phần thi: ${question.section}
+Chỉ dẫn: ${question.prompt}
+Các lựa chọn: ${question.options?.join(" | ")}
+Đáp án đúng: ${question.answer}
+${userSelectedOption ? `Sinh viên đã chọn: ${userSelectedOption}` : ""}`;
+
+    let rawText = "";
+    if (settings.provider === "gemini") {
+      const model = settings.model || "gemini-1.5-flash";
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${settings.apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+            generationConfig: { responseMimeType: "application/json", temperature: 0.6 },
+          }),
+        },
+      );
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+      }
+    } else if (settings.provider === "xai") {
+      const model = settings.model || "grok-4.5";
+      const res = await fetch("https://api.x.ai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${settings.apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.6,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data?.choices?.[0]?.message?.content ?? "";
+      }
+    } else {
+      const endpoint =
+        settings.provider === "groq"
+          ? "https://api.groq.com/openai/v1/chat/completions"
+          : "https://api.openai.com/v1/chat/completions";
+      const model =
+        settings.model || (settings.provider === "groq" ? "llama-3.3-70b-versatile" : "gpt-4o-mini");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${settings.apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.6,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data?.choices?.[0]?.message?.content ?? "";
+      }
+    }
+
+    if (rawText) {
+      const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+      const parsed = JSON.parse(cleaned);
+      if (parsed && typeof parsed === "object") {
+        return {
+          deepDive: parsed.deepDive || fallbackDeepDive,
+          whyOthersWrong:
+            Array.isArray(parsed.whyOthersWrong) && parsed.whyOthersWrong.length > 0
+              ? parsed.whyOthersWrong
+              : fallbackOthers,
+          grammarRule: parsed.grammarRule || fallbackRule,
+          senseiTip: parsed.senseiTip || fallbackTip,
+          isAiGenerated: true,
+        };
+      }
+    }
+  } catch (e) {
+    console.warn("[AI Question Tutor] Failed to fetch LLM response, fallback to engine:", e);
+  }
+
+  return {
+    deepDive: fallbackDeepDive,
+    whyOthersWrong: fallbackOthers,
+    grammarRule: fallbackRule,
+    senseiTip: fallbackTip,
+    isAiGenerated: false,
+  };
+}
