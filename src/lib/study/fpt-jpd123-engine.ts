@@ -1,4 +1,5 @@
 import { getQuestionExplanation } from "./explanation.ts";
+import { formatExamQuestionKanji } from "./kana-reading.ts";
 import { vocabulary } from "../../data/vocabulary.ts";
 import { grammar } from "../../data/grammar.ts";
 import { alphabet } from "../../data/alphabet.ts";
@@ -5083,8 +5084,12 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
   // thay vì câu hỏi dạng kanji luôn đưa lên 10 câu đầu.
   const fullExam = shuffle([...kanjiQuestions, ...vocabQuestions, ...grammarQuestions]);
 
-  return fullExam.map((q, index) => ({
-    ...q,
-    id: String(index + 1),
-  }));
+  // Chuẩn hóa và chuyển đổi toàn bộ chữ Hán chưa học trong 30 câu hỏi sang Hiragana/Katakana
+  return fullExam.map((q, index) => {
+    const formatted = formatExamQuestionKanji(q, baiFilter);
+    return {
+      ...formatted,
+      id: String(index + 1),
+    };
+  });
 }

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { buildFptJpd123Exam, generateDynamicVocabSeeds } from "./fpt-jpd123-engine.ts";
 import { buildAiPrompt, explainKanjiWithAi, explainQuestionWithAi } from "./ai-service.ts";
+import { getAllowedKanjiChars, replaceUntaughtKanjiWithKana, formatExamQuestionKanji } from "./kana-reading.ts";
 import { alphabet } from "../../data/alphabet.ts";
 import { vocabulary } from "../../data/vocabulary.ts";
 import { getQuestionExplanation, analyzeDistractors, getFullSentenceTranslation } from "./explanation.ts";
@@ -62,7 +63,10 @@ test("buildFptJpd123Exam with filtered lessons 4 & 5 strictly isolates lessons",
     assert.ok(!q.sentence.includes("ちょっと"), `Câu ${q.id} chứa 'ちょっと' của Bài 6`);
     assert.ok(!q.sentence.includes("やくそく"), `Câu ${q.id} chứa 'やくそく' của Bài 6`);
     assert.ok(!q.sentence.includes("お祭り"), `Câu ${q.id} chứa 'お祭り' của Bài 6`);
-    assert.ok(!q.sentence.includes("まい"), `Câu ${q.id} chứa 'まい' của Bài 6`);
+    assert.ok(
+      !/[0-9一二三四五六七八九十]\s*(?:枚|まい)/.test(q.sentence) && !q.sentence.includes("何枚"),
+      `Câu ${q.id} chứa lượng từ đếm vật mỏng (枚 - まい) của Bài 6: ${q.sentence}`,
+    );
 
     // Không chứa kiến thức đặc trưng Bài 7 (thể て, dụng cụ ăn uống)
     assert.ok(!q.sentence.includes("てください"), `Câu ${q.id} chứa 'てください' của Bài 7`);
@@ -904,6 +908,101 @@ test("buildAiPrompt and isQuestionAllowedForLessons strictly enforce official we
     isQuestionAllowedForLessons(validKanjiQuestion, [7]),
     true,
     "isQuestionAllowedForLessons phải chấp nhận câu hỏi chứa chữ Hán đúng trong Bài 7 (肉)",
+  );
+});
+
+test("replaceUntaughtKanjiWithKana converts untaught kanji to kana while preserving taught kanji", () => {
+  const allowedBai7 = getAllowedKanjiChars([7]);
+  // Bài 7 taught kanji: 肉, 料, 理, 野, 半, 大, 小 (plus cumulative Bài 1-6 kanji)
+  assert.ok(allowedBai7.has("肉"));
+  assert.ok(allowedBai7.has("料"));
+  assert.ok(allowedBai7.has("理"));
+  assert.ok(allowedBai7.has("大"));
+  assert.ok(allowedBai7.has("小"));
+  assert.ok(allowedBai7.has("半"));
+  assert.ok(allowedBai7.has("食")); // Bài 5
+  assert.ok(!allowedBai7.has("開")); // Not taught
+  assert.ok(!allowedBai7.has("閉")); // Not taught
+  assert.ok(!allowedBai7.has("待")); // Not taught
+  assert.ok(!allowedBai7.has("窓")); // Not taught
+  assert.ok(!allowedBai7.has("室")); // Not taught
+  assert.ok(!allowedBai7.has("病")); // Not taught
+  assert.ok(!allowedBai7.has("院")); // Not taught
+  assert.ok(!allowedBai7.has("薬")); // Not taught
+
+  // Sentence with untaught verbs and nouns
+  const s1 = "部屋の窓を開けてください。";
+  const r1 = replaceUntaughtKanjiWithKana(s1, allowedBai7);
+  assert.equal(r1.replace(/\s+/g, ""), "へやのまどをあけてください。");
+
+  // Sentence with taught kanji (料理, 大きい) and untaught kanji (作り方, 魚, 新鮮)
+  const s2 = "おいしい料理の作り方を教えてください。";
+  const r2 = replaceUntaughtKanjiWithKana(s2, allowedBai7);
+  assert.equal(r2, "おいしい料理のつくりかたをおしえてください。");
+
+  // Medical terms
+  const s3 = "病院へ行って、薬を飲みました。";
+  const r3 = replaceUntaughtKanjiWithKana(s3, allowedBai7);
+  assert.equal(r3, "びょういんへ行って、くすりを飲みました。"); // 行 and 飲 are Bài 5 taught kanji
+
+  // Food and adjectives
+  const s4 = "新鮮な野菜と牛肉を買いました。";
+  const r4 = replaceUntaughtKanjiWithKana(s4, allowedBai7);
+  assert.equal(r4, "しんせんなやさいとぎゅうにくを買いました。"); // 買 is Bài 5 taught kanji
+});
+
+test("formatExamQuestionKanji formats sentence, options, answer, prompt to Hiragana for untaught kanji", () => {
+  const q: any = {
+    id: "1",
+    section: "Ngữ pháp",
+    promptJp: "適切なものを選びなさい。",
+    prompt: "Chọn thể て đúng cho động từ trong ngoặc: 窓を（開けます）",
+    sentence: "部屋が暑いですから、窓を（　　）ください。",
+    options: ["開けて", "閉めて", "待って", "手伝って"],
+    answer: "開けて",
+    explanation: {
+      lesson: "JPD123 - Bài 7",
+      meaning: "Vì phòng nóng nên hãy mở cửa sổ giúp tôi.",
+      grammar: "Vてください",
+      reason: "Đúng"
+    }
+  };
+
+  const formatted = formatExamQuestionKanji(q, [7]);
+  assert.equal(formatted.sentence, "へやがあついですから、まどを（　　）ください。");
+  assert.deepEqual(formatted.options, ["あけて", "しめて", "まって", "てつだって"]);
+  assert.equal(formatted.answer, "あけて");
+  assert.ok(formatted.options.includes(formatted.answer));
+});
+
+test("buildFptJpd123Exam enforces that all question sentences and options have ZERO untaught kanji", () => {
+  const allowedBai7 = getAllowedKanjiChars([7]);
+  const exam = buildFptJpd123Exam(["7"]);
+
+  assert.equal(exam.length, 30);
+  for (const q of exam) {
+    const texts = [q.sentence, q.answer, ...q.options];
+    for (const t of texts) {
+      const chars = t.match(/[一-龯]/g) || [];
+      for (const c of chars) {
+        assert.ok(
+          allowedBai7.has(c),
+          `Câu ${q.id} (${q.section}): Ký tự chữ Hán '${c}' trong chuỗi "${t}" CHƯA ĐƯỢC HỌC trong chương trình Bài 7! Phải được hiển thị bằng Hiragana/Katakana.`,
+        );
+      }
+    }
+  }
+});
+
+test("buildAiPrompt explicitly includes prompt instruction to write untaught kanji in Hiragana/Katakana", () => {
+  const { systemPrompt, userPrompt } = buildAiPrompt(["7"]);
+  assert.ok(
+    systemPrompt.includes("HIRAGANA") && systemPrompt.includes("CHƯA ĐƯỢC HỌC"),
+    "systemPrompt phải có chỉ dẫn bắt buộc viết chữ Hán chưa học bằng Hiragana/Katakana",
+  );
+  assert.ok(
+    userPrompt.includes("HIRAGANA") && userPrompt.includes("CHƯA ĐƯỢC HỌC"),
+    "userPrompt phải có chỉ dẫn bắt buộc viết chữ Hán chưa học bằng Hiragana/Katakana",
   );
 });
 

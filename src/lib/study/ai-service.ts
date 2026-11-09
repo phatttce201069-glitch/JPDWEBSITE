@@ -1,5 +1,6 @@
 import type { ExamQuestion } from "./exam.ts";
 import { buildFptJpd123Exam, shuffle } from "./fpt-jpd123-engine.ts";
+import { formatExamQuestionKanji } from "./kana-reading.ts";
 import { alphabet, grammar, vocabulary } from "./content.ts";
 import type { Glyph } from "./types.ts";
 
@@ -246,6 +247,18 @@ YÊU CẦU NGHIÊM NGẶT VỀ KANJI (100% KHỚP VỚI CHỮ HÁN HỌC TRÊN W
   + Cách đọc Hiragana và ý nghĩa ➔ Chọn chữ Hán / từ ghép chữ Hán đúng.
   + Điền cách đọc chữ Hán vào chỗ trống trong câu ngữ cảnh.
 
+QUY TẮC BẮT BUỘC VỀ HIỂN THỊ KANJI VÀ HIRAGANA/KATAKANA TRONG CÂU HỎI (CRITICAL REQUIREMENT):
+- Bất kỳ từ vựng nào xuất hiện trong câu hỏi (sentence), câu chỉ dẫn (prompt, promptJp), phương án (options), đáp án (answer) mà chữ Hán (Kanji) của từ đó CHƯA ĐƯỢC HỌC trong các bài được chọn thì BẮT BUỘC PHẢI VIẾT BẰNG HIRAGANA HOẶC KATAKANA.
+- TUYỆT ĐỐI KHÔNG để chữ Hán ngoài bài học trong đề thi. Ví dụ:
+  + Viết "へや" thay vì "部屋", viết "まど" thay vì "窓"
+  + Viết "あけて" thay vì "開けて", "しめて" thay vì "閉めて", "まって" thay vì "待って"
+  + Viết "びょういん" thay vì "病院", "くすり" thay vì "薬", "ねつ" thay vì "熱"
+  + Viết "つくりかた" thay vì "作り方", "てつだって" thay vì "手伝って", "おしえて" thay vì "教えて"
+  + Viết "おきて" thay vì "起きて", "ねて" thay vì "寝て", "あそんで" thay vì "遊んで", "およいで" thay vì "泳いで"
+  + Viết "しんせんな" thay vì "新鮮な", "さかな" thay vì "魚", "くだもの" thay vì "果物"
+  + Viết "ともだち" thay vì "友達", "かぞく" thay vì "家族", "にもつ" thay vì "荷物", "きっぷ" thay vì "切符"
+- CHỈ giữ nguyên chữ Hán đối với những chữ Hán đã được học chính thức trong bài học (thuộc danh sách Chữ Hán chính thức của bài ở bên dưới).
+
 YÊU CẦU VỀ ĐỘ ĐA DẠNG CAO (HIGH DIVERSITY & REAL-WORLD CONTEXTS):
 - Đa dạng hóa ngữ cảnh thực tế: trường học, siêu thị, mua sắm, du lịch, ga tàu điện, công sở, cuộc sống gia đình, ẩm thực, hẹn hò, thời tiết, sở thích.
 - Đa dạng hóa các dạng câu hỏi:
@@ -288,9 +301,10 @@ BẮT BUỘC:
 2. ĐẶC BIỆT:
    - 100% câu hỏi từ vựng và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG ĐÃ CHO CỦA BÀI, TUYỆT ĐỐI KHÔNG DÙNG TỪ BÊN NGOÀI BÀI.
    - 100% câu hỏi Kanji và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH CHỮ HÁN CHÍNH THỨC CỦA BÀI, TUYỆT ĐỐI KHÔNG LẤY CHỮ HÁN NGOÀI BÀI (Bài 7 chỉ có 肉, 料, 理, 野, 半, 大, 小; Bài 6 chỉ có 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門; Bài 4 chỉ có 東, 京, 名, 前, 国, 男, 女, 区, 市; Bài 2 chỉ có số đếm và 円).
-3. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
-4. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
-5. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
+3. ĐẶC BIỆT VỀ CHỮ HÁN VÀ HIRAGANA: Bất kỳ từ vựng nào trong câu hỏi/phương án có chữ Hán CHƯA ĐƯỢC HỌC trong các bài này thì BẮT BUỘC PHẢI VIẾT BẰNG HIRAGANA HOẶC KATAKANA (ví dụ: viết へや, まど, あけて, しめて, まって, つくりかた, てつだって, おしえて, びょういん, くすり, しんせんな, さかな, ともだち). Tuyệt đối không để chữ Hán chưa học trong đề thi!
+4. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
+5. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
+6. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
 
   return { systemPrompt, userPrompt, allowedBai };
 }
@@ -769,10 +783,13 @@ export async function generateFptAiExam(selectedBai?: string[]): Promise<{
       }
     }
 
-    const randomizedQuestions = shuffle(validQuestions.slice(0, 30)).map((q, idx) => ({
-      ...q,
-      id: String(idx + 1),
-    }));
+    const randomizedQuestions = shuffle(validQuestions.slice(0, 30)).map((q, idx) => {
+      const formatted = formatExamQuestionKanji(q, allowedBai);
+      return {
+        ...formatted,
+        id: String(idx + 1),
+      };
+    });
 
     return {
       questions: randomizedQuestions,
