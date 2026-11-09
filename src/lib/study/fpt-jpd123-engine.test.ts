@@ -1006,6 +1006,82 @@ test("buildAiPrompt explicitly includes prompt instruction to write untaught kan
   );
 });
 
+test("Explanation engine generates high-fidelity pedagogical breakdown for te-form verbs without boilerplate", async () => {
+  const { getQuestionExplanation } = await import("./explanation.ts");
+
+  const q = {
+    id: "test-te-form-wait",
+    section: "Ngữ pháp" as const,
+    promptJp: "（　　）に入れるのに最もよいものを一つ選びなさい。",
+    prompt: "Chọn thể て đúng cho động từ「待ちます」trong ngữ cảnh yêu cầu.",
+    sentence: "ちょっと（　　）ください。",
+    options: ["待って", "待ちて", "待いて", "待んで"],
+    answer: "待って",
+  };
+
+  const exp = getQuestionExplanation(q);
+
+  assert.ok(exp.lesson?.includes("Bài 7"), `Phải là Bài 7: ${exp.lesson}`);
+  assert.ok(exp.meaning.includes("đợi một chút"), `Phải dịch hoàn chỉnh cả câu: ${exp.meaning}`);
+  assert.ok(exp.grammar?.includes("Vてください"), `Công thức ngữ pháp phải rõ ràng: ${exp.grammar}`);
+  assert.ok(exp.reason.includes("biến âm") || exp.reason.includes("quy tắc chia thể て"), `Phải giải thích quy tắc biến âm: ${exp.reason}`);
+  assert.ok(exp.tips && exp.tips.length > 0, "Phải có mẹo phản xạ 1 giây");
+
+  assert.ok(exp.wrongOptions && exp.wrongOptions.length === 3, "Phải phân tích 3 phương án sai");
+  for (const wo of exp.wrongOptions!) {
+    assert.ok(!wo.reason.includes("không đúng quy tắc kết hợp"), `Không được có câu mẫu mơ hồ: ${wo.reason}`);
+    assert.ok(!wo.reason.includes("không phù hợp với ý nghĩa và ngữ cảnh"), `Không được có câu mẫu mơ hồ: ${wo.reason}`);
+  }
+
+  const machite = exp.wrongOptions!.find((w) => w.option === "待ちて");
+  assert.ok(machite && (machite.reason.includes("biến âm") || machite.reason.includes("sai quy tắc") || machite.reason.includes("âm ngắt")), `Giải thích phương án 待ちて: ${machite?.reason}`);
+});
+
+test("Explanation engine generates pedagogical breakdown for particles and comparatives without boilerplate", async () => {
+  const { getQuestionExplanation } = await import("./explanation.ts");
+
+  // Particle tool question
+  const qTool = {
+    id: "test-particle-tool",
+    section: "Ngữ pháp" as const,
+    promptJp: "（　　）に入れるのに最もよいものを一つ選びなさい。",
+    prompt: "Chọn trợ từ thích hợp điền vào chỗ trống.",
+    sentence: "スプーン（　　）カレーを食べます。",
+    options: ["で", "に", "を", "へ"],
+    answer: "で",
+  };
+
+  const expTool = getQuestionExplanation(qTool);
+  assert.ok(expTool.lesson?.includes("Bài 7"), `Phải là Bài 7: ${expTool.lesson}`);
+  assert.ok(expTool.grammar?.includes("で"), `Công thức phải chứa で: ${expTool.grammar}`);
+  assert.ok(expTool.reason.includes("phương tiện") || expTool.reason.includes("công cụ"), `Phải nêu bản chất công cụ: ${expTool.reason}`);
+
+  const niOption = expTool.wrongOptions?.find((w) => w.option === "に");
+  assert.ok(niOption && (niOption.reason.toLowerCase().includes("thời điểm") || niOption.reason.toLowerCase().includes("đích đến")), `Trợ từ に phải giải thích đúng chức năng: ${niOption?.reason}`);
+
+  // Comparative question
+  const qComp = {
+    id: "test-comparative-yori",
+    section: "Ngữ pháp" as const,
+    promptJp: "（　　）に入れるのに最もよいものを一つ選びなさい。",
+    prompt: "Chọn từ thích hợp điền vào câu so sánh.",
+    sentence: "ベトナムは日本（　　）広いです。",
+    options: ["より", "ほど", "どちら", "いちばん"],
+    answer: "より",
+  };
+
+  const expComp = getQuestionExplanation(qComp);
+  assert.ok(expComp.lesson?.includes("Bài 6"), `Phải là Bài 6: ${expComp.lesson}`);
+  assert.ok(expComp.grammar?.includes("より"), `Công thức phải chứa より: ${expComp.grammar}`);
+
+  const hodoOption = expComp.wrongOptions?.find((w) => w.option === "ほど");
+  assert.ok(hodoOption && (hodoOption.reason.toLowerCase().includes("phủ định") || hodoOption.reason.includes("〜ほど〜ない")), `ほど phải giải thích yêu cầu phủ định: ${hodoOption?.reason}`);
+
+  const dochiraOption = expComp.wrongOptions?.find((w) => w.option === "どちら");
+  assert.ok(dochiraOption && (dochiraOption.reason.toLowerCase().includes("nghi vấn") || dochiraOption.reason.toLowerCase().includes("câu hỏi")), `どちら phải giải thích là từ để hỏi: ${dochiraOption?.reason}`);
+});
+
+
 
 
 

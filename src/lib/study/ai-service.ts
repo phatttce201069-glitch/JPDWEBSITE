@@ -283,10 +283,15 @@ Chỉ trả về duy nhất một chuỗi JSON hợp lệ (không kèm markdown 
     "answer": "Đáp án đúng (phải trùng khớp chính xác 100% với 1 trong 4 lựa chọn trong options)",
     "explanation": {
       "meaning": "Bản dịch nghĩa trọn vẹn của CẢ CÂU HOÀN CHỈNH (sau khi đã điền đáp án đúng vào câu). BẮT BUỘC dịch toàn bộ câu theo văn phong tiếng Việt tự nhiên, TUYỆT ĐỐI KHÔNG chỉ dịch mỗi từ đáp án đơn lẻ.",
-      "grammar": "Cấu trúc ngữ pháp áp dụng",
-      "lesson": "Thuộc bài nào (Ví dụ: JPD123 - Bài 4 hoặc JPD123 - Bài 5)",
-      "tips": "Mẹo giải nhanh hoặc dấu hiệu nhận biết từ khóa",
-      "reason": "Lý do chọn đáp án này và giải thích vì sao các đáp án khác sai"
+      "grammar": "Cấu trúc ngữ pháp áp dụng kèm công thức rõ ràng",
+      "lesson": "Thuộc bài nào (Ví dụ: JPD123 - Bài 7 hoặc JPD123 - Bài 6)",
+      "tips": "Mẹo giải nhanh 1 giây hoặc dấu hiệu nhận biết từ khóa phòng thi",
+      "reason": "Phân tích cặn kẽ bản chất ngữ pháp/từ vựng, giải thích chi tiết lý do vì sao đáp án đúng là chính xác nhất",
+      "wrongOptions": [
+        { "option": "Phương án sai 1", "reason": "Phân tích chi tiết tại sao phương án này sai" },
+        { "option": "Phương án sai 2", "reason": "Phân tích chi tiết tại sao phương án này sai" },
+        { "option": "Phương án sai 3", "reason": "Phân tích chi tiết tại sao phương án này sai" }
+      ]
     }
   }
 ]
@@ -303,7 +308,7 @@ BẮT BUỘC:
    - 100% câu hỏi Kanji và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH CHỮ HÁN CHÍNH THỨC CỦA BÀI, TUYỆT ĐỐI KHÔNG LẤY CHỮ HÁN NGOÀI BÀI (Bài 7 chỉ có 肉, 料, 理, 野, 半, 大, 小; Bài 6 chỉ có 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門; Bài 4 chỉ có 東, 京, 名, 前, 国, 男, 女, 区, 市; Bài 2 chỉ có số đếm và 円).
 3. ĐẶC BIỆT VỀ CHỮ HÁN VÀ HIRAGANA: Bất kỳ từ vựng nào trong câu hỏi/phương án có chữ Hán CHƯA ĐƯỢC HỌC trong các bài này thì BẮT BUỘC PHẢI VIẾT BẰNG HIRAGANA HOẶC KATAKANA (ví dụ: viết へや, まど, あけて, しめて, まって, つくりかた, てつだって, おしえて, びょういん, くすり, しんせんな, さかな, ともだち). Tuyệt đối không để chữ Hán chưa học trong đề thi!
 4. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
-5. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
+5. LỜI GIẢI CHI TIẾT SƯ PHẠM: explanation.meaning BẮT BUỘC DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH; explanation.reason phải phân tích cặn kẽ bản chất câu hỏi; explanation.wrongOptions BẮT BUỘC có mảng 3 đối tượng phân tích chi tiết lý do sai của từng đáp án còn lại (không dùng câu chung chung).
 6. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
 
   return { systemPrompt, userPrompt, allowedBai };
@@ -1015,7 +1020,7 @@ export async function explainQuestionWithAi(
   const fallbackRule =
     baseExp.grammar || "Cấu trúc ngữ pháp & Từ vựng tiếng Nhật chuẩn Đại học FPT";
 
-  const fallbackDeepDive = `Dịch câu hoàn chỉnh: "${fullSentenceTranslation}". Câu hỏi thuộc phần [${question.section}]: "${question.sentence}". Đáp án chính xác là "${question.answer}". ${baseExp.reason}`;
+  const fallbackDeepDive = baseExp.reason || `Đáp án đúng là「${question.answer}」. Cấu trúc ngữ pháp áp dụng chuẩn xác theo giáo trình.`;
 
   const fallbackOthers = baseExp.wrongOptions || [];
 
@@ -1031,17 +1036,24 @@ export async function explainQuestionWithAi(
   }
 
   try {
-    const systemPrompt = `Bạn là Giảng viên Tiếng Nhật Đại học FPT chuyên chấm thi và hướng dẫn sinh viên ôn tập môn JPD113 / JPD123.
-Nhiệm vụ: Giải thích cặn kẽ câu hỏi thi trắc nghiệm tiếng Nhật, DỊCH NGHĨA TRỌN VẸN TOÀN BỘ CẢ CÂU HOÀN CHỈNH sau khi điền đáp án đúng (tuyệt đối không chỉ dịch mỗi từ vựng đáp án), chỉ rõ bản chất ngữ pháp, và phân tích chi tiết lý do sai của từng phương án gây nhiễu (distractor).
+    const systemPrompt = `Bạn là Giảng viên Tiếng Nhật Đại học FPT giàu kinh nghiệm, chuyên hướng dẫn sinh viên ôn luyện thi môn JPD113 và JPD123.
+Phong cách giảng giải: CỰC KỲ DỄ HIỂU, TẬN TÂM, CHI TIẾT TỪNG BƯỚC, KHÔNG DÙNG TỪ NGỮ HÀN LÂM MƠ HỒ.
+Nhiệm vụ:
+1. DỊCH NGHĨA TRỌN VẸN TOÀN BỘ CẢ CÂU HOÀN CHỈNH sau khi điền đáp án đúng vào câu (văn phong tiếng Việt tự nhiên, chuẩn mực, tuyệt đối không chỉ dịch mỗi từ đơn lẻ).
+2. PHÂN TÍCH BẢN CHẤT KIẾN THỨC: Nêu rõ công thức ngữ pháp, quy tắc chia thể/nhóm động từ/tính từ, hoặc cách đọc chữ Hán (âm On, âm Kun, trường âm, âm đục).
+3. GIẢI THÍCH CHI TIẾT TỪNG ĐÁP ÁN SAI (whyOthersWrong): Với mỗi lựa chọn sai, giải thích rõ: Từ đó nghĩa là gì? Thuộc cấu trúc nào? Tại sao đặt vào câu này thì sai ngữ pháp hoặc sai logic? Cảnh báo bẫy thi thường gặp của sinh viên.
+${userSelectedOption && userSelectedOption !== question.answer ? `4. CHỈ RÕ LỖI SAI CỦA SINH VIÊN: Sinh viên đã chọn "${userSelectedOption}". Hãy phân tích cặn kẽ tại sao sinh viên lại bị nhầm sang phương án này và cách khắc phục.` : ""}
+5. MẸO PHẢN XẠ PHÒNG THI (senseiTip): Dấu hiệu nhận biết nhanh từ khóa (trong 1 giây) khi làm bài thi trắc nghiệm kết thúc môn.
+
 Định dạng trả về: Duy nhất 1 JSON object hợp lệ:
 {
-  "fullSentenceTranslation": "Bản dịch nghĩa trọn vẹn, tự nhiên của TOÀN BỘ CẢ CÂU HOÀN CHỈNH sau khi điền đáp án đúng vào câu",
-  "deepDive": "Phân tích ngữ cảnh câu hỏi, nghĩa câu hoàn chỉnh và lý do tại sao đáp án đúng là chính xác nhất",
+  "fullSentenceTranslation": "Bản dịch nghĩa tự nhiên, trọn vẹn của CẢ CÂU HOÀN CHỈNH sau khi điền đáp án đúng",
+  "deepDive": "Phân tích cặn kẽ bản chất câu hỏi, công thức, quy tắc kết hợp và lý do vì sao đáp án đúng là chính xác nhất",
   "whyOthersWrong": [
-    { "option": "Lựa chọn sai", "reason": "Lý do ngữ pháp/từ vựng/âm đọc khiến phương án này sai" }
+    { "option": "Lựa chọn sai", "reason": "Phân tích chi tiết tại sao lựa chọn này sai (nghĩa là gì, chức năng gì, sai ở điểm nào)" }
   ],
-  "grammarRule": "Quy tắc ngữ pháp hoặc điểm kiến thức cốt lõi áp dụng trong câu",
-  "senseiTip": "Bí quyết phản xạ nhanh khi gặp dạng câu hỏi này trong bài thi trắc nghiệm kết thúc môn"
+  "grammarRule": "Tên và công thức ngữ pháp hoặc điểm kiến thức cốt lõi áp dụng trong câu",
+  "senseiTip": "Bí quyết phản xạ 1 giây nhận biết từ khóa trong phòng thi FPT"
 }`;
 
     const userPrompt = `Đề bài: ${question.sentence}

@@ -23,6 +23,116 @@ export function getAnswerMeaning(answer: string, question?: ExamQuestion): strin
 
   // 1. Bảng tra cứu nghĩa nhanh các từ vựng, ngữ pháp, trợ từ thông dụng trong JPD123
   const GLOSSARY: Record<string, string> = {
+    // Động từ thể て và thể ます của Bài 7
+    買います: "mua (thể lịch sự)",
+    買って: "hãy mua / mua (thể て của 買います)",
+    かいます: "mua",
+    かって: "hãy mua",
+    手伝います: "giúp đỡ (thể lịch sự)",
+    てつだいます: "giúp đỡ",
+    手伝って: "hãy giúp đỡ (thể て của 手伝います)",
+    てつだって: "hãy giúp đỡ",
+    吸います: "hút (thuốc)",
+    すいます: "hút",
+    吸って: "hãy hút (thể て của 吸います)",
+    すって: "hãy hút",
+    持ちます: "cầm, mang, xách (thể lịch sự)",
+    もちます: "cầm, mang, xách",
+    持って: "hãy cầm / mang (thể て của 持ちます)",
+    もって: "hãy cầm, hãy mang",
+    作ります: "làm, chế biến, nấu (thể lịch sự)",
+    つくります: "làm, chế biến, nấu",
+    作って: "hãy làm, hãy nấu (thể て của 作ります)",
+    つくって: "hãy làm, hãy nấu",
+    切ります: "cắt, gọt (thể lịch sự)",
+    きります: "cắt, gọt",
+    切って: "hãy cắt (thể て của 切ります)",
+    きって: "hãy cắt / con tem",
+    飲みます: "uống (thể lịch sự)",
+    のみます: "uống",
+    飲んで: "hãy uống (thể て của 飲みます)",
+    のんで: "hãy uống",
+    読みます: "đọc (thể lịch sự)",
+    よみます: "đọc",
+    読んで: "hãy đọc (thể て của 読みます)",
+    よんで: "hãy đọc",
+    遊びます: "chơi, vui chơi (thể lịch sự)",
+    あそびます: "chơi, vui chơi",
+    遊んで: "hãy chơi (thể て của 遊びます)",
+    あそんで: "hãy chơi",
+    書きます: "viết, vẽ (thể lịch sự)",
+    かきます: "viết, vẽ",
+    書いて: "hãy viết (thể て của 書きます)",
+    かいて: "hãy viết",
+    置きます: "đặt, để (thể lịch sự)",
+    おきます: "đặt, để / thức dậy",
+    置いて: "hãy đặt, để (thể て của 置きます)",
+    おいて: "hãy đặt, hãy để",
+    行きます: "đi (thể lịch sự)",
+    いきます: "đi",
+    行って: "hãy đi (thể て ngoại lệ của 行きます)",
+    いって: "hãy đi",
+    持って行きます: "mang đi, đem đi theo (thể lịch sự)",
+    もっていきます: "mang đi, đem đi theo",
+    持って行って: "hãy mang đi (thể て của 持って行きます)",
+    もっていって: "hãy mang đi",
+    泳ぎます: "bơi (thể lịch sự)",
+    およぎます: "bơi",
+    泳いで: "hãy bơi (thể て của 泳ぎます)",
+    およいで: "hãy bơi",
+    話します: "nói chuyện (thể lịch sự)",
+    はなします: "nói chuyện",
+    話して: "hãy nói chuyện (thể て của 話します)",
+    はなして: "hãy nói chuyện",
+    貸します: "cho mượn (thể lịch sự)",
+    かします: "cho mượn",
+    貸して: "hãy cho mượn (thể て của 貸します)",
+    かして: "hãy cho mượn",
+    食べます: "ăn (thể lịch sự)",
+    たべます: "ăn",
+    食べて: "hãy ăn (thể て của 食べます)",
+    たべて: "hãy ăn",
+    開けます: "mở (cửa, hộp) (thể lịch sự)",
+    あけます: "mở (cửa, hộp)",
+    開けて: "hãy mở (thể て của 開けます)",
+    あけて: "hãy mở",
+    閉めます: "đóng (cửa) (thể lịch sự)",
+    しめます: "đóng (cửa)",
+    閉めて: "hãy đóng (thể て của 閉めます)",
+    しめて: "hãy đóng",
+    教えます: "dạy, chỉ cho biết (thể lịch sự)",
+    おしえます: "dạy, chỉ cho biết",
+    教えて: "hãy chỉ dạy, hãy nói cho biết (thể て)",
+    おしえて: "hãy chỉ dạy, hãy nói cho biết",
+    起きます: "thức dậy (thể lịch sự)",
+    おきて: "hãy thức dậy (thể て của 起きます)",
+    来ます: "đến (thể lịch sự)",
+    きます: "đến",
+    来て: "hãy đến (thể て của 来ます)",
+    きて: "hãy đến",
+    持って来ます: "mang đến, đem lại đây (thể lịch sự)",
+    もってきます: "mang đến, đem lại đây",
+    持って来て: "hãy mang đến (thể て của 持って来ます)",
+    もってきて: "hãy mang đến",
+    勉強します: "học tập (thể lịch sự)",
+    べんきょうします: "học tập",
+    勉強して: "hãy học tập (thể て của 勉強します)",
+    べんきょうして: "hãy học tập",
+    待ちます: "chờ, đợi (thể lịch sự)",
+    まちます: "chờ, đợi",
+    待って: "hãy chờ (thể て của 待ちます)",
+    まって: "hãy chờ",
+    つけます: "bật (đèn, máy)",
+    つけて: "hãy bật (đèn, máy)",
+    消します: "tắt (đèn, máy)",
+    けします: "tắt (đèn, máy)",
+    消して: "hãy tắt (đèn, máy)",
+    けして: "hãy tắt",
+    撮ります: "chụp (ảnh)",
+    とります: "chụp (ảnh) / lấy",
+    撮って: "hãy chụp (ảnh)",
+    とって: "hãy chụp / hãy lấy",
+
     // Bài 6
     やくそく: "cuộc hẹn, lời hứa",
     約束: "cuộc hẹn, lời hứa",
@@ -54,33 +164,49 @@ export function getAnswerMeaning(answer: string, question?: ExamQuestion): strin
     "ええ、行きましょう": "Vâng, chúng ta cùng đi nhé",
     "ええ、食べましょう": "Vâng, chúng ta cùng ăn nhé",
 
-    // Bài 7
-    スプーン: "thìa, muỗng",
-    フォーク: "dĩa, nĩa",
-    ナイフ: "dao",
-    お箸: "đũa",
+    // Bài 7 đồ dùng & cách làm
+    スプーン: "thìa, muỗng (dụng cụ ăn uống)",
+    フォーク: "dĩa, nĩa (dụng cụ ăn uống)",
+    ナイフ: "dao (dụng cụ cắt gọt)",
+    お箸: "đũa (dụng cụ ăn uống truyền thống)",
     箸: "đũa",
-    電子レンジ: "lò vi sóng",
-    使い方: "cách sử dụng",
-    読み方: "cách đọc",
-    作り方: "cách làm, cách chế biến",
+    電子レンジ: "lò vi sóng (thiết bị hâm nóng đồ ăn)",
+    使い方: "cách sử dụng (V bỏ ます + 方)",
+    つかいかた: "cách sử dụng",
+    読み方: "cách đọc (V bỏ ます + 方)",
+    よみかた: "cách đọc",
+    作り方: "cách làm, cách chế biến (V bỏ ます + 方)",
+    つくりかた: "cách làm, cách chế biến",
     行き方: "cách đi",
-    持ち方: "cách cầm",
-    書いて: "hãy viết (thể て)",
-    読んで: "hãy đọc (thể て)",
-    見て: "hãy nhìn / hãy xem (thể て)",
-    まって: "hãy chờ (thể て của 待ちます)",
-    待って: "hãy chờ",
-    とって: "hãy chụp / hãy lấy",
-    教えて: "hãy chỉ dạy, hãy nói cho biết",
-    貸して: "hãy cho mượn",
-    手伝って: "hãy giúp đỡ",
-    あけて: "hãy mở",
-    しめて: "hãy đóng",
-    つけて: "hãy bật (đèn, máy)",
-    けして: "hãy tắt",
-    かけて: "đang gọi (điện thoại)",
-    吸って: "hút (thuốc)",
+    いきかた: "cách đi",
+    持ち方: "cách cầm, cách nắm",
+    もちかた: "cách cầm, cách nắm",
+
+    // Lượng từ số đếm thông dụng
+    "1枚": "1 tờ, 1 tấm (áo, đĩa CD, vé)",
+    "2枚": "2 tờ, 2 tấm",
+    "3枚": "3 tờ, 3 tấm",
+    何枚: "mấy tờ, bao nhiêu tấm (đếm vật mỏng phẳng)",
+    なんまい: "mấy tờ, bao nhiêu tấm",
+    "1本": "1 cái, 1 cây (bút chì, chai nước)",
+    "2本": "2 cái, 2 cây",
+    "3本": "3 cái, 3 cây",
+    一本: "1 cái, 1 cây (bút, chai lọ)",
+    何本: "mấy cái, bao nhiêu cây (đếm vật dài trụ)",
+    なんぼん: "mấy cái, bao nhiêu cây",
+    "1冊": "1 quyển, 1 cuốn (sách, vở)",
+    何冊: "mấy quyển, bao nhiêu cuốn (sách vở)",
+    "1台": "1 chiếc, 1 cái (máy tính, ô tô, xe máy)",
+    何台: "mấy chiếc, bao nhiêu cái (xe cộ, máy móc)",
+    "1杯": "1 ly, 1 cốc (nước, cà phê)",
+    一杯: "1 ly, 1 cốc (nước, cà phê)",
+    何杯: "mấy ly, bao nhiêu cốc",
+    "1匹": "1 con (chó, mèo, cá)",
+    一匹: "1 con (chó, mèo, cá)",
+    何匹: "mấy con (động vật nhỏ)",
+    "1個": "1 quả, 1 cái (trứng, táo, kẹo)",
+    一個: "1 quả, 1 cái (trứng, táo)",
+    何個: "mấy quả, bao nhiêu cái",
 
     // Bài 5
     水: "nước",
@@ -515,7 +641,26 @@ export const SENTENCE_TRANSLATIONS: Record<string, string> = {
   "すみません、ここで写真を（　　）ください。___とって": "Xin lỗi, xin hãy chụp một bức ảnh ở đây giúp tôi.",
   "田中さんは今、電話を（　　）います。___かけて": "Anh Tanaka hiện đang gọi điện thoại.",
   "このパソコンの（　　）を教えてください。___使い方": "Xin hãy chỉ cho tôi cách sử dụng chiếc máy tính này.",
-  "教室でタバコを吸って（　　）いけません。___は": "Không được phép hút thuốc lá trong lớp học."
+  "教室でタバコを吸って（　　）いけません。___は": "Không được phép hút thuốc lá trong lớp học.",
+  "ちょっと（　　）ください。___待って": "Xin vui lòng hãy đợi một chút.",
+  "ちょっと（　　）ください。___まって": "Xin vui lòng hãy đợi một chút.",
+  "スプーン（　）カレーを食べます。___で": "Tôi ăn món cà ri bằng thìa.",
+  "スプーン（　）カレーをたべます。___で": "Tôi ăn món cà ri bằng thìa.",
+  "フォーク（　）パスタを食べます。___で": "Tôi ăn mì Ý bằng dĩa/nĩa.",
+  "お箸（　）ご飯を食べます。___で": "Tôi ăn cơm bằng đũa.",
+  "ベトナムは日本（　）広いです。___より": "Việt Nam rộng hơn Nhật Bản.",
+  "私は日本の（漫画）がすきです。___まんが": "Tôi thích truyện tranh Nhật Bản.",
+  "部屋の窓を（　　）ください。___あけて": "Xin hãy mở cửa sổ phòng ra.",
+  "部屋のドアを（　　）ください。___しめて": "Xin hãy đóng cửa phòng lại.",
+  "エアコンを（　　）ください。___つけて": "Xin hãy bật điều hòa lên.",
+  "電気を（　　）ください。___けして": "Xin hãy tắt đèn đi.",
+  "荷物を（　　）ましょうか。___もち": "Tôi xách hành lý giúp bạn nhé?",
+  "荷物を（　　）ましょうか。___持ち": "Tôi xách hành lý giúp bạn nhé?",
+  "今、雨が（　　）います。___ふって": "Bây giờ trời đang mưa.",
+  "ここでタバコを（　　）はいけません。___すって": "Không được phép hút thuốc lá ở đây.",
+  "誕生日に新しいパソコンが（　　）です。___ほしい": "Vào dịp sinh nhật, tôi muốn có một chiếc máy tính xách tay mới.",
+  "暑いから、冷たい水を（　　）たいです。___のみ": "Vì trời nóng nên tôi muốn uống nước lạnh.",
+  "週末、京都へ（　　）に行きます。___あそび": "Cuối tuần tôi sẽ đi Kyoto để đi chơi."
 };
 
 /**
@@ -1411,7 +1556,7 @@ function resolveBaseExplanation(question: ExamQuestion): QuestionExplanation {
 }
 
 /**
- * Lời giải cho câu hỏi Chữ Hán (Kanji)
+ * Lời giải cho câu hỏi Chữ Hán (Kanji) với phân tích Hán Việt, bộ thủ và bẫy phát âm
  */
 function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
   const isReading =
@@ -1425,96 +1570,263 @@ function buildKanjiExplanation(q: ExamQuestion): QuestionExplanation {
 
   const lesson = determineLesson(q);
   const fullMeaning = getFullSentenceTranslation(q);
+  const answer = (q.answer || "").trim();
+
+  // Trích xuất từ hoặc chữ Hán trong ngoặc
+  const parenMatch = q.sentence?.match(/（([^）]+)）|\(([^)]+)\)|〔([^〕]+)〕/);
+  const targetChar = parenMatch ? parenMatch[1] || parenMatch[2] || parenMatch[3] : answer;
 
   if (isReading) {
+    // Phân tích cách đọc Hiragana
+    const hasLongVowel = /[ういおえ]/.test(answer) && answer.length >= 3;
+    const hasDakuten = /[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ]/.test(answer);
+    const hasSokuon = answer.includes("っ");
+
+    let specialPhonetic = "";
+    if (hasLongVowel) {
+      specialPhonetic += " Chú ý trường âm (âm kéo dài): cần phát âm dài 2 phách, không được nuốt âm dài.";
+    }
+    if (hasDakuten) {
+      specialPhonetic += " Chú ý âm đục (tenten / maru): phụ âm bị biến âm khi ghép từ.";
+    }
+    if (hasSokuon) {
+      specialPhonetic += " Chú ý âm ngắt (xúc âm っ): ngừng nửa phách trước phụ âm tiếp theo.";
+    }
+
     return {
       meaning: fullMeaning,
-      grammar: "Chữ Hán sơ cấp N5 - Cách đọc Hiragana theo âm On/Kun",
+      grammar: `Chữ Hán sơ cấp N5 - Cách đọc Hiragana theo âm On/Kun của từ「${targetChar}」`,
       lesson,
-      tips: `Chú ý nhận diện trường âm (âm dài おう, えい), âm đục (tenten) và âm ngắt (xúc âm) của chữ.`,
-      reason: `Đáp án đúng là "${q.answer}". Chữ Hán trong ngoặc có cách đọc chuẩn xác trong ngữ cảnh này là "${q.answer}". Các phương án còn lại là bẫy sai trường âm hoặc cố ý đổi phụ âm gây nhầm lẫn.`,
+      tips: `Quy tắc phòng thi FPT: Quan sát kỹ trường âm (おう, えい, ゆう) và âm đục (tenten). Các phương án sai thường cố tình bớt 1 âm dài hoặc bỏ dấu đục.`,
+      reason: `Đáp án đúng là「${answer}」. Từ chữ Hán「${targetChar}」khi điền vào ngữ cảnh câu này có cách đọc chuẩn xác là「${answer}」.${specialPhonetic} Các phương án còn lại là bẫy sai trường âm hoặc cố ý đổi phụ âm/thiếu âm đục nhằm đánh lừa thị giác.`,
     };
   }
 
   if (isWriting) {
+    const alphaHit = alphabet.find((a) => a.char === answer || (a as Record<string, unknown>).kanji === answer);
+    const hanviet = alphaHit ? (alphaHit as Record<string, unknown>).hanviet || "" : "";
+    const mnemonic = alphaHit ? (alphaHit as Record<string, unknown>).mnemonic || "" : "";
+
     return {
       meaning: fullMeaning,
-      grammar: "Chữ Hán sơ cấp N5 - Nhận diện mặt chữ Hán tương ứng với Hiragana",
+      grammar: `Chữ Hán sơ cấp N5 - Nhận diện mặt chữ Hán chuẩn xác cho âm「${targetChar}」`,
       lesson,
-      tips: "Quan sát kỹ các bộ thủ đặc trưng (bộ Mộc 木, Thủy 水, Kim 金, Môn 門, Nhật 日) để tránh chọn nhầm chữ gần giống.",
-      reason: `Đáp án đúng là "${q.answer}". Đây là chữ Hán tương ứng chính xác với âm Hiragana được cho. Các lựa chọn khác là những chữ Hán có nét tương tự hoặc mang ý nghĩa khác hoàn toàn.`,
+      tips: `Mẹo nhận biết mặt chữ: Quan sát kỹ các bộ thủ then chốt (như bộ Mộc 木, Thủy 水, Kim 金, Môn 門, Nhật 日, Nguyệt 月) để phân biệt các chữ có nét tương tự.`,
+      reason: `Đáp án đúng là chữ Hán「${answer}」${hanviet ? ` (Âm Hán Việt: ${hanviet})` : ""}. Đây là chữ Hán chuẩn xác biểu thị ý nghĩa tương ứng với âm đọc「${targetChar}」trong câu.${mnemonic ? ` Mẹo ghi nhớ: ${mnemonic}.` : ""} Các phương án còn lại là những chữ Hán khác nét hoặc có ý nghĩa khác không phù hợp với câu.`,
     };
   }
 
+  // Câu hỏi âm Hán Việt hoặc bộ thủ
   return {
     meaning: fullMeaning,
-    grammar: "Âm Hán Việt và cấu tạo chữ Hán N5",
+    grammar: `Chữ Hán sơ cấp N5 - Âm Hán Việt và cấu tạo chữ Hán「${targetChar}」`,
     lesson,
-    tips: "Âm Hán Việt là cầu nối tuyệt vời giúp sinh viên Việt Nam nhớ nhanh nghĩa của chữ Hán.",
-    reason: `Đáp án đúng là "${q.answer}". Đây là âm Hán Việt chuẩn xác của chữ Hán được cho, giúp người học dễ dàng liên tưởng đến nghĩa của từ trong tiếng Việt.`,
+    tips: "Âm Hán Việt là cầu nối tuyệt vời giúp sinh viên Việt Nam hiểu ngay 80% ý nghĩa của chữ Hán trong tiếng Nhật.",
+    reason: `Đáp án đúng là「${answer}」. Đây là âm Hán Việt chuẩn xác của chữ Hán「${targetChar}」. Hiểu rõ âm Hán Việt giúp người học dễ dàng liên tưởng đến nghĩa của từ trong tiếng Việt và mở rộng vốn từ vựng chuyên ngành.`,
   };
 }
 
 /**
- * Lời giải cho câu hỏi Ngữ pháp (Grammar)
+ * Lời giải cho câu hỏi Ngữ pháp (Grammar) với giải thích cặn kẽ bản chất công thức và quy tắc chia
  */
 function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
   const lesson = determineLesson(q);
   const grammarPoint = determineGrammarPoint(q);
+  const fullMeaning = getFullSentenceTranslation(q);
+  const answer = (q.answer || "").trim();
+  const ansMeaning = getAnswerMeaning(answer, q);
 
-  let tips = "Đọc kỹ các từ xung quanh chỗ trống: nếu là động từ thì chú ý trợ từ đi kèm; nếu là tính từ chú ý thời quá khứ hay hiện tại.";
-  if (q.sentence.includes("ほしい")) {
-    tips = "Ghi nhớ: Danh từ + が + ほしいです (Muốn sở hữu danh từ luôn đi với trợ từ が).";
-  } else if (q.sentence.includes("より") || q.sentence.includes("ほど")) {
-    tips = "So sánh hơn: A は B より (A hơn B). So sánh kém: A は B ほど [Phủ định] (A không bằng B).";
-  } else if (q.sentence.includes("ください")) {
-    tips = "Động từ đi trước ください luôn chia ở THỂ て (Vてください).";
-  } else if (q.sentence.includes("あまり") || q.sentence.includes("ぜんぜん")) {
-    tips = "Phó từ あまり / ぜんぜん bắt buộc phải đi với thể phủ định (〜くない / 〜じゃありません).";
-  } else if (q.sentence.includes("ちょっと") || q.sentence.includes("やくそく") || q.sentence.includes("約束") || q.sentence.includes("用事")) {
-    tips = "Khi từ chối lời mời rủ rê, người Nhật nói khéo「〜はちょっと…」và nêu lý do bằng「N がありますから」(Vì tôi có hẹn/việc bận).";
-  } else if ((q.sentence.includes("お祭り") || q.sentence.includes("おまつり") || q.sentence.includes("試験") || q.sentence.includes("パーティー")) && q.sentence.includes("あります")) {
-    tips = "Địa điểm diễn ra sự kiện/hoạt động (lễ hội, kỳ thi, bữa tiệc) đi với trợ từ「で」, không dùng trợ từ「に」.";
-  } else if (q.sentence.includes("まい") || q.sentence.includes("枚") || q.sentence.includes("CD") || q.sentence.includes("シャツ")) {
-    tips = "Lượng từ đếm vật mỏng phẳng (đĩa CD, áo sơ mi, tờ giấy, vé, tem) luôn dùng「枚 (まい)」.";
+  let detailedReason = "";
+  let fastTip = "";
+
+  // 1. Phân tích cụ thể cho Động từ thể て (Bài 7: Vてください, Vています, Vましょうか, Vかた)
+  if (
+    grammarPoint.includes("Vてください") ||
+    (grammarPoint.includes("thể て") && answer !== "で") ||
+    answer.endsWith("て") ||
+    (answer.endsWith("で") && answer.length >= 2) ||
+    q.sentence.includes("ください") ||
+    q.sentence.includes("ています") ||
+    q.sentence.includes("ましょうか")
+  ) {
+    if (q.sentence.includes("ください")) {
+      fastTip = "💡 Thấy đuôi「ください」ở sau chỗ trống ➔ Chọn ngay động từ chia ở THỂ て (Vてください) để tạo câu nhờ vả, yêu cầu lịch sự!";
+      detailedReason = `Trong câu xuất hiện đuôi「ください」(xin hãy, vui lòng). Cấu trúc chuẩn yêu cầu động từ đứng trước phải chia ở THỂ て (Vてください) để tạo thành câu yêu cầu, nhờ vả lịch sự.
+- Đáp án chính xác là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}.
+- Phân tích quy tắc chia thể て: Động từ được chia theo đúng nhóm động từ (Nhóm 1 biến âm đuôi い/ち/り ➔ って, み/び/に ➔ んで, き ➔ いて, ぎ ➔ いで; Nhóm 2 bỏ ます thêm て; Nhóm 3 biến đổi thành 来て/して). Các phương án còn lại bị sai quy tắc biến âm hoặc sai nhóm động từ.`;
+    } else if (q.sentence.includes("ています") || q.sentence.includes("ている")) {
+      fastTip = "💡 Thấy đuôi「ています」➔ Động từ đứng trước bắt buộc phải ở THỂ て (Vています) để diễn tả hành động đang tiếp diễn tại thời điểm nói!";
+      detailedReason = `Câu diễn tả hành động đang xảy ra tại thời điểm nói. Cấu trúc chuẩn là: [Chủ ngữ は] + Vています (Đang làm V...). Động từ trước います bắt buộc phải chia ở thể て. Đáp án đúng là「${answer}」, được chia chính xác theo quy tắc thể て.`;
+    } else if (q.sentence.includes("ましょうか")) {
+      fastTip = "💡 Mẫu câu đề nghị giúp đỡ lịch sự: V(bỏ ます) + ましょうか (Tôi làm giúp bạn nhé?).";
+      detailedReason = `Đây là mẫu câu lịch sự dùng để đề nghị làm giúp người khác một việc gì đó (Vましょうか). Động từ trước ましょうか phải ở dạng V(bỏ ます). Đáp án đúng là「${answer}」.`;
+    } else if (q.sentence.includes("かた") || q.sentence.includes("方")) {
+      fastTip = "💡 Mẫu câu cách thức thực hiện hành động: V(bỏ ます) + 方 (かた) (Ví dụ: 読み方 - cách đọc, 使い方 - cách dùng, 作り方 - cách làm).";
+      detailedReason = `Mẫu câu biểu thị cách thức thực hiện một hành động: Động từ bỏ ます ghép với danh từ「方 (かた)」tạo thành danh từ mang nghĩa 'cách làm...'. Đáp án đúng là「${answer}」.`;
+    } else {
+      fastTip = "💡 Chú ý quy tắc chia thể て của 3 nhóm động từ: Nhóm 1 (いちり➔って, みびに➔んで, き➔いて, ぎ➔いで); Nhóm 2 (bỏ ます+て); Nhóm 3 (来ます➔来て, します➔して).";
+      detailedReason = `Đáp án đúng là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}. Động từ được chia chuẩn xác theo quy tắc chuyển đổi sang thể て của tiếng Nhật sơ cấp, tạo thành câu tự nhiên và đúng ngữ pháp.`;
+    }
   }
 
-  const ansMeaning = getAnswerMeaning(q.answer, q);
-  const fullMeaning = getFullSentenceTranslation(q);
+  // 2. Phân tích cho Trợ từ công cụ, phương tiện (Bài 7: スプーンで, バスで, 日本語で)
+  else if (
+    grammarPoint.includes("công cụ") ||
+    grammarPoint.includes("phương tiện") ||
+    (answer === "で" && (q.sentence.includes("スプーン") || q.sentence.includes("フォーク") || q.sentence.includes("ナイフ") || q.sentence.includes("箸") || q.sentence.includes("お箸") || q.sentence.includes("バス") || q.sentence.includes("電車") || q.sentence.includes("車") || q.sentence.includes("日本語") || q.sentence.includes("英語")))
+  ) {
+    fastTip = "💡 Danh từ chỉ dụng cụ ăn uống (thìa, dĩa, dao, đũa), phương tiện (xe buýt, tàu điện) hoặc ngôn ngữ ➔ BẮT BUỘC dùng trợ từ「で」!";
+    detailedReason = `Trong câu, danh từ trước chỗ trống đóng vai trò là CÔNG CỤ / PHƯƠNG TIỆN để thực hiện hành động.
+- Theo quy tắc ngữ pháp tiếng Nhật sơ cấp: [Công cụ / Phương tiện] + で + [Hành động] mang ý nghĩa là 'bằng / dùng [công cụ] để làm gì'.
+- Đáp án đúng là trợ từ「で」.
+- Không dùng「に」(chỉ thời gian hoặc đích đến), không dùng「を」(chỉ tân ngữ bị tác động), không dùng「へ」(chỉ phương hướng di chuyển).`;
+  }
+
+  // 3. Phân tích cho Cấu trúc So sánh (Bài 6: より, ほど, どちら, いちばん)
+  else if (grammarPoint.includes("so sánh") || grammarPoint.includes("So sánh") || ["より", "ほど", "どちら", "どちらが", "いちばん", "一番"].includes(answer)) {
+    if (answer === "より") {
+      fastTip = "💡 Cấu trúc so sánh hơn: A は B より [Tính từ] です (A thì hơn B). Nhìn thấy vị ngữ khẳng định ➔ Chọn ngay「より」!";
+      detailedReason = `Câu so sánh hơn giữa 2 đối tượng theo công thức:『A は B より [Tính từ] です』(A thì [Tính từ] hơn B).
+- Danh từ đứng trước chỗ trống đóng vai trò là mốc chuẩn để so sánh.
+- Vị ngữ trong câu ở dạng KHẲNG ĐỊNH, do đó bắt buộc phải dùng trợ từ so sánh「より」.
+- Phân biệt với ほど: Trợ từ「ほど」chỉ dùng trong so sánh không bằng và vị ngữ bắt buộc phải ở dạng PHỦ ĐỊNH.`;
+    } else if (answer === "ほど") {
+      fastTip = "💡 Cấu trúc so sánh không bằng: A は B ほど [Tính từ phủ định] (A không bằng B). Nhìn thấy vị ngữ phủ định (〜くない / 〜じゃありません) ➔ Chọn ngay「ほど」!";
+      detailedReason = `Câu so sánh không bằng (so sánh kém) theo công thức:『A は B ほど [Tính từ PHỦ ĐỊNH]』(A không bằng B).
+- Vị ngữ trong câu kết thúc ở dạng PHỦ ĐỊNH (〜くないです hoặc 〜じゃありません).
+- Theo quy tắc ngữ pháp tiếng Nhật, khi vị ngữ phủ định thì mốc so sánh B bắt buộc phải đi với trợ từ「ほど」, tuyệt đối không dùng「より」.`;
+    } else if (answer.includes("どちら")) {
+      fastTip = "💡 Câu hỏi lựa chọn giữa 2 đối tượng: A と B と どちらが [Tính từ] ですか (Giữa A và B thì bên nào... hơn?).";
+      detailedReason = `Đây là câu hỏi lựa chọn giữa đúng 2 đối tượng A và B. Cấu trúc chuẩn:『A と B と どちらが [Tính từ] ですか』.
+-「どちら」là đại từ để hỏi mang nghĩa 'bên nào / cái nào' trong phạm vi 2 đối tượng.
+- Khi trả lời câu hỏi này sẽ dùng:『[Đối tượng] のほうが [Tính từ] です』.`;
+    } else if (answer === "いちばん" || answer === "一番") {
+      fastTip = "💡 So sánh nhất trong một tập hợp: [Phạm vi] の中で [Chủ ngữ] が一番 [Tính từ] です (Trong tất cả... thì... là nhất).";
+      detailedReason = `Cấu trúc so sánh cao nhất:『[Phạm vi / Tập hợp] の中で [Chủ ngữ] が 一番 [Tính từ] です』(Trong số các..., thì... là tính từ nhất).
+- Phó từ「一番 (いちばん)」đứng ngay trước tính từ để biểu thị mức độ cao nhất trong toàn bộ phạm vi được so sánh.`;
+    }
+  }
+
+  // 4. Phân tích cho Nơi tổ chức sự kiện / lễ hội (Bài 6: Địa điểm で Sự kiện があります)
+  else if (
+    grammarPoint.includes("sự kiện") ||
+    grammarPoint.includes("Sự kiện") ||
+    (answer === "で" && (q.sentence.includes("お祭り") || q.sentence.includes("おまつり") || q.sentence.includes("パーティー") || q.sentence.includes("コンサート") || q.sentence.includes("試合") || q.sentence.includes("試験")))
+  ) {
+    fastTip = "💡 Bẫy đề thi kinh điển FPT: Nơi diễn ra sự kiện, lễ hội, bữa tiệc (お祭り, パーティー, コンサート...) BẮT BUỘC dùng trợ từ「で」, TUYỆT ĐỐI KHÔNG dùng「に」!";
+    detailedReason = `Đây là câu hỏi kiểm tra điểm ngữ pháp then chốt của Bài 6 về nơi diễn ra sự kiện.
+- Công thức:『[Địa điểm] で + [Sự kiện/Lễ hội/Bữa tiệc] + があります』(Tại [Địa điểm] có tổ chức sự kiện...).
+- Nhiều học sinh nhầm thấy「あります」nghĩ là chỉ vị trí tồn tại của đồ vật nên chọn「に」. Tuy nhiên, khi danh từ đi kèm là một SỰ KIỆN / HOẠT ĐỘNG (lễ hội お祭り, bữa tiệc パーティー, cuộc họp 会議, trận đấu 試合), nơi tổ chức sự kiện BẮT BUỘC phải dùng trợ từ『で』!`;
+  }
+
+  // 5. Phân tích cho Rủ rê & Từ chối khéo (Bài 6: 〜はちょっと… / 〜がありますから)
+  else if (grammarPoint.includes("Rủ rê") || grammarPoint.includes("rủ rê") || grammarPoint.includes("Từ chối") || answer.includes("ちょっと") || answer.includes("約束") || answer.includes("用事") || answer.includes("ましょう")) {
+    if (answer.includes("ちょっと")) {
+      fastTip = "💡 Văn hóa từ chối khéo của người Nhật: Khi được rủ rê mà không thể tham gia, người Nhật nói khéo「〜はちょっと…」(thì hơi bất tiện/khó cho tôi) để giữ phép lịch sự!";
+      detailedReason = `Trong giao tiếp tiếng Nhật, khi muốn từ chối một lời mời rủ rê (〜ませんか) một cách tế nhị, người Nhật không nói thẳng 'いいえ' (không) mà nói lấp lửng『〜はちょっと…』(Thời gian đó thì có chút bất tiện cho tôi...).
+- Sau đó thường đưa ra lý do khách quan bằng cấu trúc:『[Lý do] がありますから』(Vì tôi có hẹn / có việc bận rồi).
+- Đáp án đúng là「${answer}」.`;
+    } else if (answer.includes("ましょう")) {
+      fastTip = "💡 Đáp lại lời rủ rê (〜ませんか) khi đồng ý:「ええ、〜ましょう」(Vâng, chúng ta cùng làm thôi!).";
+      detailedReason = `Khi người khác rủ rê bằng cấu trúc「〜ませんか」, nếu đồng ý tham gia thì người Nhật sẽ hưởng ứng nồng nhiệt bằng cấu trúc『ええ、〜ましょう』(Được đấy, chúng ta cùng làm nhé). Đáp án đúng là「${answer}」.`;
+    }
+  }
+
+  // 6. Phân tích cho Lượng từ số đếm (Bài 6: 枚 - まい)
+  else if (grammarPoint.includes("Lượng từ") || grammarPoint.includes("vật mỏng") || answer.includes("まい") || answer.includes("枚")) {
+    fastTip = "💡 Đếm các vật mỏng phẳng (áo sơ mi, đĩa CD, vé xem phim, tờ giấy, tem, bánh pizza) ➔ BẮT BUỘC dùng lượng từ「枚 (まい)」!";
+    detailedReason = `Đây là câu hỏi kiểm tra lượng từ chỉ số đếm của Bài 6.
+- Trong tiếng Nhật, mỗi loại đồ vật có một lượng từ đếm riêng biệt.
+- Đối với các vật có đặc điểm MỎNG, PHẲNG (như áo sơ mi シャツ, đĩa CD, vé チケット, tờ giấy 紙, con tem 切手) thì dùng lượng từ『枚 (まい)』.
+- Đáp án đúng là「${answer}」. Các phương án đếm khác (như 本 đếm vật dài, 台 đếm máy móc, 冊 đếm sách) đều sai loại đồ vật.`;
+  }
+
+  // 7. Phân tích cho Mẫu câu mong muốn (Bài 5: ほしい vs たい)
+  else if (grammarPoint.includes("mong muốn") || answer.includes("ほしい") || answer.includes("たい") || (answer === "が" && q.sentence.includes("ほしい"))) {
+    if (answer === "が" && q.sentence.includes("ほしい")) {
+      fastTip = "💡 Bẫy đề thi kinh điển: Trong tiếng Nhật,「ほしい」là TÍNH TỪ đuôi い (không phải động từ). Đối tượng mong muốn BẮT BUỘC dùng trợ từ「が」(Danh từ + が + ほしいです), KHÔNG dùng「を」!";
+      detailedReason = `Người học tiếng Việt thường có thói quen dịch xuôi 'Tôi muốn [đồ vật]' nên liên tưởng đến ngoại động từ và chọn nhầm trợ từ「を」.
+- Bản chất ngữ pháp:『ほしい (hoshii)』là một TÍNH TỪ đuôi い biểu thị cảm xúc mong muốn sở hữu, KHÔNG PHẢI là động từ.
+- Do đó, đối tượng của tính từ「ほしい」bắt buộc phải đi kèm với trợ từ『が』.
+- Công thức chuẩn: [Chủ ngữ は] + [Danh từ] + が + ほしいです. Đáp án chính xác là trợ từ『が』.`;
+    } else if (answer.includes("ほしい")) {
+      fastTip = "💡 Phân biệt: Muốn sở hữu ĐỒ VẬT ➔ Dùng「Danh từ + が + ほしいです」; Muốn làm HÀNH ĐỘNG ➔ Dùng「V(bỏ ます) + たいです」.";
+      detailedReason = `Mẫu câu mong muốn sở hữu một đồ vật hoặc vật nuôi:『Danh từ + が + ほしいです』. Ở đây từ đứng trước là danh từ đồ vật nên dùng「ほしい」, không dùng「たい」(vì たい chỉ ghép sau động từ).`;
+    } else if (answer.includes("たい")) {
+      fastTip = "💡 Muốn làm hành động động từ: V(bỏ ます) + たいです (Ví dụ: 食べます ➔ 食べたいです, 行きます ➔ 行きたいです).";
+      detailedReason = `Mẫu câu diễn tả mong muốn thực hiện một hành động của bản thân: Động từ bỏ ます ghép với đuôi『〜たいです』. Đáp án đúng là「${answer}」.`;
+    }
+  }
+
+  // 8. Phân tích cho Chia tính từ đuôi い và đuôi な (Bài 4)
+  else if (grammarPoint.includes("tính từ") || grammarPoint.includes("Tính từ") || answer.includes("かった") || answer.includes("くない") || answer.includes("でした") || answer.includes("じゃありません")) {
+    if (answer.includes("かった")) {
+      fastTip = "💡 Quy tắc chia tính từ đuôi い ở quá khứ: Bỏ い đổi thành「〜かったです」(Ví dụ: おいしい ➔ おいしかったです). Tuyệt đối KHÔNG dùng '〜いでした'!";
+      detailedReason = `Câu diễn tả đặc điểm, trạng thái trong quá khứ với tính từ đuôi い.
+- Quy tắc chia: Tính từ đuôi い khi chuyển sang quá khứ khẳng định thì BỎ đuôi い và thay bằng đuôi『〜かったです』.
+- Bẫy thi thường gặp: Nhiều bạn nhầm sang tính từ đuôi な nên chọn 'おいしいでした' (đây là lỗi sai ngữ pháp nghiêm trọng trong tiếng Nhật). Đáp án đúng là「${answer}」.`;
+    } else if (answer.includes("くない")) {
+      fastTip = "💡 Quy tắc phủ định tính từ đuôi い: Bỏ い đổi thành「〜くないです」(Ví dụ: おいしい ➔ おいしくないです).";
+      detailedReason = `Tính từ đuôi い khi phủ định sẽ bỏ い thêm『〜くないです』. Đáp án đúng là「${answer}」.`;
+    } else {
+      fastTip = "💡 Tính từ đuôi な: Khẳng định hiện tại です, Phủ định hiện tại じゃありません, Quá khứ khẳng định でした, Quá khứ phủ định じゃありませんでした.";
+      detailedReason = `Tính từ đuôi な khi chia ở thì này tuân theo đúng quy tắc kết hợp ngữ pháp. Đáp án đúng là「${answer}」.`;
+    }
+  }
+
+  // 9. Fallback thông minh: Tạo phân tích sư phạm mạch lạc cho các trường hợp khác
+  else {
+    fastTip = "💡 Đọc kỹ từ đứng ngay trước và ngay sau chỗ trống để xác định từ loại và cấu trúc kết hợp chuẩn xác.";
+    detailedReason = `Đáp án chính xác là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}.
+- Xét theo cấu trúc ngữ pháp của ${lesson}: Cấu trúc『${grammarPoint}』yêu cầu điền dạng thức「${answer}」để câu văn hoàn chỉnh, chính xác về mặt ngữ nghĩa và chuẩn ngữ pháp tiếng Nhật sơ cấp.
+- Các phương án còn lại bị sai dạng thức kết hợp trợ từ hoặc sai quy tắc chia thì/thể của câu.`;
+  }
 
   return {
     meaning: fullMeaning,
     grammar: grammarPoint,
     lesson,
-    tips,
-    reason: `Đáp án đúng là "${q.answer}"${ansMeaning ? ` (${ansMeaning})` : ""}. Theo quy tắc ngữ pháp của ${lesson}, cấu trúc "${grammarPoint}" yêu cầu dạng thức "${q.answer}" để tạo thành câu hoàn chỉnh, đúng ngữ pháp. Các phương án còn lại bị sai dạng chia hoặc sai quy tắc kết hợp trợ từ.`,
+    tips: fastTip,
+    reason: detailedReason,
   };
 }
 
 /**
- * Lời giải cho câu hỏi Từ vựng (Vocabulary)
+ * Lời giải cho câu hỏi Từ vựng (Vocabulary) với phân tích nghĩa, từ loại và ngữ cảnh thực tế
  */
 function buildVocabExplanation(q: ExamQuestion): QuestionExplanation {
   const lesson = determineLesson(q);
   const ansMeaning = getAnswerMeaning(q.answer, q);
   const fullMeaning = getFullSentenceTranslation(q);
+  const answer = (q.answer || "").trim();
+
+  let contextAnalysis = "";
+  if (q.sentence.includes("スプーン") || q.sentence.includes("フォーク") || q.sentence.includes("カレー") || q.sentence.includes("食べます")) {
+    contextAnalysis = "Ngữ cảnh câu nói về việc dùng dụng cụ để thưởng thức món ăn. Từ vựng được chọn phù hợp hoàn hảo với thói quen sinh hoạt và ngữ pháp tiếng Nhật.";
+  } else if (q.sentence.includes("お祭り") || q.sentence.includes("パーティー") || q.sentence.includes("コンサート")) {
+    contextAnalysis = "Ngữ cảnh câu nói về sự kiện văn hóa, giải trí đời sống trong giáo trình tiếng Nhật.";
+  } else if (q.sentence.includes("約束") || q.sentence.includes("用事") || q.sentence.includes("時間")) {
+    contextAnalysis = "Ngữ cảnh câu nói về thời gian biểu và các cuộc hẹn trong sinh hoạt hàng ngày.";
+  } else {
+    contextAnalysis = "Từ vựng này kết hợp tự nhiên với các thành phần trong câu, tạo thành câu giao tiếp chuẩn văn phong Nhật Bản.";
+  }
 
   return {
     meaning: fullMeaning,
     grammar: "Từ vựng chuyên đề & Ngữ cảnh giao tiếp thực tế",
     lesson,
-    tips: "Liên hệ ngữ cảnh sinh hoạt hàng ngày (đồ dùng ăn uống, đồ đạc trong nhà, thời tiết, giao tiếp hỏi đáp) để loại trừ phương án sai.",
-    reason: `Đáp án đúng là "${q.answer}"${ansMeaning ? ` (${ansMeaning})` : ""}. Từ vựng này phù hợp nhất với ngữ cảnh và ngữ nghĩa của câu văn. Các phương án còn lại không hợp lý về mặt logic hoặc ngữ cảnh tình huống.`,
+    tips: "Liên hệ ngữ cảnh sinh hoạt đời sống hàng ngày (đồ dùng ăn uống, đồ đạc trong phòng, thời gian, phương tiện, hoạt động) để chọn từ tự nhiên nhất.",
+    reason: `Đáp án đúng là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}.
+- Ý nghĩa: Từ「${answer}」mang nghĩa là "${ansMeaning || "từ vựng chuẩn của bài"}", đóng vai trò then chốt trong việc hoàn thiện ý nghĩa câu văn.
+- Phân tích ngữ cảnh: ${contextAnalysis}
+- Các phương án còn lại là những từ vựng khác nghĩa hoặc không phù hợp với tình huống thực tế của câu văn.`,
   };
 }
 
 /**
- * Tự động phân loại câu hỏi thuộc Bài học nào (Bài 4 - 7) dựa trên chữ Hán, cấu trúc ngữ pháp và từ vựng.
- * @param q Câu hỏi trắc nghiệm cần phân loại
- * @returns Tên bài học kèm chủ đề cụ thể (Ví dụ: 'JPD123 - Bài 6 (So sánh, Rủ rê & Lượng từ)')
+ * Tự động phân loại câu hỏi thuộc Bài học nào (Bài 1 - 7) một cách chính xác
  */
 function determineLesson(q: ExamQuestion): string {
-  // If lesson is already provided on question and is a specific single lesson (not a generic range like "Bài 4 đến 7")
   if (
     q.explanation?.lesson &&
     q.explanation.lesson.includes("Bài") &&
@@ -1552,31 +1864,43 @@ function determineLesson(q: ExamQuestion): string {
     }
   }
 
-  // 2. Phân loại theo cấu trúc ngữ pháp và từ vựng đặc trưng
-  // Bài 7: Thể て, cách làm かた, dụng cụ ăn uống
+  // 2. Bài 7: Thể て, yêu cầu ください, tiếp diễn ています, đề nghị ましょうか, cách làm かた, dụng cụ ăn uống
   if (
+    q.sentence.includes("ください") ||
     q.sentence.includes("てください") ||
     q.sentence.includes("ています") ||
+    q.sentence.includes("ましょうか") ||
     q.sentence.includes("かた") ||
+    q.sentence.includes("方") ||
     q.sentence.includes("スプーン") ||
     q.sentence.includes("フォーク") ||
     q.sentence.includes("ナイフ") ||
+    q.sentence.includes("お箸") ||
+    q.sentence.includes("箸") ||
     q.sentence.includes("電子レンジ") ||
     q.prompt.includes("thể て") ||
-    q.prompt.includes("Thể て")
+    q.prompt.includes("Thể て") ||
+    q.prompt.includes("cách làm") ||
+    q.prompt.includes("dụng cụ") ||
+    (q.answer && q.answer.length >= 2 && (q.answer.endsWith("て") || q.answer.endsWith("で")))
   ) {
     return "JPD123 - Bài 7 (Động từ thể て và Mẫu câu giao tiếp)";
   }
 
-  // Bài 6: So sánh hơn (より), so sánh kém (ほど), so sánh lựa chọn (どちらが), so sánh nhất (いちばん), Rủ rê / Từ chối khéo (ちょっと / やくそく), Nơi diễn ra sự kiện (で...あります), Đếm vật mỏng (まい)
+  // 3. Bài 6: So sánh (より, ほど, どちら, いちばん), Rủ rê & Từ chối khéo (はちょっと, 約束, 用事), Nơi sự kiện (Địa điểm で Sự kiện あります), Lượng từ (まい, 枚)
   if (
     fullText.includes("より") ||
     fullText.includes("ほど") ||
     fullText.includes("どちらが") ||
+    fullText.includes("どちら") ||
     fullText.includes("いちばん") ||
-    fullText.includes("ちょっと") ||
-    fullText.includes("やくそく") ||
+    fullText.includes("一番") ||
+    fullText.includes("はちょっと") ||
+    fullText.includes("ちょっと…") ||
     fullText.includes("約束") ||
+    fullText.includes("やくそく") ||
+    fullText.includes("用事") ||
+    fullText.includes("ようじ") ||
     fullText.includes("お祭り") ||
     fullText.includes("おまつり") ||
     fullText.includes("パーティー") ||
@@ -1590,14 +1914,12 @@ function determineLesson(q: ExamQuestion): string {
     fullText.includes("so sánh") ||
     fullText.includes("rủ rê") ||
     fullText.includes("Rủ rê") ||
-    fullText.includes("từ chối") ||
-    fullText.includes("vật mỏng") ||
-    fullText.includes("sự kiện")
+    fullText.includes("từ chối")
   ) {
     return "JPD123 - Bài 6 (So sánh, Rủ rê & Lượng từ)";
   }
 
-  // Bài 5: Quá khứ động từ (ました), mong muốn (たい / ほしい), nguyên nhân (から / どうして)
+  // 4. Bài 5: Quá khứ động từ (ました), mong muốn (たい / ほしい), nguyên nhân (から / どうして), mục đích di chuyển (〜に行きます)
   if (
     q.sentence.includes("ほしい") ||
     q.sentence.includes("たい") ||
@@ -1615,7 +1937,7 @@ function determineLesson(q: ExamQuestion): string {
     return "JPD123 - Bài 5 (Quá khứ, Mong muốn và Mục đích)";
   }
 
-  // Bài 4: Tính từ đuôi い / な, thời tiết, vị trí, phương hướng, hỏi khoảng cách (どのくらい)
+  // 5. Bài 4: Tính từ đuôi い / な, thời tiết, vị trí, khoảng cách
   if (
     q.sentence.includes("おいしい") ||
     q.sentence.includes("さむい") ||
@@ -1635,47 +1957,74 @@ function determineLesson(q: ExamQuestion): string {
     q.sentence.includes("前") ||
     q.sentence.includes("国") ||
     q.sentence.includes("料理") ||
-    q.sentence.includes("映画") ||
-    q.sentence.includes("どちら")
+    q.sentence.includes("映画")
   ) {
     return "JPD123 - Bài 4 (Tính từ và Liên từ)";
   }
 
-  // 3. Fallback theo 77 chữ Hán chuẩn website nếu câu hỏi không đánh dấu section
-  if (/[肉料理野半大小]/.test(fullText)) {
-    return "JPD123 - Bài 7 (Chữ Hán & Từ vựng N5)";
-  }
-  if (/[今来帰会社聞読話書寺言具田力門]/.test(fullText)) {
-    return "JPD123 - Bài 6 (Chữ Hán & Từ vựng N5)";
-  }
-  if (/[先週毎午後見食飲買物行休]/.test(fullText)) {
-    return "JPD123 - Bài 5 (Chữ Hán & Từ vựng N5)";
-  }
-  if (/[東京名前国男女区市]/.test(fullText)) {
-    return "JPD123 - Bài 4 (Chữ Hán & Từ vựng N5)";
-  }
+  // 6. Bài 1-3 của JPD113
   if (/[月火水木土曜何年時間分]/.test(fullText)) {
-    return "JPD113 - Bài 3 (Chữ Hán & Từ vựng N5)";
+    return "JPD113 - Bài 3 (Thời gian, Di chuyển & Nơi làm việc)";
   }
   if (/[一二三四五六七八九十百千万円]/.test(fullText)) {
-    return "JPD113 - Bài 2 (Chữ Hán & Từ vựng N5)";
+    return "JPD113 - Bài 2 (Chỉ định từ, Địa điểm & Mua sắm)";
   }
   if (/[私人才学生校日本語]/.test(fullText)) {
-    return "JPD113 - Bài 1 (Chữ Hán & Từ vựng N5)";
+    return "JPD113 - Bài 1 (Câu danh từ & Chào hỏi cơ bản)";
   }
 
   return "JPD123 - Giáo trình Sơ cấp 2 (FPT University)";
 }
 
+/**
+ * Tự động phân tích điểm ngữ pháp then chốt của câu hỏi
+ */
 function determineGrammarPoint(q: ExamQuestion): string {
   const fullText = `${q.sentence || ""} ${q.prompt || ""} ${q.answer || ""}`;
 
-  if (fullText.includes("ちょっと") || fullText.includes("từ chối") || fullText.includes("Từ chối")) {
-    return "Rủ rê, Đồng ý và Từ chối khéo: 〜はちょっと… / 〜がありますから";
+  // 1. Bài 7: Mẫu câu thể て
+  if (fullText.includes("ください") || fullText.includes("てください")) {
+    return "Mẫu câu yêu cầu, nhờ vả lịch sự: Vてください (Xin vui lòng hãy làm V...)";
   }
-  if (fullText.includes("ましょう") || fullText.includes("ませんか") || fullText.includes("rủ rê") || fullText.includes("Rủ rê")) {
-    return "Mẫu câu rủ rê và đề nghị cùng làm: 〜ませんか / 〜ましょう";
+  if (fullText.includes("ています") || fullText.includes("ている")) {
+    return "Mẫu câu hành động đang tiếp diễn: Vています (Đang làm V...)";
   }
+  if (fullText.includes("ましょうか")) {
+    return "Mẫu câu đề nghị giúp đỡ lịch sự: V[bỏ ます] + ましょうか (Tôi làm ... giúp bạn nhé?)";
+  }
+  if (fullText.includes("かた") || fullText.includes("方")) {
+    return "Mẫu câu cách thức thực hiện hành động: V[bỏ ます] + 方 (かた) (Cách làm...)";
+  }
+
+  // 2. Bài 7: Trợ từ công cụ dụng cụ
+  if (
+    (fullText.includes("で") && (fullText.includes("スプーン") || fullText.includes("フォーク") || fullText.includes("ナイフ") || fullText.includes("お箸") || fullText.includes("箸"))) ||
+    fullText.includes("dụng cụ") ||
+    fullText.includes("công cụ")
+  ) {
+    return "Trợ từ chỉ công cụ, phương tiện: [Công cụ / Phương tiện] + で + Hành động";
+  }
+
+  // 3. Bài 6: So sánh
+  if (fullText.includes("より")) {
+    return "Cấu trúc so sánh hơn: A は B より [Tính từ] です (A thì hơn B)";
+  }
+  if (fullText.includes("ほど")) {
+    return "Cấu trúc so sánh kém (không bằng): A は B ほど [Tính từ phủ định] (A không bằng B)";
+  }
+  if (fullText.includes("どちら")) {
+    return "So sánh lựa chọn: A と B と どちらが [Tính từ] ですか (Giữa A và B cái nào hơn?)";
+  }
+  if (fullText.includes("いちばん") || fullText.includes("一番")) {
+    return "So sánh cao nhất: [Phạm vi] の中で [Chủ ngữ] が一番 [Tính từ] です";
+  }
+
+  // 4. Bài 6: Lượng từ
+  if (fullText.includes("まい") || fullText.includes("枚") || fullText.includes("vật mỏng")) {
+    return "Lượng từ đếm vật mỏng, phẳng: [Danh từ] が/を 〜枚 (まい)";
+  }
+
+  // 5. Bài 6: Nơi diễn ra sự kiện
   if (
     (fullText.includes("で") && (fullText.includes("あります") || fullText.includes("ある"))) ||
     fullText.includes("sự kiện") ||
@@ -1687,22 +2036,37 @@ function determineGrammarPoint(q: ExamQuestion): string {
   ) {
     return "Nơi diễn ra sự kiện, hoạt động: Địa điểm + で + N(sự kiện) + があります";
   }
-  if (fullText.includes("まい") || fullText.includes("枚") || fullText.includes("vật mỏng")) {
-    return "Đếm số lượng vật mỏng, phẳng: N が / を 〜まい (枚) あります / 買いました";
+
+  // 6. Bài 6: Rủ rê & Từ chối khéo
+  if (
+    (fullText.includes("ちょっと") && !fullText.includes("ください") && !fullText.includes("待")) ||
+    fullText.includes("はちょっと") ||
+    fullText.includes("ちょっと…") ||
+    fullText.includes("約束") ||
+    fullText.includes("やくそく") ||
+    fullText.includes("用事") ||
+    fullText.includes("ようじ") ||
+    fullText.includes("từ chối") ||
+    fullText.includes("Từ chối")
+  ) {
+    return "Rủ rê, Đồng ý và Từ chối khéo: 〜はちょっと… / 〜がありますから";
   }
+  if (fullText.includes("ましょう") || fullText.includes("ませんか") || fullText.includes("rủ rê") || fullText.includes("Rủ rê")) {
+    return "Mẫu câu rủ rê và đề nghị cùng làm: 〜ませんか / 〜ましょう";
+  }
+
+  // 7. Bài 5: Mong muốn & Quá khứ
   if (fullText.includes("ほしい")) return "Mẫu câu mong muốn sở hữu: Danh từ + が + ほしいです";
   if (fullText.includes("たい")) return "Mẫu câu muốn thực hiện hành động: V[bỏ ます] + たいです";
-  if (fullText.includes("より")) return "Cấu trúc so sánh hơn: A は B より Tính từ です";
-  if (fullText.includes("ほど")) return "Cấu trúc so sánh kém (không bằng): A は B ほど Tính từ [phủ định]";
-  if (fullText.includes("どちら")) return "So sánh lựa chọn: A と B と どちらが Tính từ ですか";
-  if (fullText.includes("いちばん")) return "So sánh nhất: [Phạm vi] の中で [Chủ ngữ] が いちばん [Tính từ] です";
-  if (fullText.includes("ください")) return "Mẫu câu yêu cầu, nhờ vả lịch sự: Vてください";
-  if (fullText.includes("かた")) return "Mẫu câu cách thức làm: V[bỏ ます] + 方 (かた)";
-  if (fullText.includes("すき")) return "Mẫu câu nói về sở thích: Danh từ + が + すきです";
-  if (fullText.includes("ました")) return "Thì quá khứ của động từ: Vました / Vませんでした";
+  if (fullText.includes("ました") || fullText.includes("ませんでした")) return "Thì quá khứ của động từ: Vました / Vませんでした";
+  if (fullText.includes("から") || fullText.includes("どうして")) return "Mẫu câu hỏi và giải thích nguyên nhân: どうして〜か / 〜から";
+
+  // 8. Bài 4: Tính từ
   if (fullText.includes("かった") || fullText.includes("くない")) return "Chia tính từ đuôi い: Quá khứ かったです, Phủ định くないです";
   if (fullText.includes("でした") || fullText.includes("じゃありません")) return "Chia tính từ đuôi な: Quá khứ でした, Phủ định じゃありません";
-  return "Cấu trúc câu ngữ pháp tiếng Nhật sơ cấp";
+  if (fullText.includes("あまり") || fullText.includes("ぜんぜん")) return "Phó từ mức độ đi với phủ định: あまり / ぜんぜん + [Phủ định]";
+
+  return "Cấu trúc câu ngữ pháp tiếng Nhật sơ cấp chuẩn FPT";
 }
 
 /**
@@ -1723,6 +2087,9 @@ export function analyzeDistractors(question: ExamQuestion): WrongOptionAnalysis[
   });
 }
 
+/**
+ * Phân tích chuyên sâu và chi tiết lý do sai của từng đáp án gây nhiễu, tuyệt đối không dùng câu rập khuôn
+ */
 function getSingleDistractorReason(option: string, question: ExamQuestion): string {
   const ans = (question.answer || "").trim();
   const ansMeaning = getAnswerMeaning(ans, question);
@@ -1730,9 +2097,10 @@ function getSingleDistractorReason(option: string, question: ExamQuestion): stri
     getAnswerMeaning(option, question) ||
     vocabulary.find((v) => v.word === option || v.reading === option)?.meaning;
 
-  // 1. Phân tích cho câu hỏi Kanji
+  // =========================================================================
+  // 1. PHÂN TÍCH CHO CÂU HỎI KANJI
+  // =========================================================================
   if (question.section === "Kanji") {
-    // Trường hợp chọn cách đọc Hiragana
     const isReadingPrompt =
       question.prompt.includes("cách đọc") ||
       question.prompt.includes("読み方") ||
@@ -1740,92 +2108,258 @@ function getSingleDistractorReason(option: string, question: ExamQuestion): stri
 
     if (isReadingPrompt) {
       if (optMeaning) {
-        return `Sai ngữ nghĩa:「${option}」là cách đọc của từ mang nghĩa "${optMeaning}", không phải cách đọc của chữ Hán trong câu này.`;
+        return `Sai ý nghĩa:「${option}」là cách đọc của từ mang nghĩa "${optMeaning}", không phải cách đọc của chữ Hán trong câu này.`;
       }
       // Sai trường âm (độ dài chênh lệch có nguyên âm trường âm)
       if (Math.abs(option.length - ans.length) === 1 && /[ういおえ]/.test(option + ans)) {
-        return `Sai quy tắc trường âm: Thừa hoặc thiếu âm kéo dài (trường âm) so với âm chuẩn「${ans}」.`;
+        return `Sai quy tắc trường âm: Thừa hoặc thiếu âm kéo dài (trường âm) so với âm chuẩn「${ans}」. Khi đọc cần phát âm đúng độ dài phách.`;
       }
       // Sai âm đục/âm ngắt
-      if (/[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっ]/.test(option) !== /[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっ]/.test(ans)) {
+      if (
+        /[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっ]/.test(option) !==
+        /[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっ]/.test(ans)
+      ) {
         return `Sai biến âm: Sai về âm đục (dakuten) hoặc âm ngắt so với cách đọc chính xác「${ans}」.`;
       }
-      return `Phát âm không đúng: Không phải là cách đọc On hay Kun hợp lệ của chữ Hán trong ngữ cảnh từ này.`;
+      return `Phát âm không đúng:「${option}」không phải là cách đọc On hay Kun hợp lệ của chữ Hán này trong tiếng Nhật chuẩn.`;
     }
 
     // Trường hợp chọn chữ Hán từ Hiragana
-    if (optMeaning) {
-      return `Sai chữ Hán: Chữ「${option}」mang nghĩa là "${optMeaning}", không tương ứng với nghĩa của từ cần tìm.`;
+    const alphaOpt = alphabet.find((a) => a.char === option || (a as Record<string, unknown>).kanji === option);
+    if (alphaOpt) {
+      const hv = (alphaOpt as Record<string, unknown>).hanviet || "";
+      return `Sai chữ Hán: Chữ「${option}」${hv ? `(Âm Hán: ${hv})` : ""} mang ý nghĩa khác, không khớp với nghĩa của từ trong câu.`;
     }
-    return `Chữ Hán「${option}」có cấu tạo bộ thủ và ý nghĩa khác, không khớp với từ trong đề bài.`;
+    if (optMeaning) {
+      return `Sai chữ Hán: Chữ「${option}」mang nghĩa là "${optMeaning}", không tương ứng với từ vựng cần điền.`;
+    }
+    return `Chữ Hán「${option}」có cấu tạo bộ thủ và ý nghĩa khác hoàn toàn so với đáp án đúng「${ans}」.`;
   }
 
-  // 2. Phân tích cho câu hỏi Ngữ pháp
+  // =========================================================================
+  // 2. PHÂN TÍCH CHO CÂU HỎI NGỮ PHÁP
+  // =========================================================================
   if (question.section === "Ngữ pháp") {
-    // Phân tích trợ từ đơn
-    if (option === "で") {
-      return "Sai trợ từ:「で」dùng chỉ nơi chốn diễn ra hành động, phương tiện hoặc nơi tổ chức sự kiện; không dùng cho vị trí hoặc động từ này.";
-    }
-    if (option === "に") {
-      return "Sai trợ từ:「に」chỉ thời điểm xác định, đích đến (行きます) hoặc vị trí tồn tại; không phù hợp với chức năng ngữ pháp của câu.";
-    }
-    if (option === "を") {
-      return "Sai trợ từ:「を」dùng chỉ đối tượng chịu tác động của ngoại động từ; không đi với động từ tự thân hoặc tính từ mong muốn này.";
-    }
-    if (option === "へ") {
-      return "Sai trợ từ:「へ」chỉ phương hướng di chuyển; không dùng chỉ thời gian, nơi chốn hành động hay đối tượng.";
-    }
-    if (option === "が") {
-      return "Sai trợ từ:「が」chỉ chủ ngữ ngữ pháp hoặc bổ ngữ cho tính từ/sở thích; câu này đòi hỏi trợ từ khác theo mẫu câu.";
-    }
-    if (option === "と") {
-      return "Sai trợ từ:「と」dùng để liên kết 'và' hoặc 'cùng với ai đó'; không tạo thành mẫu ngữ pháp hợp lệ ở đây.";
-    }
-    if (option === "より") {
-      return "Sai trợ từ so sánh:「より」chỉ dùng trong câu so sánh hơn (A hơn B); không đúng cấu trúc ở đây.";
-    }
-    if (option === "ほど") {
-      return "Sai trợ từ so sánh:「ほど」chỉ dùng trong câu so sánh kém và bắt buộc vị ngữ phải ở dạng phủ định.";
-    }
-    if (option === "から") {
-      return "Sai trợ từ:「から」chỉ điểm xuất phát (từ...) hoặc nêu nguyên nhân; không khớp với mẫu câu này.";
-    }
-    if (option === "まで") {
-      return "Sai trợ từ:「まで」chỉ giới hạn thời gian/không gian kết thúc (đến...).";
+    // 2.1. Phân tích chia động từ thể て (Bài 7)
+    if (ans.endsWith("て") || ans.endsWith("で") || question.sentence.includes("ください") || question.sentence.includes("ています")) {
+      // Nhóm 1 đuôi ち (như 待って)
+      if (ans.includes("待って") || ans === "まって") {
+        if (option.includes("待ちて") || option === "まちて") {
+          return "Sai quy tắc chia thể て: Động từ「待ちます」thuộc Nhóm 1 (âm ち trước ます), quy tắc phải đổi thành âm ngắt『〜って』thành「待って」. Chỉ động từ Nhóm 2 mới bỏ ます thêm て trực tiếp.";
+        }
+        if (option.includes("待いて") || option === "まいて") {
+          return "Sai biến âm: Đuôi『〜いて』chỉ dùng cho động từ kết thúc bằng き (như 書きます ➔ 書いて), không dùng cho động từ đuôi ち.";
+        }
+        if (option.includes("待んで") || option === "まんで") {
+          return "Sai biến âm: Đuôi『〜んで』chỉ dùng cho động từ đuôi み, び, に (như 飲みます ➔ 飲んで, 遊びます ➔ 遊んで), không dùng cho đuôi ち.";
+        }
+      }
+
+      // Nhóm 1 đuôi い (như 買って)
+      if (ans.includes("買って") || ans === "かって") {
+        if (option.includes("買いして") || option === "かいして") {
+          return "Sai quy tắc chia:「買います」có đuôi い ➔ biến thành âm ngắt『買って』, không thêm して.";
+        }
+        if (option.includes("買いて") || option === "かいて") {
+          return "Sai biến âm: Đuôi『〜いて』chỉ dùng cho động từ đuôi き; động từ 買います đuôi い phải biến thành âm ngắt『買って』.";
+        }
+        if (option.includes("買んで") || option === "かんで") {
+          return "Sai biến âm: Đuôi『〜んで』chỉ dùng cho động từ đuôi み, び, に; không dùng cho 買います.";
+        }
+      }
+
+      // Nhóm 1 đuôi み (như 飲んで, 読んで)
+      if (ans.includes("飲んで") || ans.includes("読んで") || ans === "のんで" || ans === "よんで") {
+        if (option.includes("飲みて") || option.includes("読みて")) {
+          return "Sai quy tắc chia: Động từ Nhóm 1 đuôi み phải biến đổi thành『〜んで』, không được giữ nguyên âm み rồi thêm て.";
+        }
+        if (option.includes("飲んて") || option.includes("読んて")) {
+          return "Sai biến âm (thiếu âm đục): Động từ đuôi み, び, に khi chia thể て bắt buộc phải có âm đục là『〜んで』, không phải 〜んて.";
+        }
+      }
+
+      // Nhóm 1 đuôi き (như 書いて)
+      if (ans.includes("書いて") || ans === "かいて") {
+        if (option.includes("書って") || option === "かって") {
+          return "Sai quy tắc chia: Động từ Nhóm 1 đuôi き (書きます) phải đổi thành『〜いて』(書いて), không đổi thành âm ngắt って.";
+        }
+      }
+
+      // Nhóm 1 ngoại lệ (行きます ➔ 行って)
+      if (ans.includes("行って") || ans === "いって") {
+        if (option.includes("行いて") || option === "いいて") {
+          return "Sai ngoại lệ:「行きます」mặc dù có đuôi き nhưng là trường hợp ngoại lệ duy nhất đổi thành âm ngắt『行って (いって)』, tuyệt đối không chia thành 行いて.";
+        }
+      }
+
+      // Nhóm 2 (như 食べて, 開けて, 教えて)
+      if (ans.includes("食べて") || ans.includes("開けて") || ans.includes("教えて")) {
+        if (option.includes("って")) {
+          return "Sai quy tắc chia: Đây là động từ Nhóm 2 (trước ます là nguyên âm e/i đặc biệt), chỉ cần bỏ ます thêm て, không biến đổi thành âm ngắt『って』(lỗi hay gặp do nhầm sang Nhóm 1).";
+        }
+        if (option.includes("いで")) {
+          return "Sai biến âm: Đuôi『〜いで』chỉ dùng cho động từ Nhóm 1 có đuôi ぎ (như 泳ぎます ➔ 泳いで), không áp dụng cho động từ Nhóm 2.";
+        }
+      }
+
+      // Nhóm 3 (như 来て, 持って来て, 勉強して)
+      if (ans.includes("来て") || ans === "きて") {
+        if (option === "きって" || option.includes("切って")) {
+          return "Sai từ vựng:「きって」là thể て của động từ 切ります (cắt) hoặc danh từ 切手 (con tem); thể て của 来ます (đến) phải là『来て (きて)』.";
+        }
+      }
     }
 
-    // Phân tích dạng chia động từ / tính từ
+    // 2.2. Phân tích trợ từ trong ngữ cảnh cụ thể
+    // Ngữ cảnh dụng cụ / phương tiện ăn uống (スプーン, フォーク, ナイフ, 箸)
+    if (question.sentence.includes("スプーン") || question.sentence.includes("フォーク") || question.sentence.includes("ナイフ") || question.sentence.includes("箸") || question.sentence.includes("お箸")) {
+      if (option === "に") {
+        return "Sai chức năng trợ từ:「に」dùng chỉ thời điểm xác định (7時に) hoặc đích đến (学校に行きます); không dùng sau dụng cụ ăn uống.";
+      }
+      if (option === "を") {
+        return "Sai chức năng trợ từ:「を」dùng để đánh dấu tân ngữ trực tiếp (đồ ăn bị ăn, ví dụ: カレーを食べます); không dùng cho công cụ ăn uống.";
+      }
+      if (option === "へ") {
+        return "Sai chức năng trợ từ:「へ」chỉ phương hướng di chuyển; không dùng sau dụng cụ hay đồ vật.";
+      }
+      if (option === "が") {
+        return "Sai chức năng trợ từ:「が」chỉ chủ ngữ thực hiện hành động hoặc đối tượng mong muốn; không dùng sau công cụ.";
+      }
+    }
+
+    // Ngữ cảnh nơi diễn ra sự kiện / lễ hội (お祭り, パーティー, コンサート, 試合)
+    if (question.sentence.includes("お祭り") || question.sentence.includes("おまつり") || question.sentence.includes("パーティー") || question.sentence.includes("コンサート")) {
+      if (option === "に") {
+        return "Bẫy đề thi FPT: Đối với sự kiện, lễ hội, bữa tiệc (お祭り, パーティー), nơi tổ chức sự kiện BẮT BUỘC dùng trợ từ「で」, không dùng trợ từ「に」.";
+      }
+      if (option === "を") {
+        return "Sai trợ từ: Động từ tồn tại「あります」là tự động từ, không nhận tân ngữ trực tiếp với「を」.";
+      }
+      if (option === "へ") {
+        return "Sai trợ từ:「へ」chỉ phương hướng di chuyển tới đâu; ở đây là diễn ra sự kiện tại địa điểm.";
+      }
+    }
+
+    // Ngữ cảnh tính từ mong muốn ほしい
+    if (question.sentence.includes("ほしい")) {
+      if (option === "を") {
+        return "Bẫy đề thi kinh điển: Trong tiếng Nhật,「ほしい」là TÍNH TỪ đuôi い (không phải động từ). Đối tượng mong muốn bắt buộc đi với trợ từ「が」(パソコンがほしいです), tuyệt đối không dùng trợ từ「を」.";
+      }
+      if (option === "に") {
+        return "Sai trợ từ:「に」chỉ thời gian hoặc vị trí, không đi trước tính từ mong muốn「ほしい」.";
+      }
+      if (option === "で") {
+        return "Sai trợ từ:「で」chỉ nơi diễn ra hành động hoặc công cụ, không đi trước tính từ「ほしい」.";
+      }
+    }
+
+    // Ngữ cảnh so sánh (より vs ほど vs どちら vs いちばん)
+    if (ans === "より") {
+      if (option === "ほど") {
+        return "Sai cấu trúc so sánh:「ほど」chỉ dùng trong so sánh không bằng (A không bằng B) và vị ngữ bắt buộc phải ở dạng PHỦ ĐỊNH. Ở đây vị ngữ là khẳng định nên phải dùng「より」.";
+      }
+      if (option.includes("どちら")) {
+        return "Sai từ loại:「どちら」là từ để hỏi (bên nào/cái nào) dùng trong câu hỏi lựa chọn giữa 2 đối tượng, không dùng làm liên từ so sánh trong câu khẳng định.";
+      }
+      if (option === "いちばん" || option === "一番") {
+        return "Sai cấu trúc:「いちばん」dùng trong so sánh nhất và cần có cụm phạm vi (〜の中で), không dùng sau danh từ so sánh 2 đối tượng.";
+      }
+    }
+    if (ans === "ほど") {
+      if (option === "より") {
+        return "Sai cấu trúc:「より」dùng trong so sánh hơn với vị ngữ khẳng định (A hơn B). Khi vị ngữ là phủ định (không bằng) thì bắt buộc phải dùng「ほど」.";
+      }
+      if (option.includes("どちら") || option === "いちばん") {
+        return "Sai mẫu câu: Không dùng trong câu so sánh không bằng với vị ngữ phủ định.";
+      }
+    }
+
+    // Phân tích trợ từ đơn tổng quát
+    if (option === "で") {
+      return "Sai chức năng:「で」dùng chỉ nơi chốn hành động, phương tiện hoặc nơi tổ chức sự kiện; không phù hợp với chức năng ngữ pháp yêu cầu ở câu này.";
+    }
+    if (option === "に") {
+      return "Sai chức năng:「に」chỉ thời điểm xác định, đích đến chuyển động hoặc vị trí tồn tại; không phù hợp với ngữ cảnh câu.";
+    }
+    if (option === "を") {
+      return "Sai chức năng:「を」dùng đánh dấu tân ngữ trực tiếp của ngoại động từ; không đi với tính từ hoặc tự động từ này.";
+    }
+    if (option === "へ") {
+      return "Sai chức năng:「へ」chỉ phương hướng di chuyển; không dùng chỉ thời gian, công cụ hay đối tượng.";
+    }
+    if (option === "が") {
+      return "Sai chức năng:「が」chỉ chủ ngữ ngữ pháp hoặc đối tượng của tính từ/sở thích; câu này đòi hỏi trợ từ khác theo mẫu câu.";
+    }
+
+    // Phân tích dạng chia tính từ / động từ sai
+    if (option.includes("いでした")) {
+      return "Sai quy tắc chia tính từ: Tính từ đuôi い ở quá khứ phải đổi thành「〜かったです」(ví dụ: おいしかったです), tuyệt đối không bao giờ dùng '〜いでした' (lỗi hay gặp do nhầm sang tính từ đuôi な).";
+    }
+    if (option.includes("くないでした")) {
+      return "Sai quy tắc chia: Phủ định quá khứ của tính từ đuôi い phải là「〜くなかったです」.";
+    }
     if (option.includes("ますたい")) {
       return "Sai quy tắc kết hợp: Muốn diễn tả mong muốn phải bỏ ます rồi mới thêm たい (V[bỏ ます] + たいです), không ghép nguyên cả 'ますたい'.";
     }
     if (option.includes("るたい")) {
       return "Sai quy tắc kết hợp: Thể từ điển không ghép trực tiếp với たい.";
     }
-    if (option.includes("いでした")) {
-      return "Sai quy tắc chia tính từ: Tính từ đuôi い ở quá khứ phải đổi thành 〜かったです, không bao giờ dùng 〜いでした.";
-    }
-    if (option.includes("くないでした")) {
-      return "Sai quy tắc chia: Phủ định quá khứ của tính từ đuôi い phải là 〜くなかったです.";
-    }
-    if (option.includes("ました") && ans.includes("たい")) {
-      return "Sai thì/ngữ cảnh:「ました」diễn tả hành động đã hoàn thành trong quá khứ, trong khi câu diễn tả mong muốn (たいです).";
-    }
     if (option.includes("たい") && ans.includes("ほしい")) {
-      return "Sai mẫu câu: Vたい dùng cho mong muốn 'hành động động từ', còn Nがほしい dùng cho mong muốn 'sở hữu danh từ'.";
+      return "Sai mẫu câu: Vたい dùng cho mong muốn 'hành động động từ', còn Nがほしい dùng cho mong muốn 'sở hữu danh từ đồ vật'.";
     }
     if (option.includes("ほしい") && ans.includes("たい")) {
-      return "Sai mẫu câu: Nがほしい dùng cho danh từ, còn ở đây có động từ nên phải dùng Vたい.";
+      return "Sai mẫu câu: Nがほしい dùng cho danh từ đồ vật, còn ở đây có động từ nên phải dùng Vたい.";
+    }
+
+    // Phân tích lượng từ sai
+    if (option.includes("台") || option.includes("だい")) {
+      return "Sai lượng từ:「台 (だい)」dùng đếm máy móc, xe cộ, thiết bị điện tử (ô tô, máy tính); không dùng đếm cho loại đồ vật này.";
+    }
+    if (option.includes("本") || option.includes("ほん") || option.includes("ぼん") || option.includes("ぽん")) {
+      return "Sai lượng từ:「本」dùng đếm vật dài hình trụ (bút chì, chai nước, ô dù); không dùng cho loại đồ vật này.";
+    }
+    if (option.includes("冊") || option.includes("さつ")) {
+      return "Sai lượng từ:「冊」dùng đếm sách vở, từ điển, tạp chí có gáy đóng; không dùng cho loại đồ vật này.";
+    }
+    if (option.includes("杯") || option.includes("はい") || option.includes("ばい")) {
+      return "Sai lượng từ:「杯」dùng đếm cốc, chén, ly đồ uống (cà phê, trà, bia).";
     }
 
     if (optMeaning) {
-      return `Sai mẫu câu: Cấu trúc「${option}」có nghĩa là "${optMeaning}", không phù hợp với ngữ cảnh ngữ pháp yêu cầu.`;
+      return `Sai mẫu câu: Cấu trúc「${option}」có nghĩa là "${optMeaning}", không phù hợp với quy tắc ngữ pháp của câu này.`;
     }
-    return `Dạng thức ngữ pháp của「${option}」không đúng quy tắc kết hợp hoặc không đúng ý nghĩa của câu.`;
+    return `Dạng thức ngữ pháp của「${option}」không đúng quy tắc kết hợp trong tiếng Nhật sơ cấp.`;
   }
 
-  // 3. Phân tích cho câu hỏi Từ vựng
-  if (optMeaning) {
-    return `Sai ngữ cảnh: Từ「${option}」có nghĩa là "${optMeaning}", không hợp lý với tình huống và ý nghĩa của câu văn.`;
+  // =========================================================================
+  // 3. PHÂN TÍCH CHO CÂU HỎI TỪ VỰNG
+  // =========================================================================
+  // Phân tích từ vựng đồ dùng ăn uống Bài 7
+  if (ans === "スプーン" || ans === "フォーク" || ans === "ナイフ" || ans === "お箸") {
+    if (option === "フォーク") {
+      return "Sai dụng cụ:「フォーク」nghĩa là nĩa/dĩa, dùng để ăn mì, salad hoặc xiên thức ăn; không dùng để xúc món ăn dạng lỏng hoặc cơm cà ri.";
+    }
+    if (option === "ナイフ") {
+      return "Sai dụng cụ:「ナイフ」nghĩa là dao, dùng để cắt thái thịt hoặc gọt hoa quả; không dùng làm công cụ xúc thức ăn.";
+    }
+    if (option === "お箸" || option === "箸") {
+      return "Sai dụng cụ:「お箸 (đũa)」dùng để gắp đồ ăn châu Á/Nhật Bản; đối với món cà ri hoặc súp phương Tây theo bài học chuẩn phải dùng thìa (スプーン).";
+    }
+    if (option === "スプーン") {
+      return "Sai dụng cụ:「スプーン」nghĩa là thìa/muỗng, dùng để múc đồ ăn dạng lỏng hoặc cơm cà ri.";
+    }
   }
-  return `Từ vựng「${option}」không phù hợp với ý nghĩa và ngữ cảnh của câu.`;
+
+  // Phân tích mùa Bài 6
+  if (ans === "春" || ans === "夏" || ans === "秋" || ans === "冬") {
+    if (option === "冬") return "Sai mùa:「冬 (ふゆ)」là mùa đông (lạnh giá, có tuyết rơi), không khớp với ngữ cảnh mùa trong câu.";
+    if (option === "夏") return "Sai mùa:「夏 (なつ)」là mùa hè (nóng bức, đi biển, lễ hội pháo hoa).";
+    if (option === "春") return "Sai mùa:「春 (はる)」là mùa xuân (ấm áp, ngắm hoa anh đào nở).";
+    if (option === "秋") return "Sai mùa:「秋 (あき)」là mùa thu (mát mẻ, ngắm lá đỏ momiji).";
+  }
+
+  if (optMeaning) {
+    return `Sai ý nghĩa: Từ「${option}」có nghĩa là "${optMeaning}", không hợp lý với ngữ cảnh và tình huống thực tế của câu văn.`;
+  }
+  return `Từ vựng「${option}」không phù hợp với ý nghĩa và ngữ cảnh logic của câu.`;
 }

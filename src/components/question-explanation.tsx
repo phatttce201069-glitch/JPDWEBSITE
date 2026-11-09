@@ -123,7 +123,7 @@ export function QuestionExplanationPanel({
           </div>
 
           {/* Hộp hiển thị câu hỏi & câu hoàn chỉnh */}
-          <div className="rounded-lg bg-paper p-3 border border-amber-500/20 space-y-2">
+          <div className="rounded-lg bg-paper p-3 border border-amber-500/20 space-y-2.5">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 font-semibold text-amber-950 text-xs">
                 <FileQuestion className="size-3.5 text-amber-600" />
@@ -144,21 +144,23 @@ export function QuestionExplanationPanel({
             )}
 
             {/* Đề bài & Câu đúng & Dịch câu hoàn chỉnh */}
-            <div className="rounded bg-sheet/80 p-2.5 border border-line space-y-1.5 text-xs">
+            <div className="rounded bg-sheet/80 p-2.5 border border-line space-y-2 text-xs">
               <div className="text-stone">
                 <span className="font-semibold text-stone">Đề bài: </span>
                 <span className="jp font-medium text-ink">{question.sentence}</span>
               </div>
               <div className="text-ink">
                 <span className="font-semibold text-emerald-800">Câu hoàn chỉnh: </span>
-                <span className="jp font-semibold text-emerald-950 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">
+                <span className="jp font-semibold text-emerald-950 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                   {completedSentence}
                 </span>
               </div>
               {fullSentenceVi && (
-                <div className="text-ink pt-1.5 border-t border-line/60">
-                  <span className="font-semibold text-emerald-800">Dịch cả câu hoàn chỉnh: </span>
-                  <span className="font-medium text-ink italic">&quot;{fullSentenceVi}&quot;</span>
+                <div className="text-ink pt-2 border-t border-line/60">
+                  <span className="font-semibold text-emerald-800 block mb-0.5">Dịch cả câu hoàn chỉnh: </span>
+                  <p className="font-medium text-ink italic bg-emerald-500/10 p-2 rounded border border-emerald-500/20 leading-relaxed text-[12.5px]">
+                    &quot;{fullSentenceVi}&quot;
+                  </p>
                 </div>
               )}
             </div>
@@ -171,93 +173,91 @@ export function QuestionExplanationPanel({
               </span>
               {answerMeaning && (
                 <span className="text-stone text-[11px] font-medium bg-mist/60 px-2 py-0.5 rounded border border-line">
-                  Nghĩa đáp án: <strong>{answerMeaning}</strong>
+                  Ý nghĩa: <strong>{answerMeaning}</strong>
                 </span>
               )}
             </div>
           </div>
 
-          {/* 1. Dịch nghĩa */}
-          {fullSentenceVi && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 font-medium text-stone">
-                <BookOpen className="size-3 text-stone" />
-                <span>Dịch nghĩa toàn bộ câu hoàn chỉnh:</span>
-              </div>
-              <div className="pl-4 space-y-1">
-                <p className="text-ink font-medium leading-relaxed text-[13px] bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20 italic">
-                  &quot;{fullSentenceVi}&quot;
-                </p>
-                {answerMeaning && (
-                  <p className="text-stone text-[11px] pl-1">
-                    ➔ Ý nghĩa từ vựng/đáp án <strong>{question.answer}</strong>: {answerMeaning}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* 2. Cấu trúc ngữ pháp */}
+          {/* 1. Bản chất kiến thức cốt lõi & Cấu trúc ngữ pháp */}
           {explanation.grammar && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 font-medium text-stone">
-                <Target className="size-3 text-stone" />
-                <span>Cấu trúc ngữ pháp / Điểm ngữ pháp:</span>
+            <div className="rounded-lg bg-indigo-500/5 border border-indigo-500/20 p-3 space-y-1.5 text-xs">
+              <div className="flex items-center gap-1.5 font-semibold text-indigo-950 dark:text-indigo-200">
+                <Target className="size-3.5 text-indigo-600" />
+                <span>Cấu trúc ngữ pháp & Quy tắc áp dụng:</span>
               </div>
-              <p className="text-ink pl-4 font-medium text-[13px] jp">
+              <p className="text-ink font-semibold pl-5 text-[12.5px] jp leading-relaxed">
                 {explanation.grammar}
               </p>
             </div>
           )}
 
-          {/* 3. Mẹo giải nhanh */}
-          {explanation.tips && (
-            <div className="rounded-lg bg-paper/90 border border-amber-500/20 p-2.5 space-y-1">
-              <div className="flex items-center gap-1.5 font-medium text-amber-800">
-                <Zap className="size-3.5 fill-amber-500 text-amber-500" />
-                <span>Mẹo giải nhanh & Dấu hiệu nhận biết:</span>
-              </div>
-              <p className="text-stone pl-5 text-xs leading-relaxed">
-                {explanation.tips}
-              </p>
-            </div>
-          )}
-
-          {/* 4. Lý do chọn đáp án này */}
+          {/* 2. Phân tích chi tiết lý do chọn đáp án đúng */}
           {explanation.reason && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 font-medium text-stone">
-                <HelpCircle className="size-3 text-stone" />
-                <span>Lý do chọn đáp án đúng:</span>
+            <div className="rounded-lg bg-paper p-3 border border-amber-500/20 space-y-1.5 text-xs">
+              <div className="flex items-center gap-1.5 font-semibold text-amber-950">
+                <HelpCircle className="size-3.5 text-amber-600" />
+                <span>Phân tích chi tiết bản chất câu hỏi:</span>
               </div>
-              <p className="text-ink pl-4 text-xs leading-relaxed font-normal">
+              <div className="text-stone pl-5 text-xs leading-relaxed space-y-1 font-normal whitespace-pre-line">
                 {explanation.reason}
-              </p>
+              </div>
             </div>
           )}
 
-          {/* 5. Phân tích lý do tại sao các phương án khác bị sai */}
+          {/* 3. Phân tích lý do tại sao các phương án khác bị sai & Cảnh báo bẫy */}
           {explanation.wrongOptions && explanation.wrongOptions.length > 0 && (
             <div className="space-y-2 pt-1 border-t border-amber-500/15">
-              <div className="flex items-center gap-1.5 font-semibold text-rose-900 text-xs">
-                <XCircle className="size-3.5 text-rose-500" />
-                <span>Phân tích lý do các đáp án còn lại bị sai:</span>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 font-semibold text-rose-900 text-xs">
+                  <XCircle className="size-3.5 text-rose-500" />
+                  <span>Phân tích lý do các đáp án còn lại bị sai (Tránh bẫy đề thi):</span>
+                </div>
+                <span className="text-[10px] text-stone">Phân tích chuyên sâu 3 phương án nhiễu</span>
               </div>
               <div className="grid gap-2 pl-1">
-                {explanation.wrongOptions.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-lg bg-paper border border-rose-500/20 p-2.5 text-xs flex items-start gap-2.5 shadow-2xs"
-                  >
-                    <span className="font-bold text-rose-700 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 shrink-0 font-mono text-[11px]">
-                      {item.option}
-                    </span>
-                    <span className="text-stone leading-relaxed">
-                      {item.reason}
-                    </span>
-                  </div>
-                ))}
+                {explanation.wrongOptions.map((item, idx) => {
+                  const isUserMistake = userSelectedOption && userSelectedOption === item.option;
+                  return (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "rounded-lg p-2.5 text-xs flex items-start gap-2.5 shadow-2xs border transition-all",
+                        isUserMistake
+                          ? "bg-rose-50 border-rose-400 ring-1 ring-rose-400/50"
+                          : "bg-paper border-rose-500/20",
+                      )}
+                    >
+                      <div className="shrink-0 flex flex-col gap-1 items-start">
+                        <span className="font-bold text-rose-700 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 font-mono text-[11px]">
+                          {item.option}
+                        </span>
+                        {isUserMistake && (
+                          <span className="text-[9px] font-bold text-rose-700 bg-rose-200/80 px-1 py-0.2 rounded border border-rose-300">
+                            ⚠️ Bạn đã chọn
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-stone leading-relaxed text-[11.5px]">
+                        {item.reason}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
+            </div>
+          )}
+
+          {/* 4. Mẹo phản xạ nhanh từ Giảng viên FPT */}
+          {explanation.tips && (
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/25 p-3 space-y-1">
+              <div className="flex items-center gap-1.5 font-semibold text-amber-900">
+                <Zap className="size-3.5 fill-amber-500 text-amber-500" />
+                <span>Mẹo phản xạ nhanh 1 giây trong phòng thi FPT:</span>
+              </div>
+              <p className="text-amber-950 dark:text-amber-100 pl-5 text-xs leading-relaxed font-medium">
+                {explanation.tips}
+              </p>
             </div>
           )}
 
