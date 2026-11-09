@@ -776,22 +776,137 @@ test("buildFptJpd123Exam for Bài 7 strictly focuses on Bài 7 vocabulary with z
   }
 });
 
-test("buildAiPrompt explicitly mandates 100% lesson vocabulary and prohibits outside words", () => {
-  const { systemPrompt, userPrompt } = buildAiPrompt(["6"]);
+test("generateDynamicKanjiSeeds produces rich seeds for all lessons 1-7 matching 100% web kanji", async () => {
+  const { generateDynamicKanjiSeeds, isSeedValidForLessonKanji } = await import("./fpt-jpd123-engine.ts");
+  const { alphabet } = await import("../../data/alphabet.ts");
+
+  for (let b = 1; b <= 7; b++) {
+    const seeds = generateDynamicKanjiSeeds([b]);
+    assert.ok(seeds.length >= 25, `Bài ${b} phải tạo được ít nhất 25 câu hỏi Kanji động (thực tế: ${seeds.length})`);
+
+    const lessonKanjis = alphabet.filter(
+      (g) =>
+        g.type === "kanji" &&
+        g.row &&
+        (g.row === `Bài ${b}` || g.row.startsWith(`Bài ${b} `) || g.row.startsWith(`Bài ${b}·`)),
+    );
+    const lessonChars = new Set(lessonKanjis.map((k) => k.char));
+
+    for (const s of seeds) {
+      assert.equal(s.section, "Kanji");
+      assert.equal(s.bai, b);
+
+      // Mọi seed đều phải hợp lệ với chữ Hán của bài
+      const isValid = isSeedValidForLessonKanji(s, b);
+      assert.ok(
+        isValid,
+        `Seed [${s.sentence}] (ans: ${s.answer}) không hợp lệ với chữ Hán Bài ${b}`,
+      );
+    }
+  }
+});
+
+test("buildFptJpd123Exam Kanji section for Bài 7 strictly tests only the 7 official web kanji with zero outside kanji", async () => {
+  const { alphabet } = await import("../../data/alphabet.ts");
+  const bai7Kanjis = alphabet.filter(
+    (g) =>
+      g.type === "kanji" &&
+      g.row &&
+      (g.row === "Bài 7" || g.row.startsWith("Bài 7 ") || g.row.startsWith("Bài 7·")),
+  );
+  const bai7Chars = new Set(bai7Kanjis.map((k) => k.char));
+  assert.equal(bai7Chars.size, 7, "Bài 7 trên web phải có chính xác 7 chữ Hán: 肉, 料, 理, 野, 半, 大, 小");
+
+  // Kiểm tra 10 lần sinh đề thi Bài 7 ngẫu nhiên
+  for (let round = 1; round <= 10; round++) {
+    const paper = buildFptJpd123Exam(["7"]);
+    const kanjiQuestions = paper.filter((q) => q.section === "Kanji");
+    assert.equal(kanjiQuestions.length, 10, "Phải có đúng 10 câu Kanji");
+
+    for (const q of kanjiQuestions) {
+      // Tìm chữ Hán được kiểm tra trong câu hỏi hoặc đáp án
+      const m = (q.sentence + " " + q.prompt).match(/[（〔「【]([^）〕」】]+)[）〕」】]/);
+      const bracketKanji = m ? (m[1].match(/[一-龯]/g) || []) : [];
+      const ansKanji = q.answer.match(/[一-龯]/g) || [];
+      const testedKanji = [...new Set([...bracketKanji, ...ansKanji])];
+
+      assert.ok(
+        testedKanji.length > 0,
+        `Câu hỏi Kanji ${q.sentence} phải kiểm tra chữ Hán cụ thể`,
+      );
+
+      // 100% chữ Hán được kiểm tra phải nằm trong đúng 7 chữ Hán của Bài 7
+      for (const char of testedKanji) {
+        assert.ok(
+          bai7Chars.has(char),
+          `Câu ${q.sentence} kiểm tra chữ Hán '${char}' KHÔNG thuộc 7 chữ Hán Bài 7 trên web (chỉ gồm: ${[...bai7Chars].join(", ")})`,
+        );
+      }
+
+      // Tuyệt đối không chứa các chữ Hán ngoài bài như 病院, 電気, 開, 閉, 待, 泳
+      const forbiddenOutsideKanji = ["病", "院", "電", "気", "開", "閉", "待", "泳", "書", "読", "話"];
+      for (const forbidden of forbiddenOutsideKanji) {
+        assert.ok(
+          !testedKanji.includes(forbidden),
+          `Câu ${q.sentence} (ans: ${q.answer}) vi phạm: chứa chữ Hán ngoài bài '${forbidden}'`,
+        );
+      }
+    }
+  }
+});
+
+test("buildAiPrompt and isQuestionAllowedForLessons strictly enforce official web kanji", async () => {
+  const { buildAiPrompt, isQuestionAllowedForLessons } = await import("./ai-service.ts");
+
+  const { systemPrompt, userPrompt } = buildAiPrompt(["7"]);
 
   assert.ok(
-    systemPrompt.includes("STRICT LESSON VOCABULARY ENFORCEMENT"),
-    "System prompt phải có chỉ dẫn bắt buộc từ vựng trong bài",
+    systemPrompt.includes("100% CẢ 10 CÂU HỎI CHỮ HÁN"),
+    "System prompt phải có quy tắc 100% câu hỏi chữ Hán",
   );
   assert.ok(
-    systemPrompt.includes("TUYỆT ĐỐI KHÔNG dùng 机, ペン"),
-    "System prompt phải cấm dùng các từ ngoài bài",
+    systemPrompt.includes("Bài 7 CHỈ CÓ đúng 7 chữ: 肉, 料, 理, 野, 半, 大, 小"),
+    "System prompt phải nêu rõ 7 chữ Hán của Bài 7",
   );
   assert.ok(
-    userPrompt.includes("100% câu hỏi từ vựng và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG ĐÃ CHO"),
-    "User prompt phải nhấn mạnh lấy trực tiếp từ vựng của bài",
+    userPrompt.includes("Bài 7 chỉ có 肉, 料, 理, 野, 半, 大, 小"),
+    "User prompt phải nhấn mạnh danh sách chữ Hán Bài 7",
+  );
+
+  // isQuestionAllowedForLessons phải từ chối câu hỏi Kanji có chữ ngoài bài
+  const invalidKanjiQuestion: any = {
+    id: "test-1",
+    section: "Kanji",
+    promptJp: "漢字の読み方を選びなさい。",
+    prompt: "Chọn cách đọc của chữ Hán trong（　　）.",
+    sentence: "（病院）へ行きます。",
+    options: ["びょういん", "びょうき", "びよういん", "びょうえん"],
+    answer: "びょういん",
+    explanation: { lesson: "JPD123 - Bài 7", meaning: "Tôi đi bệnh viện.", reason: "Đúng" }
+  };
+  assert.equal(
+    isQuestionAllowedForLessons(invalidKanjiQuestion, [7]),
+    false,
+    "isQuestionAllowedForLessons phải từ chối câu hỏi chứa chữ Hán ngoài bài 7 (病院)",
+  );
+
+  const validKanjiQuestion: any = {
+    id: "test-2",
+    section: "Kanji",
+    promptJp: "漢字の読み方を選びなさい。",
+    prompt: "Chọn cách đọc của chữ Hán trong（　　）.",
+    sentence: "今晩は豚（肉）を食べます。",
+    options: ["にく", "とり", "さかな", "ぎゅう"],
+    answer: "にく",
+    explanation: { lesson: "JPD123 - Bài 7", meaning: "Tối nay tôi ăn thịt lợn.", reason: "Đúng" }
+  };
+  assert.equal(
+    isQuestionAllowedForLessons(validKanjiQuestion, [7]),
+    true,
+    "isQuestionAllowedForLessons phải chấp nhận câu hỏi chứa chữ Hán đúng trong Bài 7 (肉)",
   );
 });
+
 
 
 

@@ -1355,298 +1355,220 @@ export const KANJI_SEEDS: QuestionSeed[] = [
     bai: 6,
   },
 
-  // --- BÀI 7 KANJI ---
+  // --- BÀI 7 KANJI (100% CHUẨN 7 CHỮ HÁN WEB: 肉, 料, 理, 野, 半, 大, 小) ---
   {
     section: "Kanji",
     promptJp: HEADERS.YOMI.promptJp,
     prompt: HEADERS.YOMI.prompt,
-    sentence: "先生、この言葉の（意味）を教えてください。",
-    answer: "いみ",
-    wrongs: ["いめ", "いき", "ちみ"],
+    sentence: "今晩は豚（肉）を食べます。",
+    answer: "にく",
+    wrongs: ["とり", "さかな", "ぎゅう"],
     bai: 7,
+    explanation: {
+      meaning: "Tối nay tôi ăn thịt lợn.",
+      grammar: "Chữ Hán: 肉 (NHỤC - thịt)",
+      lesson: "JPD123 - Bài 7",
+      tips: "Chữ 肉 đọc là にく (niku).",
+      reason: "Chữ 肉 trong bài 7 có âm đọc là にく."
+    }
   },
   {
     section: "Kanji",
     promptJp: HEADERS.YOMI.promptJp,
     prompt: HEADERS.YOMI.prompt,
-    sentence: "紙に黒いペンで名前を（書いて）ください。",
-    answer: "かいて",
-    wrongs: ["きいて", "おいて", "はなして"],
+    sentence: "母の作る（料理）はとてもおいしいです。",
+    answer: "りょうり",
+    wrongs: ["りょうち", "りょうし", "きょうり"],
     bai: 7,
+    explanation: {
+      meaning: "Món ăn mẹ nấu rất ngon.",
+      grammar: "Chữ Hán: 料理 (LIỆU LÝ - món ăn)",
+      lesson: "JPD123 - Bài 7",
+      tips: "Chữ 料理 đọc là りょうり (ryouri).",
+      reason: "Chữ 料理 ghép từ 料 và 理, đọc là りょうり."
+    }
   },
   {
     section: "Kanji",
     promptJp: HEADERS.YOMI.promptJp,
     prompt: HEADERS.YOMI.prompt,
-    sentence: "田中さんは今、教室で宿題を（して）います。",
-    answer: "して",
-    wrongs: ["みて", "きて", "いて"],
+    sentence: "スーパーで新鮮な（野菜）を買いました。",
+    answer: "やさい",
+    wrongs: ["やせい", "のさい", "やざい"],
     bai: 7,
+    explanation: {
+      meaning: "Tôi đã mua rau tươi ở siêu thị.",
+      grammar: "Chữ Hán: 野菜 (DÃ THÁI - rau củ)",
+      lesson: "JPD123 - Bài 7",
+      tips: "Chữ 野菜 đọc là やさい (yasai).",
+      reason: "Chữ 野菜 có chữ 野 (DÃ), đọc là やさい."
+    }
   },
   {
     section: "Kanji",
     promptJp: HEADERS.YOMI.promptJp,
     prompt: HEADERS.YOMI.prompt,
-    sentence: "熱がありますから、（病院）へ行かなければなりません。",
-    answer: "びょういん",
-    wrongs: ["びょうき", "びょいん", "ぼよういん"],
+    sentence: "ケーキを（半分）食べました。",
+    answer: "はんぶん",
+    wrongs: ["ほんぶん", "はんふん", "ほんふん"],
     bai: 7,
+    explanation: {
+      meaning: "Tôi đã ăn một nửa cái bánh ngọt.",
+      grammar: "Chữ Hán: 半分 (BÁN PHÂN - một nửa)",
+      lesson: "JPD123 - Bài 7",
+      tips: "Chữ 半分 đọc là はんぶん (hanbun).",
+      reason: "Chữ 半 (BÁN) ghép với 分 (PHÂN), đọc là はんぶん."
+    }
   },
   {
     section: "Kanji",
     promptJp: HEADERS.YOMI.promptJp,
     prompt: HEADERS.YOMI.prompt,
-    sentence: "朝ごはんのあとで、薬を（飲んで）ください。",
-    answer: "のんで",
-    wrongs: ["たべて", "すんで", "よんで"],
+    sentence: "私の大学はとても（大きい）です。",
+    answer: "おおきい",
+    wrongs: ["たいきい", "だいきい", "おおしい"],
     bai: 7,
+    explanation: {
+      meaning: "Trường đại học của tôi rất to lớn.",
+      grammar: "Chữ Hán: 大きい (ĐẠI - to lớn)",
+      lesson: "JPD123 - Bài 7",
+      tips: "Chữ 大 có âm Kunyomi trong 大きい đọc là おお.",
+      reason: "大きい đọc chuẩn là おおきい."
+    }
   },
   {
     section: "Kanji",
     promptJp: HEADERS.YOMI.promptJp,
     prompt: HEADERS.YOMI.prompt,
-    sentence: "（電気）を消して、部屋を出ます。",
-    answer: "でんき",
-    wrongs: ["でんしゃ", "てんき", "でんわ"],
+    sentence: "このカバンはとても（小さい）です。",
+    answer: "ちいさい",
+    wrongs: ["しょうさい", "こさい", "ちさい"],
     bai: 7,
+    explanation: {
+      meaning: "Cái cặp này rất nhỏ.",
+      grammar: "Chữ Hán: 小さい (TIỂU - nhỏ bé)",
+      lesson: "JPD123 - Bài 7",
+      tips: "Chữ 小 có âm Kunyomi trong 小さい đọc là ちい.",
+      reason: "小さい đọc chuẩn là ちいさい."
+    }
   },
   {
     section: "Kanji",
     promptJp: HEADERS.KAKI.promptJp,
     prompt: HEADERS.KAKI.prompt,
-    sentence: "すみません、その窓を（あけて）ください。",
-    answer: "開けて",
-    wrongs: ["閉けて", "門けて", "問けて"],
-    bai: 7,
-  },
-  {
-    section: "Kanji",
-    promptJp: HEADERS.KAKI.promptJp,
-    prompt: HEADERS.KAKI.prompt,
-    sentence: "漢字の（よみかた）がまだ分かりません。",
-    answer: "読み方",
-    wrongs: ["書き方", "話し方", "見み方"],
-    bai: 7,
-  },
-  {
-    section: "Kanji",
-    promptJp: HEADERS.KAKI.promptJp,
-    prompt: HEADERS.KAKI.prompt,
-    sentence: "暑いですから、ドアを（しめて）クーラーをつけてください。",
-    answer: "閉めて",
-    wrongs: ["開めて", "止めて", "間めて"],
-    bai: 7,
-  },
-  {
-    section: "Kanji",
-    promptJp: HEADERS.KAKI.promptJp,
-    prompt: HEADERS.KAKI.prompt,
-    sentence: "すき焼きに牛肉と（やさい）を入れます。",
-    answer: "野菜",
-    wrongs: ["野草", "野菜い", "野果"],
-    bai: 7,
-  },
-  {
-    section: "Kanji",
-    promptJp: HEADERS.KAKI.promptJp,
-    prompt: HEADERS.KAKI.prompt,
-    sentence: "豚（にく）と鶏肉を半分ずつ買いました。",
+    sentence: "今晩は豚（にく）の料理を食べます。",
     answer: "肉",
-    wrongs: ["内", "魚", "角"],
+    wrongs: ["料", "理", "野"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.KAKI.promptJp,
+    prompt: HEADERS.KAKI.prompt,
+    sentence: "日本（りょうり）はとてもおいしいです。",
+    answer: "料理",
+    wrongs: ["料金", "野理", "料野"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.KAKI.promptJp,
+    prompt: HEADERS.KAKI.prompt,
+    sentence: "スーパーで新鮮な（やさい）を食べます。",
+    answer: "野菜",
+    wrongs: ["野草", "菜野", "野食"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.KAKI.promptJp,
+    prompt: HEADERS.KAKI.prompt,
+    sentence: "リンゴを（はんぶん）ください。",
+    answer: "半分",
+    wrongs: ["半日", "大半", "分半"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.KAKI.promptJp,
+    prompt: HEADERS.KAKI.prompt,
+    sentence: "この部屋はとても（おおきい）です。",
+    answer: "大きい",
+    wrongs: ["小さい", "広い", "高い"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.KAKI.promptJp,
+    prompt: HEADERS.KAKI.prompt,
+    sentence: "このカバンはとても（ちいさい）です。",
+    answer: "小さい",
+    wrongs: ["大きい", "狭い", "低い"],
     bai: 7,
   },
   {
     section: "Kanji",
     promptJp: HEADERS.HAN.promptJp,
-    prompt: "Chữ Hán「病」trong từ「病院 (びょういん)」có âm Hán Việt là gì?",
-    sentence: "〔病〕院",
-    answer: "BỆNH",
-    wrongs: ["VIỆN", "THỐNG", "THƯƠNG"],
-    bai: 7,
-  },
-  {
-    section: "Kanji",
-    promptJp: HEADERS.HAN.promptJp,
-    prompt: "Chữ Hán「電」trong「電気 (でんき)」「電車 (でんしゃ)」có âm Hán Việt là gì?",
-    sentence: "〔電〕気",
-    answer: "ĐIỆN",
-    wrongs: ["KHÍ", "XA", "VÂN"],
-    bai: 7,
-  },
-  {
-    section: "Kanji",
-    promptJp: HEADERS.HAN.promptJp,
-    prompt: "Chữ Hán「肉」trong「牛肉 (ぎゅうにく)」có âm Hán Việt là gì?",
-    sentence: "牛〔肉〕",
+    prompt: "Chữ Hán「肉」có âm Hán Việt là gì?",
+    sentence: "〔肉〕",
     answer: "NHỤC",
-    wrongs: ["NGƯU", "HỦY", "GIÁP"],
+    wrongs: ["LIỆU", "LÝ", "DÃ"],
     bai: 7,
   },
   {
     section: "Kanji",
     promptJp: HEADERS.HAN.promptJp,
-    prompt: "Chữ Hán「半」trong「半分 (はんぶん)」có âm Hán Việt là gì?",
+    prompt: "Chữ Hán「料」có âm Hán Việt là gì?",
+    sentence: "〔料〕理",
+    answer: "LIỆU",
+    wrongs: ["KHOA", "LÝ", "DÃ"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.HAN.promptJp,
+    prompt: "Chữ Hán「理」có âm Hán Việt là gì?",
+    sentence: "料〔理〕",
+    answer: "LÝ",
+    wrongs: ["LIỆU", "TRÍ", "DÃ"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.HAN.promptJp,
+    prompt: "Chữ Hán「野」có âm Hán Việt là gì?",
+    sentence: "〔野〕菜",
+    answer: "DÃ",
+    wrongs: ["DẠ", "LÝ", "BÁN"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.HAN.promptJp,
+    prompt: "Chữ Hán「半」có âm Hán Việt là gì?",
     sentence: "〔半〕分",
     answer: "BÁN",
-    wrongs: ["PHÂN", "NGỌ", "HOÀN"],
+    wrongs: ["PHÂN", "ĐẠI", "TIỂU"],
     bai: 7,
   },
-{
-  "section": "Kanji",
-  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
-  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
-  "sentence": "スーパーで豚の（肉）を買いました。",
-  "answer": "にく",
-  "wrongs": [
-    "とり",
-    "さかな",
-    "ぎゅう"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
-  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
-  "sentence": "きのう、新鮮な（野菜）を食べました。",
-  "answer": "やさい",
-  "wrongs": [
-    "やせい",
-    "のさい",
-    "やざい"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
-  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
-  "sentence": "気分が悪いので、（病院）へ行きます。",
-  "answer": "びょういん",
-  "wrongs": [
-    "びょうかん",
-    "びよういん",
-    "びょうえん"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
-  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
-  "sentence": "暑いですね。部屋の（電気）をつけてください。",
-  "answer": "でんき",
-  "wrongs": [
-    "でんしゃ",
-    "でんわ",
-    "てんき"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
-  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
-  "sentence": "窓を（開けて）ください。",
-  "answer": "あけて",
-  "wrongs": [
-    "しめて",
-    "つけて",
-    "けして"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "（　　）の漢字の正しい読み方を選びなさい。",
-  "prompt": "Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）.",
-  "sentence": "寒いですから、ドアを（閉めて）ください。",
-  "answer": "しめて",
-  "wrongs": [
-    "あけて",
-    "たてて",
-    "けして"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "下線のひらがなの正しい漢字を選びなさい。",
-  "prompt": "Chọn chữ Hán tự đúng của chữ Hiragana trong（　　）.",
-  "sentence": "すしの（つくりかた）を習いました。",
-  "answer": "作り方",
-  "wrongs": [
-    "作リ方",
-    "創り方",
-    "作り芳"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "下線のひらがなの正しい漢字を選びなさい。",
-  "prompt": "Chọn chữ Hán tự đúng của chữ Hiragana trong（　　）.",
-  "sentence": "あそこで少し（まって）ください。",
-  "answer": "待って",
-  "wrongs": [
-    "持って",
-    "特って",
-    "侍って"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "下線のひらがなの正しい漢字を選びなさい。",
-  "prompt": "Chọn chữ Hán tự đúng của chữ Hiragana trong（　　）.",
-  "sentence": "ここに住所と名前を（かいて）ください。",
-  "answer": "書いて",
-  "wrongs": [
-    "描いて",
-    "着いて",
-    "聞いて"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "下線の漢字の音読みまたは意味・漢字音を選びなさい。",
-  "prompt": "Chữ Hán「病」trong「病院 (びょういん)」có âm Hán Việt là gì?",
-  "sentence": "〔病〕院",
-  "answer": "BỆNH",
-  "wrongs": [
-    "VIỆN",
-    "ĐIỆN",
-    "KHÍ"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "下線の漢字の音読みまたは意味・漢字音を選びなさい。",
-  "prompt": "Chữ Hán「開」trong「開けてください」mang ý nghĩa gì?",
-  "sentence": "〔開〕けてください",
-  "answer": "Khai (Mở)",
-  "wrongs": [
-    "Bế (Đóng)",
-    "Khởi (Thức dậy)",
-    "Văn (Nghe)"
-  ],
-  "bai": 7
-},
-{
-  "section": "Kanji",
-  "promptJp": "下線の漢字の音読みまたは意味・漢字音を選びなさい。",
-  "prompt": "Chữ Hán「閉」trong「閉めてください」mang ý nghĩa gì?",
-  "sentence": "〔閉〕めてください",
-  "answer": "Bế (Đóng)",
-  "wrongs": [
-    "Khai (Mở)",
-    "Diệt (Tắt)",
-    "Chỉ (Dừng)"
-  ],
-  "bai": 7
-}
+  {
+    section: "Kanji",
+    promptJp: HEADERS.HAN.promptJp,
+    prompt: "Chữ Hán「大」có âm Hán Việt là gì?",
+    sentence: "〔大〕きい",
+    answer: "ĐẠI",
+    wrongs: ["TIỂU", "THÁI", "KHUYỂN"],
+    bai: 7,
+  },
+  {
+    section: "Kanji",
+    promptJp: HEADERS.HAN.promptJp,
+    prompt: "Chữ Hán「小」có âm Hán Việt là gì?",
+    sentence: "〔小〕さい",
+    answer: "TIỂU",
+    wrongs: ["ĐẠI", "THIẾU", "THỦY"],
+    bai: 7,
+  }
 ];
 
 // =========================================================================
@@ -4841,6 +4763,235 @@ export function generateDynamicVocabSeeds(allowedBai: number[]): QuestionSeed[] 
 }
 
 /**
+ * Kiểm tra xem một hạt giống câu hỏi Kanji (QuestionSeed) có hợp lệ và strictly tuân thủ
+ * danh sách 77 chữ Hán chính thức trên web (alphabet.ts) của bài học đó hay không.
+ */
+export function isSeedValidForLessonKanji(s: QuestionSeed, bai: number): boolean {
+  if (s.bai !== bai) return false;
+  const lessonKanjis = alphabet.filter(
+    (g) =>
+      g.type === "kanji" &&
+      g.row &&
+      (g.row === `Bài ${bai}` || g.row.startsWith(`Bài ${bai} `) || g.row.startsWith(`Bài ${bai}·`)),
+  );
+  const lessonChars = new Set(lessonKanjis.map((k) => k.char));
+
+  const m = (s.sentence + " " + s.prompt).match(/[（〔「【]([^）〕」】]+)[）〕」】]/);
+  const bracketKanji = m ? (m[1].match(/[一-龯]/g) || []) : [];
+  const ansKanji = s.answer.match(/[一-龯]/g) || [];
+  const testedKanji = [...new Set([...bracketKanji, ...ansKanji])];
+
+  if (testedKanji.length === 0) return false;
+  if (!testedKanji.every((c) => lessonChars.has(c))) return false;
+
+  const allWebKanjis = alphabet.filter((g) => g.type === "kanji");
+  const allWebChars = new Set(allWebKanjis.map((k) => k.char));
+  const wrongsKanji = (s.wrongs || []).flatMap((w) => w.match(/[一-龯]/g) || []);
+  if (wrongsKanji.some((c) => !allWebChars.has(c))) return false;
+
+  return true;
+}
+
+/**
+ * Sinh ngân hàng câu hỏi chữ Hán động (Dynamic Kanji Bank) trực tiếp từ 77 chữ Hán chính thức trên web (alphabet.ts).
+ * Đảm bảo:
+ * - 100% câu hỏi chữ Hán chỉ kiểm tra các chữ Hán thuộc bài học được chọn.
+ * - 100% các phương án gây nhiễu chữ Hán chỉ lấy từ các chữ Hán trong bài hoặc trong web.
+ * - Đa dạng hoá 5 dạng câu hỏi:
+ *   1. Chữ Hán -> Âm Hán Việt & Ý nghĩa
+ *   2. Âm Hán Việt & Ý nghĩa -> Chữ Hán
+ *   3. Cách đọc Hiragana của từ ghép / chữ Hán
+ *   4. Cách đọc Hiragana & ý nghĩa -> Chữ Hán / từ ghép đúng
+ *   5. Đọc chữ Hán trong câu ngữ cảnh thực tế của bài học
+ */
+export function generateDynamicKanjiSeeds(allowedBai: number[]): QuestionSeed[] {
+  const seeds: QuestionSeed[] = [];
+  const allWebKanji = alphabet.filter((g) => g.type === "kanji");
+
+  for (const bai of allowedBai) {
+    const lessonKanji = alphabet.filter(
+      (g) =>
+        g.type === "kanji" &&
+        g.row &&
+        (g.row === `Bài ${bai}` || g.row.startsWith(`Bài ${bai} `) || g.row.startsWith(`Bài ${bai}·`)),
+    );
+    if (lessonKanji.length === 0) continue;
+    const courseName = bai <= 3 ? "JPD113" : "JPD123";
+    const lessonChars = new Set(lessonKanji.map((k) => k.char));
+
+    for (const k of lessonKanji) {
+      const hv = k.hanviet || "";
+      const meaning = k.meaning || "";
+      if (!hv || !meaning) continue;
+      const correctHvMeaning = `${hv} (${meaning})`;
+
+      // 1. Chữ Hán -> Âm Hán Việt & Ý nghĩa
+      const sameLessonOthers = lessonKanji.filter((other) => other.char !== k.char && (other.hanviet || other.meaning));
+      const otherAllowedKanji = allWebKanji.filter(
+        (other) =>
+          other.char !== k.char &&
+          (other.hanviet || other.meaning) &&
+          !lessonChars.has(other.char),
+      );
+
+      const wrongsHvMeaning = [
+        ...sameLessonOthers.sort(() => Math.random() - 0.5),
+        ...otherAllowedKanji.sort(() => Math.random() - 0.5),
+      ]
+        .map((other) => `${other.hanviet} (${other.meaning})`)
+        .filter((text) => text !== correctHvMeaning)
+        .slice(0, 3);
+
+      if (wrongsHvMeaning.length >= 3) {
+        seeds.push({
+          section: "Kanji",
+          promptJp: "漢字の音読み・訓読みと意味を選びなさい。",
+          prompt: `Chữ Hán「${k.char}」có âm Hán Việt và ý nghĩa là gì?`,
+          sentence: `〔${k.char}〕`,
+          answer: correctHvMeaning,
+          wrongs: wrongsHvMeaning,
+          bai,
+          explanation: {
+            meaning: `Chữ Hán「${k.char}」: âm Hán Việt là ${hv}, nghĩa là "${meaning}".`,
+            grammar: `Chữ Hán Bài ${bai}`,
+            lesson: `${courseName} - Bài ${bai} (Kanji)`,
+            tips: `Kanji: ${k.char} [${hv}] = ${meaning}`,
+            reason: `Chữ Hán「${k.char}」trong bài ${bai} có âm Hán Việt là ${hv} và mang ý nghĩa "${meaning}".`,
+          },
+        });
+      }
+
+      // 2. Âm Hán Việt & Ý nghĩa -> Chữ Hán
+      let wrongChars = sameLessonOthers.map((o) => o.char).sort(() => Math.random() - 0.5);
+      if (wrongChars.length < 3) {
+        const extra = allWebKanji.filter((o) => o.char !== k.char && !lessonChars.has(o.char)).map((o) => o.char);
+        wrongChars = [...wrongChars, ...extra.sort(() => Math.random() - 0.5)];
+      }
+      const finalWrongChars = wrongChars.slice(0, 3);
+
+      if (finalWrongChars.length >= 3) {
+        seeds.push({
+          section: "Kanji",
+          promptJp: "次の意味を表す正しい漢字を選びなさい。",
+          prompt: `Chữ Hán nào dưới đây có âm Hán Việt là「${hv}」và mang ý nghĩa là「${meaning}」?`,
+          sentence: `【${hv}】: ${meaning}`,
+          answer: k.char,
+          wrongs: finalWrongChars,
+          bai,
+          explanation: {
+            meaning: `Âm Hán Việt ${hv} (${meaning}) tương ứng với chữ Hán「${k.char}」.`,
+            grammar: `Chữ Hán Bài ${bai}`,
+            lesson: `${courseName} - Bài ${bai} (Kanji)`,
+            tips: `Kanji: ${k.char} [${hv}] = ${meaning}`,
+            reason: `Chữ Hán chính xác ứng với âm Hán Việt ${hv} (${meaning}) là「${k.char}」.`,
+          },
+        });
+      }
+
+      // 3. Đọc từ / chữ Hán đơn và từ ghép
+      const compounds = k.compounds || [];
+      const readingItems = [...compounds];
+      if (k.kunyomi && k.kunyomi !== "—" && k.kunyomi !== "-" && !readingItems.some((c) => c.word === k.char)) {
+        readingItems.unshift({
+          word: k.char,
+          reading: k.kunyomi.replace(/\..*$/, ""),
+          meaning: k.meaning || "",
+        });
+      }
+
+      for (const item of readingItems) {
+        const word = item.word;
+        const reading = item.reading;
+        const cMeaning = item.meaning || "";
+        if (!word || !reading) continue;
+
+        // BẮT BUỘC: Nếu từ có chứa chữ Hán, TẤT CẢ các chữ Hán trong từ PHẢI NẰM TRONG lessonChars
+        const wordChars = word.match(/[一-龯]/g) || [];
+        if (wordChars.length > 0 && wordChars.some((ch) => !lessonChars.has(ch))) {
+          continue;
+        }
+
+        const otherReadings = compounds
+          .filter((c) => c.reading !== reading)
+          .map((c) => c.reading);
+
+        const fallbackReadings = [
+          reading.replace(/ん/g, "んん"),
+          reading.replace(/っ/g, ""),
+          reading.endsWith("い") ? reading.slice(0, -1) + "え" : reading + "い",
+          reading.startsWith("お") ? reading.slice(1) : "お" + reading,
+          reading.replace(/う/g, "お"),
+          reading.replace(/し/g, "ち"),
+          reading.replace(/き/g, "ぎ"),
+          reading.replace(/に/g, "み"),
+          reading.replace(/ょ/g, "ゅ"),
+          reading.replace(/ゅ/g, "ょ"),
+        ].filter((r) => r !== reading);
+
+        const allCandidates = [...new Set([...otherReadings, ...fallbackReadings])];
+        if (allCandidates.length >= 3) {
+          const wrongs = allCandidates.sort(() => Math.random() - 0.5).slice(0, 3);
+          seeds.push({
+            section: "Kanji",
+            promptJp: "（　　）の漢字の正しい読み方を選びなさい。",
+            prompt: `Chọn cách đọc Hiragana đúng của chữ Hán trong（　　）:`,
+            sentence: `（${word}）`,
+            answer: reading,
+            wrongs,
+            bai,
+            explanation: {
+              meaning: `「${word}」có cách đọc là "${reading}" (${cMeaning}).`,
+              grammar: `Cách đọc Kanji Bài ${bai}`,
+              lesson: `${courseName} - Bài ${bai} (Kanji)`,
+              tips: `Kanji: ${word} (${reading}): ${cMeaning}`,
+              reason: `Từ「${word}」trong bài ${bai} có cách đọc chuẩn là「${reading}」, nghĩa là "${cMeaning}".`,
+            },
+          });
+        }
+
+        // 4. Cách đọc Hiragana + Nghĩa -> Chữ Hán
+        if (wordChars.length > 0 && wordChars.every((ch) => lessonChars.has(ch))) {
+          const otherWords = compounds
+            .filter((c) => c.word !== word && (c.word.match(/[一-龯]/g) || []).every((ch) => lessonChars.has(ch)))
+            .map((c) => c.word);
+
+          const fallbackWords = sameLessonOthers
+            .map((other) => other.char)
+            .filter((ch) => ch !== word);
+
+          let wordCandidates = [...new Set([...otherWords, ...fallbackWords])];
+          if (wordCandidates.length < 3) {
+            const extraWeb = allWebKanji.map((o) => o.char).filter((ch) => ch !== word && !wordCandidates.includes(ch));
+            wordCandidates = [...wordCandidates, ...extraWeb];
+          }
+          if (wordCandidates.length >= 3) {
+            const wrongs = wordCandidates.sort(() => Math.random() - 0.5).slice(0, 3);
+            seeds.push({
+              section: "Kanji",
+              promptJp: "次の言葉の正しい漢字を選びなさい。",
+              prompt: `Từ「${reading}」(${cMeaning}) được viết bằng chữ Hán nào dưới đây?`,
+              sentence: `（${reading}）: ${cMeaning}`,
+              answer: word,
+              wrongs,
+              bai,
+              explanation: {
+                meaning: `Từ「${reading}」(${cMeaning}) được viết bằng chữ Hán là「${word}」.`,
+                grammar: `Viết Kanji Bài ${bai}`,
+                lesson: `${courseName} - Bài ${bai} (Kanji)`,
+                tips: `Kanji: ${word} (${reading}): ${cMeaning}`,
+                reason: `Cách viết chữ Hán chính xác của「${reading}」(${cMeaning}) là「${word}」.`,
+              },
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return seeds;
+}
+
+/**
  * Sinh đề thi JPD123 chuẩn Form Đại học FPT bằng thuật toán tạo đề đa dạng (High-Diversity AI Generator Engine).
  * Luôn đảm bảo:
  * - 30 câu chia đều: 10 câu Kanji + 10 câu Từ vựng + 10 câu Ngữ pháp.
@@ -4918,7 +5069,13 @@ export function buildFptJpd123Exam(selectedBai?: string[]): ExamQuestion[] {
   const dynamicVocabSeeds = generateDynamicVocabSeeds(baiFilter);
   const vocabPool = [...dynamicVocabSeeds, ...VOCAB_SEEDS];
 
-  const kanjiQuestions = pickSection(KANJI_SEEDS, 10, "fpt-kanji");
+  const dynamicKanjiSeeds = generateDynamicKanjiSeeds(baiFilter);
+  const validStaticKanjiSeeds = KANJI_SEEDS.filter(
+    (s) => s.bai !== undefined && isSeedValidForLessonKanji(s, s.bai),
+  );
+  const kanjiPool = [...dynamicKanjiSeeds, ...validStaticKanjiSeeds];
+
+  const kanjiQuestions = pickSection(kanjiPool, 10, "fpt-kanji");
   const vocabQuestions = pickSection(vocabPool, 10, "fpt-vocab");
   const grammarQuestions = pickSection(GRAMMAR_SEEDS, 10, "fpt-gram");
 

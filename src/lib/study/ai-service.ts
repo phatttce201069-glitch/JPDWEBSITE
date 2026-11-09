@@ -1,6 +1,6 @@
 import type { ExamQuestion } from "./exam.ts";
 import { buildFptJpd123Exam, shuffle } from "./fpt-jpd123-engine.ts";
-import { grammar, vocabulary } from "./content.ts";
+import { alphabet, grammar, vocabulary } from "./content.ts";
 import type { Glyph } from "./types.ts";
 
 export type AiProvider = "built-in" | "gemini" | "xai" | "openai" | "groq";
@@ -45,37 +45,37 @@ export function saveAiSettings(settings: AiSettings) {
  */
 const LESSON_OUTLINES: Record<number, { kanji: string; vocab: string; grammar: string }> = {
   1: {
-    kanji: "私, 人, 学, 生, 先, 輩, 友, 達, 本, 日",
+    kanji: "私, 人, 才, 学, 生, 校, 日, 本, 語",
     vocab: "Chào hỏi, nghề nghiệp (学生, 先生, 会社員, 医者, エンジニア), quốc tịch (ベトナム人, 日本人, アメリカ人), tuổi tác (〜歳, はたち)",
     grammar: "Câu danh từ (N1 は N2 です / じゃありません / ですか), trợ từ の (sở hữu, trực thuộc), trợ từ も (cũng), trợ từ と (và)",
   },
   2: {
-    kanji: "何, 階, 円, 百, 千, 万, 店, 買, 車, 語",
+    kanji: "一, 二, 三, 四, 五, 六, 七, 八, 九, 十, 百, 千, 万, 円",
     vocab: "Địa điểm trong trường/công ty (教室, 食堂, 事務所, 会議室, 受付, トイレ), đồ vật (ペン, 本, 傘, 時計, 鞄), số đếm tiền tệ & số tầng (何階, いくら, 円)",
     grammar: "Chỉ định từ (これ, それ, あれ, この, その, あの), hỏi vị trí (どこ, どちら), hỏi nguồn gốc xuất xứ (どこの), hỏi giá tiền (いくら), gọi món/mua sắm (N を ください)",
   },
   3: {
-    kanji: "行, 来, 帰, 食, 飲, 見, 聞, 読, 書, 時, 分, 半",
+    kanji: "月, 火, 水, 木, 土, 曜, 何, 年, 時, 間, 分",
     vocab: "Thời gian (今, 〜時, 〜分, 午前, 午後, 毎日, 朝, 昼, 晩), các thứ trong tuần (月〜日曜日), động từ sinh hoạt (起きます, 寝ます, 働きます, 休みます, 勉強します, 食べます, 飲みます)",
     grammar: "Động từ lịch sự (Vます / Vません), trợ từ へ (nơi đến: 行きます/来ます/帰ります), trợ từ を (tân ngữ tác động), trợ từ で (nơi diễn ra hành động), trợ từ に (thời điểm cụ thể), trợ từ から〜まで (từ... đến...)",
   },
   4: {
-    kanji: "東, 京, 名, 前, 国, 男, 女, 区, 市, 料理, 映画, 暑い, 新しい, 広い, 狭い, 近い, 遠い, 古い, 買う, 難",
+    kanji: "東, 京, 名, 前, 国, 男, 女, 区, 市",
     vocab: "Phương hướng (北, 南, 東, 西), phương tiện & giao thông (車, 新幹線, 電車, 飛行機, 駅, 町, 歩いて), thời gian/khoảng cách (〜時間, どのくらい), địa điểm du lịch (温泉, 川, 山, 寺, 神社, 桜, 建物), tính từ miêu tả (暑い, 寒い, 暖かい, 涼しい, 遠い, 近い, 大きい, 小さい, 高い, 安い, 新しい, 古い, 広い, 狭い, いい/よい, きれい, 静か, 賑やか, 有名), phó từ & liên từ (とても, すこし, あまり, ぜんぜん, が, しかし, そして)",
     grammar: "Tính từ đuôi い và な (khẳng định, phủ định 〜くない / 〜じゃありません, quá khứ 〜かった / 〜でした, phủ định quá khứ 〜くなかった / 〜じゃありませんでした), tính từ bổ nghĩa danh từ (新しい車, きれいな町), tính từ bổ nghĩa động từ (早く起きます, きれいにします), phó từ mức độ (とても, あまり + phủ định), liên từ (〜が〜, しかし, そして), vị trí sự kiện (で vs に), hỏi thời gian di chuyển (〜から〜まで どのくらい)",
   },
   5: {
-    kanji: "先, 週, 毎, 午, 後, 見, 食, 飲, 買, 物, 行, 休, 家, 本, 水, 友, 達, 私",
+    kanji: "先, 週, 毎, 午, 後, 見, 食, 飲, 買, 物, 行, 休",
     vocab: "Đời sống & đồ vật (パソコン, 車, 自転車, カメラ, お金, 時間, 友達, 家族, 部屋), động từ sinh hoạt & di chuyển (買います, 待ちます, 行きます, 来ます, 帰ります, 会います, 勉強します, 働きます, 休みます, 見ます, 食べます, 飲みます, 散歩します, 買い物します), từ chỉ thời gian quá khứ (おととい, きのう, 先週, 先月, 去年), bưu điện & thư tín (郵便局, 手紙, 切手, 荷物), tính từ quá khứ (楽しかった, 面白かった, 忙しかった, 大変でした), phó từ (一緒に, 一人で, どうして, どうでしたか)",
     grammar: "Động từ quá khứ (Vました / Vませんでした), tính từ quá khứ (Aかったです / Aでした), mong muốn sở hữu (N が ほしいです / ほしくないです), mong muốn làm việc (Vたいです / Vたくないです), mục đích di chuyển (V/N に 行きます/来ます/帰ります), trợ từ と (cùng với ai), trợ từ から (chỉ nguyên nhân: 〜から、〜), câu hỏi trải nghiệm quá khứ (どうでしたか)",
   },
   6: {
-    kanji: "今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門, 枚, 約, 束, 祭",
+    kanji: "今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門",
     vocab: "Thời tiết & các mùa (春, 夏, 秋, 冬, 雨, 雪, 風, くもり, 季節), sự kiện & hoạt động (お祭り, パーティー, 試験, コンサート, 試合, 約束 - やくそく, 用事 - ようじ, アルバイト), vật mỏng đếm 枚 (CD, シャツ, チケット, 切手), so sánh & lựa chọn (どちら, ずっと, ほう, いちばん)",
     grammar: "1. So sánh hơn (A は B より Adj です), so sánh lựa chọn (A と B と どちらが...), trả lời so sánh (A のほうが...), so sánh nhất (N の中で A が いちばん...), so sánh không bằng (A は B ほど...くない). 2. Rủ rê & Đáp lại / Từ chối khéo: rủ rê (いっしょに Vませんか), đồng ý (Vましょう), từ chối khéo (すみません。〜はちょっと…), đưa ra lý do từ chối (N がありますから / やくそくがありますから). 3. Nơi diễn ra sự kiện: [Địa điểm] で [Sự kiện: お祭り/パーティー/試験] があります. 4. Đếm số lượng vật mỏng: Lượng từ 枚 (まい) - N が/を 〜まい あります/買いました (CDが1まいあります, シャツを2枚買いました).",
   },
   7: {
-    kanji: "肉, 料, 理, 野, 半, 大, 小, 病, 院, 電, 気, 開, 閉, 待, 書, 読, 話, 泳, 行, 来",
+    kanji: "肉, 料, 理, 野, 半, 大, 小",
     vocab: "Quy tắc chia động từ thể て (Nhóm 1, 2, 3), dụng cụ ăn uống (スプーン, フォーク, ナイフ, はし, コップ, お皿, 冷蔵庫, 電子レンジ), gia vị & nấu ăn (砂糖, 塩, 醤油, 肉, 野菜), phó từ (もう, まだ, ぜひ), từ vựng giao tiếp",
     grammar: "1. Quy tắc chia thể て (Vて: Nhóm 1, 2, 3 và ngoại lệ 行く→行って). 2. Sự tồn tại người/động vật (N1 に N2 が います). 3. Yêu cầu lịch sự (Vてください). 4. Thì hiện tại tiếp diễn (Vています / Vていません / 何をしていますか). 5. Đề nghị giúp đỡ (Vましょうか). 6. Cách làm (V[bỏ ます]+かた: 作り方, 使い方, 読み方, 行き方).",
   },
@@ -126,31 +126,31 @@ export function getDynamicLessonOutline(bai: number | string): DynamicLessonOutl
       : LESSON_OUTLINES[baiNum].vocab;
   }
 
-  // 3. Trích xuất chữ Hán (Kanji) từ từ vựng và câu ví dụ ngữ pháp
-  const kanjiSet = new Set<string>();
-  if (LESSON_OUTLINES[baiNum]?.kanji) {
-    for (const char of LESSON_OUTLINES[baiNum].kanji.split(/[,\s]+/)) {
-      if (char.trim()) kanjiSet.add(char.trim());
-    }
+  // 3. Trích xuất chữ Hán (Kanji) chính thức của bài từ alphabet.ts (CHUẨN 100% WEB KANJI)
+  const lessonKanjis = alphabet.filter(
+    (g) =>
+      g.type === "kanji" &&
+      g.row &&
+      (g.row === `Bài ${baiStr}` || g.row.startsWith(`Bài ${baiStr} `) || g.row.startsWith(`Bài ${baiStr}·`)),
+  );
+  let kanjiText = "";
+  if (lessonKanjis.length > 0) {
+    kanjiText = lessonKanjis
+      .map((k) => {
+        const parts = [`${k.char}`];
+        if (k.hanviet) parts.push(`[${k.hanviet}]`);
+        if (k.meaning) parts.push(`(${k.meaning})`);
+        const comps = (k.compounds || []).map((c) => `${c.word}${c.reading ? `（${c.reading}）` : ""}`).filter(Boolean);
+        if (comps.length > 0) parts.push(`{từ ghép: ${comps.join(", ")}}`);
+        return parts.join(" ");
+      })
+      .join("; ");
+  } else if (LESSON_OUTLINES[baiNum]?.kanji) {
+    kanjiText = LESSON_OUTLINES[baiNum].kanji;
   }
-  for (const w of words) {
-    for (const char of w.word) {
-      if (/[一-龯]/.test(char)) kanjiSet.add(char);
-    }
-  }
-  if (gLesson) {
-    for (const p of gLesson.points) {
-      for (const ex of p.examples) {
-        for (const char of ex.jp) {
-          if (/[一-龯]/.test(char)) kanjiSet.add(char);
-        }
-      }
-    }
-  }
-  const kanjiText = [...kanjiSet].slice(0, 45).join(", ");
 
   return {
-    kanji: kanjiText || LESSON_OUTLINES[baiNum]?.kanji || "Chữ Hán thuộc phạm vi bài học",
+    kanji: kanjiText || "Chữ Hán thuộc phạm vi bài học",
     vocab: vocabText || LESSON_OUTLINES[baiNum]?.vocab || "Từ vựng thuộc phạm vi bài học",
     grammar: grammarText || LESSON_OUTLINES[baiNum]?.grammar || "Ngữ pháp thuộc phạm vi bài học",
   };
@@ -229,12 +229,22 @@ ${negativeConstraints}
 QUY TẮC BẮT BUỘC VỀ TỪ VỰNG TRONG BÀI (STRICT LESSON VOCABULARY ENFORCEMENT - TUYỆT ĐỐI KHÔNG DÙNG TỪ NGOÀI BÀI):
 - 100% CẢ 10 CÂU HỎI TỪ VỰNG (section "Từ vựng") VÀ TẤT CẢ 4 LỰA CHỌN (A, B, C, D) CỦA MỖI CÂU BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG CỦA CÁC BÀI ĐÃ CHỌN Ở PHÍA DƯỚI.
 - TUYỆT ĐỐI NGHIÊM CẤM đưa vào bất kỳ từ vựng nào nằm ngoài danh sách từ vựng của bài (ví dụ: TUYỆT ĐỐI KHÔNG dùng 机, ペン, 携帯電話, 病院, 猫, 犬, 荷物, 切符, 宿題 khi tạo đề cho Bài 6 hoặc Bài 7 nếu bài đó không có từ này).
-- Tất cả 3 phương án gây nhiễu sai (distractors / wrongs) cũng BẮT BUỘC phải là từ vựng thuộc danh sách từ vựng của các bài đã chọn.
+- Tất cả 3 phương án gây nhiễu sai (distractors / wrongs) của phần Từ vựng cũng BẮT BUỘC phải là từ vựng thuộc danh sách từ vựng của các bài đã chọn.
 - Đánh mạnh và phủ rộng vào các từ vựng trong bài, kết hợp đa dạng các dạng câu hỏi:
   + Điền từ vựng thích hợp vào câu ngữ cảnh bài học.
   + Cho từ tiếng Nhật trong bài ➔ Chọn ý nghĩa tiếng Việt chính xác.
   + Cho ý nghĩa tiếng Việt ➔ Chọn từ vựng tiếng Nhật tương ứng trong bài.
   + Cho chữ Hán của từ vựng trong bài ➔ Chọn cách đọc Hiragana đúng.
+
+YÊU CẦU NGHIÊM NGẶT VỀ KANJI (100% KHỚP VỚI CHỮ HÁN HỌC TRÊN WEB):
+- 100% CẢ 10 CÂU HỎI CHỮ HÁN (section "Kanji") VÀ TẤT CẢ 4 LỰA CHỌN (A, B, C, D) CỦA MỖI CÂU BẮT BUỘC PHẢI THUỘC DANH SÁCH CHỮ HÁN CHÍNH THỨC CỦA CÁC BÀI ĐÃ CHỌN ĐƯỢC CUNG CẤP Ở PHÍA DƯỚI.
+- TUYỆT ĐỐI NGHIÊM CẤM đưa vào bất kỳ chữ Hán nào ngoài bài học (Ví dụ: Bài 7 CHỈ CÓ đúng 7 chữ: 肉, 料, 理, 野, 半, 大, 小 — TUYỆT ĐỐI KHÔNG hỏi 病院, 電気, 開, 閉, 待, 泳...; Bài 6 CHỈ CÓ 15 chữ: 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門 — TUYỆT ĐỐI KHÔNG hỏi 雨, 雪, 海, 山, 川, 天気, 魚...; Bài 4 CHỈ CÓ 9 chữ: 東, 京, 名, 前, 国, 男, 女, 区, 市 — KHÔNG hỏi 料理, 映画, 暑...; Bài 2 CHỈ CÓ số đếm và tiền tệ: 一, 二, 三, 四, 五, 六, 七, 八, 九, 十, 百, 千, 万, 円 — KHÔNG hỏi 牛肉, 魚, 卵...).
+- Các dạng câu hỏi Kanji:
+  + Chữ Hán trong bài ➔ Chọn âm Hán Việt và ý nghĩa đúng.
+  + Âm Hán Việt và ý nghĩa ➔ Chọn chữ Hán tương ứng trong bài.
+  + Từ ghép chữ Hán trong bài ➔ Chọn cách đọc Hiragana đúng.
+  + Cách đọc Hiragana và ý nghĩa ➔ Chọn chữ Hán / từ ghép chữ Hán đúng.
+  + Điền cách đọc chữ Hán vào chỗ trống trong câu ngữ cảnh.
 
 YÊU CẦU VỀ ĐỘ ĐA DẠNG CAO (HIGH DIVERSITY & REAL-WORLD CONTEXTS):
 - Đa dạng hóa ngữ cảnh thực tế: trường học, siêu thị, mua sắm, du lịch, ga tàu điện, công sở, cuộc sống gia đình, ẩm thực, hẹn hò, thời tiết, sở thích.
@@ -275,7 +285,9 @@ Chú ý:
   const userPrompt = `Hãy tạo trọn bộ 30 câu hỏi trắc nghiệm ${courseCode} Đại học FPT cho các bài: ${lessonNames} (Mã phiên #${entropySeed}).
 BẮT BUỘC:
 1. 100% nội dung (10 Kanji, 10 Từ vựng, 10 Ngữ pháp) CHỈ LẤY TRONG ${lessonNames}.
-2. ĐẶC BIỆT: 100% câu hỏi từ vựng và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG ĐÃ CHO CỦA BÀI, TUYỆT ĐỐI KHÔNG DÙNG TỪ BÊN NGOÀI BÀI.
+2. ĐẶC BIỆT:
+   - 100% câu hỏi từ vựng và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH TỪ VỰNG ĐÃ CHO CỦA BÀI, TUYỆT ĐỐI KHÔNG DÙNG TỪ BÊN NGOÀI BÀI.
+   - 100% câu hỏi Kanji và cả 4 lựa chọn A, B, C, D BẮT BUỘC PHẢI LẤY TRỰC TIẾP TỪ DANH SÁCH CHỮ HÁN CHÍNH THỨC CỦA BÀI, TUYỆT ĐỐI KHÔNG LẤY CHỮ HÁN NGOÀI BÀI (Bài 7 chỉ có 肉, 料, 理, 野, 半, 大, 小; Bài 6 chỉ có 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門; Bài 4 chỉ có 東, 京, 名, 前, 国, 男, 女, 区, 市; Bài 2 chỉ có số đếm và 円).
 3. Đa dạng hóa tối đa ngữ cảnh câu hỏi và thứ tự câu hỏi. Không trùng lặp câu hỏi.
 4. Phần explanation.meaning BẮT BUỘC PHẢI DỊCH NGHĨA TRỌN VẸN CẢ CÂU HOÀN CHỈNH sang tiếng Việt, tuyệt đối không được chỉ dịch mỗi từ vựng đáp án.
 5. Xuất ra duy nhất JSON mảng 30 đối tượng.`;
@@ -422,7 +434,7 @@ export function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[
       ) {
         return false;
       }
-      const isBai6Kanji = /[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(q.sentence + q.answer);
+      const isBai6Kanji = /[今来帰会社聞読書話寺言具田力門]/.test(q.sentence + q.answer);
       const isBai6VocabWord = vocabulary.some(
         (w) =>
           /\bBài 6\b/.test(w.lesson || "") &&
@@ -475,7 +487,7 @@ export function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[
       ) {
         return false;
       }
-      const isBai7Kanji = /[肉料理野半大小病院電気開閉待書読話泳行来]/.test(q.sentence + q.answer);
+      const isBai7Kanji = /[肉料理野半大小]/.test(q.sentence + q.answer);
       const isBai7VocabWord = vocabulary.some(
         (w) =>
           /\bBài 7\b/.test(w.lesson || "") &&
@@ -515,6 +527,27 @@ export function isQuestionAllowedForLessons(q: ExamQuestion, allowedBai: number[
       if (!isBai7Kanji && !isBai7GrammarOrVocab) {
         return false;
       }
+    }
+  }
+
+  // 10. Kiểm tra nghiêm ngặt phần Kanji (section "Kanji"):
+  // Chữ Hán được kiểm tra (trong ngoặc hoặc trong đáp án) BẮT BUỘC PHẢI THUỘC danh sách 77 chữ Hán chính thức trên web của allowedBai
+  if (q.section === "Kanji") {
+    const allowedWebKanjis = alphabet.filter(
+      (g) =>
+        g.type === "kanji" &&
+        g.row &&
+        allowedBai.some((b) => g.row === `Bài ${b}` || g.row!.startsWith(`Bài ${b} `) || g.row!.startsWith(`Bài ${b}·`)),
+    );
+    const allowedChars = new Set(allowedWebKanjis.map((k) => k.char));
+
+    const m = (q.sentence + " " + q.prompt).match(/[（〔「【]([^）〕」】]+)[）〕」】]/);
+    const bracketKanji = m ? (m[1].match(/[一-龯]/g) || []) : [];
+    const ansKanji = q.answer.match(/[一-龯]/g) || [];
+    const testedKanji = [...new Set([...bracketKanji, ...ansKanji])];
+
+    if (testedKanji.length > 0 && testedKanji.some((c) => !allowedChars.has(c))) {
+      return false;
     }
   }
 

@@ -1527,19 +1527,28 @@ function determineLesson(q: ExamQuestion): string {
 
   const fullText = `${q.sentence || ""} ${q.prompt || ""} ${q.answer || ""}`;
 
-  // 1. Phân loại câu hỏi Kanji theo bộ chữ Hán đặc trưng của từng bài JPD123 FPT
+  // 1. Phân loại câu hỏi Kanji theo đúng 77 chữ Hán chuẩn giáo trình trên website (alphabet.ts)
   if (q.section === "Kanji") {
-    if (/[意味書言話読見聞食飲待立座使]/.test(fullText)) {
+    if (/[肉料理野半大小]/.test(fullText)) {
       return "JPD123 - Bài 7 (Chữ Hán N5 FPT)";
     }
-    if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(fullText)) {
+    if (/[今来帰会社聞読話書寺言具田力門]/.test(fullText)) {
       return "JPD123 - Bài 6 (Chữ Hán N5 FPT)";
     }
-    if (/[家本水友会私休時間散歩写真手紙音楽族病院車転自]/.test(fullText)) {
+    if (/[先週毎午後見食飲買物行休]/.test(fullText)) {
       return "JPD123 - Bài 5 (Chữ Hán N5 FPT)";
     }
-    if (/[東京名前国男女区市料理映画暑新広狭近遠古買難]/.test(fullText)) {
+    if (/[東京名前国男女区市]/.test(fullText)) {
       return "JPD123 - Bài 4 (Chữ Hán N5 FPT)";
+    }
+    if (/[月火水木土曜何年時間分]/.test(fullText)) {
+      return "JPD113 - Bài 3 (Chữ Hán N5 FPT)";
+    }
+    if (/[一二三四五六七八九十百千万円]/.test(fullText)) {
+      return "JPD113 - Bài 2 (Chữ Hán N5 FPT)";
+    }
+    if (/[私人才学生校日本語]/.test(fullText)) {
+      return "JPD113 - Bài 1 (Chữ Hán N5 FPT)";
     }
   }
 
@@ -1632,18 +1641,27 @@ function determineLesson(q: ExamQuestion): string {
     return "JPD123 - Bài 4 (Tính từ và Liên từ)";
   }
 
-  // 3. Fallback theo chữ Hán nếu câu hỏi không đánh dấu section
-  if (/[意味書言話読見聞食飲待立座使]/.test(fullText)) {
+  // 3. Fallback theo 77 chữ Hán chuẩn website nếu câu hỏi không đánh dấu section
+  if (/[肉料理野半大小]/.test(fullText)) {
     return "JPD123 - Bài 7 (Chữ Hán & Từ vựng N5)";
   }
-  if (/[雨町春夏秋冬雪風海山川天気旅空港魚肉菜枚約束祭]/.test(fullText)) {
+  if (/[今来帰会社聞読話書寺言具田力門]/.test(fullText)) {
     return "JPD123 - Bài 6 (Chữ Hán & Từ vựng N5)";
   }
-  if (/[家本水友会私休時間散歩写真手紙音楽族病院車転自]/.test(fullText)) {
+  if (/[先週毎午後見食飲買物行休]/.test(fullText)) {
     return "JPD123 - Bài 5 (Chữ Hán & Từ vựng N5)";
   }
-  if (/[東京名前国男女区市料理映画暑新広狭近遠古買難]/.test(fullText)) {
+  if (/[東京名前国男女区市]/.test(fullText)) {
     return "JPD123 - Bài 4 (Chữ Hán & Từ vựng N5)";
+  }
+  if (/[月火水木土曜何年時間分]/.test(fullText)) {
+    return "JPD113 - Bài 3 (Chữ Hán & Từ vựng N5)";
+  }
+  if (/[一二三四五六七八九十百千万円]/.test(fullText)) {
+    return "JPD113 - Bài 2 (Chữ Hán & Từ vựng N5)";
+  }
+  if (/[私人才学生校日本語]/.test(fullText)) {
+    return "JPD113 - Bài 1 (Chữ Hán & Từ vựng N5)";
   }
 
   return "JPD123 - Giáo trình Sơ cấp 2 (FPT University)";
