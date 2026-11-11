@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExamRouteImport } from './routes/exam'
 import { Route as GrammarRouteImport } from './routes/grammar'
 import { Route as KanaRouteImport } from './routes/kana'
+import { Route as ReadingRouteImport } from './routes/reading'
 import { Route as WordsRouteImport } from './routes/words'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const KanaRoute = KanaRouteImport.update({
   path: '/kana',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReadingRoute = ReadingRouteImport.update({
+  id: '/reading',
+  path: '/reading',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WordsRoute = WordsRouteImport.update({
   id: '/words',
   path: '/words',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/exam': typeof ExamRoute
   '/grammar': typeof GrammarRoute
   '/kana': typeof KanaRoute
+  '/reading': typeof ReadingRoute
   '/words': typeof WordsRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/exam': typeof ExamRoute
   '/grammar': typeof GrammarRoute
   '/kana': typeof KanaRoute
+  '/reading': typeof ReadingRoute
   '/words': typeof WordsRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,15 @@ export interface FileRoutesById {
   '/exam': typeof ExamRoute
   '/grammar': typeof GrammarRoute
   '/kana': typeof KanaRoute
+  '/reading': typeof ReadingRoute
   '/words': typeof WordsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/exam' | '/grammar' | '/kana' | '/words'
+  fullPaths: '/' | '/exam' | '/grammar' | '/kana' | '/reading' | '/words'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/exam' | '/grammar' | '/kana' | '/words'
-  id: '__root__' | '/' | '/exam' | '/grammar' | '/kana' | '/words'
+  to: '/' | '/exam' | '/grammar' | '/kana' | '/reading' | '/words'
+  id: '__root__' | '/' | '/exam' | '/grammar' | '/kana' | '/reading' | '/words'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +85,7 @@ export interface RootRouteChildren {
   ExamRoute: typeof ExamRoute
   GrammarRoute: typeof GrammarRoute
   KanaRoute: typeof KanaRoute
+  ReadingRoute: typeof ReadingRoute
   WordsRoute: typeof WordsRoute
 }
 
@@ -109,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KanaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reading': {
+      id: '/reading'
+      path: '/reading'
+      fullPath: '/reading'
+      preLoaderRoute: typeof ReadingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/words': {
       id: '/words'
       path: '/words'
@@ -124,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExamRoute: ExamRoute,
   GrammarRoute: GrammarRoute,
   KanaRoute: KanaRoute,
+  ReadingRoute: ReadingRoute,
   WordsRoute: WordsRoute,
 }
 export const routeTree = rootRouteImport
