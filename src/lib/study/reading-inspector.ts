@@ -43,9 +43,36 @@ export function inspectJapaneseCharOrWord(target: string): WordInspection {
       romaji: wordRomaji,
       meaning: matchedWord.meaning,
       hanviet: hanvietList.length > 0 ? hanvietList.join(" ") : undefined,
-      isKanji: hasKanji(matchedWord.word),
+      isKanji: hasKanji(clean),
       lesson: matchedWord.lesson,
     };
+  }
+
+  // 1.5. Kiểm tra nếu là từ ghép Kanji trong alphabet.ts (ví dụ: 料理, 料金, 新幹線, 大学, 日本...)
+  for (const k of alphabet) {
+    if (k.type === "kanji" && k.compounds) {
+      const matchedCompound = k.compounds.find(
+        (c) => c.word === clean || clean.includes(c.word) || c.word.includes(clean),
+      );
+      if (matchedCompound) {
+        const hiragana = matchedCompound.reading || toKana(clean);
+        const romaji = toRomaji(hiragana);
+        const kanjiChars = clean.match(/[一-龯]/g) || [];
+        const hanvietList = kanjiChars
+          .map((c) => alphabet.find((g) => g.char === c && g.type === "kanji")?.hanviet)
+          .filter(Boolean);
+
+        return {
+          text: clean,
+          hiragana,
+          romaji,
+          meaning: matchedCompound.meaning,
+          hanviet: hanvietList.length > 0 ? hanvietList.join(" ") : undefined,
+          isKanji: true,
+          lesson: k.row,
+        };
+      }
+    }
   }
 
   // 2. Kiểm tra nếu là chữ Hán (Kanji) đơn lẻ trong alphabet.ts

@@ -17,31 +17,35 @@ import { toRomaji } from "./romaji.ts";
 import { shuffle } from "./fpt-jpd123-engine.ts";
 
 const RECENT_PASSAGE_KEY = "fpt_recent_reading_passages_v1";
+const memoryRecentIds = new Set<string>();
 
 /**
  * Lấy danh sách ID các bài đọc đã xem gần đây trong phiên học (Session)
  */
 export function getRecentReadingIds(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = sessionStorage.getItem(RECENT_PASSAGE_KEY);
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    return new Set(Array.isArray(arr) ? arr : []);
-  } catch {
-    return new Set();
+  const result = new Set<string>(memoryRecentIds);
+  if (typeof window !== "undefined") {
+    try {
+      const raw = sessionStorage.getItem(RECENT_PASSAGE_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach((id) => result.add(id));
+        }
+      }
+    } catch {}
   }
+  return result;
 }
 
 /**
  * Ghi nhận ID bài đọc vừa làm vào bộ nhớ phiên để chống lặp bài đọc
  */
 export function recordReadingId(id: string): void {
+  memoryRecentIds.add(id);
   if (typeof window === "undefined") return;
   try {
-    const recent = getRecentReadingIds();
-    recent.add(id);
-    const list = [...recent];
+    const list = [...memoryRecentIds];
     // Giữ tối đa 50 ID gần nhất
     const trimmed = list.slice(-50);
     sessionStorage.setItem(RECENT_PASSAGE_KEY, JSON.stringify(trimmed));
@@ -54,6 +58,7 @@ export function recordReadingId(id: string): void {
  * Xóa lịch sử bài đọc gần đây để làm lại từ đầu
  */
 export function clearRecentReadingIds(): void {
+  memoryRecentIds.clear();
   if (typeof window === "undefined") return;
   try {
     sessionStorage.removeItem(RECENT_PASSAGE_KEY);

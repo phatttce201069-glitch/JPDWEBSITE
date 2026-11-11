@@ -1,0 +1,140 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  READING_PASSAGES_JPD113,
+  READING_PASSAGES_JPD123,
+} from "./reading-data.ts";
+import {
+  generateReadingPassage,
+  clearRecentReadingIds,
+  sanitizeReadingPassageKanji,
+} from "./reading-engine.ts";
+import {
+  inspectJapaneseCharOrWord,
+  passageToRomaji,
+} from "./reading-inspector.ts";
+import { buildReadingAiPrompt } from "./reading-ai.ts";
+import { getAllowedKanjiChars } from "./kana-reading.ts";
+
+test("JPD113 reading passages strictly use only official JPD113 Kanji and vocabulary", () => {
+  const allowedKanji113 = getAllowedKanjiChars([1, 2, 3]);
+
+  for (const passage of READING_PASSAGES_JPD113) {
+    assert.equal(passage.course, "JPD113");
+    assert.ok(passage.title.trim().length > 0);
+    assert.ok(passage.content.trim().length > 0);
+    assert.ok(passage.sentences.length >= 3, "Bài đọc JPD113 phải có ít nhất 3 câu");
+
+    // Kiểm tra độ dài: JPD113 ngắn hơn JPD123
+    assert.ok(
+      passage.content.length <= 160,
+      `Bài đọc JPD113 (${passage.title}) phải ngắn gọn (dưới 160 ký tự), nhận được: ${passage.content.length}`,
+    );
+
+    // Kiểm tra 100% chữ Hán trong bài đọc phải thuộc danh sách cho phép của Bài 1, 2, 3
+    const kanjiChars = passage.content.match(/[一-龯]/g) || [];
+    for (const c of kanjiChars) {
+      assert.ok(
+        allowedKanji113.has(c),
+        `Bài đọc JPD113 "${passage.title}" chứa chữ Hán '${c}' chưa học trong Bài 1-3!`,
+      );
+    }
+
+    // Kiểm tra câu hỏi đọc hiểu
+    assert.ok(passage.questions.length >= 3, "Phải có ít nhất 3 câu hỏi đọc hiểu");
+    for (const q of passage.questions) {
+      assert.equal(q.options.length, 4, "Mỗi câu hỏi phải có đúng 4 lựa chọn");
+      assert.ok(q.options.includes(q.answer), "Đáp án đúng phải nằm trong 4 lựa chọn");
+      assert.ok(q.explanation.meaning.trim().length > 0);
+      assert.ok(q.explanation.reason.trim().length > 0);
+    }
+  }
+});
+
+test("JPD123 reading passages are longer and strictly use only official JPD123 Kanji and vocabulary", () => {
+  const allowedKanji123 = getAllowedKanjiChars([1, 2, 3, 4, 5, 6, 7]);
+
+  for (const passage of READING_PASSAGES_JPD123) {
+    assert.equal(passage.course, "JPD123");
+    assert.ok(passage.title.trim().length > 0);
+    assert.ok(passage.content.trim().length > 0);
+    assert.ok(passage.sentences.length >= 5, "Bài đọc JPD123 phải có ít nhất 5 câu");
+
+    // Kiểm tra độ dài: JPD123 dài hơn JPD113
+    assert.ok(
+      passage.content.length >= 130,
+      `Bài đọc JPD123 (${passage.title}) phải dài hơn JPD113, nhận được: ${passage.content.length}`,
+    );
+
+    // Kiểm tra 100% chữ Hán trong bài đọc phải thuộc danh sách cho phép của Bài 1-7
+    const kanjiChars = passage.content.match(/[一-龯]/g) || [];
+    for (const c of kanjiChars) {
+      assert.ok(
+        allowedKanji123.has(c),
+        `Bài đọc JPD123 "${passage.title}" chứa chữ Hán '${c}' chưa học trong Bài 1-7!`,
+      );
+    }
+
+    // Kiểm tra câu hỏi đọc hiểu
+    assert.ok(passage.questions.length >= 3, "Phải có ít nhất 3 câu hỏi đọc hiểu");
+    for (const q of passage.questions) {
+      assert.equal(q.options.length, 4, "Mỗi câu hỏi phải có đúng 4 lựa chọn");
+      assert.ok(q.options.includes(q.answer), "Đáp án đúng phải nằm trong 4 lựa chọn");
+      assert.ok(q.explanation.meaning.trim().length > 0);
+      assert.ok(q.explanation.reason.trim().length > 0);
+    }
+  }
+});
+
+test("generateReadingPassage respects anti-repetition session cache and rotates passages", () => {
+  clearRecentReadingIds();
+
+  // Lượt 1
+  const p1 = generateReadingPassage("JPD113");
+  assert.ok(p1 && p1.id);
+
+  // Lượt 2: không được trùng với p1
+  const p2 = generateReadingPassage("JPD113");
+  assert.ok(p2 && p2.id);
+  assert.notEqual(p1.id, p2.id, "Lượt 2 không được lặp lại bài đọc của lượt 1");
+
+  // Lượt 3: không được trùng với p2
+  const p3 = generateReadingPassage("JPD113");
+  assert.ok(p3 && p3.id);
+  assert.notEqual(p2.id, p3.id, "Lượt 3 không được lặp lại bài đọc của lượt 2");
+});
+
+test("inspectJapaneseCharOrWord correctly returns Romaji, Hiragana and Hanviet for double-click", () => {
+  // Tra chữ Hán đơn lẻ
+  const k1 = inspectJapaneseCharOrWord("日");
+  assert.equal(k1.isKanji, true);
+  assert.ok(k1.romaji.length > 0);
+  assert.equal(k1.hanviet, "NHẬT");
+
+  // Tra từ vựng có trong bài
+  const w1 = inspectJapaneseCharOrWord("料理");
+  assert.equal(w1.isKanji, true);
+  assert.equal(w1.hiragana, "りょうり");
+  assert.equal(w1.romaji, "ryouri");
+  assert.ok(w1.meaning.toLowerCase().includes("món ăn") || w1.meaning.toLowerCase().includes("nấu") || w1.meaning.toLowerCase().includes("ẩm thực"));
+
+  // Tra Kana
+  const kana = inspectJapaneseCharOrWord("あした");
+  assert.equal(kana.isKanji, false);
+  assert.equal(kana.romaji, "ashita");
+});
+
+test("passageToRomaji transliterates full Japanese text into clean Romaji", () => {
+  const romaji = passageToRomaji("わたしはナムです。");
+  assert.ok(romaji.includes("watashi") && romaji.includes("namu") && romaji.includes("desu"));
+});
+
+test("buildReadingAiPrompt correctly configures length and kanji constraints for both courses", () => {
+  const p113 = buildReadingAiPrompt("JPD113");
+  assert.ok(p113.systemPrompt.includes("Ngắn gọn") && p113.systemPrompt.includes("80 đến 130"));
+  assert.ok(p113.systemPrompt.includes("34 chữ Hán"));
+
+  const p123 = buildReadingAiPrompt("JPD123");
+  assert.ok(p123.systemPrompt.includes("Dài hơn một chút") && p123.systemPrompt.includes("150 đến 240"));
+  assert.ok(p123.systemPrompt.includes("Bài 7"));
+});
