@@ -109,10 +109,12 @@ function GrammarPage() {
     );
   }
 
-  // 2. Chế độ xem chi tiết 1 điểm ngữ pháp cụ thể
+  // 2. Chế độ xem chi tiết 1 điểm ngữ pháp cụ thể (học nội dung lý thuyết)
   if (found) {
     const { point } = found;
     const pointIdx = found.lesson.points.findIndex((p) => p.id === point.id);
+    const prevPoint = pointIdx > 0 ? found.lesson.points[pointIdx - 1] : null;
+    const nextPoint = pointIdx < found.lesson.points.length - 1 ? found.lesson.points[pointIdx + 1] : null;
 
     return (
       <div>
@@ -124,52 +126,54 @@ function GrammarPage() {
           ← {found.lesson.title}
         </button>
 
-        <div className="mt-3 flex items-center gap-2">
-          <span className="rounded bg-seal/10 px-2 py-0.5 text-xs font-semibold text-seal">
-            Phần {pointIdx + 1} / {found.lesson.points.length}
-          </span>
-          <span className="text-xs text-stone">{found.lesson.subtitle}</span>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="rounded bg-seal/10 px-2 py-0.5 text-xs font-semibold text-seal">
+              Phần {pointIdx + 1} / {found.lesson.points.length}
+            </span>
+            <span className="text-xs text-stone">{found.lesson.subtitle}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="text-xs text-stone hover:text-ink underline-offset-2 hover:underline cursor-pointer"
+              onClick={() => setShowReading((value) => !value)}
+            >
+              {showReading ? "Ẩn cách đọc" : "Hiện cách đọc ví dụ"}
+            </button>
+            <Button
+              tone="ghost"
+              className="text-xs px-2.5 py-1 min-h-8 inline-flex items-center gap-1"
+              onClick={() => setSearch({ point: point.id, drill: true })}
+            >
+              <Target className="size-3 text-seal" />
+              <span>Luyện phần này</span>
+            </Button>
+          </div>
         </div>
 
-        <h1 className="jp mt-2 text-4xl leading-snug font-medium">{point.structure_jp}</h1>
-        <p className="mt-2 text-lg text-stone">{point.structure_vi}</p>
-
-        {/* Nút hành động nhanh: Luyện riêng phần này hoặc luyện cả bài */}
-        <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
-          <Button
-            className="flex-1 shadow-xs inline-flex items-center justify-center gap-2"
-            tone="seal"
-            onClick={() => setSearch({ point: point.id, drill: true })}
-          >
-            <Target className="size-4" />
-            <span>Luyện riêng phần này ({point.structure_vi})</span>
-          </Button>
-          <Button
-            className="sm:w-auto"
-            tone="ghost"
-            onClick={() => setSearch({ point: "", drill: true })}
-          >
-            Luyện cả bài {found.lesson.id}
-          </Button>
-        </div>
+        <h1 className="jp mt-2 text-4xl leading-snug font-medium text-ink">{point.structure_jp}</h1>
+        <p className="mt-2 text-lg text-stone font-medium">{point.structure_vi}</p>
 
         <dl className="mt-8 space-y-5">
           <div>
-            <dt className="text-xs tracking-wide text-stone uppercase font-medium">Công thức</dt>
-            <dd className="mt-1 font-mono text-sm bg-sheet px-3.5 py-2.5 rounded-lg border border-line">
+            <dt className="text-xs tracking-wide text-stone uppercase font-medium">Công thức mẫu câu</dt>
+            <dd className="mt-1 font-mono text-sm bg-sheet px-4 py-3 rounded-lg border border-line text-ink">
               {point.formula}
             </dd>
           </div>
           <div>
-            <dt className="text-xs tracking-wide text-stone uppercase font-medium">Cách dùng</dt>
-            <dd className="mt-1 text-stone leading-relaxed">
-              {point.explanation}. {point.usage}
+            <dt className="text-xs tracking-wide text-stone uppercase font-medium">Ý nghĩa & Cách dùng</dt>
+            <dd className="mt-1 text-ink/90 leading-relaxed bg-sheet/40 p-4 rounded-lg border border-line/60">
+              <p className="font-medium text-ink">{point.explanation}</p>
+              {point.usage ? <p className="mt-2 text-sm text-stone">{point.usage}</p> : null}
             </dd>
           </div>
           {point.note ? (
-            <div className="border-l-2 border-seal pl-4">
-              <dt className="text-xs tracking-wide text-seal uppercase font-medium">Lưu ý</dt>
-              <dd className="mt-1 text-sm leading-relaxed">{point.note}</dd>
+            <div className="border-l-4 border-seal bg-seal/5 p-4 rounded-r-lg">
+              <dt className="text-xs tracking-wide text-seal uppercase font-semibold">Lưu ý quan trọng</dt>
+              <dd className="mt-1 text-sm text-ink leading-relaxed">{point.note}</dd>
             </div>
           ) : null}
         </dl>
@@ -183,27 +187,30 @@ function GrammarPage() {
         ) : null}
 
         <div className="mt-8 flex items-center justify-between">
-          <h2 className="text-sm tracking-wide text-stone uppercase font-medium">Ví dụ minh họa</h2>
+          <h2 className="text-sm tracking-wide text-stone uppercase font-semibold inline-flex items-center gap-2">
+            <BookOpen className="size-4 text-seal" />
+            Ví dụ minh họa
+          </h2>
           <button
             type="button"
-            className="min-h-11 text-sm text-ink underline-offset-2 hover:underline cursor-pointer"
+            className="text-xs text-stone hover:text-ink underline-offset-2 hover:underline cursor-pointer"
             onClick={() => setShowReading((value) => !value)}
           >
-            {showReading ? "Ẩn cách đọc" : "Hiện cách đọc"}
+            {showReading ? "Ẩn Hiragana / Romaji" : "Hiện Hiragana / Romaji"}
           </button>
         </div>
 
         {point.examples.length === 0 ? (
           <p className="mt-3 text-stone">Mẫu này chưa có ví dụ.</p>
         ) : (
-          <ul className="mt-2 divide-y divide-line border-y border-line">
+          <ul className="mt-3 divide-y divide-line border-y border-line">
             {point.examples.map((example) => (
               <li key={example.jp} className="py-4">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="jp text-xl">{example.jp}</p>
+                  <p className="jp text-xl font-medium text-ink">{example.jp}</p>
                   <button
                     type="button"
-                    className="min-h-11 shrink-0 text-stone hover:text-ink cursor-pointer"
+                    className="size-8 rounded-full border border-line bg-paper flex items-center justify-center text-stone hover:text-seal hover:border-seal shrink-0 cursor-pointer transition-colors"
                     aria-label="Nghe phát âm"
                     onClick={() => speakJapanese(example.jp)}
                   >
@@ -212,33 +219,78 @@ function GrammarPage() {
                 </div>
                 {showReading ? (
                   <p className="mt-1 text-sm text-stone">
-                    {example.reading}
-                    <span className="mt-0.5 block">{example.romaji}</span>
+                    <span className="font-mono text-ink/80">{example.reading}</span>
+                    <span className="mt-0.5 block text-xs text-stone/80">{example.romaji}</span>
                   </p>
                 ) : null}
-                <p className="mt-2 text-ink">{example.vi}</p>
+                <p className="mt-2 text-ink font-medium">{example.vi}</p>
               </li>
             ))}
           </ul>
         )}
 
-        {/* Nút hành động cuối trang */}
-        <div className="mt-8 pt-6 border-t border-line flex flex-col sm:flex-row gap-3">
-          <Button
-            className="flex-1 shadow-xs inline-flex items-center justify-center gap-2"
-            tone="seal"
-            onClick={() => setSearch({ point: point.id, drill: true })}
-          >
-            <Target className="size-4" />
-            <span>Luyện riêng phần này ({point.structure_vi})</span>
-          </Button>
-          <Button
-            className="sm:w-auto"
-            tone="ghost"
-            onClick={() => setSearch({ point: "", drill: true })}
-          >
-            Luyện toàn bộ bài {found.lesson.id}
-          </Button>
+        {/* Khu vực Luyện tập bên trong trang nội dung ngữ pháp */}
+        <div className="mt-10 rounded-2xl border border-seal/30 bg-seal/5 p-5 sm:p-6 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-semibold text-seal uppercase tracking-wider inline-flex items-center gap-1.5">
+                <Target className="size-4" />
+                Luyện tập kiến thức vừa học
+              </span>
+              <h3 className="mt-1 text-base font-semibold text-ink">
+                Đã nắm vững cấu trúc 「{point.structure_jp}」?
+              </h3>
+              <p className="mt-1 text-xs sm:text-sm text-stone max-w-xl">
+                Bắt đầu làm bài trắc nghiệm để củng cố công thức, cách chia và ý nghĩa của riêng phần này hoặc luyện tập toàn bộ Bài {found.lesson.id}.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2.5 shrink-0">
+              <Button
+                className="shadow-xs inline-flex items-center justify-center gap-2"
+                tone="seal"
+                onClick={() => setSearch({ point: point.id, drill: true })}
+              >
+                <Target className="size-4" />
+                <span>Luyện tập phần này</span>
+              </Button>
+              <Button
+                tone="ghost"
+                onClick={() => setSearch({ point: "", drill: true })}
+              >
+                Luyện cả bài {found.lesson.id}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Chuyển tiếp các phần học trong bài */}
+        <div className="mt-6 pt-6 border-t border-line flex items-center justify-between gap-3 text-xs">
+          {prevPoint ? (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-stone hover:text-ink font-medium p-2 rounded-lg hover:bg-sheet cursor-pointer transition-colors"
+              onClick={() => setSearch({ point: prevPoint.id, drill: false })}
+            >
+              ← Phần {pointIdx}: {prevPoint.structure_vi}
+            </button>
+          ) : <div />}
+          {nextPoint ? (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-seal hover:text-seal-dark font-medium p-2 rounded-lg hover:bg-seal/10 cursor-pointer transition-colors"
+              onClick={() => setSearch({ point: nextPoint.id, drill: false })}
+            >
+              Học tiếp: Phần {pointIdx + 2} ({nextPoint.structure_vi}) →
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-stone hover:text-ink font-medium p-2 rounded-lg hover:bg-sheet cursor-pointer transition-colors"
+              onClick={() => setSearch({ point: "", drill: false })}
+            >
+              Về danh sách bài học →
+            </button>
+          )}
         </div>
       </div>
     );
@@ -271,28 +323,9 @@ function GrammarPage() {
         <h1 className="display mt-1 text-4xl">{lesson.title}</h1>
         <p className="mt-3 text-stone leading-relaxed">{lesson.description}</p>
 
-        {/* Action card: Luyện toàn bộ bài */}
-        <div className="mt-6 rounded-xl border border-line bg-sheet/60 p-4">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <div>
-              <p className="font-semibold text-ink">Luyện tập tổng hợp cả bài</p>
-              <p className="text-xs text-stone mt-0.5">
-                Luyện trắc nghiệm kết hợp tất cả {lesson.points.length} phần ngữ pháp của bài này
-              </p>
-            </div>
-            <Button
-              tone="seal"
-              className="shrink-0"
-              onClick={() => setSearch({ point: "", drill: true })}
-            >
-              Luyện tất cả các phần
-            </Button>
-          </div>
-        </div>
-
         {/* Banner bảng chia động từ nếu là Bài 7 */}
         {lesson.id === "7" ? (
-          <div className="mt-4 rounded-xl border border-seal/30 bg-seal/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="mt-6 rounded-xl border border-seal/30 bg-seal/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start gap-3">
               <BookOpen className="size-5 text-seal shrink-0 mt-0.5" />
               <div>
@@ -312,12 +345,13 @@ function GrammarPage() {
           </div>
         ) : null}
 
-        {/* Danh sách từng phần ngữ pháp với nút Luyện riêng */}
+        {/* Danh sách từng phần ngữ pháp để vào học */}
         <div className="mt-8 flex items-center justify-between">
-          <h2 className="text-xs tracking-wider text-stone uppercase font-semibold">
-            Danh sách các phần ({lesson.points.length} phần)
+          <h2 className="text-xs tracking-wider text-stone uppercase font-semibold inline-flex items-center gap-1.5">
+            <BookOpen className="size-3.5 text-seal" />
+            Nội dung ngữ pháp trong bài ({lesson.points.length} phần)
           </h2>
-          <span className="text-xs text-stone">Chọn 「🎯 Luyện riêng」để luyện tập từng phần</span>
+          <span className="text-xs text-stone">Bấm vào từng phần để học lý thuyết & ví dụ</span>
         </div>
 
         <ul className="mt-3 divide-y divide-line border-y border-line">
@@ -350,24 +384,37 @@ function GrammarPage() {
 
               <div className="flex items-center gap-2 shrink-0">
                 <Button
-                  tone="ghost"
-                  className="hidden md:inline-flex min-h-9 px-3 py-1 text-xs"
+                  tone="seal"
+                  className="shadow-xs min-h-9 px-3.5 py-1 text-xs inline-flex items-center gap-1.5"
                   onClick={() => setSearch({ point: point.id, drill: false })}
                 >
-                  Lý thuyết
-                </Button>
-                <Button
-                  tone="seal"
-                  className="min-h-9 px-3 py-1 text-xs shadow-xs inline-flex items-center gap-1.5"
-                  onClick={() => setSearch({ point: point.id, drill: true })}
-                >
-                  <Target className="size-3.5" />
-                  <span>Luyện riêng</span>
+                  <BookOpen className="size-3.5" />
+                  <span>Vào học →</span>
                 </Button>
               </div>
             </li>
           ))}
         </ul>
+
+        {/* Luyện tập tổng hợp sau khi học xong các phần */}
+        <div className="mt-10 rounded-xl border border-line bg-sheet/60 p-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div>
+              <p className="font-semibold text-ink">Luyện tập tổng hợp cả bài</p>
+              <p className="text-xs text-stone mt-0.5">
+                Sau khi học xong toàn bộ lý thuyết các phần, hãy làm bài trắc nghiệm kết hợp cả {lesson.points.length} phần của Bài {lesson.id}.
+              </p>
+            </div>
+            <Button
+              tone="ghost"
+              className="shrink-0 inline-flex items-center gap-1.5"
+              onClick={() => setSearch({ point: "", drill: true })}
+            >
+              <Target className="size-3.5 text-seal" />
+              <span>Bắt đầu luyện cả bài</span>
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -378,9 +425,9 @@ function GrammarPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <p className="text-sm tracking-[0.18em] text-stone uppercase font-medium">Ngữ pháp</p>
-          <h1 className="display mt-2 text-4xl">Học mẫu câu, luyện riêng từng phần.</h1>
+          <h1 className="display mt-2 text-4xl">Học mẫu câu & Ngữ pháp</h1>
           <p className="mt-2 max-w-lg text-stone">
-            Chọn một bài học để xem toàn bộ lý thuyết, hoặc bấm nút <strong className="text-seal font-medium">🎯 Luyện riêng</strong> ở từng phần bên dưới để vào luyện tập ngay.
+            Bấm vào bất kỳ phần ngữ pháp nào bên dưới để học lý thuyết, công thức và ví dụ chi tiết. Sau khi học xong, bạn có thể tự chọn luyện tập ngay bên trong bài học.
           </p>
         </div>
       </div>
@@ -428,12 +475,12 @@ function GrammarPage() {
       </div>
 
       {/* Thông báo hướng dẫn nhanh */}
-      <div className="mt-4 rounded-xl border border-seal/30 bg-seal/5 p-4 flex items-start gap-3">
-        <Target className="size-5 text-seal shrink-0 mt-0.5" />
+      <div className="mt-4 rounded-xl border border-line bg-sheet/60 p-4 flex items-start gap-3">
+        <BookOpen className="size-5 text-seal shrink-0 mt-0.5" />
         <div className="text-sm">
-          <p className="font-semibold text-seal">Luyện riêng từng phần ngữ pháp đã sẵn sàng cho cả JPD113 & JPD123!</p>
+          <p className="font-semibold text-ink">Nội dung ngữ pháp chuẩn giáo trình JPD113 & JPD123 FPT</p>
           <p className="text-stone mt-0.5">
-            Bấm vào bất kỳ ô phần ngữ pháp nào bên dưới (ví dụ ở <strong>JPD113 - Bài 1</strong>: <span className="underline decoration-seal font-medium text-ink">Phần 1: N1 là N2</span> hoặc <strong>JPD123 - Bài 6</strong>: <span className="underline decoration-seal font-medium text-ink">Phần 1: A hơn B</span>) để luyện trắc nghiệm riêng dạng câu hỏi đó.
+            Bấm vào các ô phần ngữ pháp trong từng bài bên dưới để vào học lý thuyết, công thức cấu trúc câu và ví dụ thực tế. Nút luyện tập được tích hợp ngay bên trong mỗi bài học.
           </p>
         </div>
       </div>
@@ -486,55 +533,50 @@ function GrammarPage() {
                 </p>
               </div>
 
-              {/* Các nút hành động chính của bài */}
+              {/* Nút hành động chính của bài */}
               <div className="flex items-center gap-2 shrink-0 sm:self-start">
                 <Button
-                  tone="ghost"
-                  className="text-xs px-3 py-1.5 min-h-9"
+                  tone="seal"
+                  className="text-xs px-3.5 py-1.5 min-h-9 shadow-xs inline-flex items-center gap-1.5"
                   onClick={() => setSearch({ lesson: item.id, point: "", drill: false })}
                 >
-                  Chi tiết lý thuyết →
-                </Button>
-                <Button
-                  tone="ghost"
-                  className="text-xs px-3 py-1.5 min-h-9"
-                  onClick={() => setSearch({ lesson: item.id, point: "", drill: true })}
-                >
-                  Luyện cả bài
+                  <BookOpen className="size-3.5" />
+                  <span>Vào học bài này →</span>
                 </Button>
               </div>
             </div>
 
-            {/* Danh sách các phần với nút bấm Luyện riêng trực tiếp */}
+            {/* Danh sách nội dung ngữ pháp các phần để bấm vào học */}
             <div className="mt-5 pt-4 border-t border-line/60">
               <div className="flex items-center justify-between gap-2 mb-3">
                 <span className="text-xs font-semibold text-stone uppercase tracking-wider inline-flex items-center gap-1.5">
-                  <Target className="size-3.5 text-seal" />
-                  Luyện riêng từng phần:
+                  <BookOpen className="size-3.5 text-seal" />
+                  Nội dung ngữ pháp trong bài ({item.points.length} phần):
                 </span>
                 <span className="text-[11px] text-stone hidden sm:inline">
-                  Bấm vào phần bạn muốn luyện
+                  Bấm vào phần bạn muốn học
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                 {item.points.map((p, pIdx) => (
                   <button
                     key={p.id}
                     type="button"
-                    title={`Luyện riêng phần ${pIdx + 1}: ${p.structure_vi} - ${p.structure_jp}`}
-                    className="flex flex-col items-start gap-1 rounded-lg border border-line bg-paper p-2.5 text-left text-xs transition-all hover:border-seal hover:bg-seal/10 hover:shadow-2xs cursor-pointer group"
-                    onClick={() => setSearch({ lesson: item.id, point: p.id, drill: true })}
+                    title={`Học ngữ pháp phần ${pIdx + 1}: ${p.structure_vi} - ${p.structure_jp}`}
+                    className="flex flex-col items-start gap-1.5 rounded-lg border border-line bg-paper p-3 text-left text-xs transition-all hover:border-seal hover:bg-seal/5 hover:shadow-xs cursor-pointer group"
+                    onClick={() => setSearch({ lesson: item.id, point: p.id, drill: false })}
                   >
                     <div className="flex items-center justify-between w-full gap-1">
-                      <span className="font-semibold text-seal group-hover:text-seal">
+                      <span className="font-semibold text-ink group-hover:text-seal transition-colors line-clamp-1">
                         Phần {pIdx + 1}: {p.structure_vi}
                       </span>
-                      <span className="shrink-0 rounded bg-seal/10 px-1.5 py-0.5 text-[10px] font-medium text-seal opacity-80 group-hover:opacity-100 group-hover:bg-seal group-hover:text-paper transition-colors">
-                        🎯 Luyện riêng
+                      <span className="shrink-0 inline-flex items-center gap-0.5 rounded bg-stone/10 px-1.5 py-0.5 text-[10px] font-medium text-stone group-hover:bg-seal group-hover:text-paper transition-colors">
+                        <span>Học</span>
+                        <ChevronRight className="size-2.5" />
                       </span>
                     </div>
-                    <span className="jp text-[11px] text-stone group-hover:text-ink truncate max-w-full">
+                    <span className="jp text-xs font-medium text-stone group-hover:text-ink transition-colors truncate max-w-full">
                       {p.structure_jp}
                     </span>
                   </button>

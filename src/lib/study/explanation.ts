@@ -1683,7 +1683,7 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
   }
 
   // 3. Phân tích cho Cấu trúc So sánh (Bài 6: より, ほど, どちら, いちばん)
-  else if (grammarPoint.includes("so sánh") || grammarPoint.includes("So sánh") || ["より", "ほど", "どちら", "どちらが", "いちばん", "一番"].includes(answer)) {
+  else if (grammarPoint.includes("so sánh") || grammarPoint.includes("So sánh") || ["より", "ほど", "どちら", "どちらが", "いちばん", "一番", "の", "ほう", "ずっと"].includes(answer)) {
     if (answer === "より") {
       fastTip = "💡 Cấu trúc so sánh hơn: A は B より [Tính từ] です (A thì hơn B). Nhìn thấy vị ngữ khẳng định ➔ Chọn ngay「より」!";
       detailedReason = `Câu so sánh hơn giữa 2 đối tượng theo công thức:『A は B より [Tính từ] です』(A thì [Tính từ] hơn B).
@@ -1704,6 +1704,21 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
       fastTip = "💡 So sánh nhất trong một tập hợp: [Phạm vi] の中で [Chủ ngữ] が一番 [Tính từ] です (Trong tất cả... thì... là nhất).";
       detailedReason = `Cấu trúc so sánh cao nhất:『[Phạm vi / Tập hợp] の中で [Chủ ngữ] が 一番 [Tính từ] です』(Trong số các..., thì... là tính từ nhất).
 - Phó từ「一番 (いちばん)」đứng ngay trước tính từ để biểu thị mức độ cao nhất trong toàn bộ phạm vi được so sánh.`;
+    } else if (answer === "の" && q.sentence.includes("なかで")) {
+      fastTip = "💡 Cụm từ so sánh cao nhất: [Phạm vi] の なかで (trong số...). Bắt buộc dùng trợ từ「の」đi liền với なかで!";
+      detailedReason = `Cấu trúc so sánh nhất trong một tập hợp:『[Tập hợp] の なかで [Chủ ngữ] がいちばん [Tính từ] です』. Cụm từ bắt buộc đi kèm là trợ từ『の』để liên kết với「なかで」. Đáp án đúng là「の」.`;
+    } else if (answer === "で" && !q.sentence.includes("なかで")) {
+      fastTip = "💡 Trợ từ chỉ phạm vi không gian/địa điểm so sánh nhất: [Địa điểm/Phạm vi] で...がいちばん (Ví dụ: せかいで, クラスで).";
+      detailedReason = `Khi phạm vi trong so sánh nhất là một địa điểm hoặc phạm trù (như せかい - thế giới, ベトナム - Việt Nam), ta dùng trợ từ『で』để giới hạn phạm vi. Đáp án đúng là「で」.`;
+    } else if (answer === "ずっと") {
+      fastTip = "💡 Phó từ「ずっと」(hơn hẳn, hơn rất nhiều) dùng để nhấn mạnh mức độ chênh lệch lớn trong câu so sánh hơn.";
+      detailedReason = `Trong câu so sánh hơn『A は B より [Phó từ] [Tính từ] です』, phó từ「ずっと」mang nghĩa là 'hơn hẳn / hơn rất nhiều' nhằm nhấn mạnh mức độ chênh lệch rõ rệt giữa hai đối tượng. Đáp án đúng là「ずっと」.`;
+    } else if (answer === "ほう" || answer === "のほう") {
+      fastTip = "💡 Vế so sánh hơn: [Đối tượng] の ほうが [Tính từ] です (Phía / bên... thì hơn).";
+      detailedReason = `Trong câu so sánh hơn hoặc trả lời câu hỏi lựa chọn, cấu trúc chuẩn là:『[Đối tượng] の ほう が [Tính từ] です』. Từ cần điền là「ほう」.`;
+    } else {
+      fastTip = "💡 Cấu trúc so sánh trong tiếng Nhật: A は B より / A は B ほど...ない / A と B と どちらが / [Phạm vi] で 一番.";
+      detailedReason = `Đáp án đúng là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}. Câu áp dụng cấu trúc so sánh chuẩn xác của Bài 6.`;
     }
   }
 
@@ -1720,7 +1735,7 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
   }
 
   // 5. Phân tích cho Rủ rê & Từ chối khéo (Bài 6: 〜はちょっと… / 〜がありますから)
-  else if (grammarPoint.includes("Rủ rê") || grammarPoint.includes("rủ rê") || grammarPoint.includes("Từ chối") || answer.includes("ちょっと") || answer.includes("約束") || answer.includes("用事") || answer.includes("ましょう")) {
+  else if (grammarPoint.includes("Rủ rê") || grammarPoint.includes("rủ rê") || grammarPoint.includes("Từ chối") || answer.includes("ちょっと") || answer.includes("約束") || answer.includes("用事") || answer.includes("ましょう") || answer.includes("ませんか")) {
     if (answer.includes("ちょっと")) {
       fastTip = "💡 Văn hóa từ chối khéo của người Nhật: Khi được rủ rê mà không thể tham gia, người Nhật nói khéo「〜はちょっと…」(thì hơi bất tiện/khó cho tôi) để giữ phép lịch sự!";
       detailedReason = `Trong giao tiếp tiếng Nhật, khi muốn từ chối một lời mời rủ rê (〜ませんか) một cách tế nhị, người Nhật không nói thẳng 'いいえ' (không) mà nói lấp lửng『〜はちょっと…』(Thời gian đó thì có chút bất tiện cho tôi...).
@@ -1729,10 +1744,16 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
     } else if (answer.includes("ましょう")) {
       fastTip = "💡 Đáp lại lời rủ rê (〜ませんか) khi đồng ý:「ええ、〜ましょう」(Vâng, chúng ta cùng làm thôi!).";
       detailedReason = `Khi người khác rủ rê bằng cấu trúc「〜ませんか」, nếu đồng ý tham gia thì người Nhật sẽ hưởng ứng nồng nhiệt bằng cấu trúc『ええ、〜ましょう』(Được đấy, chúng ta cùng làm nhé). Đáp án đúng là「${answer}」.`;
+    } else if (answer.includes("ませんか")) {
+      fastTip = "💡 Mẫu câu rủ rê, mời mọc lịch sự: V(bỏ ます) + ませんか (Cùng làm... với tôi nhé?).";
+      detailedReason = `Để rủ rê hoặc mời người khác cùng làm một hành động với mình một cách lịch sự, người Nhật dùng cấu trúc『V(bỏ ます) + ませんか』(Ví dụ: いっしょにおちゃを飲みませんか). Đáp án đúng là「${answer}」.`;
+    } else {
+      fastTip = "💡 Mẫu câu rủ rê và hồi đáp trong giao tiếp tiếng Nhật: 〜ませんか (rủ rê) / 〜ましょう (đồng ý) / 〜はちょっと… (từ chối khéo).";
+      detailedReason = `Đáp án đúng là「${answer}」. Đây là cách diễn đạt phù hợp trong văn cảnh giao tiếp mời mọc hoặc hồi đáp.`;
     }
   }
 
-  // 6. Phân tích cho Lượng từ số đếm (Bài 6: 枚 - まい)
+  // 6. Phân tích cho Lượng từ số đếm (Bài 6: 枚 - まi)
   else if (grammarPoint.includes("Lượng từ") || grammarPoint.includes("vật mỏng") || answer.includes("まい") || answer.includes("枚")) {
     fastTip = "💡 Đếm các vật mỏng phẳng (áo sơ mi, đĩa CD, vé xem phim, tờ giấy, tem, bánh pizza) ➔ BẮT BUỘC dùng lượng từ「枚 (まい)」!";
     detailedReason = `Đây là câu hỏi kiểm tra lượng từ chỉ số đếm của Bài 6.
@@ -1742,19 +1763,25 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
   }
 
   // 7. Phân tích cho Mẫu câu mong muốn (Bài 5: ほしい vs たい)
-  else if (grammarPoint.includes("mong muốn") || answer.includes("ほしい") || answer.includes("たい") || (answer === "が" && q.sentence.includes("ほしい"))) {
+  else if (grammarPoint.includes("mong muốn") || answer.includes("ほしい") || answer.includes("たい") || (answer === "が" && q.sentence.includes("ほしい")) || (answer === "は" && q.sentence.includes("ほしくない"))) {
     if (answer === "が" && q.sentence.includes("ほしい")) {
       fastTip = "💡 Bẫy đề thi kinh điển: Trong tiếng Nhật,「ほしい」là TÍNH TỪ đuôi い (không phải động từ). Đối tượng mong muốn BẮT BUỘC dùng trợ từ「が」(Danh từ + が + ほしいです), KHÔNG dùng「を」!";
       detailedReason = `Người học tiếng Việt thường có thói quen dịch xuôi 'Tôi muốn [đồ vật]' nên liên tưởng đến ngoại động từ và chọn nhầm trợ từ「を」.
 - Bản chất ngữ pháp:『ほしい (hoshii)』là một TÍNH TỪ đuôi い biểu thị cảm xúc mong muốn sở hữu, KHÔNG PHẢI là động từ.
 - Do đó, đối tượng của tính từ「ほしい」bắt buộc phải đi kèm với trợ từ『が』.
 - Công thức chuẩn: [Chủ ngữ は] + [Danh từ] + が + ほしいです. Đáp án chính xác là trợ từ『が』.`;
+    } else if (answer === "は") {
+      fastTip = "💡 Nhấn mạnh sự tương phản hoặc phủ định: Trợ từ「は」thay thế cho「が」để nhấn mạnh đối tượng không mong muốn (N は ほしくないです).";
+      detailedReason = `Trong câu phủ định「〜ほしくないです」, trợ từ「は」được dùng thay cho「が」nhằm nhấn mạnh sự tương phản hoặc làm nổi bật đối tượng. Đáp án đúng là「は」.`;
     } else if (answer.includes("ほしい")) {
       fastTip = "💡 Phân biệt: Muốn sở hữu ĐỒ VẬT ➔ Dùng「Danh từ + が + ほしいです」; Muốn làm HÀNH ĐỘNG ➔ Dùng「V(bỏ ます) + たいです」.";
       detailedReason = `Mẫu câu mong muốn sở hữu một đồ vật hoặc vật nuôi:『Danh từ + が + ほしいです』. Ở đây từ đứng trước là danh từ đồ vật nên dùng「ほしい」, không dùng「たい」(vì たい chỉ ghép sau động từ).`;
     } else if (answer.includes("たい")) {
       fastTip = "💡 Muốn làm hành động động từ: V(bỏ ます) + たいです (Ví dụ: 食べます ➔ 食べたいです, 行きます ➔ 行きたいです).";
       detailedReason = `Mẫu câu diễn tả mong muốn thực hiện một hành động của bản thân: Động từ bỏ ます ghép với đuôi『〜たいです』. Đáp án đúng là「${answer}」.`;
+    } else {
+      fastTip = "💡 Cấu trúc mong muốn: Danh từ + が + ほしいです / V(bỏ ます) + たいです.";
+      detailedReason = `Đáp án đúng là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}. Câu tuân theo cấu trúc mong muốn của Bài 5.`;
     }
   }
 
@@ -1780,6 +1807,14 @@ function buildGrammarExplanation(q: ExamQuestion): QuestionExplanation {
     detailedReason = `Đáp án chính xác là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}.
 - Xét theo cấu trúc ngữ pháp của ${lesson}: Cấu trúc『${grammarPoint}』yêu cầu điền dạng thức「${answer}」để câu văn hoàn chỉnh, chính xác về mặt ngữ nghĩa và chuẩn ngữ pháp tiếng Nhật sơ cấp.
 - Các phương án còn lại bị sai dạng thức kết hợp trợ từ hoặc sai quy tắc chia thì/thể của câu.`;
+  }
+
+  // Đảm bảo không bao giờ trả về reason rỗng
+  if (!detailedReason || detailedReason.trim().length === 0) {
+    detailedReason = `Đáp án chính xác là「${answer}」${ansMeaning ? ` (${ansMeaning})` : ""}. Cấu trúc『${grammarPoint}』yêu cầu sử dụng dạng thức「${answer}」để câu văn hoàn chỉnh và chuẩn ngữ pháp.`;
+  }
+  if (!fastTip || fastTip.trim().length === 0) {
+    fastTip = "💡 Đọc kỹ từ đứng trước và sau chỗ trống để xác định từ loại và trợ từ kết hợp chính xác.";
   }
 
   return {
