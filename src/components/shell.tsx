@@ -7,6 +7,7 @@ const LINKS = [
   { to: "/kana" as const, label: "Chữ", search: { script: "hiragana" as const, row: "", mode: "chart" as const, at: 0 } },
   { to: "/words" as const, label: "Từ", search: { lesson: "", mode: "list" as const, at: 0 } },
   { to: "/grammar" as const, label: "Ngữ pháp", search: { lesson: "", point: "", drill: false } },
+  { to: "/reading" as const, label: "Đọc", search: { course: "JPD113" as const } },
   { to: "/exam" as const, label: "Đề", search: { course: "" as const, bai: "" } },
 ];
 

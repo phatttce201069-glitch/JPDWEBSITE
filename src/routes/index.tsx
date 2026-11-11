@@ -76,6 +76,11 @@ function Home() {
             <Door kicker="04" title="Kiểm tra" detail="30 câu A–D. Kanji, từ vựng, ngữ pháp — nhiều cách hỏi trong một đề." meta="30 câu" />
           </Link>
         </li>
+        <li>
+          <Link to="/reading" search={{ course: "JPD113" }} className="group flex items-center gap-4 py-5">
+            <Door kicker="05" title="Luyện thi đọc" detail="Đọc hiểu JPD113 & JPD123 chuẩn FPT. Đọc phát âm, hiện Romaji, ấn đúp tra chữ." meta="Đọc hiểu" />
+          </Link>
+        </li>
       </ul>
     </div>
   );

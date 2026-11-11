@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertCircle,
@@ -396,6 +396,60 @@ function ExamPage() {
                   Tùy chỉnh bài
                   <ChevronRight className="size-4" />
                 </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Highlight: Reading Comprehension Practice (Luyện thi đọc hiểu FPT) */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm tracking-wide text-stone uppercase flex items-center gap-1.5">
+              <BookOpen className="size-4 text-emerald-600" />
+              Luyện thi Đọc hiểu (読解) · Chuẩn Form FPT
+            </h2>
+            <Link
+              to="/reading"
+              search={{ course: "JPD113" }}
+              className="text-xs text-ink font-semibold underline hover:text-emerald-700"
+            >
+              Vào phòng luyện đọc &rarr;
+            </Link>
+          </div>
+
+          <div className="mt-3 rounded-xl border border-line bg-sheet p-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h3 className="font-semibold text-ink text-base">
+                  Đọc hiểu JPD113 & JPD123 bám sát 100% từ vựng và Kanji đã học
+                </h3>
+                <p className="text-sm text-stone leading-relaxed">
+                  Luyện kỹ năng đọc hiểu kết hợp phát âm tự động, hiển thị Romaji và tính năng <strong>nhấp đúp chữ bất kỳ để tra Romaji</strong> tức thì.
+                </p>
+                <div className="flex flex-wrap gap-2 pt-1 text-xs text-stone">
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ JPD113: Bài ngắn sơ cấp</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ JPD123: Độ dài chuẩn đề thi FPT</span>
+                  <span className="rounded bg-paper px-2 py-0.5 border border-line">✓ 3–4 câu trắc nghiệm A–D kèm lời giải</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
+                <Link
+                  to="/reading"
+                  search={{ course: "JPD113" }}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-paper px-3.5 py-2 text-xs font-semibold text-ink hover:border-ink/50 shadow-xs"
+                >
+                  <BookOpen className="size-3.5 text-amber-600" />
+                  <span>Đọc hiểu JPD113</span>
+                </Link>
+                <Link
+                  to="/reading"
+                  search={{ course: "JPD123" }}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink px-3.5 py-2 text-xs font-semibold text-paper hover:bg-ink/90 shadow-xs"
+                >
+                  <BookOpen className="size-3.5 text-amber-400" />
+                  <span>Đọc hiểu JPD123</span>
+                </Link>
               </div>
             </div>
           </div>
