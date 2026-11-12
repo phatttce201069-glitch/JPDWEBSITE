@@ -90,8 +90,14 @@ function ExamPage() {
   const [reviewFilter, setReviewFilter] = useState<"missed" | "all">("missed");
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const selected = search.bai ? search.bai.split(",").filter(Boolean) : [];
-  const starredWords = vocabulary.filter((word) => starred.includes(word.id));
+  const selected = useMemo(
+    () => (search.bai ? search.bai.split(",").filter(Boolean) : []),
+    [search.bai],
+  );
+  const starredWords = useMemo(
+    () => vocabulary.filter((word) => starred.includes(word.id)),
+    [starred],
+  );
 
   useEffect(() => {
     if (search.ai) {
@@ -110,8 +116,8 @@ function ExamPage() {
             ? `${search.course} · Bài ${selected.join(", ")}`
             : search.course
           : "Kiểm tra";
-    setLast({ to: "/exam", label, search });
-  }, [search.course, search.bai, selected, setLast]);
+    setLast({ to: "/exam", label, search: { course: search.course, bai: search.bai, ai: search.ai } });
+  }, [search.course, search.bai, search.ai, selected, setLast]);
 
   useEffect(() => {
     if (!paper || closed || showCancelModal) return;
@@ -219,44 +225,63 @@ function ExamPage() {
     setClosed(false);
   }
 
-  async function startAiExam(targetBaiList?: string[]) {
+  async function startAiExam(targetBaiList?: string[], explicitCourse?: "JPD113" | "JPD123") {
     setIsGeneratingAi(true);
     setGenerationStep(0);
     setNote("");
 
-    // Simulate animated AI drafting progression
-    await new Promise((r) => setTimeout(r, 350));
-    setGenerationStep(1); // Phân tích cấu trúc môn FPT
+    try {
+      // Simulate animated AI drafting progression
+      await new Promise((r) => setTimeout(r, 350));
+      setGenerationStep(1); // Phân tích cấu trúc môn FPT
 
-    await new Promise((r) => setTimeout(r, 450));
-    setGenerationStep(2); // Soạn câu hỏi Kanji, Từ vựng, Ngữ pháp
+      await new Promise((r) => setTimeout(r, 450));
+      setGenerationStep(2); // Soạn câu hỏi Kanji, Từ vựng, Ngữ pháp
 
-    const defaultBai = search.course === "JPD113" ? ["1", "2", "3"] : ["4", "5", "6", "7"];
-    const target =
-      targetBaiList && targetBaiList.length > 0
-        ? targetBaiList
-        : selected.length > 0
-          ? selected
-          : defaultBai;
+      const defaultBai =
+        explicitCourse === "JPD113" || search.course === "JPD113" ? ["1", "2", "3"] : ["4", "5", "6", "7"];
+      const target =
+        targetBaiList && targetBaiList.length > 0
+          ? targetBaiList
+          : selected.length > 0
+            ? selected
+            : defaultBai;
 
-    const result = await generateFptAiExam(target);
+      const resolvedCourse: "JPD113" | "JPD123" =
+        explicitCourse ??
+        (search.course === "JPD113" || search.course === "JPD123"
+          ? search.course
+          : target.every((b) => Number(b) <= 3)
+            ? "JPD113"
+            : "JPD123");
 
-    setGenerationStep(3); // Kiểm định và hoàn thiện bộ đề
-    await new Promise((r) => setTimeout(r, 350));
+      const result = await generateFptAiExam(target);
 
-    setAiProviderName(result.provider);
-    if (result.error) {
-      setNote(result.error);
+      setGenerationStep(3); // Kiểm định và hoàn thiện bộ đề
+      await new Promise((r) => setTimeout(r, 350));
+
+      setAiProviderName(result.provider);
+      if (result.error) {
+        setNote(result.error);
+      }
+
+      if (!search.course || search.course !== resolvedCourse) {
+        setSearch({ course: resolvedCourse, bai: target.join(","), ai: true });
+      }
+
+      setIsAiExam(true);
+      setPaper(result.questions);
+      setIndex(0);
+      setPicked(null);
+      setAnswers(Array(result.questions.length).fill(null));
+      setLeft(EXAM_SECONDS);
+      setClosed(false);
+      window.scrollTo({ top: 0, behavior: "auto" });
+    } catch {
+      setNote("Không thể tạo đề AI lúc này, vui lòng thử lại.");
+    } finally {
+      setIsGeneratingAi(false);
     }
-
-    setIsAiExam(true);
-    setPaper(result.questions);
-    setIndex(0);
-    setPicked(null);
-    setAnswers(Array(result.questions.length).fill(null));
-    setLeft(EXAM_SECONDS);
-    setClosed(false);
-    setIsGeneratingAi(false);
   }
 
   function handleSaveAiSettings(updated: AiSettings) {
@@ -279,10 +304,11 @@ function ExamPage() {
   function handleFinishEarly() {
     setShowCancelModal(false);
     setClosed(true);
+    window.scrollTo({ top: 0, behavior: "auto" });
   }
 
   // --- SCREEN 1: Choose Course or Exam Type ---
-  if (!search.course) {
+  if (!search.course && !paper) {
     return (
       <div>
         <p className="text-sm tracking-[0.18em] text-stone uppercase">Kiểm tra</p>
@@ -337,7 +363,7 @@ function ExamPage() {
               <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-line/50">
                 <Button
                   tone="seal"
-                  onClick={() => startAiExam(["1", "2", "3"])}
+                  onClick={() => startAiExam(["1", "2", "3"], "JPD113")}
                   className="flex-1 flex items-center justify-center gap-1.5 font-medium text-xs sm:text-sm"
                 >
                   <Sparkles className="size-4" />
@@ -382,7 +408,7 @@ function ExamPage() {
               <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-line/50">
                 <Button
                   tone="seal"
-                  onClick={() => startAiExam(["4", "5", "6", "7"])}
+                  onClick={() => startAiExam(["4", "5", "6", "7"], "JPD123")}
                   className="flex-1 flex items-center justify-center gap-1.5 font-medium text-xs sm:text-sm"
                 >
                   <Sparkles className="size-4" />
@@ -540,7 +566,7 @@ function ExamPage() {
   }
 
   // --- SCREEN 2: Unit / Lesson selection before starting exam ---
-  if (!paper) {
+  if (!paper && search.course) {
     const units = examUnits(search.course, starred);
     const isStarred = search.course === "starred";
     const isFptCourse = search.course === "JPD113" || search.course === "JPD123";
@@ -794,6 +820,8 @@ function ExamPage() {
       </div>
     );
   }
+
+  if (!paper) return null;
 
   // --- SCREEN 3: Exam in progress or Exam Results ---
   const done = closed || index >= paper.length;
@@ -1207,7 +1235,11 @@ function ExamPage() {
           {isAiExam ? (
             <Button
               tone="seal"
-              onClick={() => startAiExam(selected.length ? selected : ["4", "5", "6", "7"])}
+              onClick={() =>
+                startAiExam(
+                  selected.length ? selected : search.course === "JPD113" ? ["1", "2", "3"] : ["4", "5", "6", "7"],
+                )
+              }
               className="flex items-center gap-1.5"
             >
               <Sparkles className="size-4" />
