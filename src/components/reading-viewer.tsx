@@ -88,7 +88,7 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
   }
 
   return (
-    <div ref={containerRef} className="relative rounded-2xl border border-line bg-surface p-5 sm:p-7 shadow-sm">
+    <div ref={containerRef} className="relative rounded-2xl border border-line bg-sheet p-5 sm:p-7 shadow-sm">
       {/* Thanh tiêu đề và công cụ đọc */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-4">
         <div>
@@ -161,7 +161,7 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
 
       {/* Nội dung bài đọc (Hiển thị từng câu tương tác) */}
       <div
-        className="mt-5 space-y-3 font-japanese text-lg sm:text-xl leading-relaxed text-ink select-text"
+        className="mt-5 space-y-3 jp text-lg sm:text-xl leading-relaxed text-ink select-text"
         onDoubleClick={handleDoubleClick}
       >
         {passage.sentences.map((s, idx) => {
@@ -229,7 +229,7 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
         >
           <div className="flex items-start justify-between gap-2 border-b border-line pb-2">
             <div>
-              <span className="font-japanese text-2xl font-bold text-ink">{inspectedWord.text}</span>
+              <span className="jp text-2xl font-bold text-ink">{inspectedWord.text}</span>
               {inspectedWord.hanviet && (
                 <span className="ml-2 rounded bg-amber-500/10 px-1.5 py-0.5 text-xs font-semibold text-amber-700">
                   {inspectedWord.hanviet}
@@ -256,7 +256,7 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
             {inspectedWord.hiragana && inspectedWord.hiragana !== inspectedWord.text && (
               <div className="flex items-baseline justify-between">
                 <span className="text-stone">Hiragana:</span>
-                <span className="font-japanese text-sm font-medium text-ink">
+                <span className="jp text-sm font-medium text-ink">
                   {inspectedWord.hiragana}
                 </span>
               </div>

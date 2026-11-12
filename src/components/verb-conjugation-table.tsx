@@ -491,7 +491,7 @@ function VerbCellTe({
       <button
         type="button"
         onClick={() => speakJapanese(verb.te)}
-        className="opacity-40 group-hover:opacity-100 transition-opacity text-seal hover:text-seal-dark cursor-pointer p-1"
+        className="opacity-40 group-hover:opacity-100 transition-opacity text-seal hover:opacity-80 cursor-pointer p-1"
         aria-label={`Nghe ${verb.te}`}
       >
         <Volume2 className="size-3.5" />

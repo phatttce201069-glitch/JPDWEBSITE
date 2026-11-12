@@ -114,7 +114,7 @@ function ReadingPage() {
 
       {/* Thông tin chuẩn đầu ra môn học */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
-        <div className="flex items-start gap-2.5 rounded-xl border border-line/70 bg-surface p-3.5">
+        <div className="flex items-start gap-2.5 rounded-xl border border-line/70 bg-sheet p-3.5">
           <Layers className="size-4 shrink-0 text-amber-600 mt-0.5" />
           <div>
             <span className="font-semibold text-ink block">Độ dài chuẩn đề thi</span>
@@ -126,7 +126,7 @@ function ReadingPage() {
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5 rounded-xl border border-line/70 bg-surface p-3.5">
+        <div className="flex items-start gap-2.5 rounded-xl border border-line/70 bg-sheet p-3.5">
           <CheckCircle2 className="size-4 shrink-0 text-emerald-600 mt-0.5" />
           <div>
             <span className="font-semibold text-ink block">Từ vựng & Kanji trong bài</span>
@@ -136,7 +136,7 @@ function ReadingPage() {
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5 rounded-xl border border-line/70 bg-surface p-3.5">
+        <div className="flex items-start gap-2.5 rounded-xl border border-line/70 bg-sheet p-3.5">
           <BookOpen className="size-4 shrink-0 text-indigo-600 mt-0.5" />
           <div>
             <span className="font-semibold text-ink block">Hỗ trợ phát âm & Romaji</span>

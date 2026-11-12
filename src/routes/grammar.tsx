@@ -277,7 +277,7 @@ function GrammarPage() {
           {nextPoint ? (
             <button
               type="button"
-              className="inline-flex items-center gap-1 text-seal hover:text-seal-dark font-medium p-2 rounded-lg hover:bg-seal/10 cursor-pointer transition-colors"
+              className="inline-flex items-center gap-1 text-seal hover:opacity-80 font-medium p-2 rounded-lg hover:bg-seal/10 cursor-pointer transition-colors"
               onClick={() => setSearch({ point: nextPoint.id, drill: false })}
             >
               Học tiếp: Phần {pointIdx + 2} ({nextPoint.structure_vi}) →

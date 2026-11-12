@@ -40,7 +40,7 @@ export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
   const scorePercent = Math.round((correctCount / questions.length) * 100);
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-5 sm:p-7 shadow-sm">
+    <div className="rounded-2xl border border-line bg-sheet p-5 sm:p-7 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-4">
         <div>
           <span className="text-xs font-semibold tracking-wider text-stone uppercase">
@@ -87,7 +87,7 @@ export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
                     {qIdx + 1}
                   </span>
                   <div>
-                    <h4 className="font-japanese text-base font-semibold text-ink sm:text-lg">
+                    <h4 className="jp text-base font-semibold text-ink sm:text-lg">
                       {q.prompt}
                     </h4>
                   </div>
@@ -150,7 +150,7 @@ export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
                       >
                         {letter}
                       </span>
-                      <span className="font-japanese flex-1 leading-snug">{opt}</span>
+                      <span className="jp flex-1 leading-snug">{opt}</span>
                     </button>
                   );
                 })}
