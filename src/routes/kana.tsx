@@ -74,7 +74,10 @@ function KanaPage() {
     void navigate({ search: (prev) => ({ ...prev, ...patch }) });
   }
 
-  const quiz = useMemo(() => (search.mode === "quiz" ? buildKanaQuiz(pool) : []), [search.mode, search.script, search.row]);
+  const quiz = useMemo(
+    () => (search.mode === "quiz" ? buildKanaQuiz(pool) : []),
+    [search.mode, search.script, search.row, kanjiCourse, pool],
+  );
 
   return (
     <div>
@@ -206,7 +209,15 @@ function KanaPage() {
         />
       ) : null}
 
-      {search.mode === "quiz" ? <div className="mt-6"><QuizPanel items={quiz} onExit={() => setSearch({ mode: "chart" })} /></div> : null}
+      {search.mode === "quiz" ? (
+        <div className="mt-6">
+          <QuizPanel
+            key={`${search.script}-${search.row}-${kanjiCourse}`}
+            items={quiz}
+            onExit={() => setSearch({ mode: "chart" })}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -283,11 +294,14 @@ function GlyphButton({ glyph, known, onOpen }: { glyph: Glyph; known: boolean; o
       type="button"
       onClick={() => onOpen(glyph)}
       className={cn(
-        "relative flex aspect-square items-center justify-center rounded-md border bg-sheet jp text-3xl transition-colors hover:border-ink sm:text-4xl",
+        "relative flex aspect-square flex-col items-center justify-center rounded-md border bg-sheet transition-colors hover:border-ink",
         known ? "border-seal/50" : "border-line",
       )}
     >
-      {glyph.char}
+      <span className="jp text-2xl leading-none sm:text-3xl">{glyph.char}</span>
+      {glyph.romaji ? (
+        <span className="mt-1 font-mono text-[10px] leading-none text-stone/80">{glyph.romaji}</span>
+      ) : null}
       {known ? <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-seal" /> : null}
     </button>
   );
@@ -416,6 +430,25 @@ function StudyGlyph({
 
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [glyph.char, glyph.type]);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === "ArrowLeft" && index > 0) {
+        e.preventDefault();
+        onPrev();
+      } else if (e.key === "ArrowRight" && index < total - 1) {
+        e.preventDefault();
+        onNext();
+      } else if (e.key === " ") {
+        e.preventDefault();
+        setOpen((v) => !v);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [index, total, onPrev, onNext]);
 
   return (
     <section className="mt-6">

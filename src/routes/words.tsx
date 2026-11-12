@@ -123,6 +123,26 @@ function WordsPage() {
   }, [current?.id]);
 
   useEffect(() => {
+    if (search.mode !== "study" || !current) return;
+    function onKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === "ArrowLeft" && index > 0) {
+        e.preventDefault();
+        setSearch({ at: index - 1 });
+      } else if (e.key === "ArrowRight" && index < practiceWords.length - 1) {
+        e.preventDefault();
+        setSearch({ at: index + 1 });
+      } else if (e.key === " ") {
+        e.preventDefault();
+        setCardMeaning((v) => !v);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [search.mode, current?.id, index, practiceWords.length]);
+
+  useEffect(() => {
     setLast({
       to: "/words",
       label: title,
@@ -302,7 +322,7 @@ function WordsPage() {
       ) : (
         <>
           {/* Navigation modes */}
-          <div className="mt-5 flex items-center justify-between gap-2 border-b border-line pb-3">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-b border-line pb-3">
             <div className="flex gap-2">
               {(
                 [
@@ -395,8 +415,10 @@ function WordsPage() {
                 className="mt-5 w-full rounded-md border border-line bg-sheet px-6 py-10 text-center transition-shadow hover:shadow-xs"
                 onClick={() => setCardMeaning((value) => !value)}
               >
-                <span className="jp block text-6xl font-medium">{current.word}</span>
-                <span className="mt-3 block text-stone">{current.reading}</span>
+                <span className="jp block text-5xl sm:text-6xl font-medium break-words">{current.word}</span>
+                {current.reading && current.reading.replace(/\s+/g, "") !== current.word.replace(/\s+/g, "") ? (
+                  <span className="mt-3 block text-stone">{current.reading}</span>
+                ) : null}
                 <span className="mt-6 block min-h-8 text-xl font-medium">{cardMeaning ? current.meaning : "Chạm để xem nghĩa"}</span>
                 {cardMeaning && current.example ? <span className="mt-3 block text-sm text-stone">{current.example}</span> : null}
               </button>
@@ -629,6 +651,7 @@ function WordsPage() {
                 </div>
               )}
               <WordQuiz
+                key={`${search.lesson}-${onlyStarredInLesson}-${includeAllSubLessons}-${practiceWords.length}`}
                 words={practiceWords}
                 pool={isStarredView ? "starred" : "lesson"}
                 onExit={() => setSearch({ mode: "sheet", at: 0 })}
