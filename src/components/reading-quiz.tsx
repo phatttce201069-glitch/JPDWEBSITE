@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, HelpCircle, ArrowRight, RotateCcw, Award } from "lucide-react";
 import type { ReadingPassage, ReadingQuestion } from "@/lib/study/reading-types";
 
@@ -10,6 +10,11 @@ interface ReadingQuizProps {
 export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    setSelectedAnswers({});
+    setIsSubmitted(false);
+  }, [passage.id]);
 
   const questions = passage.questions;
 

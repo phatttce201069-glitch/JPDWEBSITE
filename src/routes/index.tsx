@@ -132,6 +132,13 @@ function Continue({ last }: { last: LastPlace }) {
       </Link>
     );
   }
+  if (last.to === "/reading") {
+    return (
+      <Link to="/reading" search={last.search} className={className}>
+        {body}
+      </Link>
+    );
+  }
   return (
     <Link to="/exam" search={last.search} className={className}>
       {body}

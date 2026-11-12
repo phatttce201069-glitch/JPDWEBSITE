@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect, useRef } from "react";
 import { Sparkles, RefreshCw, BookOpen, Layers, CheckCircle2 } from "lucide-react";
 import { generateReadingPassage } from "@/lib/study/reading-engine";
 import { generateAiReadingPassage } from "@/lib/study/reading-ai";
 import { ReadingViewer } from "@/components/reading-viewer";
 import { ReadingQuiz } from "@/components/reading-quiz";
+import { useStudy } from "@/lib/study/store";
 import type { ReadingCourse, ReadingPassage } from "@/lib/study/reading-types";
 
 interface ReadingSearch {
@@ -21,24 +22,54 @@ export const Route = createFileRoute("/reading")({
 
 function ReadingPage() {
   const search = Route.useSearch();
-  const [course, setCourse] = useState<ReadingCourse>(search.course || "JPD113");
-  const [passage, setPassage] = useState<ReadingPassage>(() => generateReadingPassage(search.course || "JPD113"));
+  const navigate = useNavigate({ from: "/reading" });
+  const setLast = useStudy((state) => state.setLast);
+  const course: ReadingCourse = search.course || "JPD113";
+  const [passage, setPassage] = useState<ReadingPassage>(() => generateReadingPassage(course));
   const [isGenerating, setIsGenerating] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
+  const prevCourseRef = useRef<ReadingCourse>(course);
+  const toastTimerRef = useRef<number | null>(null);
 
-  // Cập nhật bài đọc khi đổi môn học
+  function showToast(msg: string, ms = 2500) {
+    setNotification(msg);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => {
+      setNotification(null);
+      toastTimerRef.current = null;
+    }, ms);
+  }
+
   useEffect(() => {
-    const newPassage = generateReadingPassage(course);
-    setPassage(newPassage);
-    setNotification(null);
-  }, [course]);
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  // Cập nhật bài đọc khi URL course thực sự đổi (không chạy trùng lúc mount)
+  useEffect(() => {
+    if (prevCourseRef.current !== course) {
+      prevCourseRef.current = course;
+      setPassage(generateReadingPassage(course));
+      setNotification(null);
+    }
+    setLast({
+      to: "/reading",
+      label: `Luyện đọc · ${course}`,
+      search: { course },
+    });
+  }, [course, setLast]);
+
+  function handleSelectCourse(nextCourse: ReadingCourse) {
+    if (nextCourse === course) return;
+    void navigate({ search: { course: nextCourse } });
+  }
 
   // Sinh bài đọc ngẫu nhiên mới từ kho đề chống trùng lặp
   function handleGenerateNew() {
     const next = generateReadingPassage(course, { excludeId: passage.id });
     setPassage(next);
-    setNotification("Đã tải bài đọc mới chống trùng lặp!");
-    setTimeout(() => setNotification(null), 2500);
+    showToast("Đã tải bài đọc mới chống trùng lặp!", 2500);
   }
 
   // Gọi AI sinh bài đọc
@@ -49,17 +80,16 @@ function ReadingPage() {
       const result = await generateAiReadingPassage(course);
       setPassage(result.passage);
       if (result.error) {
-        setNotification(result.error);
+        showToast(result.error, 3500);
       } else {
-        setNotification(`Đã tạo bài đọc thành công qua ${result.provider}!`);
+        showToast(`Đã tạo bài đọc thành công qua ${result.provider}!`, 3000);
       }
     } catch {
       const fallback = generateReadingPassage(course, { excludeId: passage.id });
       setPassage(fallback);
-      setNotification("Đã kích hoạt bài đọc thay thế chuẩn FPT.");
+      showToast("Đã kích hoạt bài đọc thay thế chuẩn FPT.", 3000);
     } finally {
       setIsGenerating(false);
-      setTimeout(() => setNotification(null), 3000);
     }
   }
 
@@ -89,7 +119,7 @@ function ReadingPage() {
         <div className="flex items-center gap-1.5 rounded-xl border border-line bg-paper p-1 self-start sm:self-center shadow-xs">
           <button
             type="button"
-            onClick={() => setCourse("JPD113")}
+            onClick={() => handleSelectCourse("JPD113")}
             className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition-all ${
               course === "JPD113"
                 ? "bg-ink text-paper shadow-xs"
@@ -100,7 +130,7 @@ function ReadingPage() {
           </button>
           <button
             type="button"
-            onClick={() => setCourse("JPD123")}
+            onClick={() => handleSelectCourse("JPD123")}
             className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition-all ${
               course === "JPD123"
                 ? "bg-ink text-paper shadow-xs"
@@ -191,7 +221,7 @@ function ReadingPage() {
         </div>
 
         {/* Component Câu hỏi trắc nghiệm đọc hiểu A-D */}
-        <ReadingQuiz passage={passage} onNextPassage={handleGenerateNew} />
+        <ReadingQuiz key={passage.id} passage={passage} onNextPassage={handleGenerateNew} />
       </div>
     </div>
   );

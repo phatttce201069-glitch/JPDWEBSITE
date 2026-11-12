@@ -35,6 +35,7 @@ export type LastPlace =
   | { to: "/kana"; label: string; search: KanaSearch }
   | { to: "/words"; label: string; search: WordsSearch }
   | { to: "/grammar"; label: string; search: GrammarSearch }
+  | { to: "/reading"; label: string; search: { course: "JPD113" | "JPD123" } }
   | { to: "/exam"; label: string; search: ExamSearch };
 
 /** Cấu trúc từ ghép của một ký tự Kanji */

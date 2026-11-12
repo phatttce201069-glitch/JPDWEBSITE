@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Volume2, Languages, Eye, EyeOff, Sparkles, BookOpen, X, VolumeX } from "lucide-react";
-import { speakJapanese } from "@/lib/study/speech";
+import { speakJapanese, stopJapaneseSpeech } from "@/lib/study/speech";
 import { inspectJapaneseCharOrWord } from "@/lib/study/reading-inspector";
 import type { ReadingPassage, ReadingSentence, WordInspection } from "@/lib/study/reading-types";
 
@@ -18,6 +18,30 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
   const [popoverPos, setPopoverPos] = useState<{ x: number; y: number } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const fullTimerRef = useRef<number | null>(null);
+  const clickTimerRef = useRef<number | null>(null);
+
+  // Reset state & dừng phát âm khi đổi bài đọc hoặc rời trang
+  useEffect(() => {
+    setActiveSentenceIndex(null);
+    setIsPlayingFull(false);
+    setInspectedWord(null);
+    setPopoverPos(null);
+    stopJapaneseSpeech();
+    if (fullTimerRef.current) {
+      window.clearTimeout(fullTimerRef.current);
+      fullTimerRef.current = null;
+    }
+    if (clickTimerRef.current) {
+      window.clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    }
+    return () => {
+      stopJapaneseSpeech();
+      if (fullTimerRef.current) window.clearTimeout(fullTimerRef.current);
+      if (clickTimerRef.current) window.clearTimeout(clickTimerRef.current);
+    };
+  }, [passage.id]);
 
   // Đóng popover khi nhấp ra ngoài
   useEffect(() => {
@@ -33,34 +57,73 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
 
   // Xử lý phát âm toàn bài đọc
   function handlePlayFull() {
+    if (fullTimerRef.current) {
+      window.clearTimeout(fullTimerRef.current);
+      fullTimerRef.current = null;
+    }
+
     if (isPlayingFull) {
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopJapaneseSpeech();
       setIsPlayingFull(false);
       setActiveSentenceIndex(null);
       return;
     }
 
     setIsPlayingFull(true);
-    speakJapanese(passage.content);
+    setActiveSentenceIndex(null);
+    speakJapanese(passage.content, {
+      onEnd: () => {
+        setIsPlayingFull(false);
+        if (fullTimerRef.current) {
+          window.clearTimeout(fullTimerRef.current);
+          fullTimerRef.current = null;
+        }
+      },
+      onError: () => setIsPlayingFull(false),
+    });
 
-    // Tự động tắt trạng thái phát sau một khoảng thời gian ước lượng
-    const estimatedMs = Math.max(passage.content.length * 280, 3000);
-    setTimeout(() => {
+    // Fallback timeout phòng trường hợp sự kiện onend không kích hoạt trên một số trình duyệt
+    const estimatedMs = Math.max(passage.content.length * 320, 4000);
+    fullTimerRef.current = window.setTimeout(() => {
       setIsPlayingFull(false);
+      fullTimerRef.current = null;
     }, estimatedMs);
   }
 
-  // Phát âm từng câu khi bấm nút loa nhỏ
-  function handlePlaySentence(sentence: ReadingSentence, index: number, e: React.MouseEvent) {
-    e.stopPropagation();
+  // Phát âm từng câu khi bấm nút loa nhỏ hoặc nhấn chọn câu
+  function handlePlaySentence(sentence: ReadingSentence, index: number, e?: React.MouseEvent) {
+    e?.stopPropagation();
+    if (fullTimerRef.current) {
+      window.clearTimeout(fullTimerRef.current);
+      fullTimerRef.current = null;
+    }
+    setIsPlayingFull(false);
     setActiveSentenceIndex(index);
-    speakJapanese(sentence.jp);
+    speakJapanese(sentence.jp, {
+      onEnd: () => setActiveSentenceIndex((curr) => (curr === index ? null : curr)),
+    });
+  }
+
+  // Khi bấm vào dòng câu: chờ 220ms để tránh xung đột với ấn đúp tra từ
+  function handleSentenceRowClick(sentence: ReadingSentence, index: number) {
+    if (clickTimerRef.current) {
+      window.clearTimeout(clickTimerRef.current);
+    }
+    setActiveSentenceIndex(index);
+    onSentenceClick?.(sentence, index);
+    clickTimerRef.current = window.setTimeout(() => {
+      handlePlaySentence(sentence, index);
+      clickTimerRef.current = null;
+    }, 220);
   }
 
   // Xử lý sự kiện ấn đúp (double-click) vào bất kỳ chữ/từ nào
   function handleDoubleClick(e: React.MouseEvent) {
+    if (clickTimerRef.current) {
+      window.clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    }
+
     const selection = window.getSelection();
     let text = selection ? selection.toString().trim() : "";
 
@@ -75,13 +138,13 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
       const query = text.slice(0, 10);
       const inspection = inspectJapaneseCharOrWord(query);
       if (inspection.text) {
-        // Tọa độ hiển thị popover
-        const rect = (e.target as HTMLElement).getBoundingClientRect();
-        const clientX = Math.min(Math.max(e.clientX, 20), window.innerWidth - 280);
-        const clientY = Math.max(e.clientY - 90, 80);
+        // Kẹp tọa độ hiển thị popover an toàn trong viewport trên cả mobile và desktop
+        const clientX = Math.min(Math.max(e.clientX - 140, 12), Math.max(12, window.innerWidth - 300));
+        const clientY = Math.min(Math.max(e.clientY - 120, 76), Math.max(76, window.innerHeight - 230));
 
         setPopoverPos({ x: clientX, y: clientY });
         setInspectedWord(inspection);
+        setIsPlayingFull(false);
         speakJapanese(inspection.text);
       }
     }
@@ -169,10 +232,7 @@ export function ReadingViewer({ passage, onSentenceClick }: ReadingViewerProps) 
           return (
             <div
               key={idx}
-              onClick={() => {
-                setActiveSentenceIndex(idx);
-                onSentenceClick?.(s, idx);
-              }}
+              onClick={() => handleSentenceRowClick(s, idx)}
               className={`group relative rounded-xl p-3 transition-all cursor-pointer border ${
                 isActive
                   ? "border-amber-500/40 bg-amber-500/5 shadow-xs"
