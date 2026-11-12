@@ -39,11 +39,7 @@ function Home() {
 
       <ul className="mt-8 divide-y divide-line border-y border-line">
         <li>
-          <Link
-            to="/kana"
-            search={{ script: "hiragana", row: "", mode: "chart", at: 0 }}
-            className="group flex items-center gap-4 py-5"
-          >
+          <Link to="/kana" className="group flex items-center gap-4 py-5">
             <Door
               kicker="01"
               title="Bảng chữ cái"
@@ -53,11 +49,7 @@ function Home() {
           </Link>
         </li>
         <li>
-          <Link
-            to="/words"
-            search={{ lesson: "", mode: "list", at: 0 }}
-            className="group flex items-center gap-4 py-5"
-          >
+          <Link to="/words" className="group flex items-center gap-4 py-5">
             <Door
               kicker="02"
               title="Từ vựng"
@@ -67,17 +59,17 @@ function Home() {
           </Link>
         </li>
         <li>
-          <Link to="/grammar" search={{ lesson: "", point: "", drill: false }} className="group flex items-center gap-4 py-5">
+          <Link to="/grammar" className="group flex items-center gap-4 py-5">
             <Door kicker="03" title="Ngữ pháp" detail="Học mẫu câu, công thức, ví dụ và luyện tập bên trong bài học." meta={`${grammarCount} mẫu`} />
           </Link>
         </li>
         <li>
-          <Link to="/exam" search={{ course: "", bai: "" }} className="group flex items-center gap-4 py-5">
+          <Link to="/exam" className="group flex items-center gap-4 py-5">
             <Door kicker="04" title="Kiểm tra" detail="30 câu A–D. Kanji, từ vựng, ngữ pháp — nhiều cách hỏi trong một đề." meta="30 câu" />
           </Link>
         </li>
         <li>
-          <Link to="/reading" search={{ course: "JPD113" }} className="group flex items-center gap-4 py-5">
+          <Link to="/reading" className="group flex items-center gap-4 py-5">
             <Door kicker="05" title="Luyện thi đọc" detail="Đọc hiểu JPD113 & JPD123 chuẩn FPT. Đọc phát âm, hiện Romaji, ấn đúp tra chữ." meta="Đọc hiểu" />
           </Link>
         </li>

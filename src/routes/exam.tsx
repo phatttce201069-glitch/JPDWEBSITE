@@ -52,20 +52,32 @@ import { getAnswerMeaning, getFullSentenceTranslation } from "@/lib/study/explan
 import { buildFptJpd123Exam } from "@/lib/study/fpt-jpd123-engine";
 import { analyzeExamPerformance } from "@/lib/study/exam-diagnostic";
 
+function cleanExamSearch(raw: Record<string, unknown>): ExamSearch {
+  const out: ExamSearch = {};
+  if (raw.course === "JPD113" || raw.course === "JPD123" || raw.course === "starred") {
+    out.course = raw.course;
+  }
+  if (typeof raw.bai === "string" && raw.bai.trim()) {
+    out.bai = raw.bai;
+  }
+  if (raw.ai === true || raw.ai === "true") {
+    out.ai = true;
+  }
+  return out;
+}
+
 export const Route = createFileRoute("/exam")({
-  validateSearch: (search: Record<string, unknown>): ExamSearch => ({
-    course:
-      search.course === "JPD113" || search.course === "JPD123" || search.course === "starred"
-        ? search.course
-        : "",
-    bai: typeof search.bai === "string" ? search.bai : "",
-    ai: search.ai === true || search.ai === "true",
-  }),
+  validateSearch: cleanExamSearch,
   component: ExamPage,
 });
 
 function ExamPage() {
-  const search = Route.useSearch();
+  const rawSearch = Route.useSearch();
+  const search = {
+    course: (rawSearch.course || "") as "" | "JPD113" | "JPD123" | "starred",
+    bai: rawSearch.bai || "",
+    ai: rawSearch.ai === true,
+  };
   const navigate = useNavigate({ from: "/exam" });
   const starred = useStudy((state) => state.starred);
   const setLast = useStudy((state) => state.setLast);
@@ -116,7 +128,7 @@ function ExamPage() {
             ? `${search.course} · Bài ${selected.join(", ")}`
             : search.course
           : "Kiểm tra";
-    setLast({ to: "/exam", label, search: { course: search.course, bai: search.bai, ai: search.ai } });
+    setLast({ to: "/exam", label, search: cleanExamSearch(search) });
   }, [search.course, search.bai, search.ai, selected, setLast]);
 
   useEffect(() => {
@@ -137,7 +149,7 @@ function ExamPage() {
   }, [picked, index]);
 
   function setSearch(patch: Partial<ExamSearch>) {
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    void navigate({ search: (prev) => cleanExamSearch({ ...prev, ...patch }) });
   }
 
   function toggleBai(bai: string) {
@@ -436,7 +448,6 @@ function ExamPage() {
             </h2>
             <Link
               to="/reading"
-              search={{ course: "JPD113" }}
               className="text-xs text-ink font-semibold underline hover:text-emerald-700"
             >
               Vào phòng luyện đọc &rarr;
@@ -462,7 +473,6 @@ function ExamPage() {
               <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
                 <Link
                   to="/reading"
-                  search={{ course: "JPD113" }}
                   className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-paper px-3.5 py-2 text-xs font-semibold text-ink hover:border-ink/50 shadow-xs"
                 >
                   <BookOpen className="size-3.5 text-amber-600" />
@@ -745,7 +755,7 @@ function ExamPage() {
             <Button
               className="mt-4"
               tone="seal"
-              onClick={() => navigate({ to: "/words", search: { lesson: "", mode: "list", at: 0 } })}
+              onClick={() => navigate({ to: "/words" })}
             >
               Đến phần Từ vựng để đánh dấu ⭐
             </Button>

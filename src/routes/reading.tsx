@@ -12,11 +12,13 @@ interface ReadingSearch {
   course?: ReadingCourse;
 }
 
+function cleanReadingSearch(search: Record<string, unknown>): ReadingSearch {
+  if (search.course === "JPD123") return { course: "JPD123" };
+  return {};
+}
+
 export const Route = createFileRoute("/reading")({
-  validateSearch: (search: Record<string, unknown>): ReadingSearch => {
-    const course = search.course === "JPD113" || search.course === "JPD123" ? search.course : "JPD113";
-    return { course };
-  },
+  validateSearch: cleanReadingSearch,
   component: ReadingPage,
 });
 
@@ -24,7 +26,7 @@ function ReadingPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/reading" });
   const setLast = useStudy((state) => state.setLast);
-  const course: ReadingCourse = search.course || "JPD113";
+  const course: ReadingCourse = search.course === "JPD123" ? "JPD123" : "JPD113";
   const [passage, setPassage] = useState<ReadingPassage>(() => generateReadingPassage(course));
   const [isGenerating, setIsGenerating] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
@@ -56,13 +58,13 @@ function ReadingPage() {
     setLast({
       to: "/reading",
       label: `Luyện đọc · ${course}`,
-      search: { course },
+      search: course === "JPD123" ? { course: "JPD123" } : {},
     });
   }, [course, setLast]);
 
   function handleSelectCourse(nextCourse: ReadingCourse) {
     if (nextCourse === course) return;
-    void navigate({ search: { course: nextCourse } });
+    void navigate({ search: nextCourse === "JPD123" ? { course: "JPD123" } : {} });
   }
 
   // Sinh bài đọc ngẫu nhiên mới từ kho đề chống trùng lặp

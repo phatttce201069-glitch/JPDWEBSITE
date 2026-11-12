@@ -4,11 +4,11 @@ import { bindStudySync } from "@/lib/study/sync";
 import { useStudy } from "@/lib/study/store";
 
 const LINKS = [
-  { to: "/kana" as const, label: "Chữ", search: { script: "hiragana" as const, row: "", mode: "chart" as const, at: 0 } },
-  { to: "/words" as const, label: "Từ", search: { lesson: "", mode: "list" as const, at: 0 } },
-  { to: "/grammar" as const, label: "Ngữ pháp", search: { lesson: "", point: "", drill: false } },
-  { to: "/reading" as const, label: "Đọc", search: { course: "JPD113" as const } },
-  { to: "/exam" as const, label: "Đề", search: { course: "" as const, bai: "" } },
+  { to: "/kana" as const, label: "Chữ" },
+  { to: "/words" as const, label: "Từ" },
+  { to: "/grammar" as const, label: "Ngữ pháp" },
+  { to: "/reading" as const, label: "Đọc" },
+  { to: "/exam" as const, label: "Đề" },
 ];
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -46,7 +46,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={link.to}
                   to={link.to}
-                  search={link.search}
                   className={
                     active
                       ? "rounded-md bg-ink px-2 py-2 text-xs font-medium whitespace-nowrap text-paper sm:px-3 sm:text-sm"

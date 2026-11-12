@@ -91,6 +91,71 @@ export function lessonTitle(lesson: string) {
   return lesson.replace(/^JPD\d+\s*-\s*/, "");
 }
 
+const LESSON_TO_SLUG = new Map<string, string>();
+const SLUG_TO_LESSON = new Map<string, string>();
+
+(() => {
+  const uniqueLessons = [...new Set(vocabulary.map((w) => w.lesson))];
+  for (const lesson of uniqueLessons) {
+    const courseMatch = lesson.match(/^(JPD\d+)\s*-\s*Bài\s*(\d+)\s*·\s*(.+)$/i);
+    let slug = "";
+    if (courseMatch) {
+      const coursePrefix = courseMatch[1].toLowerCase();
+      const bai = courseMatch[2];
+      const partRaw = courseMatch[3].trim();
+      const partNum = partRaw.match(/^(\d+)\b/);
+      if (partNum) {
+        slug = `${coursePrefix}-bai-${bai}-${partNum[1]}`;
+      } else if (/hội thoại/i.test(partRaw)) {
+        slug = `${coursePrefix}-bai-${bai}-hoi-thoai`;
+      } else if (/もう一度/.test(partRaw)) {
+        slug = `${coursePrefix}-bai-${bai}-nghe-lai`;
+      } else {
+        const cleanPart = partRaw
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+        slug = `${coursePrefix}-bai-${bai}-${cleanPart || "extra"}`;
+      }
+    } else {
+      slug =
+        lesson
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") || `lesson-${LESSON_TO_SLUG.size + 1}`;
+    }
+
+    // Bảo đảm không trùng slug
+    let uniqueSlug = slug;
+    let counter = 2;
+    while (SLUG_TO_LESSON.has(uniqueSlug)) {
+      uniqueSlug = `${slug}-${counter}`;
+      counter += 1;
+    }
+
+    LESSON_TO_SLUG.set(lesson, uniqueSlug);
+    SLUG_TO_LESSON.set(uniqueSlug, lesson);
+  }
+})();
+
+export function lessonSlug(lesson: string): string {
+  if (!lesson) return "";
+  if (lesson === "starred") return "starred";
+  return LESSON_TO_SLUG.get(lesson) ?? lesson;
+}
+
+export function resolveLessonSlug(param: string): string {
+  if (!param) return "";
+  if (param === "starred") return "starred";
+  if (SLUG_TO_LESSON.has(param)) return SLUG_TO_LESSON.get(param)!;
+  if (LESSON_TO_SLUG.has(param)) return param;
+  return "";
+}
+
 export function pointById(id: string) {
   for (const lesson of grammar) {
     const point = lesson.points.find((item) => item.id === id);

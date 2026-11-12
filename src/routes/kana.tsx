@@ -19,18 +19,27 @@ import { explainKanjiWithAi, type KanjiAiExplanation } from "@/lib/study/ai-serv
 import type { Glyph, KanaSearch, Script } from "@/lib/study/types";
 import { cn } from "@/lib/cn";
 
+function cleanKanaSearch(search: Record<string, unknown>): KanaSearch {
+  const out: KanaSearch = {};
+  if (search.script === "katakana" || search.script === "kanji") out.script = search.script;
+  if (typeof search.row === "string" && search.row.trim()) out.row = search.row;
+  if (search.mode === "study" || search.mode === "quiz") out.mode = search.mode;
+  return out;
+}
+
 export const Route = createFileRoute("/kana")({
-  validateSearch: (search: Record<string, unknown>): KanaSearch => ({
-    script: search.script === "katakana" || search.script === "kanji" ? search.script : "hiragana",
-    row: typeof search.row === "string" ? search.row : "",
-    mode: search.mode === "study" || search.mode === "quiz" ? search.mode : "chart",
-    at: Number(search.at) > 0 ? Math.floor(Number(search.at)) : 0,
-  }),
+  validateSearch: cleanKanaSearch,
   component: KanaPage,
 });
 
 function KanaPage() {
-  const search = Route.useSearch();
+  const rawSearch = Route.useSearch();
+  const script: Script = rawSearch.script ?? "hiragana";
+  const row: string = rawSearch.row ?? "";
+  const mode: "chart" | "study" | "quiz" = rawSearch.mode ?? "chart";
+  const [at, setAt] = useState(0);
+
+  const search = { script, row, mode, at };
   const navigate = useNavigate({ from: "/kana" });
   const known = useStudy((state) => state.knownKana);
   const setKnown = useStudy((state) => state.setKanaKnown);
@@ -53,25 +62,35 @@ function KanaPage() {
     : [...KANA_ROWS];
 
   const pool = search.row ? courseFilteredGlyphs.filter((item) => item.row === search.row) : courseFilteredGlyphs;
-  const index = Math.min(search.at, Math.max(pool.length - 1, 0));
+  const index = Math.min(at, Math.max(pool.length - 1, 0));
   const current = pool[index];
 
   useEffect(() => {
     const label =
-      search.mode === "study"
-        ? `${labelOf(search.script)} · luyện`
-        : search.mode === "quiz"
-          ? `${labelOf(search.script)} · kiểm tra`
-          : labelOf(search.script);
+      mode === "study"
+        ? `${labelOf(script)} · luyện`
+        : mode === "quiz"
+          ? `${labelOf(script)} · kiểm tra`
+          : labelOf(script);
     setLast({
       to: "/kana",
       label,
-      search,
+      search: cleanKanaSearch({ script, row, mode }),
     });
-  }, [search.script, search.row, search.mode, search.at, setLast]);
+  }, [script, row, mode, setLast]);
 
   function setSearch(patch: Partial<KanaSearch>) {
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    if (patch.at !== undefined) {
+      setAt(patch.at);
+    }
+    const nextScript = patch.script !== undefined ? patch.script : script;
+    const nextRow = patch.row !== undefined ? patch.row : row;
+    const nextMode = patch.mode !== undefined ? patch.mode : mode;
+    if (nextScript !== script || nextRow !== row || nextMode !== mode) {
+      void navigate({
+        search: () => cleanKanaSearch({ script: nextScript, row: nextRow, mode: nextMode }),
+      });
+    }
   }
 
   const quiz = useMemo(

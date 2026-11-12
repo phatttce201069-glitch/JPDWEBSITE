@@ -4,7 +4,7 @@ import { Check, CheckSquare, Filter, Play, Square, Star, Trash2, Volume2 } from 
 import { Button } from "@/components/ui/button";
 import { ProgressLine } from "@/components/progress-line";
 import { WordQuiz } from "@/components/word-quiz";
-import { courses, lessonTitle, vocabulary, wordsIn } from "@/lib/study/content";
+import { courses, lessonSlug, lessonTitle, resolveLessonSlug, vocabulary, wordsIn } from "@/lib/study/content";
 import { kanaReading, romajiOf, speakable } from "@/lib/study/romaji";
 import { useStudy } from "@/lib/study/store";
 import { speakJapanese } from "@/lib/study/speech";
@@ -13,17 +13,30 @@ import type { Word, WordsSearch } from "@/lib/study/types";
 
 const STARRED_LESSON = "starred";
 
+function cleanWordsSearch(raw: Record<string, unknown>): WordsSearch {
+  const out: WordsSearch = {};
+  const resolved = typeof raw.lesson === "string" ? resolveLessonSlug(raw.lesson) : "";
+  if (resolved) {
+    out.lesson = lessonSlug(resolved);
+    if (raw.mode === "list" || raw.mode === "sheet") {
+      out.mode = raw.mode;
+    }
+  }
+  return out;
+}
+
 export const Route = createFileRoute("/words")({
-  validateSearch: (search: Record<string, unknown>): WordsSearch => ({
-    lesson: typeof search.lesson === "string" ? search.lesson : "",
-    mode: search.mode === "study" || search.mode === "sheet" ? search.mode : "list",
-    at: Number(search.at) > 0 ? Math.floor(Number(search.at)) : 0,
-  }),
+  validateSearch: cleanWordsSearch,
   component: WordsPage,
 });
 
 function WordsPage() {
-  const search = Route.useSearch();
+  const rawSearch = Route.useSearch();
+  const activeLesson = rawSearch.lesson ? resolveLessonSlug(rawSearch.lesson) : "";
+  const activeMode: "list" | "study" | "sheet" = activeLesson ? (rawSearch.mode ?? "study") : "list";
+  const [at, setAt] = useState(0);
+
+  const search = { lesson: activeLesson, mode: activeMode, at };
   const navigate = useNavigate({ from: "/words" });
   const knownWords = useStudy((state) => state.knownWords);
   const starred = useStudy((state) => state.starred);
@@ -146,12 +159,21 @@ function WordsPage() {
     setLast({
       to: "/words",
       label: title,
-      search,
+      search: cleanWordsSearch({ lesson: activeLesson, mode: activeMode }),
     });
-  }, [search.lesson, search.mode, search.at, setLast, title]);
+  }, [activeLesson, activeMode, setLast, title]);
 
   function setSearch(patch: Partial<WordsSearch>) {
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    if (patch.at !== undefined) {
+      setAt(patch.at);
+    }
+    const nextLesson = patch.lesson !== undefined ? patch.lesson : activeLesson;
+    const nextMode = patch.mode !== undefined ? patch.mode : activeMode;
+    if (nextLesson !== activeLesson || nextMode !== activeMode) {
+      void navigate({
+        search: () => cleanWordsSearch({ lesson: nextLesson, mode: nextMode }),
+      });
+    }
   }
 
   function toggleSelectWord(id: number) {

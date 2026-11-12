@@ -46,21 +46,28 @@ function cleanParam(value: unknown): string {
   return str;
 }
 
+function cleanGrammarSearch(search: Record<string, unknown>): GrammarSearch {
+  const out: GrammarSearch = {};
+  const lesson = cleanParam(search.lesson);
+  const point = cleanParam(search.point);
+  const drill = search.drill === true || search.drill === "true" || search.drill === "1";
+  if (lesson) out.lesson = lesson;
+  if (point) out.point = point;
+  if (drill) out.drill = true;
+  return out;
+}
+
 export const Route = createFileRoute("/grammar")({
-  validateSearch: (search: Record<string, unknown>): GrammarSearch => ({
-    lesson: cleanParam(search.lesson),
-    point: cleanParam(search.point),
-    drill: search.drill === true || search.drill === "true" || search.drill === "1",
-  }),
+  validateSearch: cleanGrammarSearch,
   component: GrammarPage,
 });
 
 function GrammarPage() {
   const rawSearch = Route.useSearch();
-  const search: GrammarSearch = {
-    ...rawSearch,
+  const search = {
     lesson: cleanParam(rawSearch.lesson),
     point: cleanParam(rawSearch.point),
+    drill: rawSearch.drill === true,
   };
   const navigate = useNavigate({ from: "/grammar" });
   const setLast = useStudy((state) => state.setLast);
@@ -87,12 +94,14 @@ function GrammarPage() {
     setLast({
       to: "/grammar",
       label,
-      search,
+      search: cleanGrammarSearch(search),
     });
   }, [search.lesson, search.point, search.drill, found?.point.structure_jp, found?.point.structure_vi, lesson?.title, setLast]);
 
   function setSearch(patch: Partial<GrammarSearch>) {
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    void navigate({
+      search: (prev) => cleanGrammarSearch({ ...prev, ...patch }),
+    });
   }
 
   // 1. Chế độ luyện trắc nghiệm (toàn bài hoặc riêng 1 phần)

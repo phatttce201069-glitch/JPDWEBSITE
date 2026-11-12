@@ -3,30 +3,30 @@ export type Script = "hiragana" | "katakana" | "kanji";
 
 /** Tham số tìm kiếm / điều hướng trang Bảng chữ cái */
 export type KanaSearch = {
-  script: Script;
-  row: string;
-  mode: "chart" | "study" | "quiz";
-  at: number;
+  script?: Script;
+  row?: string;
+  mode?: "chart" | "study" | "quiz";
+  at?: number;
 };
 
 /** Tham số tìm kiếm / điều hướng trang Từ vựng */
 export type WordsSearch = {
-  lesson: string;
-  mode: "list" | "study" | "sheet";
-  at: number;
+  lesson?: string;
+  mode?: "list" | "study" | "sheet";
+  at?: number;
 };
 
 /** Tham số tìm kiếm / điều hướng trang Ngữ pháp */
 export type GrammarSearch = {
-  lesson: string;
-  point: string;
-  drill: boolean;
+  lesson?: string;
+  point?: string;
+  drill?: boolean;
 };
 
 /** Tham số tìm kiếm / cấu hình bài thi */
 export type ExamSearch = {
-  course: "" | "JPD113" | "JPD123" | "starred";
-  bai: string;
+  course?: "" | "JPD113" | "JPD123" | "starred";
+  bai?: string;
   ai?: boolean;
 };
 
@@ -35,7 +35,7 @@ export type LastPlace =
   | { to: "/kana"; label: string; search: KanaSearch }
   | { to: "/words"; label: string; search: WordsSearch }
   | { to: "/grammar"; label: string; search: GrammarSearch }
-  | { to: "/reading"; label: string; search: { course: "JPD113" | "JPD123" } }
+  | { to: "/reading"; label: string; search: { course?: "JPD113" | "JPD123" } }
   | { to: "/exam"; label: string; search: ExamSearch };
 
 /** Cấu trúc từ ghép của một ký tự Kanji */
