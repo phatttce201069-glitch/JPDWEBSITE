@@ -58,16 +58,27 @@ test("JPD123 reading passages are longer and strictly use only official JPD123 K
     assert.equal(passage.course, "JPD123");
     assert.ok(passage.title.trim().length > 0);
     assert.ok(passage.content.trim().length > 0);
-    assert.ok(passage.sentences.length >= 5, "Bài đọc JPD123 phải có ít nhất 5 câu");
+    assert.ok(passage.sentences.length >= 6, "Bài đọc JPD123 chuẩn đề thi FPT phải có ít nhất 6 câu");
 
-    // Kiểm tra độ dài: JPD123 dài hơn JPD113
+    // Kiểm tra độ dài: JPD123 thực tế dài và giàu ngữ cảnh (200-280 ký tự)
     assert.ok(
-      passage.content.length >= 130,
-      `Bài đọc JPD123 (${passage.title}) phải dài hơn JPD113, nhận được: ${passage.content.length}`,
+      passage.content.length >= 200,
+      `Bài đọc JPD123 (${passage.title}) phải đạt độ dài chuẩn đề thi FPT (ít nhất 200 ký tự), nhận được: ${passage.content.length}`,
+    );
+
+    // Kiểm tra mật độ Katakana: Mỗi bài đọc JPD123 phải chứa ít nhất 3 từ mượn Katakana từ giáo trình Bài 1-7
+    const katakanaMatches = passage.content.match(/[\u30A0-\u30FF]+/g) || [];
+    assert.ok(
+      katakanaMatches.length >= 3,
+      `Bài đọc JPD123 (${passage.title}) phải chứa ít nhất 3 từ Katakana, nhận được: ${katakanaMatches.length}`,
     );
 
     // Kiểm tra 100% chữ Hán trong bài đọc phải thuộc danh sách cho phép của Bài 1-7
     const kanjiChars = passage.content.match(/[一-龯]/g) || [];
+    assert.ok(
+      kanjiChars.length >= 15,
+      `Bài đọc JPD123 (${passage.title}) phải có mật độ chữ Hán cao (ít nhất 15 chữ Hán), nhận được: ${kanjiChars.length}`,
+    );
     for (const c of kanjiChars) {
       assert.ok(
         allowedKanji123.has(c),
@@ -76,12 +87,14 @@ test("JPD123 reading passages are longer and strictly use only official JPD123 K
     }
 
     // Kiểm tra câu hỏi đọc hiểu
-    assert.ok(passage.questions.length >= 3, "Phải có ít nhất 3 câu hỏi đọc hiểu");
+    assert.ok(passage.questions.length >= 4, "Phải có ít nhất 4 câu hỏi đọc hiểu phân hóa");
     for (const q of passage.questions) {
       assert.equal(q.options.length, 4, "Mỗi câu hỏi phải có đúng 4 lựa chọn");
       assert.ok(q.options.includes(q.answer), "Đáp án đúng phải nằm trong 4 lựa chọn");
       assert.ok(q.explanation.meaning.trim().length > 0);
       assert.ok(q.explanation.reason.trim().length > 0);
+      assert.ok(q.explanation.wrongOptions);
+      assert.equal(q.explanation.wrongOptions.length, 3, "Phải giải thích rõ ràng 3 phương án sai");
     }
   }
 });
@@ -135,6 +148,7 @@ test("buildReadingAiPrompt correctly configures length and kanji constraints for
   assert.ok(p113.systemPrompt.includes("34 chữ Hán"));
 
   const p123 = buildReadingAiPrompt("JPD123");
-  assert.ok(p123.systemPrompt.includes("Dài hơn một chút") && p123.systemPrompt.includes("150 đến 240"));
+  assert.ok(p123.systemPrompt.includes("Dài hơn") && p123.systemPrompt.includes("200 đến 280"));
+  assert.ok(p123.systemPrompt.includes("KATAKANA"));
   assert.ok(p123.systemPrompt.includes("Bài 7"));
 });

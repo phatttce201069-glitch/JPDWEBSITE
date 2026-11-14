@@ -18,12 +18,17 @@ export function buildReadingAiPrompt(course: ReadingCourse): {
   const lengthRule =
     course === "JPD113"
       ? "- ĐỘ DÀI: Ngắn gọn (khoảng 3 đến 5 câu, từ 80 đến 130 ký tự tiếng Nhật). Cấu trúc ngữ pháp sơ cấp (câu danh từ, chỉ định từ, địa điểm, thời gian)."
-      : "- ĐỘ DÀI: Dài hơn một chút (khoảng 5 đến 8 câu, từ 150 đến 240 ký tự tiếng Nhật) đúng chuẩn cấu trúc bài thi đọc hiểu JPD123 tại Đại học FPT (chứa tính từ, so sánh hơn/nhất, mong muốn たい, thể て, lý do から).";
+      : "- ĐỘ DÀI VÀ ĐỘ KHÓ: Dài hơn và thách thức hơn (khoảng 6 đến 9 câu, từ 200 đến 280 ký tự tiếng Nhật) đúng chuẩn cấu trúc bài thi đọc hiểu JPD123 tại Đại học FPT (câu ghép đa mệnh đề, so sánh hơn/chọn lựa, mong muốn たい, thể て nối hành động / てから, lý do から, từ chối khéo はちょっと…).";
+
+  const katakanaRule =
+    course === "JPD113"
+      ? ""
+      : "\n4. TỪ VỰNG KATAKANA CHUẨN GIÁO TRÌNH:\n   - Bắt buộc lồng ghép tự nhiên từ 4 đến 8 từ Katakana đã học (ví dụ: レストラン, ホテル, デパート, スーパー, コンビニ, バス, タクシー, パーティー, コンサート, カラオケ, ピザ, カレー, スープ, ハンバーグ, サラダ, パン, コーヒー, ジュース, スプーン, フォーク, ナイフ, Tシャツ, パソコン, カメラ, チケット, アニメ, ゲーム, アルバイト, テスト, ルームメイト).";
 
   const kanjiRule =
     course === "JPD113"
       ? "- CHỮ HÁN CHO PHÉP: CHỈ dùng 34 chữ Hán của Bài 1, 2, 3: [私, 人, 才, 学, 生, 校, 日, 本, 語, 一, 二, 三, 四, 五, 六, 七, 八, 九, 十, 百, 千, 万, 円, 月, 火, 水, 木, 土, 曜, 何, 年, 時, 間, 分]. Bất kỳ chữ Hán nào khác ngoài danh sách này BẮT BUỘC PHẢI VIẾT BẰNG HIRAGANA HOẶC KATAKANA."
-      : "- CHỮ HÁN CHO PHÉP: CHỈ dùng các chữ Hán đã học đến Bài 7: [私, 人, 才, 学, 生, 校, 日, 本, 語, 一, 二, 三, 四, 五, 六, 七, 八, 九, 十, 百, 千, 万, 円, 月, 火, 水, 木, 土, 曜, 何, 年, 時, 間, 分, 東, 京, 名, 前, 国, 男, 女, 区, 市, 先, 週, 毎, 午, 後, 見, 食, 飲, 買, 物, 行, 休, 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門, 肉, 料, 理, 野, 半, 大, 小]. Bất kỳ chữ Hán nào chưa học (như 開, 閉, 待, 泳, 暑, 寒, 楽, 撮...) BẮT BUỘC PHẢI VIẾT BẰNG HIRAGANA (ví dụ: viết あけて, まって, あつい, さむい, たのしい, とりたい).";
+      : "- MẬT ĐỘ VÀ PHẠM VI CHỮ HÁN: Tối đa hóa việc dùng 77 chữ Hán chính thức đã học đến Bài 7 (tối thiểu 15-30 chữ Hán trong bài): [私, 人, 才, 学, 生, 校, 日, 本, 語, 一, 二, 三, 四, 五, 六, 七, 八, 九, 十, 百, 千, 万, 円, 月, 火, 水, 木, 土, 曜, 何, 年, 時, 間, 分, 東, 京, 名, 前, 国, 男, 女, 区, 市, 先, 週, 毎, 午, 後, 見, 食, 飲, 買, 物, 行, 休, 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門, 肉, 料, 理, 野, 半, 大, 小]. Bất kỳ chữ Hán nào chưa học (như 開, 閉, 待, 泳, 暑, 寒, 楽, 撮, 友, 車, 新, 安, 高...) BẮT BUỘC PHẢI VIẾT BẰNG HIRAGANA (ví dụ: viết あけて, まって, あつい, さむい, たのしい, とりたい, ともだち, あたらしい, やすい, たかい).";
 
   const systemPrompt = `Bạn là giảng viên tiếng Nhật trường Đại học FPT chuyên biên soạn phần thi ĐỌC HIỂU (読解 - Dokkai) môn ${course} (Tiếng Nhật ${course === "JPD113" ? "1" : "2"}).
 Nhiệm vụ: Soạn một bài đọc hiểu mới mẻ, tự nhiên kèm 3-4 câu hỏi trắc nghiệm A-D chuẩn đề thi kết thúc môn FPT.
@@ -36,7 +41,7 @@ QUY TẮC BẮT BUỘC (CRITICAL CONSTRAINTS - TUÂN THỦ 100%):
 2. PHẠM VI CHỮ HÁN:
    ${kanjiRule}
 3. ĐỘ DÀI VÀ CẤU TRÚC ĐỀ THI:
-   ${lengthRule}
+   ${lengthRule}${katakanaRule}
 4. CÂU HỎI TRẮC NGHIỆM ĐỌC HIỂU (3 đến 4 câu):
    - Mỗi câu hỏi có đúng 4 lựa chọn (A, B, C, D).
    - Đáp án đúng duy nhất, giải thích chi tiết tại sao đúng và tại sao các lựa chọn còn lại sai.
@@ -79,7 +84,7 @@ Chỉ xuất ra duy nhất JSON (không kèm markdown \`\`\`json) với định 
 
   const userPrompt = `Hãy tạo một bài đọc hiểu mới hoàn chỉnh cho môn ${course} Đại học FPT (Mã #${entropySeed}).
 Lưu ý:
-- ${course === "JPD113" ? "Bài ngắn (~80-130 ký tự, 3-5 câu), chỉ dùng 34 Kanji Bài 1-3" : "Bài dài hơn (~150-240 ký tự, 5-8 câu), chỉ dùng Kanji đến Bài 7"}.
+- ${course === "JPD113" ? "Bài ngắn (~80-130 ký tự, 3-5 câu), chỉ dùng 34 Kanji Bài 1-3" : "Bài dài chuẩn đề thi FPT (~200-280 ký tự, 6-9 câu), tăng cường mật độ Katakana và Kanji Bài 1-7"}.
 - Chữ Hán chưa học bắt buộc viết bằng Hiragana/Katakana.
 - Xuất ra JSON hợp lệ.`;
 
