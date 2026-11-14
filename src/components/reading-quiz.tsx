@@ -5,9 +5,11 @@ import type { ReadingPassage, ReadingQuestion } from "@/lib/study/reading-types"
 interface ReadingQuizProps {
   passage: ReadingPassage;
   onNextPassage?: () => void;
+  onComplete?: (result: { correctCount: number; totalCount: number }) => void;
+  nextPassageLabel?: string;
 }
 
-export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
+export function ReadingQuiz({ passage, onNextPassage, onComplete, nextPassageLabel }: ReadingQuizProps) {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -28,6 +30,10 @@ export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
 
   function handleSubmit() {
     setIsSubmitted(true);
+    if (onComplete) {
+      const correct = questions.filter((q) => selectedAnswers[q.id] === q.answer).length;
+      onComplete({ correctCount: correct, totalCount: questions.length });
+    }
   }
 
   function handleReset() {
@@ -232,9 +238,9 @@ export function ReadingQuiz({ passage, onNextPassage }: ReadingQuizProps) {
                   handleReset();
                   onNextPassage();
                 }}
-                className="flex items-center gap-1.5 rounded-xl bg-ink px-5 py-2 text-sm font-semibold text-paper hover:bg-ink/90 shadow-sm"
+                className="flex items-center gap-1.5 rounded-xl bg-ink px-5 py-2 text-sm font-semibold text-paper hover:bg-ink/90 shadow-sm cursor-pointer"
               >
-                <span>Luyện bài đọc tiếp theo</span>
+                <span>{nextPassageLabel || "Luyện bài đọc tiếp theo"}</span>
                 <ArrowRight className="size-4" />
               </button>
             )}

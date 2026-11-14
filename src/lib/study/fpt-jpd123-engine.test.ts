@@ -68,8 +68,10 @@ test("buildFptJpd123Exam with filtered lessons 4 & 5 strictly isolates lessons",
       `Câu ${q.id} chứa lượng từ đếm vật mỏng (枚 - まい) của Bài 6: ${q.sentence}`,
     );
 
-    // Không chứa kiến thức đặc trưng Bài 7 (thể て, dụng cụ ăn uống)
-    assert.ok(!q.sentence.includes("てください"), `Câu ${q.id} chứa 'てください' của Bài 7`);
+    // Không chứa kiến thức đặc trưng Bài 7 (thể て, dụng cụ ăn uống - ngoại trừ cụm hội thoại cố định của Bài 4 'ぜひ来てください')
+    if (!q.sentence.includes("ぜひ")) {
+      assert.ok(!q.sentence.includes("てください"), `Câu ${q.id} chứa 'てください' của Bài 7`);
+    }
     assert.ok(!q.sentence.includes("スプーン"), `Câu ${q.id} chứa 'スプーン' của Bài 7`);
     assert.ok(!q.sentence.includes("フォーク"), `Câu ${q.id} chứa 'フォーク' của Bài 7`);
   }

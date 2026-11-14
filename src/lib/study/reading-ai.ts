@@ -1,6 +1,11 @@
 import { getAiSettings } from "./ai-service.ts";
-import { generateReadingPassage, sanitizeReadingPassageKanji } from "./reading-engine.ts";
-import type { ReadingCourse, ReadingPassage } from "./reading-types.ts";
+import {
+  generateReadingPassage,
+  generateReadingExamSet,
+  computePassageSetKanjiCoverage,
+  sanitizeReadingPassageKanji,
+} from "./reading-engine.ts";
+import type { ReadingCourse, ReadingPassage, ReadingPassageSet } from "./reading-types.ts";
 import { toKana } from "./kana-reading.ts";
 import { toRomaji } from "./romaji.ts";
 
@@ -203,6 +208,227 @@ export async function generateAiReadingPassage(course: ReadingCourse): Promise<{
       isRealAi: false,
       provider: "FPT Reading Engine (Fallback)",
       error: `Không thể kết nối AI (${message}). Đã chuyển sang bộ bài đọc chuẩn FPT.`,
+    };
+  }
+}
+
+/**
+ * Xây dựng prompt cho AI để tạo trọn bộ 4 đề đọc hiểu phủ 100% Kanji Bài 4-7
+ */
+export function buildReadingAiSetPrompt(course: ReadingCourse): {
+  systemPrompt: string;
+  userPrompt: string;
+  allowedBai: number[];
+} {
+  const allowedBai = course === "JPD113" ? [1, 2, 3] : [4, 5, 6, 7];
+  const entropySeed = Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  const coverageInstruction =
+    course === "JPD123"
+      ? `QUY TẮC PHỦ TOÀN BỘ 43 CHỮ HÁN BÀI 4 ĐẾN 7:
+Trong 4 đề đọc hiểu này, bạn BẮT BUỘC phải phân bổ sao cho TỔNG HỢP CẢ 4 ĐỀ PHẢI XUẤT HIỆN ĐỦ TOÀN BỘ 43 CHỮ HÁN sau:
+[東, 京, 名, 前, 国, 男, 女, 区, 市, 先, 週, 毎, 午, 後, 見, 食, 飲, 買, 物, 行, 休, 今, 来, 帰, 会, 社, 聞, 読, 書, 話, 寺, 言, 具, 田, 力, 門, 肉, 料, 理, 野, 半, 大, 小].
+- Mỗi bài đọc nên dùng từ 15 đến 30 chữ Hán trong danh sách trên.
+- TUYỆT ĐỐI KHÔNG dùng bất kỳ chữ Hán nào chưa học (như 開, 閉, 暑, 寒, 楽, 撮...). Chữ Hán chưa học bắt buộc viết bằng Hiragana/Katakana (ví dụ: あけて, あつい, さむい, たのしい, とりたい).
+- Mỗi bài đọc dài khoảng 200 đến 280 ký tự tiếng Nhật (6 đến 9 câu).
+- Lồng ghép tự nhiên từ 4 đến 8 từ mượn Katakana trong giáo trình Bài 1-7 (ví dụ: レストラン, ホテル, デパート, スーパー, コンビニ, バス, タクシー, パーティー, コンサート, カラオケ, ピザ, カレー, スープ, ハンバーグ, サラダ, パン, コーヒー, ジュース, スプーン, フォーク, ナイフ, Tシャツ, パソコン, カメラ, チケット, アニメ, ゲーム, アルバイト, テスト, ルームメイト).`
+      : `QUY TẮC CHO JPD113:
+Tạo 4 bài đọc ngắn gọn (80-130 ký tự, 3-5 câu), chỉ dùng 34 chữ Hán của Bài 1-3.`;
+
+  const systemPrompt = `Bạn là giảng viên tiếng Nhật trường Đại học FPT chuyên biên soạn BỘ ĐỀ THI ĐỌC HIỂU (読解 - Dokkai) môn ${course}.
+Nhiệm vụ: Soạn một bộ gồm ĐÚNG 4 BÀI ĐỌC HIỂU (Đề 1, Đề 2, Đề 3, Đề 4) chuẩn đề thi kết thúc môn FPT.
+Mã phiên ngẫu nhiên: #${entropySeed}.
+
+${coverageInstruction}
+
+Mỗi bài đọc trong bộ đề phải đi kèm ĐÚNG 4 CÂU HỎI TRẮC NGHIỆM A-D có đáp án và giải thích chi tiết vì sao đúng, vì sao các phương án còn lại sai.
+
+YÊU CẦU ĐỊNH DẠNG ĐẦU RA:
+Chỉ xuất ra duy nhất JSON (không kèm markdown \`\`\`json) với định dạng:
+{
+  "id": "ai-set-${course.toLowerCase()}-${entropySeed}",
+  "course": "${course}",
+  "title": "JPD123 読解4題セット",
+  "titleVi": "Bộ 4 đề đọc hiểu JPD123 FPT (Phủ toàn diện Bài 4–7)",
+  "passages": [
+    {
+      "id": "ai-${course.toLowerCase()}-${entropySeed}-1",
+      "course": "${course}",
+      "title": "Tiêu đề tiếng Nhật Đề 1",
+      "titleVi": "Tiêu đề tiếng Việt Đề 1",
+      "theme": "Chủ đề Đề 1",
+      "content": "Toàn bộ đoạn văn tiếng Nhật Đề 1",
+      "sentences": [
+        { "jp": "Câu 1 tiếng Nhật", "vi": "Bản dịch câu 1", "romaji": "Romaji câu 1" }
+      ],
+      "translation": "Bản dịch toàn bộ Đề 1",
+      "romaji": "Toàn bộ Romaji Đề 1",
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Câu hỏi trắc nghiệm tiếng Nhật",
+          "options": ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+          "answer": "Đáp án đúng",
+          "explanation": {
+            "meaning": "Ý nghĩa câu hỏi và đáp án",
+            "reason": "Dẫn chứng từ bài đọc",
+            "wrongOptions": [
+              { "option": "Phương án sai 1", "reason": "Lý do sai" },
+              { "option": "Phương án sai 2", "reason": "Lý do sai" },
+              { "option": "Phương án sai 3", "reason": "Lý do sai" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}`;
+
+  const userPrompt = `Hãy tạo một bộ gồm đúng 4 đề đọc hiểu môn ${course} Đại học FPT (Mã #${entropySeed}).
+Lưu ý:
+- Tổng hợp cả 4 đề phải phủ đủ toàn bộ 43 chữ Hán của Bài 4 đến 7.
+- Không dùng chữ Hán ngoài giáo trình.
+- Mỗi đề có 4 câu hỏi trắc nghiệm A-D phân hóa.
+- Xuất ra JSON hợp lệ.`;
+
+  return { systemPrompt, userPrompt, allowedBai };
+}
+
+/**
+ * Gọi AI sinh một bộ gồm 4 đề đọc hiểu hoặc tự động fallback sang Engine FPT đã xác thực
+ */
+export async function generateAiReadingExamSet(course: ReadingCourse): Promise<{
+  set: ReadingPassageSet;
+  isRealAi: boolean;
+  provider: string;
+  error?: string;
+}> {
+  const settings = getAiSettings();
+  const allowedBai = course === "JPD113" ? [1, 2, 3] : [4, 5, 6, 7];
+
+  // 1. Chế độ Engine FPT tích hợp (Built-in)
+  if (settings.provider === "built-in" || !settings.apiKey.trim()) {
+    const set = generateReadingExamSet(course);
+    return {
+      set,
+      isRealAi: false,
+      provider: "FPT Reading Engine (Offline)",
+    };
+  }
+
+  // 2. Chế độ AI trực tuyến (Gemini, Grok, OpenAI)
+  try {
+    const { systemPrompt, userPrompt } = buildReadingAiSetPrompt(course);
+    let rawText = "";
+
+    if (settings.provider === "gemini") {
+      const model = settings.model || "gemini-1.5-flash";
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${settings.apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+            generationConfig: { responseMimeType: "application/json", temperature: 0.7 },
+          }),
+        },
+      );
+      if (!res.ok) throw new Error(`Gemini error: ${res.statusText}`);
+      const data = await res.json();
+      rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    } else {
+      const endpoint =
+        settings.provider === "xai"
+          ? "https://api.x.ai/v1/chat/completions"
+          : "https://api.openai.com/v1/chat/completions";
+      const model =
+        settings.model || (settings.provider === "xai" ? "grok-4.5" : "gpt-4o-mini");
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${settings.apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.7,
+        }),
+      });
+      if (!res.ok) throw new Error(`${settings.provider} error: ${res.statusText}`);
+      const data = await res.json();
+      rawText = data?.choices?.[0]?.message?.content ?? "";
+    }
+
+    const cleaned = rawText.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+    const parsed = JSON.parse(cleaned) as {
+      id?: string;
+      title?: string;
+      titleVi?: string;
+      passages?: ReadingPassage[];
+    };
+
+    if (!parsed || !Array.isArray(parsed.passages) || parsed.passages.length < 2) {
+      throw new Error("Dữ liệu bộ 4 đề trả về từ AI không đúng cấu trúc.");
+    }
+
+    const sanitizedPassages = parsed.passages.slice(0, 4).map((p, idx) => {
+      const ensured: ReadingPassage = {
+        ...p,
+        id: p.id || `ai-${course.toLowerCase()}-${Date.now()}-${idx + 1}`,
+        course,
+        sentences:
+          Array.isArray(p.sentences) && p.sentences.length > 0
+            ? p.sentences
+            : (p.content || "")
+                .split(/(?<=[。！？\n])/)
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .map((s) => ({
+                  jp: s,
+                  vi: "",
+                  romaji: toRomaji(toKana(s)),
+                })),
+        romaji: p.romaji || toRomaji(toKana(p.content || "")),
+        isAiGenerated: true,
+      };
+      return sanitizeReadingPassageKanji(ensured, allowedBai);
+    });
+
+    const coverage = computePassageSetKanjiCoverage(sanitizedPassages, course);
+
+    const fullSet: ReadingPassageSet = {
+      id: parsed.id || `ai-set-${course.toLowerCase()}-${Date.now()}`,
+      course,
+      title: parsed.title || `${course} 読解4題セット`,
+      titleVi: parsed.titleVi || `Bộ 4 đề đọc hiểu ${course} FPT`,
+      passages: sanitizedPassages,
+      coveredKanji: coverage.coveredKanji,
+      targetKanjiCount: coverage.targetKanjiCount,
+      coveragePercentage: coverage.coveragePercentage,
+      isCompleteCoverage: coverage.isCompleteCoverage,
+    };
+
+    return {
+      set: fullSet,
+      isRealAi: true,
+      provider: `${settings.provider.toUpperCase()} (${settings.model || "Default"})`,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn("[Reading AI Set] Error calling LLM, fallback to Engine:", message);
+    const fallback = generateReadingExamSet(course);
+    return {
+      set: fallback,
+      isRealAi: false,
+      provider: "FPT Reading Engine (Fallback)",
+      error: `Không thể kết nối AI (${message}). Đã kích hoạt bộ 4 đề chuẩn FPT phủ 100% chữ Hán.`,
     };
   }
 }

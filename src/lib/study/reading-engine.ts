@@ -1,10 +1,14 @@
 import {
   READING_PASSAGES_JPD113,
   READING_PASSAGES_JPD123,
+  READING_EXAM_SETS_JPD113,
+  READING_EXAM_SETS_JPD123,
+  computePassageSetKanjiCoverage,
 } from "./reading-data.ts";
 import type {
   ReadingCourse,
   ReadingPassage,
+  ReadingPassageSet,
   ReadingQuestion,
   ReadingSentence,
 } from "./reading-types.ts";
@@ -16,8 +20,103 @@ import {
 import { toRomaji } from "./romaji.ts";
 import { shuffle } from "./fpt-jpd123-engine.ts";
 
+export { computePassageSetKanjiCoverage };
+
 const RECENT_PASSAGE_KEY = "fpt_recent_reading_passages_v1";
+const RECENT_SET_KEY = "fpt_recent_reading_sets_v1";
 const memoryRecentIds = new Set<string>();
+const memoryRecentSetIds = new Set<string>();
+
+/**
+ * Lấy danh sách ID các bộ đề đã xem gần đây trong phiên học (Session)
+ */
+export function getRecentReadingSetIds(): Set<string> {
+  const result = new Set<string>(memoryRecentSetIds);
+  if (typeof window !== "undefined") {
+    try {
+      const raw = sessionStorage.getItem(RECENT_SET_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach((id) => result.add(id));
+        }
+      }
+    } catch {}
+  }
+  return result;
+}
+
+/**
+ * Ghi nhận ID bộ đề vừa làm vào bộ nhớ phiên
+ */
+export function recordReadingSetId(id: string): void {
+  memoryRecentSetIds.add(id);
+  if (typeof window === "undefined") return;
+  try {
+    const list = [...memoryRecentSetIds];
+    const trimmed = list.slice(-20);
+    sessionStorage.setItem(RECENT_SET_KEY, JSON.stringify(trimmed));
+  } catch {}
+}
+
+/**
+ * Xóa lịch sử bộ đề gần đây
+ */
+export function clearRecentReadingSetIds(): void {
+  memoryRecentSetIds.clear();
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(RECENT_SET_KEY);
+  } catch {}
+}
+
+/**
+ * Sinh bộ gồm 4 đề đọc hiểu theo môn học, đảm bảo phủ toàn bộ chữ Hán và ngữ pháp
+ */
+export function generateReadingExamSet(
+  course: ReadingCourse,
+  options?: {
+    excludeSetId?: string;
+  },
+): ReadingPassageSet {
+  const pool = course === "JPD123" ? READING_EXAM_SETS_JPD123 : READING_EXAM_SETS_JPD113;
+  const recentSetIds = getRecentReadingSetIds();
+
+  if (options?.excludeSetId) {
+    recentSetIds.add(options.excludeSetId);
+  }
+
+  // 1. Lọc các bộ đề chưa từng xuất hiện gần đây
+  const freshSets = pool.filter((s) => !recentSetIds.has(s.id));
+  const candidates = freshSets.length > 0 ? freshSets : pool.filter((s) => s.id !== options?.excludeSetId);
+  const selectedSet = shuffle(candidates)[0] || pool[0];
+
+  recordReadingSetId(selectedSet.id);
+
+  // 2. Xáo trộn các lựa chọn trắc nghiệm A-D cho từng câu hỏi trong mỗi đề
+  const allowedBai = course === "JPD113" ? [1, 2, 3] : [4, 5, 6, 7];
+  const randomizedPassages = selectedSet.passages.map((p) => {
+    const sanitized = sanitizeReadingPassageKanji(p, allowedBai);
+    return {
+      ...sanitized,
+      questions: sanitized.questions.map((q) => ({
+        ...q,
+        options: shuffle([...q.options]),
+      })),
+    };
+  });
+
+  const coverage = computePassageSetKanjiCoverage(randomizedPassages, course);
+
+  return {
+    ...selectedSet,
+    passages: randomizedPassages,
+    coveredKanji: coverage.coveredKanji,
+    targetKanjiCount: coverage.targetKanjiCount,
+    coveragePercentage: coverage.coveragePercentage,
+    isCompleteCoverage: coverage.isCompleteCoverage,
+  };
+}
 
 /**
  * Lấy danh sách ID các bài đọc đã xem gần đây trong phiên học (Session)

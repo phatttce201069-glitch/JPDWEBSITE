@@ -1,5 +1,55 @@
-import type { ReadingPassage } from "./reading-types.ts";
+import type { ReadingCourse, ReadingPassage, ReadingPassageSet } from "./reading-types.ts";
 import { getAllowedKanjiChars, replaceUntaughtKanjiWithKana } from "./kana-reading.ts";
+
+export const TARGET_KANJI_JPD123 = [
+  "東", "京", "名", "前", "国", "男", "女", "区", "市",
+  "先", "週", "毎", "午", "後", "見", "食", "飲", "買", "物", "行", "休",
+  "今", "来", "帰", "会", "社", "聞", "読", "書", "話", "寺", "言", "具", "田", "力", "門",
+  "肉", "料", "理", "野", "半", "大", "小"
+];
+
+export const TARGET_KANJI_JPD113 = [
+  "私", "人", "才", "学", "生", "校", "日", "本", "語",
+  "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "百", "千", "万", "円",
+  "月", "火", "水", "木", "土", "曜", "何", "年", "時", "間", "分"
+];
+
+export function computePassageSetKanjiCoverage(
+  passages: ReadingPassage[],
+  course: ReadingCourse,
+): {
+  coveredKanji: string[];
+  targetKanjiCount: number;
+  coveragePercentage: number;
+  isCompleteCoverage: boolean;
+  missingKanji: string[];
+} {
+  const targetChars = course === "JPD123" ? TARGET_KANJI_JPD123 : TARGET_KANJI_JPD113;
+  const targetSet = new Set(targetChars);
+  const foundSet = new Set<string>();
+
+  for (const p of passages) {
+    const chars = p.content.match(/[一-龯]/g) || [];
+    for (const c of chars) {
+      if (targetSet.has(c)) {
+        foundSet.add(c);
+      }
+    }
+  }
+
+  const coveredKanji = targetChars.filter((c) => foundSet.has(c));
+  const missingKanji = targetChars.filter((c) => !foundSet.has(c));
+  const targetKanjiCount = targetChars.length;
+  const coveragePercentage = Math.round((coveredKanji.length / targetKanjiCount) * 100);
+
+  return {
+    coveredKanji,
+    targetKanjiCount,
+    coveragePercentage,
+    isCompleteCoverage: coveredKanji.length === targetKanjiCount,
+    missingKanji,
+  };
+}
 
 function sanitizePassage(p: ReadingPassage, allowedBai: number[]): ReadingPassage {
   const allowed = getAllowedKanjiChars(allowedBai);
@@ -148,11 +198,11 @@ const RAW_PASSAGES_JPD113: ReadingPassage[] = [
         answer: "ひろくないですが、しずかです",
         explanation: {
           meaning: "Căn phòng như thế nào? Đáp án: Không rộng nhưng yên tĩnh.",
-          reason: "Bài đọc ghi:「へやはひろくないですが、しずかです。」",
+          reason: "Dẫn chứng câu 2:「へやはひろくないですが、しずかです。」",
           wrongOptions: [
-            { option: "ひろくて、にぎやかです", reason: "Trái ngược với thông tin trong bài." },
+            { option: "ひろくて、にぎやかです", reason: "Ngược với thông tin phòng không rộng và yên tĩnh." },
             { option: "せまくて、うるさいです", reason: "Phòng yên tĩnh chứ không ồn ào." },
-            { option: "とてもひろいです", reason: "Bài nói rõ phòng không rộng." }
+            { option: "とてもひろいです", reason: "Phòng không rộng." }
           ]
         }
       }
@@ -161,41 +211,43 @@ const RAW_PASSAGES_JPD113: ReadingPassage[] = [
   {
     id: "jpd113-read-3",
     course: "JPD113",
-    title: "大学のとしょかん",
-    titleVi: "Thư viện của trường đại học",
-    theme: "Thời gian và địa điểm học tập",
-    content: "FPT大学のとしょかんは二かいにあります。としょかんは月曜日からきんようびまであきます。時間は午前九時から午後六時までです。土曜日と日曜日は休みです。としょかんには日本語の本がたくさんあります。わたしは水曜日の午後にとしょかんへ行きます。",
+    title: "としょかんと毎日のスケジュール",
+    titleVi: "Thư viện và lịch trình mỗi ngày",
+    theme: "Thời gian, các thứ trong tuần và địa điểm",
+    content: "大学のとしょかんは午前九時から午後七時までです。月曜日から金曜日まであいています。土曜日と日曜日は休みです。としょかんには本がたくさんあります。日本の本もあります。わたしは水曜日の午後にとしょかんへ行きます。二時間、日本語の本を読みます。としょかんはとてもきれいで、しずかです。",
     sentences: [
-      { jp: "FPT大学のとしょかんは二かいにあります。", vi: "Thư viện trường Đại học FPT ở tầng 2.", romaji: "Efu-pii-tii daigaku no toshokan wa nikai ni arimasu." },
-      { jp: "としょかんは月曜日からきんようびまであきます。", vi: "Thư viện mở cửa từ thứ Hai đến thứ Sáu.", romaji: "Toshokan wa getsuyoubi kara kinyoubi made akimasu." },
-      { jp: "時間は午前九時から午後六時までです。", vi: "Thời gian từ 9 giờ sáng đến 6 giờ chiều.", romaji: "Jikan wa gozen ku-ji kara gogo roku-ji made desu." },
-      { jp: "土曜日と日曜日は休みです。", vi: "Thứ Bảy và Chủ nhật là ngày nghỉ.", romaji: "Doyoubi to nichiyoubi wa yasumi desu." },
-      { jp: "としょかんには日本語の本がたくさんあります。", vi: "Ở thư viện có rất nhiều sách tiếng Nhật.", romaji: "Toshokan ni wa nihongo no hon ga takusan arimasu." },
-      { jp: "わたしは水曜日の午後にとしょかんへ行きます。", vi: "Tôi đến thư viện vào chiều thứ Tư.", romaji: "Watashi wa suiyoubi no gogo ni toshokan e ikimasu." }
+      { jp: "大学のとしょかんは午前九時から午後七時までです。", vi: "Thư viện của trường đại học mở từ 9 giờ sáng đến 7 giờ tối.", romaji: "Daigaku no toshokan wa gozen kyuu-ji kara gogo shichi-ji made desu." },
+      { jp: "月曜日から金曜日まであいています。", vi: "Mở cửa từ thứ Hai đến thứ Sáu.", romaji: "Getsuyoubi kara kinyoubi made aite imasu." },
+      { jp: "土曜日と日曜日は休みです。", vi: "Thứ Bảy và Chủ nhật thì nghỉ.", romaji: "Doyoubi to nichiyoubi wa yasumi desu." },
+      { jp: "としょかんには本がたくさんあります。", vi: "Trong thư viện có rất nhiều sách.", romaji: "Toshokan ni wa hon ga takusan arimasu." },
+      { jp: "日本の本もあります。", vi: "Cũng có cả sách của Nhật Bản.", romaji: "Nihon no hon mo arimasu." },
+      { jp: "わたしは水曜日の午後にとしょかんへ行きます。", vi: "Tôi đến thư viện vào chiều thứ Tư.", romaji: "Watashi wa suiyoubi no gogo ni toshokan e ikimasu." },
+      { jp: "二時間、日本語の本を読みます。", vi: "Tôi đọc sách tiếng Nhật trong hai tiếng.", romaji: "Ni-jikan, nihongo no hon o yomimasu." },
+      { jp: "としょかんはとてもきれいで、しずかです。", vi: "Thư viện rất đẹp và yên tĩnh.", romaji: "Toshokan wa totemo kirei de, shizuka desu." }
     ],
-    translation: "Thư viện trường Đại học FPT nằm ở tầng 2. Thư viện mở cửa từ thứ Hai đến thứ Sáu. Giờ mở cửa từ 9 giờ sáng đến 6 giờ chiều. Thứ Bảy và Chủ nhật nghỉ. Ở thư viện có rất nhiều sách tiếng Nhật. Tôi thường đến thư viện vào chiều thứ Tư.",
-    romaji: "Efu-pii-tii daigaku no toshokan wa nikai ni arimasu. Toshokan wa getsuyoubi kara kinyoubi made akimasu. Jikan wa gozen ku-ji kara gogo roku-ji made desu. Doyoubi to nichiyoubi wa yasumi desu. Toshokan ni wa nihongo no hon ga takusan arimasu. Watashi wa suiyoubi no gogo ni toshokan e ikimasu.",
-    vocabularyUsed: ["図書館", "大学", "二階", "月曜日", "金曜日", "土曜日", "日曜日", "水曜日", "午前", "午後", "休み", "行きます"],
-    kanjiUsed: ["学", "二", "月", "火", "水", "木", "土", "日", "曜", "九", "六", "時", "間", "私", "本", "語"],
+    translation: "Thư viện trường đại học mở cửa từ 9 giờ sáng đến 7 giờ tối. Thư viện mở từ thứ Hai đến thứ Sáu, còn thứ Bảy và Chủ nhật thì đóng cửa nghỉ. Ở thư viện có rất nhiều đầu sách, có cả sách tiếng Nhật nữa. Tôi thường đến thư viện vào các buổi chiều thứ Tư và đọc sách tiếng Nhật trong 2 tiếng đồng hồ. Thư viện ở đây rất khang trang và yên tĩnh.",
+    romaji: "Daigaku no toshokan wa gozen kyuu-ji kara gogo shichi-ji made desu. Getsuyoubi kara kinyoubi made aite imasu. Doyoubi to nichiyoubi wa yasumi desu. Toshokan ni wa hon ga takusan arimasu. Nihon no hon mo arimasu. Watashi wa suiyoubi no gogo ni toshokan e ikimasu. Ni-jikan, nihongo no hon o yomimasu. Toshokan wa totemo kirei de, shizuka desu.",
+    vocabularyUsed: ["大学", "図書館", "午前", "午後", "月曜日", "金曜日", "土曜日", "日曜日", "休み", "水曜日", "二時間", "日本語", "読む"],
+    kanjiUsed: ["大", "学", "午", "前", "後", "九", "時", "七", "月", "曜", "日", "土", "休", "本", "水", "二", "間", "語"],
     questions: [
       {
         id: "jpd113-q3-1",
-        prompt: "としょかんは何かいにありますか。",
-        options: ["二かいにあります", "一かいにあります", "三かいにあります", "四かいにあります"],
-        answer: "二かいにあります",
+        prompt: "としょかんは何時から何時までですか。",
+        options: ["午前九時から午後七時までです", "午前八時から午後六時までです", "午前九時から午後五時までです", "午前十時から午後八時までです"],
+        answer: "午前九時から午後七時までです",
         explanation: {
-          meaning: "Thư viện ở tầng mấy? Đáp án: Ở tầng 2.",
-          reason: "Bài đọc nêu rõ câu đầu tiên:「FPT大学のとしょかんは二かいにあります。」",
+          meaning: "Thư viện mở cửa từ mấy giờ đến mấy giờ? Đáp án: Từ 9 giờ sáng đến 7 giờ tối.",
+          reason: "Câu mở đầu nêu rõ:「大学のとしょかんは午前九時から午後七時までです。」",
           wrongOptions: [
-            { option: "一かいにあります", reason: "Tầng 1 là sai." },
-            { option: "三かいにあります", reason: "Tầng 3 là sai." },
-            { option: "四かいにあります", reason: "Tầng 4 là sai." }
+            { option: "午前八時から午後六時までです", reason: "Sai giờ bắt đầu và kết thúc." },
+            { option: "午前九時から午後五時までです", reason: "5 giờ chiều là đóng cửa sớm hơn quy định." },
+            { option: "午前十時から午後八時までです", reason: "Sai giờ mở cửa." }
           ]
         }
       },
       {
         id: "jpd113-q3-2",
-        prompt: "としょかんの休みは何曜日ですか。",
+        prompt: "としょかんは何曜日が休みですか。",
         options: ["土曜日と日曜日です", "月曜日と火曜日です", "水曜日と木曜日です", "きんようびです"],
         answer: "土曜日と日曜日です",
         explanation: {
@@ -224,233 +276,515 @@ const RAW_PASSAGES_JPD113: ReadingPassage[] = [
         }
       }
     ]
+  },
+  {
+    id: "jpd113-read-4",
+    course: "JPD113",
+    title: "大学の学食と買い物",
+    titleVi: "Bữa trưa ở nhà ăn trường và đi mua sắm",
+    theme: "Thời gian, giá tiền và hoạt động hàng ngày",
+    content: "毎日、十二時半に大学の学食でひるごはんを食べます。学食にはラーメンやカレーがあります。ラーメンは五百円です。とても安いです。午後一時に、友達と本屋へ行きます。日本語の本とじしょを買います。じしょは三千円です。午後は三時から五時までとしょかんで日本語を勉強します。",
+    sentences: [
+      { jp: "毎日、十二時半に大学の学食でひるごはんを食べます。", vi: "Mỗi ngày, vào lúc 12 giờ rưỡi tôi ăn trưa ở căng tin trường.", romaji: "Mainichi, juuni-jihan ni daigaku no gakushoku de hirugohan o tabemasu." },
+      { jp: "学食にはラーメンやカレーがあります。", vi: "Ở căng tin có mì ramen và cơm cà ri.", romaji: "Gakushoku ni wa raamen ya karee ga arimasu." },
+      { jp: "ラーメンは五百円です。", vi: "Mì ramen có giá 500 yên.", romaji: "Raamen wa gohyaku-en desu." },
+      { jp: "とても安いです。", vi: "Rất rẻ.", romaji: "Totemo yasui desu." },
+      { jp: "午後一時に、友達と本屋へ行きます。", vi: "Lúc 1 giờ chiều, tôi cùng bạn đi đến hiệu sách.", romaji: "Gogo ichi-ji ni, tomodachi to honya e ikimasu." },
+      { jp: "日本語の本とじしょを買います。", vi: "Chúng tôi mua sách tiếng Nhật và từ điển.", romaji: "Nihongo no hon to jisho o kaimasu." },
+      { jp: "じしょは三千円です。", vi: "Từ điển có giá 3.000 yên.", romaji: "Jisho wa sanzen-en desu." },
+      { jp: "午後は三時から五時までとしょかんで日本語を勉強します。", vi: "Buổi chiều tôi học tiếng Nhật ở thư viện từ 3 giờ đến 5 giờ.", romaji: "Gogo wa san-ji kara go-ji made toshokan de nihongo o benkyou shimasu." }
+    ],
+    translation: "Hàng ngày, đúng 12 giờ rưỡi trưa tôi đều dùng bữa tại nhà ăn của trường đại học. Ở căng tin có bán món mì ramen và cơm cà ri. Mì ramen giá 500 yên, rất vừa túi tiền và rẻ. Đến 1 giờ chiều, tôi cùng bạn đi đến hiệu sách để mua sách tiếng Nhật và một cuốn từ điển. Cuốn từ điển có giá 3.000 yên. Buổi chiều từ 3 giờ đến 5 giờ, tôi chăm chỉ ôn bài tiếng Nhật tại thư viện.",
+    romaji: "Mainichi, juuni-jihan ni daigaku no gakushoku de hirugohan o tabemasu. Gakushoku ni wa raamen ya karee ga arimasu. Raamen wa gohyaku-en desu. Totemo yasui desu. Gogo ichi-ji ni, tomodachi to honya e ikimasu. Nihongo no hon to jisho o kaimasu. Jisho wa sanzen-en desu. Gogo wa san-ji kara go-ji made toshokan de nihongo o benkyou shimasu.",
+    vocabularyUsed: ["毎日", "十二時半", "大学", "昼ご飯", "食べる", "ラーメン", "カレー", "五百円", "安い", "午後", "一時", "本屋", "行く", "日本語", "本", "辞書", "買う", "三千円", "三時", "五時", "図書館", "勉強"],
+    kanjiUsed: ["毎", "日", "十", "二", "時", "半", "大", "学", "食", "円", "午", "後", "一", "本", "行", "語", "買", "三", "千", "五"],
+    questions: [
+      {
+        id: "jpd113-q4-1",
+        prompt: "ラーメンはいくらですか。",
+        options: ["五百円です", "三百円です", "千円です", "五千円です"],
+        answer: "五百円です",
+        explanation: {
+          meaning: "Mì ramen có giá bao nhiêu tiền? Đáp án: 500 yên (五百円).",
+          reason: "Dẫn chứng câu 3:「ラーメンは五百円です。」",
+          wrongOptions: [
+            { option: "三百円です", reason: "Sai số tiền (300 yên)." },
+            { option: "千円です", reason: "1.000 yên là đắt hơn thực tế." },
+            { option: "五千円です", reason: "Sai hoàn toàn giá tiền." }
+          ]
+        }
+      },
+      {
+        id: "jpd113-q4-2",
+        prompt: "午後一時にどこへ行きますか。",
+        options: ["本屋へ行きます", "としょかんへ行きます", "学食へ行きます", "へやへ帰ります"],
+        answer: "本屋へ行きます",
+        explanation: {
+          meaning: "Lúc 1 giờ chiều đi đâu? Đáp án: Đến hiệu sách (本屋へ行きます).",
+          reason: "Dẫn chứng câu 5:「午後一時に、友達と本屋へ行きます。」",
+          wrongOptions: [
+            { option: "としょかんへ行きます", reason: "Thư viện là 3 giờ chiều mới đến học." },
+            { option: "学食へ行きます", reason: "Nhà ăn là 12h30 trưa." },
+            { option: "へやへ帰ります", reason: "Không có thông tin về phòng lúc 1 giờ." }
+          ]
+        }
+      },
+      {
+        id: "jpd113-q4-3",
+        prompt: "じしょはいくらですか。",
+        options: ["三千円です", "五百円です", "二千円です", "五千円です"],
+        answer: "三千円です",
+        explanation: {
+          meaning: "Cuốn từ điển giá bao nhiêu tiền? Đáp án: 3.000 yên (三千円).",
+          reason: "Dẫn chứng câu 7:「じしょは三千円です。」",
+          wrongOptions: [
+            { option: "五百円です", reason: "500 yên là giá của bát mì ramen." },
+            { option: "二千円です", reason: "Sai giá tiền." },
+            { option: "五千円です", reason: "Quá đắt so với bài đọc." }
+          ]
+        }
+      }
+    ]
   }
 ];
 
 const RAW_PASSAGES_JPD123: ReadingPassage[] = [
+  // SET 1 - Đề 1
   {
     id: "jpd123-read-1",
     course: "JPD123",
-    title: "デパートでの買い物とイタリアレストラン",
-    titleVi: "Mua sắm ở bách hóa và nhà hàng Ý",
+    title: "デパートでの買い物と日本料理",
+    titleVi: "Mua sắm ở bách hóa và món ăn Nhật",
     theme: "Mua sắm, so sánh giá cả, dụng cụ ăn uống và phương tiện",
-    content: "先週の土曜日、私は本田さんとバスで大きいデパートへ行きました。デパートでセールがありましたから、人がたくさんいました。私は白いTシャツを二まい買いました。二まいで三千円でした。とてもやすかったです。買い物をしてから、レストランへ行きました。本田さんはピザとコーヒーをたのんで、ナイフとフォークで食べました。私はカレーとジュースをスプーンで食べました。デパートのピザはスーパーのピザよりずっとおいしかったです。午後四時半にタクシーで帰りました。バスよりタクシーのほうがはやいですが、たかかったです。",
+    content: "先週の土曜日、私は東京から来た本田さんとダナン市の区にある大きいデパートへ買い物に行きました。デパートでセールがありましたから、人がたくさんいました。私たちは白いTシャツを二まい買いました。二まいで三千円でした。とてもやすかったです。買い物をしてから、日本料理のレストランへ行きました。ナイフやスプーンなどの食事の道具をつかって、とり肉の料理やピザを食べました。デパートのピザはスーパーのピザよりずっとおいしかったです。小さいカフェでコーヒーを飲んでから、午後四時半にタクシーで帰りました。バスよりタクシーのほうがはやいですが、たかかったです。",
     sentences: [
-      { jp: "先週の土曜日、私は本田さんとバスで大きいデパートへ行きました。", vi: "Thứ Bảy tuần trước, tôi và bạn Honda đã đi xe buýt đến trung tâm thương mại lớn.", romaji: "Senshuu no doyoubi, watashi wa Honda-san to basu de ookii depaato e ikimashita." },
+      { jp: "先週の土曜日、私は東京から来た本田さんとダナン市の区にある大きいデパートへ買い物に行きました。", vi: "Thứ Bảy tuần trước, tôi và bạn Honda đến từ Tokyo đã đi mua sắm ở trung tâm thương mại lớn tại quận trung tâm Đà Nẵng.", romaji: "Senshuu no doyoubi, watashi wa Toukyou kara kita Honda-san to Danan-shi no ku ni aru ookii depaato e kaimono ni ikimashita." },
       { jp: "デパートでセールがありましたから、人がたくさんいました。", vi: "Vì ở trung tâm thương mại có đợt giảm giá nên rất đông người.", romaji: "Depaato de seeru ga arimashita kara, hito ga takusan imashita." },
-      { jp: "私は白いTシャツを二まい買いました。", vi: "Tôi đã mua hai chiếc áo phông trắng.", romaji: "Watashi wa shiroi tiishatsu o nimai kaimashita." },
+      { jp: "私たちは白いTシャツを二まい買いました。", vi: "Chúng tôi đã mua hai chiếc áo phông trắng.", romaji: "Watashitachi wa shiroi tiishatsu o nimai kaimashita." },
       { jp: "二まいで三千円でした。", vi: "Hai chiếc có giá 3.000 yên.", romaji: "Nimai de sanzen-en deshita." },
       { jp: "とてもやすかったです。", vi: "Đã rất rẻ.", romaji: "Totemo yasukatta desu." },
-      { jp: "買い物をしてから、レストランへ行きました。", vi: "Sau khi mua sắm xong, chúng tôi đã đến nhà hàng.", romaji: "Kaimono o shite kara, resutoran e ikimashita." },
-      { jp: "本田さんはピザとコーヒーをたのんで、ナイフとフォークで食べました。", vi: "Honda gọi bánh pizza và cà phê, rồi ăn bằng dao và nĩa.", romaji: "Honda-san wa piza to koohii o tanonde, naifu to fooku de tabemashita." },
-      { jp: "私はカレーとジュースをスプーンで食べました。", vi: "Tôi thì ăn cà ri và uống nước ép bằng thìa.", romaji: "Watashi wa karee to juusu o supuun de tabemashita." },
+      { jp: "買い物をしてから、日本料理のレストランへ行きました。", vi: "Sau khi mua sắm xong, chúng tôi đã đến nhà hàng ẩm thực Nhật Bản.", romaji: "Kaimono o shite kara, nihon ryouri no resutoran e ikimashita." },
+      { jp: "ナイフやスプーンなどの食事の道具をつかって、とり肉の料理やピザを食べました。", vi: "Dùng các dụng cụ ăn uống như dao và thìa, chúng tôi ăn các món thịt gà và pizza.", romaji: "Naifu ya supuun nado no shokuji no dougu o tsukatte, toriniku no ryouri ya piza o tabemashita." },
       { jp: "デパートのピザはスーパーのピザよりずっとおいしかったです。", vi: "Bánh pizza ở trung tâm thương mại ngon hơn nhiều so với pizza ở siêu thị.", romaji: "Depaato no piza wa suupaa no piza yori zutto oishikatta desu." },
-      { jp: "午後四時半にタクシーで帰りました。", vi: "Đến 4 giờ rưỡi chiều, chúng tôi đi taxi về.", romaji: "Gogo yo-jihan ni takushii de kaerimashita." },
+      { jp: "小さいカフェでコーヒーを飲んでから、午後四時半にタクシーで帰りました。", vi: "Sau khi uống cà phê ở quán nhỏ, chúng tôi bắt taxi về lúc 4 giờ rưỡi chiều.", romaji: "Chiisai kafe de koohii o nonde kara, gogo yo-jihan ni takushii de kaerimashita." },
       { jp: "バスよりタクシーのほうがはやいですが、たかかったです。", vi: "Taxi nhanh hơn xe buýt nhưng mà đắt tiền hơn.", romaji: "Basu yori takushii no hou ga hayai desu ga, takakatta desu." }
     ],
-    translation: "Thứ Bảy tuần trước, tôi cùng bạn Honda đi xe buýt đến một trung tâm thương mại lớn. Vì trung tâm thương mại đang có đợt giảm giá nên có rất đông người. Tôi đã mua hai chiếc áo phông trắng với giá 3.000 yên cho cả hai chiếc, thực sự rất rẻ. Mua sắm xong, chúng tôi lên nhà hàng ăn uống. Honda gọi pizza cùng cà phê rồi ăn bằng dao và nĩa. Tôi thì ăn món cà ri và uống nước ép bằng thìa. Pizza ở trung tâm thương mại ngon hơn nhiều so với pizza ở siêu thị. Đến 4 giờ rưỡi chiều, chúng tôi bắt taxi về nhà. Taxi đi nhanh hơn xe buýt nhưng tốn tiền hơn.",
-    romaji: "Senshuu no doyoubi, watashi wa Honda-san to basu de ookii depaato e ikimashita. Depaato de seeru ga arimashita kara, hito ga takusan imashita. Watashi wa shiroi tiishatsu o nimai kaimashita. Nimai de sanzen-en deshita. Totemo yasukatta desu. Kaimono o shite kara, resutoran e ikimashita. Honda-san wa piza to koohii o tanonde, naifu to fooku de tabemashita. Watashi wa karee to juusu o supuun de tabemashita. Depaato no piza wa suupaa no piza yori zutto oishikatta desu. Gogo yo-jihan ni takushii de kaerimashita. Basu yori takushii no hou ga hayai desu ga, takakatta desu.",
-    vocabularyUsed: ["先週", "土曜日", "私", "バス", "デパート", "セール", "人", "Tシャツ", "二枚", "買う", "三千円", "買い物", "レストラン", "ピザ", "コーヒー", "ナイフ", "フォーク", "食べる", "カレー", "ジュース", "スプーン", "スーパー", "午後", "四時半", "タクシー", "帰る", "より", "ほう"],
-    kanjiUsed: ["先", "週", "土", "曜", "日", "私", "本", "田", "大", "行", "人", "二", "買", "三", "千", "円", "物", "食", "午", "後", "四", "時", "半", "帰"],
+    translation: "Thứ Bảy tuần trước, tôi cùng bạn Honda đến từ Tokyo đi mua sắm ở trung tâm thương mại lớn nằm trong quận của thành phố Đà Nẵng. Vì trung tâm thương mại có đợt bán giảm giá lớn nên rất đông người đến. Chúng tôi đã mua hai chiếc áo phông trắng với giá 3.000 yên cho cả hai chiếc, giá rất rẻ. Mua sắm xong, chúng tôi ghé vào một nhà hàng món ăn Nhật Bản. Dùng dao và thìa, chúng tôi cùng ăn món thịt gà và pizza. Pizza ở đây ngon hơn nhiều so với pizza ở siêu thị. Sau đó, chúng tôi uống cà phê ở một quán nhỏ rồi đón taxi về lúc 4 giờ rưỡi chiều. Taxi chạy nhanh hơn xe buýt nhưng đắt tiền hơn.",
+    romaji: "Senshuu no doyoubi, watashi wa Toukyou kara kita Honda-san to Danan-shi no ku ni aru ookii depaato e kaimono ni ikimashita. Depaato de seeru ga arimashita kara, hito ga takusan imashita. Watashitachi wa shiroi tiishatsu o nimai kaimashita. Nimai de sanzen-en deshita. Totemo yasukatta desu. Kaimono o shite kara, nihon ryouri no resutoran e ikimashita. Naifu ya supuun nado no shokuji no dougu o tsukatte, toriniku no ryouri ya piza o tabemashita. Depaato no piza wa suupaa no piza yori zutto oishikatta desu. Chiisai kafe de koohii o nonde kara, gogo yo-jihan ni takushii de kaerimashita. Basu yori takushii no hou ga hayai desu ga, takakatta desu.",
+    vocabularyUsed: ["先週", "土曜日", "私", "東京", "来る", "市", "区", "大きい", "デパート", "買い物", "行く", "セール", "人", "Tシャツ", "二枚", "買う", "三千円", "日本料理", "レストラン", "ナイフ", "スプーン", "道具", "肉", "食べる", "ピザ", "スーパー", "小さい", "カフェ", "コーヒー", "飲む", "午後", "四時半", "タクシー", "帰る", "バス"],
+    kanjiUsed: ["先", "週", "土", "曜", "日", "私", "東", "京", "来", "本", "田", "市", "区", "大", "買", "物", "行", "人", "二", "三", "千", "円", "料", "理", "食", "具", "肉", "小", "飲", "午", "後", "四", "時", "半", "帰"],
     questions: [
       {
         id: "jpd123-q1-1",
-        prompt: "筆者はデパートで何を何まい買いましたか。",
-        options: ["Tシャツを二まい買いました", "Tシャツを三まい買いました", "ズボンを二まい買いました", "シャツを一まい買いました"],
-        answer: "Tシャツを二まい買いました",
+        prompt: "筆者は本田さんとどこへ買い物に行きましたか。",
+        options: [
+          "ダナン市の区にある大きいデパートへ行きました",
+          "東京の小さいスーパーへ行きました",
+          "ハノイの駅の前の本屋へ行きました",
+          "大学の近くのコンビニへ行きました"
+        ],
+        answer: "ダナン市の区にある大きいデパートへ行きました",
         explanation: {
-          meaning: "Tác giả đã mua cái gì và mấy chiếc ở bách hóa? Đáp án: Mua hai chiếc áo phông (Tシャツ).",
-          reason: "Dẫn chứng câu 3:「私は白いTシャツを二まい買いました。」(Tôi đã mua hai chiếc áo phông trắng).",
+          meaning: "Tác giả đã cùng Honda đi mua sắm ở đâu? Đáp án: Trung tâm thương mại lớn ở quận của thành phố Đà Nẵng.",
+          reason: "Dẫn chứng câu 1:「ダナン市の区にある大きいデパートへ買い物に行きました。」",
           wrongOptions: [
-            { option: "Tシャツを三まい買いました", reason: "Sai số lượng: Mua 2 chiếc (二まい) chứ không phải 3 chiếc." },
-            { option: "ズボンを二まい買いました", reason: "Sai loại đồ: Tác giả mua Tシャツ (áo phông) chứ không mua quần dài (ズボン)." },
-            { option: "シャツを一まい買いました", reason: "Sai cả loại áo và số lượng." }
+            { option: "東京の小さいスーパーへ行きました", reason: "Honda đến từ Tokyo chứ không phải đi siêu thị ở Tokyo." },
+            { option: "ハノイの駅の前の本屋へ行きました", reason: "Không đi hiệu sách ở Hà Nội." },
+            { option: "大学の近くのコンビニへ行きました", reason: "Tác giả đi trung tâm thương mại lớn." }
           ]
         }
       },
       {
         id: "jpd123-q1-2",
-        prompt: "本田さんは何でピザを食べましたか。",
-        options: ["ナイフとフォークで食べました", "スプーンだけで食べました", "手だけで食べました", "ハシで食べました"],
-        answer: "ナイフとフォークで食べました",
+        prompt: "筆者はデパートで何を何まい買いましたか。",
+        options: ["白いTシャツを二まい買いました", "黒いTシャツを三まい買いました", "ズボンを二まい買いました", "シャツを一まい買いました"],
+        answer: "白いTシャツを二まい買いました",
         explanation: {
-          meaning: "Bạn Honda đã ăn bánh pizza bằng dụng cụ gì? Đáp án: Bằng dao và nĩa.",
-          reason: "Dẫn chứng câu 7:「本田さんはピザとコーヒーをたのんで、ナイフとフォークで食べました。」",
+          meaning: "Tác giả đã mua cái gì và mấy chiếc ở bách hóa? Đáp án: Mua hai chiếc áo phông trắng.",
+          reason: "Dẫn chứng câu 3:「私たちは白いTシャツを二まい買いました。」",
           wrongOptions: [
-            { option: "スプーンだけで食べました", reason: "Thìa là dụng cụ tác giả dùng để ăn cơm cà ri." },
-            { option: "手だけで食べました", reason: "Honda dùng dao và nĩa theo cách ăn lịch sự kiểu Tây." },
-            { option: "ハシで食べました", reason: "Bài đọc không đề cập đến đũa (ハシ)." }
+            { option: "黒いTシャツを三まい買いました", reason: "Áo màu trắng và mua 2 chiếc chứ không phải 3 chiếc." },
+            { option: "ズボンを二まい買いました", reason: "Mua áo phông chứ không mua quần dài." },
+            { option: "シャツを一まい買いました", reason: "Sai số lượng và chủng loại." }
           ]
         }
       },
       {
         id: "jpd123-q1-3",
-        prompt: "デパートのピザとスーパーのピザはどうですか。",
+        prompt: "レストランで何をつかって食べましたか。",
         options: [
-          "デパートのピザのほうがスーパーよりずっとおいしいです",
-          "スーパーのピザのほうがデパートよりおいしいです",
-          "どちらのピザも同じくらいおいしいです",
-          "デパートのピザはスーパーよりまずいです"
+          "ナイフやスプーンなどの食事の道具をつかいました",
+          "ハシだけをつかって食べました",
+          "手だけで食べました",
+          "フォークだけで食べました"
         ],
-        answer: "デパートのピザのほうがスーパーよりずっとおいしいです",
+        answer: "ナイフやスプーンなどの食事の道具をつかいました",
         explanation: {
-          meaning: "So sánh pizza ở bách hóa và pizza ở siêu thị như thế nào? Đáp án: Pizza ở bách hóa ngon hơn nhiều.",
-          reason: "Dẫn chứng câu 9:「デパートのピザはスーパーのピザよりずっとおいしかったです。」",
+          meaning: "Ở nhà hàng, tác giả đã dùng gì để ăn? Đáp án: Các dụng cụ ăn uống như dao và thìa.",
+          reason: "Dẫn chứng câu 7:「ナイフやスプーンなどの食事の道具をつかって、とり肉の料理やピザを食べました。」",
           wrongOptions: [
-            { option: "スーパーのピザのほうがデパートよりおいしいです", reason: "Ngược hoàn toàn với ý trong bài." },
-            { option: "どちらのピザも同じくらいおいしいです", reason: "Bài khẳng định pizza ở bách hóa ngon hơn hẳn (ずっとおいしかった)." },
-            { option: "デパートのピザはスーパーよりまずいです", reason: "Sai hoàn toàn vì pizza ở bách hóa rất ngon." }
+            { option: "ハシだけをつかって食べました", reason: "Bài không nhắc đến dùng đũa." },
+            { option: "手だけで食べました", reason: "Bài nêu rõ dùng dụng cụ dao và thìa." },
+            { option: "フォークだけで食べました", reason: "Bài nêu dao và thìa (ナイフやスプーンなどの食事の道具)." }
           ]
         }
       },
       {
         id: "jpd123-q1-4",
-        prompt: "どうして帰りはタクシーにのりましたか。",
+        prompt: "デパートのピザとスーパーのピザはどうですか。",
         options: [
-          "バスよりタクシーのほうがはやいからです",
-          "タクシーのほうがバスよりやすいからです",
-          "バスがもうなかったからです",
-          "デパートの前にバスていがなかったからです"
+          "デパートのピザのほうがスーパーよりずっとおいしいです",
+          "スーパーのピザのほうがデパートよりおいしいです",
+          "どちらのピザも同じ味です",
+          "デパートのピザはあまりおいしくないです"
         ],
-        answer: "バスよりタクシーのほうがはやいからです",
+        answer: "デパートのピザのほうがスーパーよりずっとおいしいです",
         explanation: {
-          meaning: "Tại sao lúc về lại đi bằng taxi? Đáp án: Vì taxi đi nhanh hơn xe buýt.",
-          reason: "Dẫn chứng câu kết bài:「バスよりタクシーのほうがはやいですが、たかかったです。」",
+          meaning: "So sánh pizza ở bách hóa và siêu thị như thế nào? Đáp án: Pizza ở bách hóa ngon hơn nhiều.",
+          reason: "Dẫn chứng câu 8:「デパートのピザはスーパーのピザよりずっとおいしかったです。」",
           wrongOptions: [
-            { option: "タクシーのほうがバスよりやすいからです", reason: "Taxi đắt hơn xe buýt (たかかったです)." },
-            { option: "バスがもうなかったからです", reason: "Bài không đề cập xe buýt hết chuyến." },
-            { option: "デパートの前にバスていがなかったからです", reason: "Bài đọc không đề cập đến chi tiết này." }
+            { option: "スーパーのピザのほうがデパートよりおいしいです", reason: "Ngược hoàn toàn với bài đọc." },
+            { option: "どちらのピザも同じ味です", reason: "Bài khẳng định pizza bách hóa ngon hơn hẳn." },
+            { option: "デパートのピザはあまりおいしくないです", reason: "Pizza ở bách hóa rất ngon." }
           ]
         }
       }
     ]
   },
+  // SET 1 - Đề 2
   {
     id: "jpd123-read-2",
     course: "JPD123",
-    title: "アパートでの日本料理パーティー",
-    titleVi: "Bữa tiệc món ăn Nhật ở khu căn hộ",
-    theme: "Nấu ăn, thể て chỉ trình tự, mời thầy cô, miêu tả hương vị và giao tiếp",
-    content: "私はFPT大学の学生です。今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。午前十時に本田さんとスーパーへ行って、とり肉やさかなややさいを買いました。ぜんぶで五千五百円でした。スーパーの食べ物はコンビニの食べ物よりやすいです。アパートに帰ってから、みんなで料理をつくりました。本田さんはナイフで肉をきって、私は大きいテーブルでスープとサラダをつくりました。田中先生も来て、「とてもおいしいですね」と言いました。料理を食べてから、みんなでコーヒーを飲んで、日本語でたくさん話しました。とてもたのしかったです。",
+    title: "歴史のあるお寺と門の観光",
+    titleVi: "Tham quan ngôi chùa lịch sử và cổng lớn",
+    theme: "Du lịch, danh lam thắng cảnh, phương tiện và viết tên kỷ niệm",
+    content: "来月の休みに、私の国のともだちと二人でお寺へりょこうに行きます。そのまちには大きい門とお寺がありますから、男の人も女の人もたくさん来ます。駅の前で有名なバスにのって、午前十時につきました。お寺の門の前でしゃしんをたくさんとって、きれいなたてものを見ました。たくさん歩きましたから、からだがつかれて力もなくなりましたが、とてもたのしかったです。お寺のノートに自分の名前を書いてから、よるにアパートへ帰りました。",
     sentences: [
-      { jp: "私はFPT大学の学生です。", vi: "Tôi là sinh viên trường Đại học FPT.", romaji: "Watashi wa Efu-pii-tii daigaku no gakusei desu." },
-      { jp: "今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。", vi: "Chủ nhật tuần này, tôi đã tổ chức bữa tiệc món ăn Nhật Bản cùng bạn bè tại căn hộ.", romaji: "Konshuu no nichiyoubi ni, apaato de tomodachi to nihon ryouri no paatii o shimashita." },
-      { jp: "午前十時に本田さんとスーパーへ行って、とり肉やさかなややさいを買いました。", vi: "Lúc 10 giờ sáng, tôi cùng bạn Honda đi siêu thị mua thịt gà, cá và rau củ.", romaji: "Gozen juu-ji ni Honda-san to suupaa e itte, toriniku ya sakana ya yasai o kaimashita." },
-      { jp: "ぜんぶで五千五百円でした。", vi: "Tổng cộng hết 5.500 yên.", romaji: "Zenbu de gosen gohyaku-en deshita." },
-      { jp: "スーパーの食べ物はコンビニの食べ物よりやすいです。", vi: "Thực phẩm ở siêu thị rẻ hơn thực phẩm ở cửa hàng tiện lợi.", romaji: "Suupaa no tabemono wa konbini no tabemono yori yasui desu." },
-      { jp: "アパートに帰ってから、みんなで料理をつくりました。", vi: "Sau khi về đến căn hộ, mọi người cùng nhau nấu nướng.", romaji: "Apaato ni kaette kara, minna de ryouri o tsukurimashita." },
-      { jp: "本田さんはナイフで肉をきって、私は大きいテーブルでスープとサラダをつくりました。", vi: "Honda dùng dao thái thịt, còn tôi làm món súp và sa lát ở chiếc bàn lớn.", romaji: "Honda-san wa naifu de niku o kitte, watashi wa ookii teeburu de suupu to sarada o tsukurimashita." },
-      { jp: "田中先生も来て、「とてもおいしいですね」と言いました。", vi: "Thầy Tanaka cũng đến tham dự và khen: 'Ngon tuyệt vời nhỉ'.", romaji: "Tanaka-sensei mo kite, 'Totemo oishii desu ne' to iimashita." },
-      { jp: "料理を食べてから、みんなでコーヒーを飲んで、日本語でたくさん話しました。", vi: "Sau khi ăn xong, mọi người cùng uống cà phê và trò chuyện rất nhiều bằng tiếng Nhật.", romaji: "Ryouri o tabete kara, minna de koohii o nonde, nihongo de takusan hanashimashita." },
-      { jp: "とてもたのしかったです。", vi: "Buổi tiệc đã thực sự rất vui vẻ.", romaji: "Totemo tanoshikatta desu." }
+      { jp: "来月の休みに、私の国のともだちと二人でお寺へりょこうに行きます。", vi: "Vào kỳ nghỉ tháng sau, tôi và người bạn cùng quê sẽ đi du lịch đến ngôi chùa cổ.", romaji: "Raigetsu no yasumi ni, watashi no kuni no tomodachi to futari de otera e ryokou ni ikimasu." },
+      { jp: "そのまちには大きい門とお寺がありますから、男の人も女の人もたくさん来ます。", vi: "Vì thị trấn đó có cổng lớn và ngôi chùa nên cả nam và nữ đều đến rất đông.", romaji: "Sono machi ni wa ookii mon to otera ga arimasu kara, otoko no hito mo onna no hito mo takusan kimasu." },
+      { jp: "駅の前で有名なバスにのって、午前十時につきました。", vi: "Chúng tôi lên tuyến xe buýt nổi tiếng ở trước nhà ga và đã đến nơi lúc 10 giờ sáng.", romaji: "Eki no mae de yuumeina basu ni notte, gozen juu-ji ni tsukimashita." },
+      { jp: "お寺の門の前でしゃしんをたくさんとって、きれいなたてものを見ました。", vi: "Chúng tôi chụp nhiều ảnh trước cổng chùa và chiêm ngưỡng công trình tuyệt đẹp.", romaji: "Otera no mon no mae de shashin o takusan totte, kireina tatemono o mimashita." },
+      { jp: "たくさん歩きましたから、からだがつかれて力もなくなりましたが、とてもたのしかったです。", vi: "Vì đi bộ nhiều nên người mệt và kiệt sức nhưng chuyến đi rất vui.", romaji: "Takusan arukimashita kara, karada ga tsukarete chikara mo nakunarimashita ga, totemo tanoshikatta desu." },
+      { jp: "お寺のノートに自分の名前を書いてから、よるにアパートへ帰りました。", vi: "Sau khi viết tên mình vào cuốn sổ lưu niệm của chùa, chúng tôi trở về căn hộ vào buổi tối.", romaji: "Otera no nooto ni jibun no namae o kaite kara, yoru ni apaato e kaerimashita." }
     ],
-    translation: "Tôi là sinh viên trường Đại học FPT. Chủ nhật tuần này, tôi đã tổ chức một bữa tiệc ẩm thực Nhật Bản cùng bạn bè tại căn hộ của mình. Đúng 10 giờ sáng, tôi cùng Honda đi siêu thị mua thịt gà, cá tươi và rau củ. Tổng chi phí hết 5.500 yên, đồ ăn ở siêu thị rẻ hơn nhiều so với cửa hàng tiện lợi. Về đến nhà, mọi người bắt tay vào nấu nướng. Honda dùng dao cắt thịt, còn tôi chuẩn bị súp và sa lát trên chiếc bàn lớn. Thầy Tanaka cũng tới dự và khen món ăn rất ngon. Sau khi dùng bữa, mọi người cùng nhâm nhi cà phê và trò chuyện rôm rả bằng tiếng Nhật. Bữa tiệc hôm đó thật trọn vẹn và vui vẻ.",
-    romaji: "Watashi wa Efu-pii-tii daigaku no gakusei desu. Konshuu no nichiyoubi ni, apaato de tomodachi to nihon ryouri no paatii o shimashita. Gozen juu-ji ni Honda-san to suupaa e itte, toriniku ya sakana ya yasai o kaimashita. Zenbu de gosen gohyaku-en deshita. Suupaa no tabemono wa konbini no tabemono yori yasui desu. Apaato ni kaette kara, minna de ryouri o tsukurimashita. Honda-san wa naifu de niku o kitte, watashi wa ookii teeburu de suupu to sarada o tsukurimashita. Tanaka-sensei mo kite, 'Totemo oishii desu ne' to iimashita. Ryouri o tabete kara, minna de koohii o nonde, nihongo de takusan hanashimashita. Totemo tanoshikatta desu.",
-    vocabularyUsed: ["私", "大学", "学生", "今週", "日曜日", "アパート", "日本料理", "パーティー", "午前", "十時", "スーパー", "とり肉", "買う", "五千五百円", "食べ物", "コンビニ", "帰る", "料理", "ナイフ", "テーブル", "スープ", "サラダ", "先生", "来る", "言う", "食べる", "コーヒー", "飲む", "日本語", "話す"],
-    kanjiUsed: ["私", "大", "学", "生", "今", "週", "日", "曜", "本", "料", "理", "午", "前", "十", "時", "田", "行", "肉", "買", "五", "千", "百", "円", "食", "物", "帰", "先", "言", "飲", "語", "話"],
+    translation: "Vào kỳ nghỉ tháng sau, tôi cùng một người bạn đồng hương dự định đi du lịch viếng chùa. Nơi đó có cổng chào khổng lồ và ngôi chùa thanh tịnh nên thu hút rất đông cả nam giới và nữ giới tới tham quan. Chúng tôi đón xe buýt trước nhà ga và đến nơi vào lúc 10 giờ sáng. Cả hai chụp nhiều bức ảnh kỷ niệm trước cổng chùa và ngắm nhìn các công trình kiến trúc tuyệt đẹp. Do đi bộ khá nhiều nên cơ thể thấm mệt và tiêu hao nhiều thể lực, nhưng chuyến đi vô cùng ý nghĩa và vui vẻ. Sau khi nắn nót ghi tên mình vào sổ lưu niệm tại chùa, chúng tôi trở về căn hộ khi trời đã tối.",
+    romaji: "Raigetsu no yasumi ni, watashi no kuni no tomodachi to futari de otera e ryokou ni ikimasu. Sono machi ni wa ookii mon to otera ga arimasu kara, otoko no hito mo onna no hito mo takusan kimasu. Eki no mae de yuumeina basu ni notte, gozen juu-ji ni tsukimashita. Otera no mon no mae de shashin o takusan totte, kireina tatemono o mimashita. Takusan arukimashita kara, karada ga tsukarete chikara mo nakunarimashita ga, totemo tanoshikatta desu. Otera no nooto ni jibun no namae o kaite kara, yoru ni apaato e kaerimashita.",
+    vocabularyUsed: ["来月", "休み", "私", "国", "友達", "二人", "お寺", "旅行", "行く", "大きい", "門", "男の人", "女の人", "来る", "前", "バス", "午前", "十時", "写真", "見る", "力", "名前", "書く", "アパート", "帰る"],
+    kanjiUsed: ["来", "月", "休", "私", "国", "二", "人", "寺", "行", "大", "門", "男", "女", "前", "午", "十", "時", "見", "力", "名", "書", "帰"],
     questions: [
       {
         id: "jpd123-q2-1",
-        prompt: "スーパーでぜんぶでいくら買い物しましたか。",
-        options: ["五千五百円でした", "五千円でした", "六千五百円でした", "四千五百円でした"],
-        answer: "五千五百円でした",
+        prompt: "筆者は来月の休みにだれとどこへ行きますか。",
+        options: [
+          "国のともだちと二人でお寺へ行きます",
+          "会社の人と一人で海へ行きます",
+          "先生と三人で東京へ行きます",
+          "家族とデパートへ行きます"
+        ],
+        answer: "国のともだちと二人でお寺へ行きます",
         explanation: {
-          meaning: "Đã mua sắm hết tổng cộng bao nhiêu tiền ở siêu thị? Đáp án: 5.500 yên (五千五百円).",
-          reason: "Dẫn chứng câu 4:「ぜんぶで五千五百円でした。」",
+          meaning: "Tác giả sẽ đi đâu và đi cùng ai vào kỳ nghỉ tháng sau? Đáp án: Đi chùa cùng 1 người bạn đồng hương (2 người).",
+          reason: "Dẫn chứng câu 1:「来月の休みに、私の国のともだちと二人でお寺へりょこうに行きます。」",
           wrongOptions: [
-            { option: "五千円でした", reason: "Thiếu 500 yên (五百円)." },
-            { option: "六千五百円でした", reason: "Nhiều hơn 1.000 yên so với thực tế." },
-            { option: "四千五百円でした", reason: "Ít hơn 1.000 yên so với thực tế." }
+            { option: "会社の人と一人で海へ行きます", reason: "Đi với bạn cùng quê đến chùa chứ không đi biển." },
+            { option: "先生と三人で東京へ行きます", reason: "Bài không nhắc đi với thầy giáo." },
+            { option: "家族とデパートへ行きます", reason: "Không đi trung tâm thương mại với gia đình." }
           ]
         }
       },
       {
         id: "jpd123-q2-2",
-        prompt: "筆者はアパートで何をつくりましたか。",
+        prompt: "そのまちにはどうして男の人も女の人もたくさん来ますか。",
         options: [
-          "スープとサラダをつくりました",
-          "肉料理とピザをつくりました",
-          "カレーとケーキをつくりました",
-          "パンとハンバーグをつくりました"
+          "大きい門とお寺があるからです",
+          "大きいデパートとカフェがあるからです",
+          "海と山が近いからです",
+          "スポーツの試合があるからです"
         ],
-        answer: "スープとサラダをつくりました",
+        answer: "大きい門とお寺があるからです",
         explanation: {
-          meaning: "Tác giả đã làm món gì ở căn hộ? Đáp án: Món súp và sa lát.",
-          reason: "Dẫn chứng câu 7:「私は大きいテーブルでスープとサラダをつくりました。」",
+          meaning: "Tại sao thị trấn đó lại có nhiều cả nam và nữ đến tham quan? Đáp án: Vì có cổng lớn và ngôi chùa.",
+          reason: "Dẫn chứng câu 2:「そのまちには大きい門とお寺がありますから、男の人も女の人もたくさん来ます。」",
           wrongOptions: [
-            { option: "肉料理とピザをつくりました", reason: "Honda là người cắt thịt, bài không làm pizza." },
-            { option: "カレーとケーキをつくりました", reason: "Bài không làm bánh ngọt hay cà ri." },
-            { option: "パンとハンバーグをつくりました", reason: "Không có các món này trong bữa tiệc." }
+            { option: "大きいデパートとカフェがあるからです", reason: "Thị trấn nổi tiếng nhờ cổng lớn và chùa cổ." },
+            { option: "海と山が近いからです", reason: "Không có thông tin này trong bài." },
+            { option: "スポーツの試合があるからです", reason: "Không có giải thi đấu thể thao." }
           ]
         }
       },
       {
         id: "jpd123-q2-3",
-        prompt: "田中先生は何と言いましたか。",
+        prompt: "お寺の門の前で何をしましたか。",
         options: [
-          "「とてもおいしいですね」と言いました",
-          "「少しからいですね」と言いました",
-          "「あまりおいしくないですね」と言いました",
-          "「時間がありません」と言いました"
+          "しゃしんをとって、きれいなたてものを見ました",
+          "お弁当とおにぎりを食べました",
+          "バスのチケットを買いました",
+          "お茶とジュースを飲みました"
         ],
-        answer: "「とてもおいしいですね」と言いました",
+        answer: "しゃしんをとって、きれいなたてものを見ました",
         explanation: {
-          meaning: "Thầy Tanaka đã nói câu gì? Đáp án: Thầy khen 'Ngon tuyệt vời nhỉ'.",
-          reason: "Dẫn chứng câu 8:「田中先生も来て、「とてもおいしいですね」と言いました。」",
+          meaning: "Họ đã làm gì trước cổng chùa? Đáp án: Chụp ảnh và ngắm các công trình đẹp.",
+          reason: "Dẫn chứng câu 4:「お寺の門の前でしゃしんをたくさんとって、きれいなたてものを見ました。」",
           wrongOptions: [
-            { option: "「少しからいですね」と言いました", reason: "Thầy không bảo món ăn cay." },
-            { option: "「あまりおいしくないですね」と言いました", reason: "Thầy khen ngon chứ không chê dở." },
-            { option: "「時間がありません」と言いました", reason: "Thầy đến tham gia vui vẻ và không vội vã." }
+            { option: "お弁当とおにぎりを食べました", reason: "Họ không ăn cơm hộp trước cổng chùa." },
+            { option: "バスのチケットを買いました", reason: "Mua vé là ở trạm xe buýt trước nhà ga." },
+            { option: "お茶とジュースを飲みました", reason: "Bài không nhắc đến việc uống nước tại đây." }
           ]
         }
       },
       {
         id: "jpd123-q2-4",
-        prompt: "料理を食べた後で、みんなで何をしましたか。",
+        prompt: "アパートへ帰る前に何をしましたか。",
         options: [
-          "コーヒーを飲んで、日本語で話しました",
-          "すぐにアパートへ帰りました",
-          "テレビを見て、ゲームをしました",
-          "スーパーへ買い物に行きました"
+          "お寺のノートに自分の名前を書きました",
+          "レストランでハンバーグを食べました",
+          "デパートでTシャツを買いました",
+          "駅の前でタクシーを呼びました"
         ],
-        answer: "コーヒーを飲んで、日本語で話しました",
+        answer: "お寺のノートに自分の名前を書きました",
         explanation: {
-          meaning: "Sau khi ăn xong, mọi người đã làm gì? Đáp án: Uống cà phê và trò chuyện bằng tiếng Nhật.",
-          reason: "Dẫn chứng câu 9:「料理を食べてから、みんなでコーヒーを飲んで、日本語でたくさん話しました。」",
+          meaning: "Trước khi về căn hộ, tác giả đã làm gì? Đáp án: Ghi tên mình vào sổ lưu niệm ở chùa.",
+          reason: "Dẫn chứng câu kết:「お寺のノートに自分の名前を書いてから、よるにアパートへ帰りました。」",
           wrongOptions: [
-            { option: "すぐにアパートへ帰りました", reason: "Bữa tiệc đang diễn ra tại căn hộ, không phải về ngay." },
-            { option: "テレビを見て、ゲームをしました", reason: "Bài không nhắc đến việc xem tivi hay chơi game." },
-            { option: "スーパーへ買い物に行きました", reason: "Đi siêu thị đã diễn ra từ sáng trước khi nấu." }
+            { option: "レストランでハンバーグを食べました", reason: "Bài không nhắc đến ăn thịt Hamburg." },
+            { option: "デパートでTシャツを買いました", reason: "Không đi mua áo phông." },
+            { option: "駅の前でタクシーを呼びました", reason: "Không có hành động này trong bài." }
           ]
         }
       }
     ]
   },
+  // SET 1 - Đề 3
   {
     id: "jpd123-read-3",
     course: "JPD123",
-    title: "東京りょこうとホテルのけいかく",
-    titleVi: "Chuyến du lịch Tokyo và kế hoạch đặt khách sạn",
-    theme: "Du lịch, so sánh phương tiện Shinkansen và xe buýt, đặt phòng, chụp ảnh và tham quan cổng chùa",
-    content: "来月の休みに、私は大学のともだちと二人で東京へりょこうに行きたいです。東京はとても大きくて、にぎやかなまちです。りょこうの前に、インターネットでホテルをよやくしました。ホテルのへやにテレビやパソコンがあります。東京までしんかんせんとバスとどちらがべんりですか。しんかんせんのほうがはやいですが、チケットがたかいですから、私たちはよるのバスで行きます。東京で大きい門やお寺を見て、カメラでしゃしんをたくさんとりたいです。よるはレストランでハンバーグを食べてから、カラオケへ行きたいです。今からとてもたのしみです。",
+    title: "日本語のじゅぎょうと将来の会社",
+    titleVi: "Giờ học tiếng Nhật và công ty tương lai",
+    theme: "Học tập, thể て theo chỉ dẫn, đọc thành tiếng và rèn luyện năng lực",
+    content: "毎週月曜日と水曜日に、私たちは日本語のじゅぎょうがあります。先生は「テキストを開けて、CDをよく聞いてください」と言いました。それから、学生たちに「この文を声に出して読んでください」と言って、先生はノートやパソコンに漢字を書いて、読み方を教えてくれました。じゅぎょうの後で、ルームメイトとカフェでテストについて日本語でたくさん話しました。私は今週、毎日二時間べんきょうしています。日本の会社で働きたいですから、日本語の力をつけたいです。",
     sentences: [
-      { jp: "来月の休みに、私は大学のともだちと二人で東京へりょこうに行きたいです。", vi: "Vào kỳ nghỉ tháng sau, tôi muốn cùng một người bạn đại học đi du lịch Tokyo.", romaji: "Raigetsu no yasumi ni, watashi wa daigaku no tomodachi to futari de Toukyou e ryokou ni ikitai desu." },
-      { jp: "東京はとても大きくて、にぎやかなまちです。", vi: "Tokyo là một thành phố rất rộng lớn và náo nhiệt.", romaji: "Toukyou wa totemo ookikute, nigiyakana machi desu." },
-      { jp: "りょこうの前に、インターネットでホテルをよやくしました。", vi: "Trước chuyến đi, chúng tôi đã đặt phòng khách sạn qua Internet.", romaji: "Ryokou no mae ni, intaanetto de hoteru o yoyaku shimashita." },
-      { jp: "ホテルのへやにテレビやパソコンがあります。", vi: "Trong phòng khách sạn có trang bị tivi và máy tính.", romaji: "Hoteru no heya ni terebi ya pasokon ga arimasu." },
-      { jp: "東京までしんかんせんとバスとどちらがべんりですか。", vi: "Đến Tokyo thì đi tàu Shinkansen hay xe buýt tiện hơn?", romaji: "Toukyou made shinkansen to basu to dochira ga benri desu ka." },
-      { jp: "しんかんせんのほうがはやいですが、チケットがたかいですから、私たちはよるのバスで行きます。", vi: "Tàu Shinkansen nhanh hơn nhưng vé đắt, vì vậy chúng tôi sẽ đi bằng xe buýt đêm.", romaji: "Shinkansen no hou ga hayai desu ga, chiketto ga takai desu kara, watashitachi wa yoru no basu de ikimasu." },
-      { jp: "東京で大きい門やお寺を見て、カメラでしゃしんをたくさんとりたいです。", vi: "Tôi muốn ngắm nhìn những cổng chào lớn và ngôi chùa ở Tokyo, rồi dùng máy ảnh chụp thật nhiều ảnh.", romaji: "Toukyou de ookii mon ya otera o mite, kamera de shashin o takusan toritai desu." },
-      { jp: "よるはレストランでハンバーグを食べてから、カラオケへ行きたいです。", vi: "Buổi tối, sau khi ăn món thịt băm nướng Hamburg ở nhà hàng, tôi muốn đi hát karaoke.", romaji: "Yoru wa resutoran de hanbaagu o tabete kara, karaoke e ikitai desu." },
-      { jp: "今からとてもたのしみです。", vi: "Ngay từ bây giờ tôi đã rất mong đợi chuyến đi này.", romaji: "Ima kara totemo tanoshimi desu." }
+      { jp: "毎週月曜日と水曜日に、私たちは日本語のじゅぎょうがあります。", vi: "Mỗi thứ Hai và thứ Tư hàng tuần, chúng tôi đều có tiết học tiếng Nhật.", romaji: "Maishuu getsuyoubi to suiyoubi ni, watashitachi wa nihongo no jugyou ga arimasu." },
+      { jp: "先生は「テキストを開けて、CDをよく聞いてください」と言いました。", vi: "Cô giáo nói: 'Cả lớp hãy mở sách giáo trình ra và chú ý lắng nghe đĩa CD'.", romaji: "Sensei wa 'tekisuto o akete, shii-dii o yoku kiite kudasai' to iimashita." },
+      { jp: "それから、学生たちに「この文を声に出して読んでください」と言って、先生はノートやパソコンに漢字を書いて、読み方を教えてくれました。", vi: "Sau đó, cô bảo học sinh: 'Hãy đọc to câu này lên', rồi cô viết chữ Hán vào sổ và máy tính để dạy cách đọc.", romaji: "Sorekara, gakuseitachi ni 'kono bun o koe ni dashite yonde kudasai' to itte, sensei wa nooto ya pasokon ni kanji o kaite, yomikata o oshiete kuremashita." },
+      { jp: "じゅぎょうの後で、ルームメイトとカフェでテストについて日本語でたくさん話しました。", vi: "Sau giờ học, tôi cùng bạn cùng phòng ra quán cà phê và trò chuyện rất nhiều bằng tiếng Nhật về bài thi.", romaji: "Jugyou no ato de, ruumumeito to kafe de tesuto ni tsuite nihongo de takusan hanashimashita." },
+      { jp: "私は今週、毎日二時間べんきょうしています。", vi: "Tuần này, ngày nào tôi cũng chăm chỉ học 2 tiếng đồng hồ.", romaji: "Watashi wa konshuu, mainichi ni-jikan benkyou shite imasu." },
+      { jp: "日本の会社で働きたいですから、日本語の力をつけたいです。", vi: "Vì tôi muốn làm việc ở công ty Nhật Bản nên tôi muốn nâng cao năng lực tiếng Nhật.", romaji: "Nihon no kaisha de hatarakitai desu kara, nihongo no chikara o tsuketai desu." }
     ],
-    translation: "Vào kỳ nghỉ tháng tới, tôi dự định cùng một người bạn học đại học đi du lịch Tokyo. Tokyo là một đại đô thị cực kỳ rộng lớn và sầm uất. Trước khi lên đường, chúng tôi đã đặt phòng khách sạn qua mạng Internet. Khách sạn tiện nghi có cả tivi và máy vi tính trong phòng. Đi đến Tokyo thì tàu Shinkansen hay xe buýt tiện hơn? Tàu Shinkansen chạy nhanh hơn hẳn nhưng vì giá vé đắt đỏ nên chúng tôi chọn đi bằng xe buýt đêm. Đến Tokyo, tôi muốn chiêm ngưỡng cổng đền khổng lồ và các ngôi chùa cổ kính, rồi dùng máy ảnh chụp thật nhiều kỷ niệm. Tối đến, sau khi thưởng thức món Hamburg tại nhà hàng, cả hai sẽ cùng đi hát karaoke. Nghĩ đến thôi tôi đã thấy vô cùng hào hứng.",
-    romaji: "Raigetsu no yasumi ni, watashi wa daigaku no tomodachi to futari de Toukyou e ryokou ni ikitai desu. Toukyou wa totemo ookikute, nigiyakana machi desu. Ryokou no mae ni, intaanetto de hoteru o yoyaku shimashita. Hoteru no heya ni terebi ya pasokon ga arimasu. Toukyou made shinkansen to basu to dochira ga benri desu ka. Shinkansen no hou ga hayai desu ga, chiketto ga takai desu kara, watashitachi wa yoru no basu de ikimasu. Toukyou de ookii mon ya otera o mite, kamera de shashin o takusan toritai desu. Yoru wa resutoran de hanbaagu o tabete kara, karaoke e ikitai desu. Ima kara totemo tanoshimi desu.",
-    vocabularyUsed: ["来月", "休み", "私", "大学", "二人", "東京", "旅行", "行く", "大きい", "前", "インターネット", "ホテル", "テレビ", "パソコン", "バス", "チケット", "門", "お寺", "見る", "カメラ", "レストラン", "ハンバーグ", "食べる", "カラオケ", "今"],
-    kanjiUsed: ["来", "月", "休", "私", "大", "学", "二", "人", "東", "京", "行", "前", "門", "寺", "見", "食", "今"],
+    translation: "Vào mỗi sáng thứ Hai và thứ Tư hàng tuần, chúng tôi đều có tiết học tiếng Nhật tại trường. Giáo viên dặn cả lớp: 'Các em hãy mở sách giáo khoa tiếng Nhật và chú ý lắng nghe đĩa CD phát âm nhé'. Tiếp đó, cô yêu cầu: 'Hãy đọc to câu văn này lên', rồi cô viết từng chữ Hán quan trọng vào cuốn sổ lớn và hướng dẫn cách đọc chuẩn xác. Sau tiết học, sinh viên chúng tôi cùng ở lại lớp trò chuyện thật nhiều bằng tiếng Nhật. Tuần này, mỗi ngày tôi đều tự học đều đặn 2 tiếng. Vì mong muốn sau này được làm việc tại một công ty Nhật Bản, tôi đang nỗ lực hết mình để nâng cao năng lực tiếng Nhật.",
+    romaji: "Maishuu getsuyoubi to suiyoubi ni, watashitachi wa nihongo no jugyou ga arimasu. Sensei wa 'nihongo no hon o akete, shii-dii o yoku kiite kudasai' to iimashita. Sorekara, gakuseitachi ni 'kono bun o koe ni dashite yonde kudasai' to itte, sensei wa nooto ni kanji o kaite, yomikata o oshiete kuremashita. Jugyou no ato de, gakuseitachi wa kyoushitsu de nihongo de takusan hanashimashita. Watashi wa konshuu, mainichi ni-jikan benkyou shite imasu. Nihon no kaisha de hatarakitai desu kara, nihongo no chikara o tsuketai desu.",
+    vocabularyUsed: ["毎週", "月曜日", "水曜日", "私", "日本語", "先生", "本", "CD", "聞く", "言う", "読む", "書く", "後", "話す", "今週", "毎日", "二時間", "会社", "力"],
+    kanjiUsed: ["毎", "週", "月", "曜", "日", "水", "私", "本", "語", "先", "生", "聞", "言", "読", "書", "後", "話", "今", "二", "時", "間", "会", "社", "力"],
     questions: [
       {
         id: "jpd123-q3-1",
+        prompt: "先生は最初に学生たちに何と言いましたか。",
+        options: [
+          "「本を開けて、CDをよく聞いてください」と言いました",
+          "「教室の窓を閉めてください」と言いました",
+          "「すぐにテストを始めてください」と言いました",
+          "「パソコンを消してください」と言いました"
+        ],
+        answer: "「本を開けて、CDをよく聞いてください」と言いました",
+        explanation: {
+          meaning: "Đầu tiên cô giáo đã nói gì với các học sinh? Đáp án: 'Hãy mở sách ra và nghe đĩa CD'.",
+          reason: "Dẫn chứng câu 2:「先生は「日本語の本を開けて、CDをよく聞いてください」と言いました。」",
+          wrongOptions: [
+            { option: "「教室の窓を閉めてください」と言いました", reason: "Cô không yêu cầu đóng cửa sổ lớp." },
+            { option: "「すぐにテストを始めてください」と言いました", reason: "Không phải giờ làm bài kiểm tra." },
+            { option: "「パソコンを消してください」と言いました", reason: "Không có yêu cầu tắt máy tính." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q3-2",
+        prompt: "先生はノートに何を書いて教えましたか。",
+        options: [
+          "漢字を書いて、読み方を教えてくれました",
+          "英語を書いて、意味を教えてくれました",
+          "宿題の答えを書いてくれました",
+          "レストランのメニューを書きました"
+        ],
+        answer: "漢字を書いて、読み方を教えてくれました",
+        explanation: {
+          meaning: "Cô giáo đã viết gì vào sổ và dạy điều gì? Đáp án: Viết chữ Hán và chỉ cách đọc.",
+          reason: "Dẫn chứng câu 3:「先生はノートに漢字を書いて、読み方を教えてくれました。」",
+          wrongOptions: [
+            { option: "英語を書いて、意味を教えてくれました", reason: "Cô viết chữ Hán tiếng Nhật, không viết tiếng Anh." },
+            { option: "宿題の答えを書いてくれました", reason: "Không viết đáp án bài tập về nhà." },
+            { option: "レストランのメニューを書きました", reason: "Không liên quan đến thực đơn nhà hàng." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q3-3",
+        prompt: "じゅぎょうの後で学生たちは何をしましたか。",
+        options: [
+          "教室で日本語でたくさん話しました",
+          "すぐにアパートへ帰りました",
+          "食堂へご飯を食べに行きました",
+          "スーパーへ買い物に行きました"
+        ],
+        answer: "教室で日本語でたくさん話しました",
+        explanation: {
+          meaning: "Sau giờ học, các bạn sinh viên đã làm gì? Đáp án: Trò chuyện nhiều bằng tiếng Nhật trong phòng học.",
+          reason: "Dẫn chứng câu 4:「じゅぎょうの後で、学生たちは教室で日本語でたくさん話しました。」",
+          wrongOptions: [
+            { option: "すぐにアパートへ帰りました", reason: "Họ ở lại lớp luyện nói tiếng Nhật." },
+            { option: "食堂へご飯を食べに行きました", reason: "Bài không nhắc đến việc đi nhà ăn." },
+            { option: "スーパーへ買い物に行きました", reason: "Không đi mua sắm ở siêu thị sau giờ học." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q3-4",
+        prompt: "筆者はどうして日本語の力をつけたいですか。",
+        options: [
+          "将来、日本の会社で働きたいからです",
+          "日本語のテストが嫌いだからです",
+          "先生に怒られたからです",
+          "友達に頼まれたからです"
+        ],
+        answer: "将来、日本の会社で働きたいからです",
+        explanation: {
+          meaning: "Tại sao tác giả lại muốn nâng cao năng lực tiếng Nhật? Đáp án: Vì sau này muốn làm việc ở công ty Nhật.",
+          reason: "Dẫn chứng câu kết bài:「日本の会社で働きたいですから、日本語の力をつけたいです。」",
+          wrongOptions: [
+            { option: "日本語のテストが嫌いだからです", reason: "Tác giả học tập rất chăm chỉ và có mục tiêu rõ ràng." },
+            { option: "先生に怒られたからです", reason: "Không bị giáo viên trách mắng." },
+            { option: "友達に頼まれたからです", reason: "Đó là ước mơ cá nhân chứ không phải do bạn nhờ." }
+          ]
+        }
+      }
+    ]
+  },
+  // SET 1 - Đề 4
+  {
+    id: "jpd123-read-4",
+    course: "JPD123",
+    title: "大学のスポーツ大会とアルバイト",
+    titleVi: "Đại hội thể thao ở đại học và việc làm thêm",
+    theme: "Sự kiện trường học, rủ rê, từ chối khéo, đồ ăn nhẹ và không khí náo nhiệt",
+    content: "今週の日曜日、大学でスポーツ大会があります。本田さんに「いっしょに野きゅうのしあいを見に行きませんか」と聞きました。でも、本田さんは「日曜日はちょっと…会社のアルバイトがありますから」と言いました。本田さんはえきの前のレストランで毎週アルバイトをしています。私は一人ででかけて、コンビニで野さいサンドイッチとジュースを買って食べました。午後から男の人も女の人もたくさんあつまって、とてもにぎやかでした。",
+    sentences: [
+      { jp: "今週の日曜日、大学でスポーツ大会があります。", vi: "Chủ nhật tuần này, ở trường đại học có đại hội thể thao.", romaji: "Konshuu no nichiyoubi, daigaku de supootsu taikai ga arimasu." },
+      { jp: "本田さんに「いっしょに野きゅうの試合を見に行きませんか」と聞きました。", vi: "Tôi đã hỏi bạn Honda: 'Cậu có muốn cùng đi xem trận đấu bóng chày không?'.", romaji: "Honda-san ni 'issho ni yakyuu no shiai o mi ni ikimasen ka' to kikimashita." },
+      { jp: "でも、本田さんは「日曜日はちょっと…会社のアルバイトがありますから」と言いました。", vi: "Nhưng bạn Honda đáp: 'Chủ nhật thì hơi kẹt... vì tớ có ca làm thêm ở công ty'.", romaji: "Demo, Honda-san wa 'nichiyoubi wa chotto... kaisha no arubaito ga arimasu kara' to iimashita." },
+      { jp: "本田さんは駅の前のレストランで毎週アルバイトをしています。", vi: "Honda đang làm thêm cố định vào mỗi tuần ở nhà hàng trước nhà ga.", romaji: "Honda-san wa eki no mae no resutoran de maishuu arubaito o shite imasu." },
+      { jp: "私は一人で出かけて、コンビニで野さいサンドイッチとジュースを買って食べました。", vi: "Tôi đi một mình, ghé cửa hàng tiện lợi mua bánh mì kẹp rau và nước ép để ăn.", romaji: "Watashi wa hitori de dekakete, konbini de yasai sandoitchi to juusu o katte tabemashita." },
+      { jp: "午後から男の人も女の人もたくさんあつまって、とてもにぎやかでした。", vi: "Từ buổi chiều, rất đông nam và nữ tập trung lại nên không khí vô cùng sôi nổi.", romaji: "Gogo kara otoko no hito mo onna no hito mo takusan atsumatte, totemo nigiyaka deshita." }
+    ],
+    translation: "Chủ nhật tuần này, tại khuôn viên trường đại học có tổ chức ngày hội thể thao lớn. Tôi háo hức rủ bạn Honda: 'Chủ nhật này cùng đi xem trận bóng chày với mình không?'. Thế nhưng Honda đã khéo léo từ chối: 'Chủ nhật này thì hơi kẹt cho mình... vì mình có lịch đi làm thêm'. Hóa ra bạn ấy có ca làm thêm hàng tuần tại nhà hàng phía trước nhà ga. Tuy có chút tiếc nuối nhưng tôi vẫn quyết định đi một mình, trên đường ghé cửa hàng tiện lợi mua bánh sandwich rau tươi cùng một hộp nước hoa quả. Từ chiều, các bạn nam và nữ kéo đến cổ vũ rất đông, bầu không khí thực sự náo nhiệt và vui vẻ.",
+    romaji: "Konshuu no nichiyoubi, daigaku de supootsu taikai ga arimasu. Honda-san ni 'issho ni yakyuu no shiai o mi ni ikimasen ka' to kikimashita. Demo, Honda-san wa 'nichiyoubi wa chotto... kaisha no arubaito ga arimasu kara' to iimashita. Honda-san wa eki no mae no resutoran de maishuu arubaito o shite imasu. Watashi wa hitori de dekakete, konbini de yasai sandoitchi to juusu o katte tabemashita. Gogo kara otoko no hito mo onna no hito mo takusan atsumatte, totemo nigiyaka deshita.",
+    vocabularyUsed: ["今週", "日曜日", "大学", "スポーツ", "野球", "見る", "行く", "聞く", "会社", "アルバイト", "言う", "前", "レストラン", "毎週", "一人", "コンビニ", "野菜", "サンドイッチ", "ジュース", "買う", "食べる", "午後", "男の人", "女の人"],
+    kanjiUsed: ["今", "週", "日", "曜", "大", "学", "本", "田", "野", "見", "行", "聞", "会", "社", "言", "前", "毎", "一", "人", "買", "食", "午", "後", "男", "女"],
+    questions: [
+      {
+        id: "jpd123-q4-1",
+        prompt: "本田さんはどうして野きゅうの試合を見に行きませんか。",
+        options: [
+          "日曜日に会社のアルバイトがあるからです",
+          "野きゅうの試合がきらいだからです",
+          "チケットがとてもたかいからです",
+          "病気で休んでいるからです"
+        ],
+        answer: "日曜日に会社のアルバイトがあるからです",
+        explanation: {
+          meaning: "Tại sao Honda không đi xem trận đấu bóng chày cùng tác giả? Đáp án: Vì bạn có ca làm thêm vào Chủ nhật.",
+          reason: "Dẫn chứng câu 3:「本田さんは「日曜日はちょっと…会社のアルバイトがありますから」と言いました。」",
+          wrongOptions: [
+            { option: "野きゅうの試合がきらいだからです", reason: "Honda không bảo ghét bóng chày." },
+            { option: "チケットがとてもたかいからです", reason: "Sự kiện của trường, không phải vì giá vé." },
+            { option: "病気で休んでいるからです", reason: "Honda hoàn toàn khỏe mạnh đi làm thêm." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q4-2",
+        prompt: "「日曜日はちょっと…」はどういう意味ですか。",
+        options: [
+          "ことわる（行けない）意味です",
+          "時間を聞く意味です",
+          "スポーツをほめる意味です",
+          "チケットを予約する意味です"
+        ],
+        answer: "ことわる（行けない）意味です",
+        explanation: {
+          meaning: "Cụm câu 'Chủ nhật thì hơi...' thể hiện hàm ý gì? Đáp án: Là cách từ chối lịch sự (không thể đi được).",
+          reason: "Cấu trúc giao tiếp Bài 6:「〜はちょっと…」là cách nói ngập ngừng khéo léo để từ chối lời mời trong văn hóa Nhật.",
+          wrongOptions: [
+            { option: "時間を聞く意味です", reason: "Không phải hỏi thời gian." },
+            { option: "スポーツをほめる意味です", reason: "Không phải khen ngợi thể thao." },
+            { option: "チケットを予約する意味です", reason: "Không phải đặt vé." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q4-3",
+        prompt: "筆者はコンビニで何を買って食べましたか。",
+        options: [
+          "野さいサンドイッチとジュースを買って食べました",
+          "ラーメンとピザを買って食べました",
+          "とり肉のお弁当とお茶を買いました",
+          "カレーとパンを買いました"
+        ],
+        answer: "野さいサンドイッチとジュースを買って食べました",
+        explanation: {
+          meaning: "Tác giả đã mua món gì ở cửa hàng tiện lợi? Đáp án: Mua bánh mì kẹp rau củ và nước ép.",
+          reason: "Dẫn chứng câu 5:「コンビニで野さいサンドイッチとジュースを買って食べました。」",
+          wrongOptions: [
+            { option: "ラーメンとピザを買って食べました", reason: "Không mua mì ramen hay pizza." },
+            { option: "とり肉のお弁当とお茶を買いました", reason: "Không mua cơm hộp thịt gà." },
+            { option: "カレーとパンを買いました", reason: "Không mua cà ri." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q4-4",
+        prompt: "午後からだれがたくさんあつまりましたか。",
+        options: [
+          "男の人も女の人もたくさんあつまりました",
+          "先生と留学生だけが集まりました",
+          "会社の人だけが集まりました",
+          "だれも来ませんでした"
+        ],
+        answer: "男の人も女の人もたくさんあつまりました",
+        explanation: {
+          meaning: "Từ buổi chiều, ai đã tập trung lại rất đông? Đáp án: Cả nam giới và nữ giới.",
+          reason: "Dẫn chứng câu 6:「午後から男の人も女の人もたくさんあつまって、とてもにぎやかでした。」",
+          wrongOptions: [
+            { option: "先生と留学生だけが集まりました", reason: "Bài nêu rõ cả nam và nữ tập trung đông." },
+            { option: "会社の人だけが集まりました", reason: "Đây là đại hội thể thao của trường đại học." },
+            { option: "だれも来ませんでした", reason: "Ngược hoàn toàn với thực tế rất đông vui." }
+          ]
+        }
+      }
+    ]
+  },
+  // SET 2 - Đề 5
+  {
+    id: "jpd123-read-5",
+    course: "JPD123",
+    title: "東京旅行としんかんせんの予約",
+    titleVi: "Du lịch Tokyo và đặt vé tàu Shinkansen",
+    theme: "Du lịch, so sánh phương tiện, tiện nghi khách sạn và kế hoạch tham quan",
+    content: "来月の休みに、私は大学のともだちと二人で東京へりょこうに行きます。東京はとても大きくて、にぎやかなまちです。りょこうの前に、インターネットでホテルをよやくしました。ホテルのへやにテレビやパソコンがあります。東京までしんかんせんとバスとどちらがべんりですか。しんかんせんのほうがはやいですが、チケットがたかいですから、私たちはよるのバスで行きます。東京で大きい門やお寺を見て、カメラでしゃしんをたくさんとりたいです。今からとてもたのしみです。",
+    sentences: [
+      { jp: "来月の休みに、私は大学のともだちと二人で東京へりょこうに行きます。", vi: "Vào kỳ nghỉ tháng sau, tôi cùng người bạn đại học sẽ đi du lịch Tokyo.", romaji: "Raigetsu no yasumi ni, watashi wa daigaku no tomodachi to futari de Toukyou e ryokou ni ikimasu." },
+      { jp: "東京はとても大きくて、にぎやかなまちです。", vi: "Tokyo là một thành phố rất rộng lớn và sầm uất.", romaji: "Toukyou wa totemo ookikute, nigiyakana machi desu." },
+      { jp: "りょこうの前に、インターネットでホテルをよやくしました。", vi: "Trước chuyến đi, chúng tôi đã đặt phòng khách sạn qua Internet.", romaji: "Ryokou no mae ni, intaanetto de hoteru o yoyaku shimashita." },
+      { jp: "ホテルのへやにテレビやパソコンがあります。", vi: "Trong phòng khách sạn có cả tivi và máy tính.", romaji: "Hoteru no heya ni terebi ya pasokon ga arimasu." },
+      { jp: "東京までしんかんせんとバスとどちらがべんりですか。", vi: "Đến Tokyo thì đi tàu Shinkansen hay xe buýt tiện lợi hơn?", romaji: "Toukyou made shinkansen to basu to dochira ga benri desu ka." },
+      { jp: "しんかんせんのほうがはやいですが、チケットがたかいですから、私たちはよるのバスで行きます。", vi: "Tàu Shinkansen nhanh hơn nhưng vé đắt, vì thế chúng tôi sẽ đi bằng xe buýt đêm.", romaji: "Shinkansen no hou ga hayai desu ga, chiketto ga takai desu kara, watashitachi wa yoru no basu de ikimasu." },
+      { jp: "東京で大きい門やお寺を見て、カメラでしゃしんをたくさんとりたいです。", vi: "Tôi muốn ngắm nhìn các cổng lớn và ngôi chùa ở Tokyo, rồi dùng máy ảnh chụp thật nhiều ảnh.", romaji: "Toukyou de ookii mon ya otera o mite, kamera de shashin o takusan toritai desu." },
+      { jp: "今からとてもたのしみです。", vi: "Ngay từ bây giờ tôi đã rất mong đợi chuyến đi này.", romaji: "Ima kara totemo tanoshimi desu." }
+    ],
+    translation: "Vào kỳ nghỉ tháng tới, tôi dự định cùng một người bạn đại học đi du lịch thủ đô Tokyo. Tokyo là một đại đô thị cực kỳ rộng lớn và nhộn nhịp. Trước ngày khởi hành, chúng tôi đã đặt trước phòng khách sạn qua mạng Internet. Căn phòng rất tiện nghi với cả tivi và máy tính. Đến Tokyo thì đi tàu Shinkansen hay xe buýt tiện hơn? Tàu Shinkansen chạy nhanh hơn hẳn nhưng vì giá vé đắt đỏ nên chúng tôi chọn đi bằng xe buýt đêm. Đến Tokyo, tôi muốn chiêm ngưỡng cổng đền khổng lồ và các ngôi chùa cổ kính, rồi dùng máy ảnh chụp thật nhiều kỷ niệm. Nghĩ đến thôi tôi đã thấy vô cùng hào hứng.",
+    romaji: "Raigetsu no yasumi ni, watashi wa daigaku no tomodachi to futari de Toukyou e ryokou ni ikimasu. Toukyou wa totemo ookikute, nigiyakana machi desu. Ryokou no mae ni, intaanetto de hoteru o yoyaku shimashita. Hoteru no heya ni terebi ya pasokon ga arimasu. Toukyou made shinkansen to basu to dochira ga benri desu ka. Shinkansen no hou ga hayai desu ga, chiketto ga takai desu kara, watashitachi wa yoru no basu de ikimasu. Toukyou de ookii mon ya otera o mite, kamera de shashin o takusan toritai desu. Ima kara totemo tanoshimi desu.",
+    vocabularyUsed: ["来月", "休み", "私", "大学", "二人", "東京", "旅行", "行く", "大きい", "前", "インターネット", "ホテル", "テレビ", "パソコン", "バス", "チケット", "門", "お寺", "見る", "カメラ", "今"],
+    kanjiUsed: ["来", "月", "休", "私", "大", "学", "二", "人", "東", "京", "行", "前", "門", "寺", "見", "今"],
+    questions: [
+      {
+        id: "jpd123-q5-1",
         prompt: "筆者たちはどうしてバスで東京へ行きますか。",
         options: [
           "しんかんせんのチケットがたかいですから",
@@ -460,17 +794,17 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
         ],
         answer: "しんかんせんのチケットがたかいですから",
         explanation: {
-          meaning: "Tại sao nhóm tác giả lại đi Tokyo bằng xe buýt? Đáp án: Vì giá vé tàu Shinkansen đắt.",
+          meaning: "Tại sao nhóm tác giả lại đi Tokyo bằng xe buýt? Đáp án: Vì vé tàu Shinkansen đắt.",
           reason: "Dẫn chứng câu 6:「しんかんせんのほうがはやいですが、チケットがたかいですから、私たちはよるのバスで行きます。」",
           wrongOptions: [
-            { option: "バスのほうがしんかんせんよりはやいからです", reason: "Shinkansen nhanh hơn xe buýt, không phải xe buýt nhanh hơn." },
-            { option: "しんかんせんがすきじゃないからです", reason: "Tác giả không nói không thích Shinkansen mà là do giá vé." },
+            { option: "バスのほうがしんかんせんよりはやいからです", reason: "Shinkansen nhanh hơn chứ không phải xe buýt." },
+            { option: "しんかんせんがすきじゃないからです", reason: "Tác giả không nói ghét tàu Shinkansen." },
             { option: "ホテルがバスていの前にあるからです", reason: "Không có thông tin này trong bài." }
           ]
         }
       },
       {
-        id: "jpd123-q3-2",
+        id: "jpd123-q5-2",
         prompt: "ホテルのへやに何がありますか。",
         options: [
           "テレビやパソコンがあります",
@@ -483,14 +817,14 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
           meaning: "Trong phòng khách sạn có những thiết bị gì? Đáp án: Có tivi và máy tính.",
           reason: "Dẫn chứng câu 4:「ホテルのへやにテレビやパソコンがあります。」",
           wrongOptions: [
-            { option: "電子レンジとギターがあります", reason: "Không có lò vi sóng hay đàn guitar trong phòng." },
-            { option: "ゲームとCDがあります", reason: "Không có máy chơi game hay đĩa CD." },
-            { option: "テーブルとナイフだけあります", reason: "Khách sạn trang bị tivi và máy tính." }
+            { option: "電子レンジとギターがあります", reason: "Không có lò vi sóng hay đàn guitar." },
+            { option: "ゲームとCDがあります", reason: "Không có máy chơi game hay CD." },
+            { option: "テーブルとナイフだけあります", reason: "Khách sạn trang bị tivi và máy vi tính." }
           ]
         }
       },
       {
-        id: "jpd123-q3-3",
+        id: "jpd123-q5-3",
         prompt: "東京で何を見たいと言っていますか。",
         options: [
           "大きい門やお寺を見たいです",
@@ -510,333 +844,329 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
         }
       },
       {
-        id: "jpd123-q3-4",
-        prompt: "よる、レストランで何を食べた後でカラオケへ行きますか。",
-        options: [
-          "ハンバーグを食べてから行きます",
-          "ピザを食べてから行きます",
-          "ラーメンを食べてから行きます",
-          "カレーを食べてから行きます"
-        ],
-        answer: "ハンバーグを食べてから行きます",
-        explanation: {
-          meaning: "Buổi tối, sau khi ăn món gì ở nhà hàng thì đi karaoke? Đáp án: Ăn món thịt nướng Hamburg.",
-          reason: "Dẫn chứng câu 8:「よるはレストランでハンバーグを食べてから、カラオケへ行きたいです。」",
-          wrongOptions: [
-            { option: "ピザを食べてから行きます", reason: "Pizza không phải món ăn tối trong chuyến đi này." },
-            { option: "ラーメンを食べてから行きます", reason: "Bài không nhắc đến món mì ramen." },
-            { option: "カレーを食べてから行きます", reason: "Bài không nhắc đến cà ri." }
-          ]
-        }
-      }
-    ]
-  },
-  {
-    id: "jpd123-read-4",
-    course: "JPD123",
-    title: "ジャズコンサートのやくそくとアルバイト",
-    titleVi: "Hẹn đi xem hòa nhạc Jazz và việc làm thêm",
-    theme: "Sự kiện, rủ rê, từ chối khéo 〜はちょっと…, việc làm thêm định kỳ",
-    content: "来週の土曜日のよる、ダナン市で大きいおんがくのコンサートがあります。私はジャズがすきですから、チケットを二まい買いました。大学で本田さんに「いっしょにコンサートへ行きませんか」と言いました。でも、本田さんは「土曜日はちょっと…アルバイトがありますから」と言いました。本田さんは前のレストランで毎週きん曜日と土曜日にアルバイトをしています。ざんねんですが、私は一人で行きます。コンサートの前に、カフェでパンを食べて、コーヒーを飲みます。それから、カメラでしゃしんをたくさんとりたいです。",
-    sentences: [
-      { jp: "来週の土曜日のよる、ダナン市で大きいおんがくのコンサートがあります。", vi: "Tối thứ Bảy tuần sau, ở thành phố Đà Nẵng sẽ có một buổi hòa nhạc lớn.", romaji: "Raishuu no doyoubi no yoru, Danan-shi de ookii ongaku no konsaato ga arimasu." },
-      { jp: "私はジャズがすきですから、チケットを二まい買いました。", vi: "Vì tôi thích nhạc Jazz nên đã mua hai tấm vé.", romaji: "Watashi wa jazu ga suki desu kara, chiketto o nimai kaimashita." },
-      { jp: "大学で本田さんに「いっしょにコンサートへ行きませんか」と言いました。", vi: "Ở trường đại học, tôi rủ bạn Honda: 'Cậu có muốn cùng đi nghe hòa nhạc không?'.", romaji: "Daigaku de Honda-san ni 'issho ni konsaato e ikimasen ka' to iimashita." },
-      { jp: "でも、本田さんは「土曜日はちょっと…アルバイトがありますから」と言いました。", vi: "Nhưng bạn Honda đáp: 'Thứ Bảy thì hơi kẹt... vì tớ có lịch đi làm thêm'.", romaji: "Demo, Honda-san wa 'doyoubi wa chotto... arubaito ga arimasu kara' to iimashita." },
-      { jp: "本田さんは前のレストランで毎週きん曜日と土曜日にアルバイトをしています。", vi: "Honda đang làm thêm ở nhà hàng trước đó vào mỗi thứ Sáu và thứ Bảy hàng tuần.", romaji: "Honda-san wa mae no resutoran de maishuu kinyoubi to doyoubi ni arubaito o shite imasu." },
-      { jp: "ざんねんですが、私は一人で行きます。", vi: "Tiếc thật, nhưng tôi sẽ đi một mình.", romaji: "Zannen desu ga, watashi wa hitori de ikimasu." },
-      { jp: "コンサートの前に、カフェでパンを食べて、コーヒーを飲みます。", vi: "Trước buổi hòa nhạc, tôi sẽ vào quán cà phê ăn bánh mì và uống cà phê.", romaji: "Konsaato no mae ni, kafe de pan o tabete, koohii o nomimasu." },
-      { jp: "それから、カメラでしゃしんをたくさんとりたいです。", vi: "Sau đó, tôi muốn dùng máy ảnh chụp thật nhiều bức hình đẹp.", romaji: "Sorekara, kamera de shashin o takusan toritai desu." }
-    ],
-    translation: "Tối thứ Bảy tuần sau, tại thành phố Đà Nẵng sẽ diễn ra một đại nhạc hội lớn. Vì đặc biệt yêu thích nhạc Jazz nên tôi đã mua trước hai tấm vé. Khi ở trường đại học, tôi hồ hởi rủ Honda: 'Thứ Bảy này cậu cùng đi xem hòa nhạc với mình nhé!'. Nhưng Honda đã khéo léo từ chối: 'Thứ Bảy thì hơi kẹt cho mình rồi... vì hôm đó mình có ca làm thêm'. Hóa ra bạn ấy đang làm thêm cố định ở nhà hàng gần đó vào mỗi thứ Sáu và thứ Bảy hàng tuần. Tuy hơi tiếc nhưng tôi vẫn quyết định sẽ đi một mình. Trước giờ diễn, tôi ghé tiệm cà phê ăn tạm chiếc bánh mì và nhâm nhi tách cà phê. Sau đó tôi sẽ dùng máy ảnh chụp thật nhiều khoảnh khắc đẹp.",
-    romaji: "Raishuu no doyoubi no yoru, Danan-shi de ookii ongaku no konsaato ga arimasu. Watashi wa jazu ga suki desu kara, chiketto o nimai kaimashita. Daigaku de Honda-san ni 'issho ni konsaato e ikimasen ka' to iimashita. Demo, Honda-san wa 'doyoubi wa chotto... arubaito ga arimasu kara' to iimashita. Honda-san wa mae no resutoran de maishuu kinyoubi to doyoubi ni arubaito o shite imasu. Zannen desu ga, watashi wa hitori de ikimasu. Konsaato no mae ni, kafe de pan o tabete, koohii o nomimasu. Sorekara, kamera de shashin o takusan toritai desu.",
-    vocabularyUsed: ["来週", "土曜日", "市", "大きい", "コンサート", "ジャズ", "チケット", "二枚", "買う", "大学", "言う", "アルバイト", "レストラン", "毎週", "金曜日", "一人", "行く", "前", "カフェ", "パン", "食べる", "コーヒー", "飲む", "カメラ"],
-    kanjiUsed: ["来", "週", "土", "曜", "日", "市", "大", "私", "二", "買", "学", "本", "田", "行", "言", "前", "毎", "一", "人", "食", "飲"],
-    questions: [
-      {
-        id: "jpd123-q4-1",
-        prompt: "本田さんはどうしてコンサートへ行きませんか。",
-        options: [
-          "土曜日にアルバイトがあるからです",
-          "ジャズのおんがくがきらいだからです",
-          "チケットがたかいからです",
-          "病気で休んでいるからです"
-        ],
-        answer: "土曜日にアルバイトがあるからです",
-        explanation: {
-          meaning: "Tại sao Honda không đi nghe hòa nhạc cùng tác giả? Đáp án: Vì thứ Bảy bạn có ca đi làm thêm.",
-          reason: "Dẫn chứng câu 4:「本田さんは「土曜日はちょっと…アルバイトがありますから」と言いました。」",
-          wrongOptions: [
-            { option: "ジャズのおんがくがきらいだからです", reason: "Honda không nói ghét nhạc Jazz." },
-            { option: "チケットがたかいからです", reason: "Tác giả đã mua sẵn cả 2 vé rồi (チケットを二まい買いました)." },
-            { option: "病気で休んでいるからです", reason: "Honda không bị ốm đau." }
-          ]
-        }
-      },
-      {
-        id: "jpd123-q4-2",
-        prompt: "「土曜日はちょっと…」はどういう意味ですか。",
-        options: [
-          "ことわる（行けない）意味です",
-          "時間をたずねる意味です",
-          "コンサートをほめる意味です",
-          "チケットをかう意味です"
-        ],
-        answer: "ことわる（行けない）意味です",
-        explanation: {
-          meaning: "Cụm từ 'Thứ Bảy thì hơi...' thể hiện hàm ý gì? Đáp án: Là cách từ chối khéo léo (không thể đi được).",
-          reason: "Mẫu câu giao tiếp Bài 6:「〜はちょっと…」là cách nói từ chối lịch sự và tinh tế đặc trưng của người Nhật khi không thể nhận lời mời.",
-          wrongOptions: [
-            { option: "時間をたずねる意味です", reason: "Không phải để hỏi giờ giấc." },
-            { option: "コンサートをほめる意味です", reason: "Không phải lời khen ngợi buổi hòa nhạc." },
-            { option: "チケットをかう意味です", reason: "Không phải hỏi mua vé." }
-          ]
-        }
-      },
-      {
-        id: "jpd123-q4-3",
-        prompt: "本田さんはいつレストランでアルバイトをしていますか。",
-        options: [
-          "毎週きん曜日と土曜日です",
-          "毎週月曜日と水曜日です",
-          "日曜日だけです",
-          "毎日の午前です"
-        ],
-        answer: "毎週きん曜日と土曜日です",
-        explanation: {
-          meaning: "Honda làm thêm ở nhà hàng vào những thời gian nào? Đáp án: Vào thứ Sáu và thứ Bảy hàng tuần.",
-          reason: "Dẫn chứng câu 5:「本田さんは前のレストランで毎週きん曜日と土曜日にアルバイトをしています。」",
-          wrongOptions: [
-            { option: "毎週月曜日と水曜日です", reason: "Sai các thứ trong tuần." },
-            { option: "日曜日だけです", reason: "Chủ nhật không phải ngày làm thêm của Honda." },
-            { option: "毎日の午前です", reason: "Honda chỉ làm thứ 6 và thứ 7, không phải mọi buổi sáng." }
-          ]
-        }
-      },
-      {
-        id: "jpd123-q4-4",
-        prompt: "筆者はコンサートの前に何をしますか。",
-        options: [
-          "カフェでパンを食べて、コーヒーを飲みます",
-          "デパートでTシャツを買います",
-          "ホテルでテレビを見ます",
-          "本田さんと日本語を勉強します"
-        ],
-        answer: "カフェでパンを食べて、コーヒーを飲みます",
-        explanation: {
-          meaning: "Tác giả làm gì trước khi buổi biểu diễn bắt đầu? Đáp án: Đến quán cà phê ăn bánh mì và uống cà phê.",
-          reason: "Dẫn chứng câu 7:「コンサートの前に、カフェでパンを食べて、コーヒーを飲みます。」",
-          wrongOptions: [
-            { option: "デパートでTシャツを買います", reason: "Không đi mua áo phông ở bách hóa." },
-            { option: "ホテルでテレビを見ます", reason: "Không ở khách sạn xem tivi." },
-            { option: "本田さんと日本語を勉強します", reason: "Honda bận đi làm thêm." }
-          ]
-        }
-      }
-    ]
-  },
-  {
-    id: "jpd123-read-5",
-    course: "JPD123",
-    title: "日本語のじゅぎょうとパソコンでのべんきょう",
-    titleVi: "Giờ học tiếng Nhật và việc tự học trên máy tính",
-    theme: "Lớp học tiếng Nhật, thể て yêu cầu lịch sự, so sánh cách học và mục đích di chuyển",
-    content: "毎週月曜日と水曜日の午前に、私たちは日本語のじゅぎょうがあります。先生は「日本語の本をあけて、CDを聞いてください」と言いました。それから、先生は大きいノートに書いて、よみかたをおしえました。じゅぎょうの後で、私は大学でインターネットとパソコンをつかって、べんきょうしました。パソコンでのべんきょうは本よりべんりでおもしろいです。来週、日本語のテストがありますから、今週は毎日二時間べんきょうします。今日の午後はともだちとレストランへラーメンを食べに行きます。",
-    sentences: [
-      { jp: "毎週月曜日と水曜日の午前に、私たちは日本語のじゅぎょうがあります。", vi: "Vào mỗi sáng thứ Hai và thứ Tư hàng tuần, chúng tôi đều có giờ học tiếng Nhật.", romaji: "Maishuu getsuyoubi to suiyoubi no gozen ni, watashitachi wa nihongo no jugyou ga arimasu." },
-      { jp: "先生は「日本語の本をあけて、CDを聞いてください」と言いました。", vi: "Giáo viên nói: 'Hãy mở sách tiếng Nhật ra và lắng nghe đĩa CD'.", romaji: "Sensei wa 'nihongo no hon o akete, shii-dii o kiite kudasai' to iimashita." },
-      { jp: "それから、先生は大きいノートに書いて、よみかたをおしえました。", vi: "Sau đó, cô viết lên cuốn sổ lớn và dạy cách phát âm.", romaji: "Sorekara, sensei wa ookii nooto ni kaite, yomikata o oshiemashita." },
-      { jp: "じゅぎょうの後で、私は大学でインターネットとパソコンをつかって、べんきょうしました。", vi: "Sau giờ học, tôi ở lại trường dùng máy tính và Internet để tự học.", romaji: "Jugyou no ato de, watashi wa daigaku de intaanetto to pasokon o tsukatte, benkyou shimashita." },
-      { jp: "パソコンでのべんきょうは本よりべんりでおもしろいです。", vi: "Học trên máy tính tiện lợi và thú vị hơn so với chỉ học trong sách.", romaji: "Pasokon de no benkyou wa hon yori benri de omoshiroi desu." },
-      { jp: "来週、日本語のテストがありますから、今週は毎日二時間べんきょうします。", vi: "Vì tuần sau có bài kiểm tra tiếng Nhật nên tuần này ngày nào tôi cũng học 2 tiếng.", romaji: "Raishuu, nihongo no tesuto ga arimasu kara, konshuu wa mainichi ni-jikan benkyou shimasu." },
-      { jp: "今日の午後はともだちとレストランへラーメンを食べに行きます。", vi: "Chiều nay tôi sẽ cùng bạn đến nhà hàng để ăn mì ramen.", romaji: "Kyou no gogo wa tomodachi to resutoran e raamen o tabe ni ikimasu." }
-    ],
-    translation: "Vào mỗi sáng thứ Hai và thứ Tư hàng tuần, chúng tôi đều có tiết học tiếng Nhật. Cô giáo bước vào lớp và nhẹ nhàng dặn: 'Cả lớp hãy mở sách giáo khoa tiếng Nhật và chú ý lắng nghe đĩa CD nhé'. Tiếp đó, cô viết các từ quan trọng lên cuốn sổ lớn rồi hướng dẫn tỉ mỉ cách đọc chính xác. Sau khi tiết học kết thúc, tôi ở lại trường tận dụng máy tính nối mạng Internet để tự ôn bài. Việc học qua máy tính tiện dụng và sinh động hơn hẳn so với chỉ cầm sách đọc thông thường. Tuần tới sẽ có bài kiểm tra kết thúc học phần tiếng Nhật, vì thế tuần này ngày nào tôi cũng chăm chỉ tự học đủ 2 tiếng đồng hồ. Chiều nay tôi sẽ rủ bạn thân đến nhà hàng ăn một tô mì ramen nóng hổi.",
-    romaji: "Maishuu getsuyoubi to suiyoubi no gozen ni, watashitachi wa nihongo no jugyou ga arimasu. Sensei wa 'nihongo no hon o akete, shii-dii o kiite kudasai' to iimashita. Sorekara, sensei wa ookii nooto ni kaite, yomikata o oshiemashita. Jugyou no ato de, watashi wa daigaku de intaanetto to pasokon o tsukatte, benkyou shimashita. Pasokon de no benkyou wa hon yori benri de omoshiroi desu. Raishuu, nihongo no tesuto ga arimasu kara, konshuu wa mainichi ni-jikan benkyou shimasu. Kyou no gogo wa tomodachi to resutoran e raamen o tabe ni ikimasu.",
-    vocabularyUsed: ["毎週", "月曜日", "水曜日", "午前", "日本語", "先生", "本", "CD", "聞く", "言う", "大きい", "ノート", "書く", "後", "大学", "インターネット", "パソコン", "来週", "テスト", "今週", "毎日", "二時間", "今日", "午後", "レストラン", "ラーメン", "食べる", "行く"],
-    kanjiUsed: ["毎", "週", "月", "曜", "日", "水", "午", "前", "私", "本", "語", "先", "生", "聞", "言", "大", "書", "後", "学", "来", "今", "二", "時", "間", "食", "行"],
-    questions: [
-      {
-        id: "jpd123-q5-1",
-        prompt: "先生は学生に何と言いましたか。",
-        options: [
-          "「本をあけて、CDを聞いてください」と言いました",
-          "「パソコンを消してください」と言いました",
-          "「ドアを閉めてください」と言いました",
-          "「教室から出てください」と言いました"
-        ],
-        answer: "「本をあけて、CDを聞いてください」と言いました",
-        explanation: {
-          meaning: "Giáo viên đã nói gì với học sinh? Đáp án: 'Hãy mở sách ra và nghe đĩa CD'.",
-          reason: "Dẫn chứng câu 2:「先生は「日本語の本をあけて、CDを聞いてください」と言いました。」",
-          wrongOptions: [
-            { option: "「パソコンを消してください」と言いました", reason: "Cô không yêu cầu tắt máy tính." },
-            { option: "「ドアを閉めてください」と言いました", reason: "Cô không yêu cầu đóng cửa." },
-            { option: "「教室から出てください」と言いました", reason: "Cô không bảo học sinh đi ra ngoài." }
-          ]
-        }
-      },
-      {
-        id: "jpd123-q5-2",
-        prompt: "筆者はパソコンでのべんきょうをどう思っていますか。",
-        options: [
-          "本よりべんりでおもしろいと思っています",
-          "本よりたいへんでつまらないと思っています",
-          "本と同じくらいむずかしいと思っています",
-          "あまりよくないと思っています"
-        ],
-        answer: "本よりべんりでおもしろいと思っています",
-        explanation: {
-          meaning: "Tác giả cảm nhận việc học qua máy tính như thế nào? Đáp án: Tiện lợi và thú vị hơn so với sách.",
-          reason: "Dẫn chứng câu 5:「パソコンでのべんきょうは本よりべんりでおもしろいです。」",
-          wrongOptions: [
-            { option: "本よりたいへんでつまらないと思っています", reason: "Ngược lại, tác giả thấy tiện và thú vị." },
-            { option: "本と同じくらいむずかしいと思っています", reason: "Bài không so sánh về độ khó ngang nhau." },
-            { option: "あまりよくないと思っています", reason: "Tác giả đánh giá rất tích cực." }
-          ]
-        }
-      },
-      {
-        id: "jpd123-q5-3",
-        prompt: "どうして今週は毎日二時間べんきょうしますか。",
-        options: [
-          "来週、日本語のテストがあるからです",
-          "先生にしゅくだいを出されたからです",
-          "ひまで時間があるからです",
-          "アルバイトを休んだからです"
-        ],
-        answer: "来週、日本語のテストがあるからです",
-        explanation: {
-          meaning: "Tại sao tuần này ngày nào tác giả cũng tự học 2 tiếng? Đáp án: Vì tuần tới có bài kiểm tra tiếng Nhật.",
-          reason: "Dẫn chứng câu 6:「来週、日本語のテストがありますから、今週は毎日二時間べんきょうします。」",
-          wrongOptions: [
-            { option: "先生にしゅくだいを出されたからです", reason: "Bài không đề cập lý do bị giao bài tập về nhà." },
-            { option: "ひまで時間があるからです", reason: "Không phải vì rảnh rỗi." },
-            { option: "アルバイトを休んだからです", reason: "Bài không đề cập nghỉ làm thêm." }
-          ]
-        }
-      },
-      {
         id: "jpd123-q5-4",
-        prompt: "今日の午後、筆者は何をしに行きますか。",
+        prompt: "しんかんせんとバスとどちらのほうがはやいですか。",
         options: [
-          "レストランへラーメンを食べに行きます",
-          "スーパーへジュースを買いに行きます",
-          "カフェへコーヒーを飲みに行きます",
-          "アパートへテレビを見に行きます"
+          "しんかんせんのほうがはやいです",
+          "バスのほうがはやいです",
+          "どちらも同じ速さです",
+          "タクシーより遅いです"
         ],
-        answer: "レストランへラーメンを食べに行きます",
+        answer: "しんかんせんのほうがはやいです",
         explanation: {
-          meaning: "Chiều nay tác giả dự định đi đâu làm gì? Đáp án: Đến nhà hàng để ăn mì ramen.",
-          reason: "Dẫn chứng câu kết:「今日の午後はともだちとレストランへラーメンを食べに行きます。」(Cấu trúc V(bỏ ます) + に行きます).",
+          meaning: "Giữa Shinkansen và xe buýt, phương tiện nào chạy nhanh hơn? Đáp án: Tàu Shinkansen nhanh hơn.",
+          reason: "Dẫn chứng câu 6:「しんかんせんのほうがはやいですが…」",
           wrongOptions: [
-            { option: "スーパーへジュースを買いに行きます", reason: "Không đi mua nước hoa quả." },
-            { option: "カフェへコーヒーを飲みに行きます", reason: "Không đi quán cà phê." },
-            { option: "アパートへテレビを見に行きます", reason: "Không về nhà xem tivi." }
+            { option: "バスのほうがはやいです", reason: "Xe buýt chậm hơn tàu Shinkansen." },
+            { option: "どちらも同じ速さです", reason: "Tốc độ hai phương tiện hoàn toàn khác nhau." },
+            { option: "タクシーより遅いです", reason: "Không so sánh với taxi trong câu này." }
           ]
         }
       }
     ]
   },
+  // SET 2 - Đề 6
   {
     id: "jpd123-read-6",
     course: "JPD123",
-    title: "ハノイ市とダナン市の生活とてんき",
-    titleVi: "Đời sống và thời tiết ở Hà Nội và Đà Nẵng",
-    theme: "So sánh hai thành phố, thời tiết bốn mùa, kỳ nghỉ, hải sản và phương tiện",
-    content: "私の国のなかで、ハノイ市とダナン市はどちらがすきですか。ハノイ市はとても大きくて、ゆうめいなまちです。人がおおくて、バスやタクシーがたくさんあります。ダナン市はうみがちかくて、おいしいさかなや日本料理のレストランがあります。ハノイのなつはダナンよりあついです。しかし、ふゆはハノイのほうがずっとさむいです。ダナンはあまりさむくないですから、ふゆ休みにたくさんの人がホテルやアパートへりょこうに来ます。私はダナンでピザを食べて、おいしいコーヒーを飲みたいです。",
+    title: "学校の日本語指導と読書",
+    titleVi: "Hướng dẫn tiếng Nhật ở trường và việc đọc sách",
+    theme: "Thời khóa biểu, chỉ dẫn của giáo viên, đọc sách và rèn luyện năng lực",
+    content: "毎週月曜日と水曜日の午前に、私たちは日本語のじゅぎょうがあります。先生は「テキストをあけて、CDをよく聞いてください」と言いました。それから、学生たちに「大きい声で読んでください」と言って、先生はノートやパソコンに漢字を書いて、読み方を教えてくれました。じゅぎょうの後で、ルームメイトと教室でテストについて日本語でたくさん話しました。私は今週、毎日二時間べんきょうしています。日本の会社で働きたいですから、日本語の力をつけたいです。",
     sentences: [
-      { jp: "私の国のなかで、ハノイ市とダナン市はどちらがすきですか。", vi: "Trong đất nước của tôi, giữa Hà Nội và Đà Nẵng bạn thích nơi nào hơn?", romaji: "Watashi no kuni no naka de, Hanoi-shi to Danan-shi wa dochira ga suki desu ka." },
-      { jp: "ハノイ市はとても大きくて、ゆうめいなまちです。", vi: "Hà Nội là một thành phố rất lớn và nổi tiếng.", romaji: "Hanoi-shi wa totemo ookikute, yuumeina machi desu." },
-      { jp: "人がおおくて、バスやタクシーがたくさんあります。", vi: "Nơi đây đông đúc dân cư, có rất nhiều xe buýt và taxi.", romaji: "Hito ga ookute, basu ya takushii ga takusan arimasu." },
-      { jp: "ダナン市はうみがちかくて、おいしいさかなや日本料理のレストランがあります。", vi: "Đà Nẵng thì gần biển, có nhiều cá ngon và các nhà hàng ẩm thực Nhật Bản.", romaji: "Danan-shi wa umi ga chikakute, oishii sakana ya nihon ryouri no resutoran ga arimasu." },
-      { jp: "ハノイのなつはダナンよりあついです。", vi: "Mùa hè ở Hà Nội nóng hơn ở Đà Nẵng.", romaji: "Hanoi no natsu wa Danan yori atsui desu." },
-      { jp: "しかし、ふゆはハノイのほうがずっとさむいです。", vi: "Thế nhưng vào mùa đông, Hà Nội lại lạnh hơn nhiều.", romaji: "Shikashi, fuyu wa Hanoi no hou ga zutto samui desu." },
-      { jp: "ダナンはあまりさむくないですから、ふゆ休みにたくさんの人がホテルやアパートへりょこうに来ます。", vi: "Vì Đà Nẵng không lạnh lắm nên vào kỳ nghỉ đông có rất nhiều người đến khách sạn và căn hộ nghỉ dưỡng du lịch.", romaji: "Danan wa amari samukunai desu kara, fuyuyasumi ni takusan no hito ga hoteru ya apaato e ryokou ni kimasu." },
-      { jp: "私はダナンでピザを食べて、おいしいコーヒーを飲みたいです。", vi: "Tôi muốn được thưởng thức pizza và uống cà phê ngon tại Đà Nẵng.", romaji: "Watashi wa Danan de piza o tabete, oishii koohii o nomitai desu." }
+      { jp: "毎週月曜日と水曜日の午前に、私たちは日本語のじゅぎょうがあります。", vi: "Vào sáng thứ Hai và thứ Tư hàng tuần, chúng tôi đều có giờ học tiếng Nhật.", romaji: "Maishuu getsuyoubi to suiyoubi no gozen ni, watashitachi wa nihongo no jugyou ga arimasu." },
+      { jp: "先生は「テキストをあけて、CDをよく聞いてください」と言いました。", vi: "Cô giáo nói: 'Cả lớp hãy mở sách giáo trình tiếng Nhật ra và lắng nghe đĩa CD'.", romaji: "Sensei wa 'tekisuto o akete, shii-dii o yoku kiite kudasai' to iimashita." },
+      { jp: "それから、学生たちに「大きい声で読んでください」と言って、先生はノートやパソコンに漢字を書いて、読み方を教えてくれました。", vi: "Tiếp đó, cô bảo: 'Hãy đọc to lên', rồi cô viết chữ Hán vào sổ và máy tính để hướng dẫn cách đọc.", romaji: "Sorekara, gakuseitachi ni 'ookii koe de yonde kudasai' to itte, sensei wa nooto ya pasokon ni kanji o kaite, yomikata o oshiete kuremashita." },
+      { jp: "じゅぎょうの後で、ルームメイトと教室でテストについて日本語でたくさん話しました。", vi: "Sau giờ học, tôi cùng bạn cùng phòng đã luyện nói tiếng Nhật rất nhiều trong phòng học về bài kiểm tra.", romaji: "Jugyou no ato de, ruumumeito to kyoushitsu de tesuto ni tsuite nihongo de takusan hanashimashita." },
+      { jp: "私は今週、毎日二時間べんきょうしています。", vi: "Tuần này ngày nào tôi cũng học đều 2 tiếng.", romaji: "Watashi wa konshuu, mainichi ni-jikan benkyou shite imasu." },
+      { jp: "日本の会社で働きたいですから、日本語の力をつけたいです。", vi: "Vì muốn làm việc ở công ty Nhật nên tôi muốn nâng cao năng lực tiếng Nhật.", romaji: "Nihon no kaisha de hatarakitai desu kara, nihongo no chikara o tsuketai desu." }
     ],
-    translation: "Trong số các thành phố ở nước tôi, giữa thủ đô Hà Nội và Đà Nẵng bạn yêu thích nơi nào hơn? Hà Nội là một thành phố lớn và vô cùng nổi tiếng, dân cư đông đúc, đường phố nhộn nhịp xe buýt và taxi. Còn Đà Nẵng lại gần bãi biển xanh, nổi tiếng với nhiều món cá tươi ngon cùng hàng loạt nhà hàng ẩm thực Nhật Bản. Mùa hè ở Hà Nội oi bức hơn ở Đà Nẵng, nhưng vào mùa đông thì Hà Nội lại rét buốt hơn nhiều. Mùa đông ở Đà Nẵng không bị lạnh sâu, do đó vào kỳ nghỉ đông có rất nhiều du khách đặt phòng khách sạn và căn hộ ven biển để đi du lịch. Riêng tôi, tôi chỉ mong được vào Đà Nẵng ăn bánh pizza và thưởng thức tách cà phê thơm ngon bên bờ biển.",
-    romaji: "Watashi no kuni no naka de, Hanoi-shi to Danan-shi wa dochira ga suki desu ka. Hanoi-shi wa totemo ookikute, yuumeina machi desu. Hito ga ookute, basu ya takushii ga takusan arimasu. Danan-shi wa umi ga chikakute, oishii sakana ya nihon ryouri no resutoran ga arimasu. Hanoi no natsu wa Danan yori atsui desu. Shikashi, fuyu wa Hanoi no hou ga zutto samui desu. Danan wa amari samukunai desu kara, fuyuyasumi ni takusan no hito ga hoteru ya apaato e ryokou ni kimasu. Watashi wa Danan de piza o tabete, oishii koohii o nomitai desu.",
-    vocabularyUsed: ["私", "国", "市", "大きい", "人", "バス", "タクシー", "日本料理", "レストラン", "より", "しかし", "ほう", "休み", "ホテル", "アパート", "旅行", "来る", "ピザ", "食べる", "コーヒー", "飲む"],
-    kanjiUsed: ["私", "国", "市", "大", "人", "日", "本", "料", "理", "休", "来", "食", "飲"],
+    translation: "Mỗi sáng thứ Hai và thứ Tư hàng tuần, chúng tôi đều có giờ học tiếng Nhật. Cô giáo bước vào lớp và nhẹ nhàng dặn: 'Cả lớp hãy mở sách giáo khoa tiếng Nhật và chú ý lắng nghe đĩa CD nhé'. Tiếp đó, cô yêu cầu các bạn đọc to dõng dạc từng câu, rồi nắn nót viết chữ Hán lên cuốn sổ lớn và hướng dẫn tỉ mỉ cách phát âm chuẩn xác. Sau tiết học kết thúc, sinh viên chúng tôi cùng ở lại phòng học luyện giao tiếp bằng tiếng Nhật. Tuần này ngày nào tôi cũng tự ôn tập đủ 2 tiếng. Vì tương lai muốn được làm việc tại một công ty Nhật Bản, tôi nỗ lực rèn luyện để nâng cao năng lực tiếng Nhật.",
+    romaji: "Maishuu getsuyoubi to suiyoubi no gozen ni, watashitachi wa nihongo no jugyou ga arimasu. Sensei wa 'nihongo no hon o akete, shii-dii o yoku kiite kudasai' to iimashita. Sorekara, gakuseitachi ni 'ookii koe de yonde kudasai' to itte, sensei wa nooto ni kanji o kaite, yomikata o oshiete kuremashita. Jugyou no ato de, gakuseitachi wa kyoushitsu de nihongo de takusan hanashimashita. Watashi wa konshuu, mainichi ni-jikan benkyou shite imasu. Nihon no kaisha de hatarakitai desu kara, nihongo no chikara o tsuketai desu.",
+    vocabularyUsed: ["毎週", "月曜日", "水曜日", "午前", "日本語", "先生", "本", "CD", "聞く", "言う", "大きい", "読む", "書く", "後", "話す", "今週", "毎日", "二時間", "会社", "力"],
+    kanjiUsed: ["毎", "週", "月", "曜", "日", "水", "午", "前", "私", "本", "語", "先", "生", "聞", "言", "大", "読", "書", "後", "学", "話", "今", "二", "時", "間", "会", "社", "力"],
     questions: [
       {
         id: "jpd123-q6-1",
-        prompt: "ハノイ市とダナン市のふゆのてんきはどうですか。",
+        prompt: "日本語のじゅぎょうはいつありますか。",
         options: [
-          "ふゆはハノイのほうがダナンよりずっとさむいです",
-          "ふゆはダナンのほうがハノイよりずっとさむいです",
-          "どちらも同じくらいあついです",
-          "ハノイのふゆはぜんぜんさむくないです"
+          "毎週月曜日と水曜日の午前です",
+          "毎週火曜日と木曜日の午後です",
+          "土曜日と日曜日だけです",
+          "毎日の午後です"
         ],
-        answer: "ふゆはハノイのほうがダナンよりずっとさむいです",
+        answer: "毎週月曜日と水曜日の午前です",
         explanation: {
-          meaning: "Thời tiết mùa đông ở Hà Nội và Đà Nẵng như thế nào? Đáp án: Mùa đông ở Hà Nội lạnh hơn nhiều so với Đà Nẵng.",
-          reason: "Dẫn chứng câu 6:「しかし、ふゆはハノイのほうがずっとさむいです。」",
+          meaning: "Giờ học tiếng Nhật diễn ra vào lúc nào? Đáp án: Sáng thứ Hai và thứ Tư hàng tuần.",
+          reason: "Dẫn chứng câu 1:「毎週月曜日と水曜日の午前に、私たちは日本語のじゅぎょうがあります。」",
           wrongOptions: [
-            { option: "ふゆはダナンのほうがハノイよりずっとさむいです", reason: "Ngược hoàn toàn với thực tế và bài đọc." },
-            { option: "どちらも同じくらいあついです", reason: "Mùa đông có sự chênh lệch rõ rệt về nhiệt độ." },
-            { option: "ハノイのふゆはぜんぜんさむくないです", reason: "Hà Nội mùa đông rất lạnh." }
+            { option: "毎週火曜日と木曜日の午後です", reason: "Sai thứ và buổi." },
+            { option: "土曜日と日曜日だけです", reason: "Cuối tuần không có tiết học." },
+            { option: "毎日の午後です", reason: "Chỉ học sáng thứ 2 và thứ 4." }
           ]
         }
       },
       {
         id: "jpd123-q6-2",
-        prompt: "ダナン市にはどんなレストランがありますか。",
+        prompt: "先生は学生たちにどんな声で読んでくださいと言いましたか。",
         options: [
-          "おいしいさかなや日本料理のレストランがあります",
-          "フランス料理のレストランだけあります",
-          "ファストフードの店しかありません",
-          "山の上に小さいカフェしかありません"
+          "「大きい声で読んでください」と言いました",
+          "「小さい声で読んでください」と言いました",
+          "「読まないでください」と言いました",
+          "「早く読んでください」と言いました"
         ],
-        answer: "おいしいさかなや日本料理のレストランがあります",
+        answer: "「大きい声で読んでください」と言いました",
         explanation: {
-          meaning: "Ở thành phố Đà Nẵng có những nhà hàng kiểu như thế nào? Đáp án: Các nhà hàng cá ngon và món Nhật.",
-          reason: "Dẫn chứng câu 4:「ダナン市はうみがちかくて、おいしいさかなや日本料理のレストランがあります。」",
+          meaning: "Giáo viên đã dặn học sinh đọc bằng giọng như thế nào? Đáp án: 'Hãy đọc to lên'.",
+          reason: "Dẫn chứng câu 3:「学生たちに「大きい声で読んでください」と言って…」",
           wrongOptions: [
-            { option: "フランス料理のレストランだけあります", reason: "Bài không nhắc đến nhà hàng Pháp." },
-            { option: "ファストフードの店しかありません", reason: "Không có thông tin này trong bài." },
-            { option: "山の上に小さいカフェしかありません", reason: "Đà Nẵng có nhiều nhà hàng hải sản và món Nhật gần biển." }
+            { option: "「小さい声で読んでください」と言いました", reason: "Cô dặn đọc to chứ không đọc nhỏ." },
+            { option: "「読まないでください」と言いました", reason: "Cô yêu cầu luyện đọc." },
+            { option: "「早く読んでください」と言いました", reason: "Cô dặn đọc to dõng dạc (大きい声)." }
           ]
         }
       },
       {
         id: "jpd123-q6-3",
-        prompt: "どうしてふゆ休みにたくさんの人がダナンへ来ますか。",
+        prompt: "筆者は今週、毎日何時間べんきょうしていますか。",
         options: [
-          "ダナンのふゆはあまりさむくないからです",
-          "ダナンに雪がたくさんふるからです",
-          "ハノイよりホテルがたかいからです",
-          "テストがないからです"
+          "毎日二時間べんきょうしています",
+          "毎日一時間べんきょうしています",
+          "毎日四時間べんきょうしています",
+          "全然勉強していません"
         ],
-        answer: "ダナンのふゆはあまりさむくないからです",
+        answer: "毎日二時間べんきょうしています",
         explanation: {
-          meaning: "Tại sao vào kỳ nghỉ đông nhiều người lại chọn đến Đà Nẵng? Đáp án: Vì mùa đông Đà Nẵng không lạnh lắm.",
-          reason: "Dẫn chứng câu 7:「ダナンはあまりさむくないですから、ふゆ休みにたくさんの人がホテルやアパートへりょこうに来ます。」",
+          meaning: "Tuần này mỗi ngày tác giả học mấy tiếng? Đáp án: Học 2 tiếng mỗi ngày.",
+          reason: "Dẫn chứng câu 5:「私は今週、毎日二時間べんきょうしています。」",
           wrongOptions: [
-            { option: "ダナンに雪がたくさんふるからです", reason: "Đà Nẵng không có tuyết rơi." },
-            { option: "ハノイよりホテルがたかいからです", reason: "Khách sạn đắt không phải lý do thu hút khách du lịch." },
-            { option: "テストがないからです", reason: "Bài không đề cập lý do thi cử." }
+            { option: "毎日一時間べんきょうしています", reason: "Thiếu 1 tiếng." },
+            { option: "毎日四時間べんきょうしています", reason: "Nhiều hơn thông tin bài đọc." },
+            { option: "全然勉強していません", reason: "Tác giả học tập rất chăm chỉ." }
           ]
         }
       },
       {
         id: "jpd123-q6-4",
-        prompt: "筆者はダナンで何をしたいと言っていますか。",
+        prompt: "どうして日本の会社で働きたいですか。",
         options: [
-          "ピザを食べて、おいしいコーヒーを飲みたいです",
-          "山にのぼって、スキーをしたいです",
-          "新しい車を買って、ドライブしたいです",
-          "一日中ホテルで寝たいです"
+          "将来、日本語の力をいかして仕事がしたいからです",
+          "日本へ買い物に行きたいからです",
+          "日本の食べ物がきらいだからです",
+          "会社が大学の近くにあるからです"
         ],
-        answer: "ピザを食べて、おいしいコーヒーを飲みたいです",
+        answer: "将来、日本語の力をいかして仕事がしたいからです",
         explanation: {
-          meaning: "Tác giả muốn làm gì khi ở Đà Nẵng? Đáp án: Muốn ăn bánh pizza và thưởng thức cà phê ngon.",
-          reason: "Dẫn chứng câu kết bài:「私はダナンでピザを食べて、おいしいコーヒーを飲みたいです。」",
+          meaning: "Tại sao tác giả muốn làm việc ở công ty Nhật? Đáp án: Vì muốn rèn luyện và phát huy năng lực tiếng Nhật trong công việc.",
+          reason: "Dẫn chứng câu kết bài:「日本の会社で働きたいですから、日本語の力をつけたいです。」",
           wrongOptions: [
-            { option: "山にのぼって、スキーをしたいです", reason: "Không đi trượt tuyết ở Đà Nẵng." },
-            { option: "新しい車を買って、ドライブしたいです", reason: "Không có ý định mua ô tô mới." },
-            { option: "一日中ホテルで寝たいです", reason: "Tác giả muốn đi ăn uống và trải nghiệm." }
+            { option: "日本へ買い物に行きたいからです", reason: "Mục tiêu là nghề nghiệp và năng lực." },
+            { option: "日本の食べ物がきらいだからです", reason: "Không liên quan ẩm thực." },
+            { option: "会社が大学の近くにあるからです", reason: "Không có thông tin này trong bài." }
+          ]
+        }
+      }
+    ]
+  },
+  // SET 2 - Đề 7
+  {
+    id: "jpd123-read-7",
+    course: "JPD123",
+    title: "アパートでの料理作りと週末の食事",
+    titleVi: "Nấu ăn tại căn hộ và bữa ăn cuối tuần",
+    theme: "Nấu ăn, so sánh giá cả siêu thị vs cửa hàng tiện lợi, dụng cụ ăn uống",
+    content: "今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。午前十時に本田さんとスーパーへ行って、とり肉やさかなや野さいを買いました。ぜんぶで五千五百円でした。スーパーの食べ物はコンビニの食べ物よりやすいです。アパートに帰ってから、みんなで料理をつくりました。スプーンやフォークなどの食事の道具をつかって、大きいテーブルでスープとサラダを食べました。小さいコップでお茶やコーヒーを飲んで、午後四時半まで楽しく話しました。",
+    sentences: [
+      { jp: "今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。", vi: "Chủ nhật tuần này, tôi đã tổ chức bữa tiệc ẩm thực Nhật Bản cùng bạn bè tại căn hộ.", romaji: "Konshuu no nichiyoubi ni, apaato de tomodachi to nihon ryouri no paatii o shimashita." },
+      { jp: "午前十時に本田さんとスーパーへ行って、とり肉やさかなや野さいを買いました。", vi: "Lúc 10 giờ sáng, tôi cùng bạn Honda đi siêu thị mua thịt gà, cá và rau củ.", romaji: "Gozen juu-ji ni Honda-san to suupaa e itte, toriniku ya sakana ya yasai o kaimashita." },
+      { jp: "ぜんぶで五千五百円でした。", vi: "Tổng cộng hết 5.500 yên.", romaji: "Zenbu de gosen gohyaku-en deshita." },
+      { jp: "スーパーの食べ物はコンビニの食べ物よりやすいです。", vi: "Thực phẩm ở siêu thị rẻ hơn thực phẩm ở cửa hàng tiện lợi.", romaji: "Suupaa no tabemono wa konbini no tabemono yori yasui desu." },
+      { jp: "アパートに帰ってから、みんなで料理をつくりました。", vi: "Sau khi về căn hộ, mọi người cùng nhau nấu nướng.", romaji: "Apaato ni kaette kara, minna de ryouri o tsukurimashita." },
+      { jp: "スプーンやフォークなどの食事の道具をつかって、大きいテーブルでスープ và サラダを食べました。", vi: "Dùng các dụng cụ ăn uống như thìa và nĩa, chúng tôi ăn súp và sa lát ở chiếc bàn lớn.", romaji: "Supuun ya fooku nado no shokuji no dougu o tsukatte, ookii teeburu de suupu to sarada o tabemashita." },
+      { jp: "小さいコップでお茶やコーヒーを飲んで、午後四時半まで楽しく話しました。", vi: "Chúng tôi uống trà và cà phê bằng chiếc cốc nhỏ, rồi trò chuyện vui vẻ đến 4 giờ rưỡi chiều.", romaji: "Chiisai koppu de ocha ya koohii o nonde, gogo yo-jihan made tanoshiku hanashimashita." }
+    ],
+    translation: "Chủ nhật tuần này, tôi tổ chức một bữa tiệc nấu các món ăn Nhật cùng bạn bè tại căn hộ của mình. Vào lúc 10 giờ sáng, tôi cùng Honda đi siêu thị mua thịt gà tươi, cá và rau củ. Tổng chi phí mua sắm hết 5.500 yên, đồ ăn ở siêu thị rẻ hơn nhiều so với mua ở cửa hàng tiện lợi. Về tới căn hộ, cả nhóm bắt tay vào nấu nướng. Chúng tôi dùng thìa và nĩa thưởng thức súp cùng sa lát trên chiếc bàn lớn. Sau bữa ăn, mọi người dùng cốc nhỏ nhâm nhi trà và cà phê, trò chuyện rôm rả đến tận 4 giờ rưỡi chiều.",
+    romaji: "Konshuu no nichiyoubi ni, apaato de tomodachi to nihon ryouri no paatii o shimashita. Gozen juu-ji ni Honda-san to suupaa e itte, toriniku ya sakana ya yasai o kaimashita. Zenbu de gosen gohyaku-en deshita. Suupaa no tabemono wa konbini no tabemono yori yasui desu. Apaato ni kaette kara, minna de ryouri o tsukurimashita. Supuun ya fooku nado no shokuji no dougu o tsukatte, ookii teeburu de suupu to sarada o tabemashita. Chiisai koppu de ocha ya koohii o nonde, gogo yo-jihan made tanoshiku hanashimashita.",
+    vocabularyUsed: ["今週", "日曜日", "アパート", "日本料理", "パーティー", "午前", "十時", "スーパー", "とり肉", "野菜", "買う", "五千五百円", "食べ物", "コンビニ", "帰る", "料理", "スプーン", "フォーク", "道具", "大きい", "テーブル", "スープ", "サラダ", "食べる", "小さい", "コップ", "お茶", "コーヒー", "飲む", "午後", "四時半", "話す"],
+    kanjiUsed: ["今", "週", "日", "曜", "本", "田", "行", "肉", "野", "買", "五", "千", "百", "円", "食", "物", "帰", "料", "理", "具", "大", "小", "飲", "午", "後", "四", "時", "半", "話"],
+    questions: [
+      {
+        id: "jpd123-q7-1",
+        prompt: "スーパーでぜんぶでいくら買い物しましたか。",
+        options: ["五千五百円でした", "五千円でした", "六千五百円でした", "四千五百円でした"],
+        answer: "五千五百円でした",
+        explanation: {
+          meaning: "Đã mua sắm hết tổng cộng bao nhiêu tiền ở siêu thị? Đáp án: 5.500 yên (五千五百円).",
+          reason: "Dẫn chứng câu 3:「ぜんぶで五千五百円でした。」",
+          wrongOptions: [
+            { option: "五千円でした", reason: "Thiếu 500 yên." },
+            { option: "六千五百円でした", reason: "Nhiều hơn 1.000 yên." },
+            { option: "四千五百円でした", reason: "Ít hơn 1.000 yên." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q7-2",
+        prompt: "スーパーとコンビニの食べ物はどちらがやすいですか。",
+        options: [
+          "スーパーの食べ物のほうがやすいです",
+          "コンビニの食べ物のほうがやすいです",
+          "どちらも同じ値段です",
+          "コンビニのほうがずっと安いです"
+        ],
+        answer: "スーパーの食べ物のほうがやすいです",
+        explanation: {
+          meaning: "Thực phẩm ở siêu thị hay cửa hàng tiện lợi rẻ hơn? Đáp án: Thực phẩm ở siêu thị rẻ hơn.",
+          reason: "Dẫn chứng câu 4:「スーパーの食べ物はコンビニの食べ物よりやすいです。」",
+          wrongOptions: [
+            { option: "コンビニの食べ物のほうがやすいです", reason: "Ngược với thông tin trong bài." },
+            { option: "どちらも同じ値段です", reason: "Giá cả ở siêu thị rẻ hơn." },
+            { option: "コンビニのほうがずっと安いです", reason: "Sai hoàn toàn." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q7-3",
+        prompt: "食事の時にどんな道具をつかいましたか。",
+        options: [
+          "スプーンやフォークをつかいました",
+          "ハシだけをつかいました",
+          "ナイフだけをつかいました",
+          "手だけで食べました"
+        ],
+        answer: "スプーンやフォークをつかいました",
+        explanation: {
+          meaning: "Khi dùng bữa họ đã dùng những dụng cụ nào? Đáp án: Thìa và nĩa.",
+          reason: "Dẫn chứng câu 6:「スプーンやフォークなどの食事の道具をつかって…」",
+          wrongOptions: [
+            { option: "ハシだけをつかいました", reason: "Bài nêu rõ dùng thìa và nĩa." },
+            { option: "ナイフだけをつかいました", reason: "Bài không dùng dao cắt thịt ở bàn này." },
+            { option: "手だけで食べました", reason: "Họ dùng dụng cụ ăn uống lịch sự." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q7-4",
+        prompt: "小さいコップで何を飲みましたか。",
+        options: [
+          "お茶やコーヒーを飲みました",
+          "ビールやワインを飲みました",
+          "ジュースと水を飲みました",
+          "冷たいミルクを飲みました"
+        ],
+        answer: "お茶やコーヒーを飲みました",
+        explanation: {
+          meaning: "Họ đã dùng chiếc cốc nhỏ để uống thức uống gì? Đáp án: Trà và cà phê.",
+          reason: "Dẫn chứng câu 7:「小さいコップでお茶やコーヒーを飲んで…」",
+          wrongOptions: [
+            { option: "ビールやワインを飲みました", reason: "Bài không nhắc đến đồ uống có cồn." },
+            { option: "ジュースと水を飲みました", reason: "Họ uống trà và cà phê." },
+            { option: "冷たいミルクを飲みました", reason: "Không có sữa trong bài đọc." }
+          ]
+        }
+      }
+    ]
+  },
+  // SET 2 - Đề 8
+  {
+    id: "jpd123-read-8",
+    course: "JPD123",
+    title: "ダナン市の音楽コンサートと約束",
+    titleVi: "Buổi hòa nhạc ở thành phố Đà Nẵng và cuộc hẹn",
+    theme: "Sự kiện âm nhạc ở trung tâm, rủ rê bạn bè, từ chối khéo và đông vui",
+    content: "来週の土曜日のよる、ダナン市の大きい区でおんがくのコンサートがあります。私の国でもゆう名なジャズのコンサートです。チケットを二まい買って、本田さんに「いっしょに行きませんか」と聞きました。でも、本田さんは「土曜日はちょっと…アルバイトがありますから」と言いました。本田さんは前のレストランで毎週はたらいています。ざんねんですが、私は一人で行きます。ホールの前には男の人も女の人もたくさんあつまって、とてもにぎやかでした。私の名前を書いたメモをわたしました。",
+    sentences: [
+      { jp: "来週の土曜日のよる、ダナン市の大きい区でおんがくのコンサートがあります。", vi: "Tối thứ Bảy tuần tới, ở một quận lớn thuộc thành phố Đà Nẵng sẽ có buổi hòa nhạc.", romaji: "Raishuu no doyoubi no yoru, Danan-shi no ookii ku de ongaku no konsaato ga arimasu." },
+      { jp: "私の国でもゆう名なジャズのコンサートです。", vi: "Đó là buổi biểu diễn nhạc Jazz nổi tiếng ngay cả ở đất nước tôi.", romaji: "Watashi no kuni demo yuumeina jazu no konsaato desu." },
+      { jp: "チケットを二まい買って、本田さんに「いっしょに行きませんか」と聞きました。", vi: "Tôi đã mua hai chiếc vé rồi hỏi bạn Honda: 'Cậu cùng đi với mình nhé?'.", romaji: "Chiketto o nimai katte, Honda-san ni 'issho ni ikimasen ka' to kikimashita." },
+      { jp: "でも、本田さんは「土曜日はちょっと…アルバイトがありますから」と言いました。", vi: "Nhưng Honda đáp: 'Thứ Bảy thì hơi kẹt... vì tớ có ca đi làm thêm'.", romaji: "Demo, Honda-san wa 'doyoubi wa chotto... arubaito ga arimasu kara' to iimashita." },
+      { jp: "本田さんは前のレストランで毎週はたらいています。", vi: "Honda đang làm thêm đều đặn hàng tuần ở nhà hàng phía trước.", romaji: "Honda-san wa mae no resutoran de maishuu hataraite imasu." },
+      { jp: "ざんねんですが、私は一人で行きます。", vi: "Tiếc thật, nhưng tôi sẽ đi một mình.", romaji: "Zannen desu ga, watashi wa hitori de ikimasu." },
+      { jp: "ホールの前には男の人も女の人もたくさんあつまって、とてもにぎやかでした。", vi: "Phía trước khán phòng, cả nam và nữ tập trung lại rất đông, không khí vô cùng náo nhiệt.", romaji: "Hooru no mae ni wa otoko no hito mo onna no hito mo takusan atsumatte, totemo nigiyaka deshita." },
+      { jp: "私の名前を書いたメモをわたしました。", vi: "Tôi đã đưa tờ giấy ghi tên mình cho ban tổ chức.", romaji: "Watashi no namae o kaita memo o watashimashita." }
+    ],
+    translation: "Tối thứ Bảy tuần sau, tại một quận lớn của thành phố Đà Nẵng sẽ diễn ra một buổi hòa nhạc quy mô lớn. Đây là đêm nhạc Jazz rất nổi tiếng ngay tại quê hương tôi. Sau khi mua hai tấm vé, tôi hồ hởi hỏi Honda: 'Cậu có muốn cùng đi xem với mình không?'. Thế nhưng Honda đã khéo léo từ chối: 'Thứ Bảy này thì hơi kẹt cho mình rồi... vì mình vướng ca làm thêm'. Bạn ấy đang làm thêm cố định vào mỗi tuần tại nhà hàng gần đó. Tuy hơi tiếc nhưng tôi vẫn quyết định đi một mình. Phía trước hội trường, rất đông đảo khán giả cả nam lẫn nữ tập trung đông đúc, náo nhiệt. Tôi đã đưa mảnh giấy ghi tên mình vào quầy đăng ký tham dự.",
+    romaji: "Raishuu no doyoubi no yoru, Danan-shi no ookii ku de ongaku no konsaato ga arimasu. Watashi no kuni demo yuumeina jazu no konsaato desu. Chiketto o nimai katte, Honda-san ni 'issho ni ikimasen ka' to kikimashita. Demo, Honda-san wa 'doyoubi wa chotto... arubaito ga arimasu kara' to iimashita. Honda-san wa mae no resutoran de maishuu hataraite imasu. Zannen desu ga, watashi wa hitori de ikimasu. Hooru no mae ni wa otoko no hito mo onna no hito mo takusan atsumatte, totemo nigiyaka deshita. Watashi no namae o kaita memo o watashimashita.",
+    vocabularyUsed: ["来週", "土曜日", "市", "区", "大きい", "コンサート", "私", "国", "ジャズ", "チケット", "二枚", "買う", "行く", "聞く", "アルバイト", "言う", "前", "レストラン", "毎週", "一人", "男の人", "女の人", "名前", "書く"],
+    kanjiUsed: ["来", "週", "土", "曜", "日", "市", "区", "大", "私", "国", "名", "買", "本", "田", "行", "聞", "言", "前", "毎", "一", "人", "男", "女", "書"],
+    questions: [
+      {
+        id: "jpd123-q8-1",
+        prompt: "コンサートはどこでありますか。",
+        options: [
+          "ダナン市の大きい区であります",
+          "東京の小さいホテルであります",
+          "大学の図書館であります",
+          "駅の中のカフェであります"
+        ],
+        answer: "ダナン市の大きい区であります",
+        explanation: {
+          meaning: "Buổi hòa nhạc diễn ra ở đâu? Đáp án: Tại một quận lớn thuộc thành phố Đà Nẵng.",
+          reason: "Dẫn chứng câu 1:「ダナン市の大きい区でおんがくのコンサートがあります。」",
+          wrongOptions: [
+            { option: "東京の小さいホテルであります", reason: "Không diễn ra ở khách sạn Tokyo." },
+            { option: "大学の図書館であります", reason: "Không diễn ra ở thư viện trường." },
+            { option: "駅の中のカフェであります", reason: "Không phải quán cà phê trong nhà ga." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q8-2",
+        prompt: "本田さんはどうしてコンサートへ行きませんか。",
+        options: [
+          "アルバイトの予定があるからです",
+          "ジャズのおんがくがきらいだからです",
+          "チケットがたかいからです",
+          "病気で病院へ行くからです"
+        ],
+        answer: "アルバイトの予定があるからです",
+        explanation: {
+          meaning: "Tại sao Honda không đi nghe hòa nhạc? Đáp án: Vì bạn có lịch đi làm thêm.",
+          reason: "Dẫn chứng câu 4:「土曜日はちょっと…アルバイトがありますから」",
+          wrongOptions: [
+            { option: "ジャズのおんがくがきらいだからです", reason: "Honda không nói ghét nhạc Jazz." },
+            { option: "チケットがたかいからです", reason: "Tác giả đã mua sẵn cả 2 vé rồi." },
+            { option: "病気で病院へ行くからです", reason: "Honda hoàn toàn khỏe mạnh đi làm việc." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q8-3",
+        prompt: "ホールの前にはだれがたくさんあつまりましたか。",
+        options: [
+          "男の人も女の人もたくさんあつまりました",
+          "小さい子どもだけが集まりました",
+          "先生たちだけが集まりました",
+          "だれも集まりませんでした"
+        ],
+        answer: "男の人も女の人もたくさんあつまりました",
+        explanation: {
+          meaning: "Trước hội trường có những ai tập trung lại đông đúc? Đáp án: Cả nam giới và nữ giới.",
+          reason: "Dẫn chứng câu 7:「ホールの前には男の人も女の人もたくさんあつまって、とてもにぎやかでした。」",
+          wrongOptions: [
+            { option: "小さい子どもだけが集まりました", reason: "Không chỉ có trẻ nhỏ." },
+            { option: "先生たちだけが集まりました", reason: "Không phải chỉ có các thầy cô." },
+            { option: "だれも集まりませんでした", reason: "Rất đông người đến xem hòa nhạc." }
+          ]
+        }
+      },
+      {
+        id: "jpd123-q8-4",
+        prompt: "筆者はホールで何をわたしましたか。",
+        options: [
+          "私の名前を書いたメモをわたしました",
+          "新しい本を渡しました",
+          "お金と財布を渡しました",
+          "カメラと写真を渡しました"
+        ],
+        answer: "私の名前を書いたメモをわたしました",
+        explanation: {
+          meaning: "Tác giả đã đưa cái gì tại hội trường? Đáp án: Tờ giấy ghi tên của mình.",
+          reason: "Dẫn chứng câu 8:「私の名前を書いたメモをわたしました。」",
+          wrongOptions: [
+            { option: "新しい本を渡しました", reason: "Không đưa sách mới." },
+            { option: "お金と財布を渡しました", reason: "Không đưa tiền hay ví." },
+            { option: "カメラと写真を渡しました", reason: "Không đưa máy ảnh." }
           ]
         }
       }
@@ -852,3 +1182,50 @@ export const READING_PASSAGES_JPD123: ReadingPassage[] = RAW_PASSAGES_JPD123.map
   sanitizePassage(p, [1, 2, 3, 4, 5, 6, 7]),
 );
 
+function createExamSet(
+  id: string,
+  course: ReadingCourse,
+  title: string,
+  titleVi: string,
+  passages: ReadingPassage[],
+): ReadingPassageSet {
+  const coverage = computePassageSetKanjiCoverage(passages, course);
+  return {
+    id,
+    course,
+    title,
+    titleVi,
+    passages,
+    coveredKanji: coverage.coveredKanji,
+    targetKanjiCount: coverage.targetKanjiCount,
+    coveragePercentage: coverage.coveragePercentage,
+    isCompleteCoverage: coverage.isCompleteCoverage,
+  };
+}
+
+export const READING_EXAM_SETS_JPD113: ReadingPassageSet[] = [
+  createExamSet(
+    "jpd113-set-1",
+    "JPD113",
+    "JPD113 読解問題セット 1",
+    "Bộ đề 1: Đời sống học tập & sinh hoạt sinh viên",
+    READING_PASSAGES_JPD113.slice(0, 4),
+  ),
+];
+
+export const READING_EXAM_SETS_JPD123: ReadingPassageSet[] = [
+  createExamSet(
+    "jpd123-set-1",
+    "JPD123",
+    "JPD123 読解問題セット 1（第4課〜第7課の漢字全網羅）",
+    "Bộ đề 1: Đời sống, du lịch và giao tiếp FPT (Phủ 100% 43 Kanji Bài 4–7)",
+    READING_PASSAGES_JPD123.slice(0, 4),
+  ),
+  createExamSet(
+    "jpd123-set-2",
+    "JPD123",
+    "JPD123 読解問題セット 2（第4課〜第7課の漢字全網羅）",
+    "Bộ đề 2: Khám phá Tokyo, sự kiện và ẩm thực Nhật (Phủ 100% 43 Kanji Bài 4–7)",
+    READING_PASSAGES_JPD123.slice(4, 8),
+  ),
+];

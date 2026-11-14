@@ -3,17 +3,22 @@ import assert from "node:assert/strict";
 import {
   READING_PASSAGES_JPD113,
   READING_PASSAGES_JPD123,
+  TARGET_KANJI_JPD123,
+  READING_EXAM_SETS_JPD123,
 } from "./reading-data.ts";
 import {
   generateReadingPassage,
   clearRecentReadingIds,
+  generateReadingExamSet,
+  clearRecentReadingSetIds,
+  computePassageSetKanjiCoverage,
   sanitizeReadingPassageKanji,
 } from "./reading-engine.ts";
 import {
   inspectJapaneseCharOrWord,
   passageToRomaji,
 } from "./reading-inspector.ts";
-import { buildReadingAiPrompt } from "./reading-ai.ts";
+import { buildReadingAiPrompt, buildReadingAiSetPrompt } from "./reading-ai.ts";
 import { getAllowedKanjiChars } from "./kana-reading.ts";
 
 test("JPD113 reading passages strictly use only official JPD113 Kanji and vocabulary", () => {
@@ -151,4 +156,43 @@ test("buildReadingAiPrompt correctly configures length and kanji constraints for
   assert.ok(p123.systemPrompt.includes("Dài hơn") && p123.systemPrompt.includes("200 đến 280"));
   assert.ok(p123.systemPrompt.includes("KATAKANA"));
   assert.ok(p123.systemPrompt.includes("Bài 7"));
+});
+
+test("generateReadingExamSet creates 4-exam sets covering 100% of Bài 4-7 Kanji for JPD123", () => {
+  clearRecentReadingSetIds();
+
+  // Tạo bộ 4 đề JPD123
+  const examSet = generateReadingExamSet("JPD123");
+  assert.ok(examSet.id);
+  assert.equal(examSet.course, "JPD123");
+  assert.equal(examSet.passages.length, 4, "Bộ đề thi phải có đúng 4 đề");
+
+  // Kiểm tra từng đề trong bộ 4 đề
+  for (let i = 0; i < examSet.passages.length; i++) {
+    const p = examSet.passages[i];
+    assert.ok(p.content.length >= 200, `Đề ${i + 1} phải đạt độ dài chuẩn FPT (>= 200 chữ)`);
+    assert.ok(p.questions.length >= 4, `Đề ${i + 1} phải có ít nhất 4 câu hỏi trắc nghiệm`);
+  }
+
+  // Kiểm tra độ phủ chữ Hán: Bắt buộc phủ 100% (43/43 chữ Hán Bài 4 đến 7)
+  assert.equal(examSet.targetKanjiCount, 43, "Tổng số chữ Hán mục tiêu Bài 4-7 là 43");
+  assert.equal(examSet.coveredKanji.length, 43, "Bộ 4 đề phải phủ đủ 43 chữ Hán Bài 4-7");
+  assert.equal(examSet.coveragePercentage, 100, "Tỷ lệ phủ chữ Hán phải đạt 100%");
+  assert.equal(examSet.isCompleteCoverage, true, "Đạt chuẩn hoàn chỉnh 100% độ phủ chữ Hán");
+
+  // Kiểm tra xoay vòng bộ đề (excludeSetId)
+  const nextSet = generateReadingExamSet("JPD123", { excludeSetId: examSet.id });
+  assert.ok(nextSet.id);
+  assert.notEqual(nextSet.id, examSet.id, "Bộ đề tiếp theo phải khác bộ đề hiện tại");
+  assert.equal(nextSet.isCompleteCoverage, true);
+  assert.equal(nextSet.coveredKanji.length, 43);
+});
+
+test("buildReadingAiSetPrompt requires 4 exams and complete 43/43 kanji coverage for JPD123", () => {
+  const promptData = buildReadingAiSetPrompt("JPD123");
+  const upper = promptData.systemPrompt.toUpperCase();
+  assert.ok(upper.includes("4 BÀI ĐỌC") || upper.includes("4 ĐỀ"));
+  assert.ok(upper.includes("43"));
+  assert.ok(upper.includes("BÀI 4"));
+  assert.ok(upper.includes("KATAKANA"));
 });

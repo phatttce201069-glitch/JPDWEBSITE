@@ -36,6 +36,18 @@ export type ReadingPassage = {
   isAiGenerated?: boolean;
 };
 
+export type ReadingPassageSet = {
+  id: string;
+  course: ReadingCourse;
+  title: string;
+  titleVi: string;
+  passages: ReadingPassage[];
+  coveredKanji: string[];
+  targetKanjiCount: number;
+  coveragePercentage: number;
+  isCompleteCoverage: boolean;
+};
+
 export type WordInspection = {
   text: string;
   hiragana: string;
