@@ -73,6 +73,11 @@ function Home() {
             <Door kicker="05" title="Luyện thi đọc" detail="Đọc hiểu JPD113 & JPD123 chuẩn FPT. Đọc phát âm, hiện Romaji, ấn đúp tra chữ." meta="Đọc hiểu" />
           </Link>
         </li>
+        <li>
+          <Link to="/speaking" className="group flex items-center gap-4 py-5">
+            <Door kicker="06" title="Luyện thi nói" detail="Thi vấn đáp tranh & mở rộng chuẩn FPT. Đọc câu hỏi audio, gợi ý câu trả lời, ghi âm luyện nói." meta="Thi nói" />
+          </Link>
+        </li>
       </ul>
     </div>
   );
@@ -127,6 +132,13 @@ function Continue({ last }: { last: LastPlace }) {
   if (last.to === "/reading") {
     return (
       <Link to="/reading" search={last.search} className={className}>
+        {body}
+      </Link>
+    );
+  }
+  if (last.to === "/speaking") {
+    return (
+      <Link to="/speaking" search={last.search} className={className}>
         {body}
       </Link>
     );

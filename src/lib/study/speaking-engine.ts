@@ -1,0 +1,424 @@
+import {
+  SPEAKING_EXAMS_JPD113,
+  SPEAKING_EXAMS_JPD123,
+} from "./speaking-data.ts";
+import type {
+  SpeakingCourse,
+  SpeakingExam,
+  SpeakingQuestion,
+  SpeakingScene,
+} from "./speaking-types.ts";
+import { saveSpeakingExam } from "./speaking-storage.ts";
+import { shuffle } from "./fpt-jpd123-engine.ts";
+
+const RECENT_SPEAKING_EXAM_KEY = "fpt_recent_speaking_exams_v1";
+const memoryRecentSpeakingIds = new Set<string>();
+
+export function getRecentSpeakingExamIds(): Set<string> {
+  if (typeof window === "undefined") {
+    return memoryRecentSpeakingIds;
+  }
+  try {
+    const raw = sessionStorage.getItem(RECENT_SPEAKING_EXAM_KEY);
+    if (!raw) return memoryRecentSpeakingIds;
+    const parsed = JSON.parse(raw);
+    return new Set(Array.isArray(parsed) ? parsed : []);
+  } catch {
+    return memoryRecentSpeakingIds;
+  }
+}
+
+export function recordSpeakingExamId(id: string): void {
+  memoryRecentSpeakingIds.add(id);
+  if (typeof window === "undefined") return;
+  try {
+    const current = Array.from(getRecentSpeakingExamIds());
+    const updated = [id, ...current.filter((x) => x !== id)].slice(0, 20);
+    sessionStorage.setItem(RECENT_SPEAKING_EXAM_KEY, JSON.stringify(updated));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+export function clearRecentSpeakingExamIds(): void {
+  memoryRecentSpeakingIds.clear();
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(RECENT_SPEAKING_EXAM_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+/**
+ * Sinh đề thi nói ngẫu nhiên từ kho đề hoặc tạo động, không bao giờ trùng lặp
+ */
+export function generateSpeakingExam(
+  course: SpeakingCourse,
+  options?: {
+    excludeId?: string;
+  },
+): SpeakingExam {
+  const pool = course === "JPD113" ? SPEAKING_EXAMS_JPD113 : SPEAKING_EXAMS_JPD123;
+  const recentIds = getRecentSpeakingExamIds();
+
+  // 1. Lọc các đề trong kho chưa từng xem gần đây
+  const freshExams = pool.filter((e) => !recentIds.has(e.id) && e.id !== options?.excludeId);
+
+  let selectedExam: SpeakingExam;
+  if (freshExams.length > 0) {
+    selectedExam = shuffle(freshExams)[0];
+  } else {
+    // Nếu kho đề mẫu đã xem hết, tự động sinh đề động hoàn toàn mới
+    selectedExam = buildDynamicSpeakingExam(course);
+  }
+
+  recordSpeakingExamId(selectedExam.id);
+  // Tự động lưu đề vào danh sách lưu trữ cho người dùng
+  saveSpeakingExam(selectedExam);
+
+  return selectedExam;
+}
+
+/**
+ * Thuật toán sinh đề thi nói động (Procedural Dynamic Speaking Generator)
+ * Luôn tạo ra một đề thi nói mới mẻ, chuẩn cấu trúc 4-5 câu trong tranh + 2 câu ngoài tranh.
+ */
+export function buildDynamicSpeakingExam(course: SpeakingCourse): SpeakingExam {
+  const entropy = Math.random().toString(36).slice(2, 7).toUpperCase();
+
+  function pick<T>(arr: T[]): T {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  if (course === "JPD113") {
+    // Kịch bản JPD113 động: Phòng học / Thư viện / Ga tàu
+    const theme = pick([
+      {
+        type: "classroom" as const,
+        location: "FPT大学の2階教室",
+        title: "大学の午前の教室",
+        titleVi: "Lớp học Đại học FPT buổi sáng",
+        teacher: "スミス先生（英語の先生）",
+        timeJp: "午前十時二十分",
+        timeVi: "10 giờ 20 phút sáng",
+        itemJp: "辞書と ノートと 赤いペン",
+        itemVi: "Từ điển, vở ghi và bút đỏ",
+      },
+      {
+        type: "station" as const,
+        location: "駅の切符売り場",
+        title: "にぎやかな駅の朝",
+        titleVi: "Buổi sáng nhộn nhịp tại ga tàu điện",
+        teacher: "駅員さん（男の人）",
+        timeJp: "午前七時四十五分",
+        timeVi: "7 giờ 45 phút sáng",
+        itemJp: "切符と 地下鉄の地図",
+        itemVi: "Vé tàu và bản đồ tàu điện ngầm",
+      },
+      {
+        type: "cafeteria" as const,
+        location: "大学の学生食堂",
+        title: "学生食堂の昼休み",
+        titleVi: "Giờ nghỉ trưa tại nhà ăn sinh viên",
+        teacher: "食堂のスタッフ（女の人）",
+        timeJp: "午後十二時半",
+        timeVi: "12 giờ rưỡi trưa",
+        itemJp: "お弁当と お茶と 果物",
+        itemVi: "Cơm hộp bento, trà và hoa quả",
+      },
+    ]);
+
+    const scene: SpeakingScene = {
+      id: `scene-dyn-113-${entropy}`,
+      type: theme.type,
+      title: theme.title,
+      titleVi: theme.titleVi,
+      location: theme.location,
+      description: `Khung cảnh ${theme.titleVi} tại ${theme.location}. Thời gian hiển thị là ${theme.timeVi}. Có ${theme.teacher} đang làm việc. Trên bàn có ${theme.itemVi}. Sinh viên các khoa đang có mặt rất đông vui.`,
+      descriptionJp: `${theme.location}の風景です。時間は${theme.timeJp}です。${theme.teacher}がいます。${theme.itemJp}があります。`,
+      hotspots: [
+        { id: "hs-1", labelJp: theme.teacher, labelVi: "Nhân vật chính", xPercent: 32, yPercent: 42 },
+        { id: "hs-2", labelJp: `時計（${theme.timeJp}）`, labelVi: theme.timeVi, xPercent: 78, yPercent: 25 },
+        { id: "hs-3", labelJp: theme.itemJp, labelVi: theme.itemVi, xPercent: 55, yPercent: 68 },
+        { id: "hs-4", labelJp: "学生たち", labelVi: "Các bạn sinh viên", xPercent: 20, yPercent: 75 },
+      ],
+    };
+
+    const pictureQuestions: SpeakingQuestion[] = [
+      {
+        id: `q-dyn-113-1-${entropy}`,
+        type: "in_picture",
+        order: 1,
+        questionJp: "ここは どこですか。何階に ありますか。",
+        questionRomaji: "Koko wa doko desu ka. Nan-gai ni arimasu ka.",
+        questionVi: "Đây là nơi nào? Ở tầng mấy?",
+        grammarPoint: "Chỉ định từ địa điểm & Số tầng (Bài 2)",
+        sampleAnswerJp: `${theme.location}です。二階に あります。`,
+        sampleAnswerRomaji: `${theme.location} desu. Ni-kai ni arimasu.`,
+        sampleAnswerVi: `Là ${theme.titleVi}. Ở trên tầng 2.`,
+        answerGuide: "Chỉ rõ địa điểm và số tầng theo tranh.",
+      },
+      {
+        id: `q-dyn-113-2-${entropy}`,
+        type: "in_picture",
+        order: 2,
+        questionJp: "あの 時計は いま 何時何分を 指していますか。",
+        questionRomaji: "Ano tokei wa ima nan-ji nan-pun o sashite imasu ka.",
+        questionVi: "Chiếc đồng hồ kia bây giờ chỉ mấy giờ mấy phút?",
+        grammarPoint: "Giờ phút: 〜時〜分 (Bài 3)",
+        sampleAnswerJp: `${theme.timeJp}です。`,
+        sampleAnswerRomaji: `${theme.timeJp} desu.`,
+        sampleAnswerVi: `Bây giờ là ${theme.timeVi}.`,
+        answerGuide: "Đọc rõ ràng cả giờ và phút.",
+      },
+      {
+        id: `q-dyn-113-3-${entropy}`,
+        type: "in_picture",
+        order: 3,
+        questionJp: "机の上に 何と 何が ありますか。",
+        questionRomaji: "Tsukue no ue ni nani to nani ga arimasu ka.",
+        questionVi: "Trên bàn có những đồ vật gì?",
+        grammarPoint: "Liệt kê N1 と N2 (Bài 1 & 2)",
+        sampleAnswerJp: `${theme.itemJp}が あります。`,
+        sampleAnswerRomaji: `${theme.itemJp} ga arimasu.`,
+        sampleAnswerVi: `Có ${theme.itemVi}.`,
+        answerGuide: "Dùng trợ từ『と』khi liệt kê đồ vật.",
+      },
+      {
+        id: `q-dyn-113-4-${entropy}`,
+        type: "in_picture",
+        order: 4,
+        questionJp: "前に 立っている 人は だれですか。",
+        questionRomaji: "Mae ni tatte iru hito wa dare desu ka.",
+        questionVi: "Người đang đứng ở phía trước là ai?",
+        grammarPoint: "Danh từ は Danh từ です (Bài 1)",
+        sampleAnswerJp: `${theme.teacher}です。`,
+        sampleAnswerRomaji: `${theme.teacher} desu.`,
+        sampleAnswerVi: `Đó là ${theme.teacher}.`,
+        answerGuide: "Nêu tên và vai trò của nhân vật trong tranh.",
+      },
+    ];
+
+    const extensionQuestions: SpeakingQuestion[] = [
+      {
+        id: `q-dyn-113-ext1-${entropy}`,
+        type: "extension",
+        order: 5,
+        questionJp: "あなたは 毎朝、何時に 大学へ 行きますか。",
+        questionRomaji: "Anata wa maiasa, nan-ji ni daigaku e ikimasu ka.",
+        questionVi: "Mỗi sáng bạn đến trường đại học lúc mấy giờ?",
+        grammarPoint: "Thời điểm に Động từ di chuyển (Bài 3)",
+        sampleAnswerJp: "午前七時半に 大学へ 行きます。",
+        sampleAnswerRomaji: "Gozen shichi-ji-han ni daigaku e ikimasu.",
+        sampleAnswerVi: "Tôi đến trường lúc 7 giờ rưỡi sáng.",
+        answerGuide: "Nhớ dùng trợ từ『に』chỉ mốc thời gian cụ thể.",
+      },
+      {
+        id: `q-dyn-113-ext2-${entropy}`,
+        type: "extension",
+        order: 6,
+        questionJp: "あなたの 電話番号は 何番ですか。",
+        questionRomaji: "Anata no denwa bangou wa nan-ban desu ka.",
+        questionVi: "Số điện thoại của bạn là số mấy?",
+        grammarPoint: "Đọc số điện thoại & Số đếm (Bài 2)",
+        sampleAnswerJp: "ゼロ・九・八・の・一・二・三・四・五・六です。",
+        sampleAnswerRomaji: "Zero kyuu hachi no ichi ni san yon go roku desu.",
+        sampleAnswerVi: "Số điện thoại của tôi là 098-123-456.",
+        answerGuide: "Đọc từng số một, dấu gạch nối đọc là 『の (no)』.",
+      },
+    ];
+
+    const exam: SpeakingExam = {
+      id: `dyn-sp-jpd113-${Date.now()}-${entropy}`,
+      course: "JPD113",
+      title: `JPD113 口頭試験 #${entropy}`,
+      titleVi: `Đề thi nói JPD113 #${entropy} · ${theme.titleVi}`,
+      createdAt: new Date().toISOString(),
+      scene,
+      pictureQuestions,
+      extensionQuestions,
+      isAiGenerated: true,
+      provider: "Sumi FPT Speaking Dynamic Engine",
+    };
+
+    return exam;
+  }
+
+  // JPD123 (Bài 4–7): Quán cà phê / Ký túc xá / Phố cổ Asakusa
+  const scenario = pick([
+    {
+      type: "cafe" as const,
+      location: "FPT大学のオープンカフェ",
+      title: "カフェで楽しむ午後",
+      titleVi: "Buổi chiều thư giãn tại quán cà phê FPT",
+      actionManJp: "冷たい アイスコーヒーを 飲みながら 本を 読んでいます",
+      actionManVi: "Đang vừa uống cà phê đá mát lạnh vừa đọc sách",
+      actionWomanJp: "パソコンで 日本語の 宿題を しています",
+      actionWomanVi: "Đang làm bài tập tiếng Nhật trên máy tính xách tay",
+      compareItem1: "コーヒー（三百五十円）",
+      compareItem2: "ジュース（四百円）",
+      expensiveItem: "ジュース",
+      atmosphere: "広くて、とても 静かです",
+      atmosphereVi: "Rộng rãi và rất yên tĩnh",
+    },
+    {
+      type: "dormitory" as const,
+      location: "FPT大学の学生寮の部屋",
+      title: "学生寮の楽しい休日",
+      titleVi: "Ngày nghỉ vui vẻ tại ký túc xá FPT",
+      actionManJp: "電子レンジで とり肉の料理を 温めています",
+      actionManVi: "Đang hâm nóng món thịt gà bằng lò vi sóng",
+      actionWomanJp: "日本の アニメを 見て 笑っています",
+      actionWomanVi: "Đang xem phim hoạt hình anime Nhật Bản và cười vui",
+      compareItem1: "新しい 机",
+      compareItem2: "古い 机",
+      expensiveItem: "新しい 机の ほうが きれいです",
+      atmosphere: "明るくて、とても 暖かいです",
+      atmosphereVi: "Sáng sủa và rất ấm áp",
+    },
+    {
+      type: "asakusa" as const,
+      location: "東京・浅草寺の雷門の前",
+      title: "東京浅草の観光",
+      titleVi: "Du lịch thắng cảnh Asakusa Tokyo",
+      actionManJp: "大きい 門の前で 写真を 撮っています",
+      actionManVi: "Đang chụp ảnh kỷ niệm trước cổng lớn Kaminarimon",
+      actionWomanJp: "おみやげ屋で かわいい 人形を 買っています",
+      actionWomanVi: "Đang mua búp bê truyền thống dễ thương tại tiệm quà lưu niệm",
+      compareItem1: "新幹線",
+      compareItem2: "バス",
+      expensiveItem: "新幹線の ほうが ずっと 速いです",
+      atmosphere: "有名な観光地ですから、とても にぎやかです",
+      atmosphereVi: "Vì là điểm du lịch nổi tiếng nên rất nhộn nhịp",
+    },
+  ]);
+
+  const scene: SpeakingScene = {
+    id: `scene-dyn-123-${entropy}`,
+    type: scenario.type,
+    title: scenario.title,
+    titleVi: scenario.titleVi,
+    location: scenario.location,
+    description: `Khung cảnh ${scenario.titleVi} tại ${scenario.location}. Không khí ${scenario.atmosphereVi}. Người nam ${scenario.actionManVi}. Người nữ ${scenario.actionWomanVi}. Xung quanh có các chi tiết về đồ ăn, phương tiện và đồ dùng sinh hoạt.`,
+    descriptionJp: `${scenario.location}の風景です。男性は${scenario.actionManJp}。女性は${scenario.actionWomanJp}。雰囲気は${scenario.atmosphere}。`,
+    hotspots: [
+      { id: "hs-1", labelJp: "男性の行動", labelVi: scenario.actionManVi, xPercent: 28, yPercent: 45 },
+      { id: "hs-2", labelJp: "女性の行動", labelVi: scenario.actionWomanVi, xPercent: 70, yPercent: 48 },
+      { id: "hs-3", labelJp: scenario.compareItem1, labelVi: "Vật thể 1", xPercent: 45, yPercent: 68 },
+      { id: "hs-4", labelJp: "全体の雰囲気", labelVi: scenario.atmosphereVi, xPercent: 82, yPercent: 22 },
+    ],
+  };
+
+  const pictureQuestions: SpeakingQuestion[] = [
+    {
+      id: `q-dyn-123-1-${entropy}`,
+      type: "in_picture",
+      order: 1,
+      questionJp: "男の人は いま 何を していますか。",
+      questionRomaji: "Otoko no hito wa ima nani o shite imasu ka.",
+      questionVi: "Người đàn ông bây giờ đang làm gì?",
+      grammarPoint: "Hiện tại tiếp diễn thể て: Vています (Bài 7)",
+      sampleAnswerJp: `${scenario.actionManJp}。`,
+      sampleAnswerRomaji: "Otoko no hito wa action o shite imasu.",
+      sampleAnswerVi: `Anh ấy ${scenario.actionManVi}.`,
+      answerGuide: "Dùng thể tiếp diễn『〜ています』để miêu tả hành động trong tranh.",
+    },
+    {
+      id: `q-dyn-123-2-${entropy}`,
+      type: "in_picture",
+      order: 2,
+      questionJp: "女の人は いま 何を していますか。",
+      questionRomaji: "Onna no hito wa ima nani o shite imasu ka.",
+      questionVi: "Người phụ nữ bây giờ đang làm gì?",
+      grammarPoint: "Vています (Bài 7)",
+      sampleAnswerJp: `${scenario.actionWomanJp}。`,
+      sampleAnswerRomaji: "Onna no hito wa action o shite imasu.",
+      sampleAnswerVi: `Cô ấy ${scenario.actionWomanVi}.`,
+      answerGuide: "Miêu tả chính xác hành động của nhân vật nữ.",
+    },
+    {
+      id: `q-dyn-123-3-${entropy}`,
+      type: "in_picture",
+      order: 3,
+      questionJp: `${scenario.compareItem1}と ${scenario.compareItem2}と どちらが 優れていますか／高いですか。`,
+      questionRomaji: "Dochira ga sugurete imasu ka / takai desu ka.",
+      questionVi: `Giữa ${scenario.compareItem1} và ${scenario.compareItem2} thì cái nào hơn / đắt hơn?`,
+      grammarPoint: "So sánh lựa chọn: A と B と どちらが (Bài 6)",
+      sampleAnswerJp: `${scenario.expensiveItem}です。`,
+      sampleAnswerRomaji: `${scenario.expensiveItem} desu.`,
+      sampleAnswerVi: `Là ${scenario.expensiveItem}.`,
+      answerGuide: "Cấu trúc trả lời so sánh:『[A] の ほうが 〜 です』.",
+    },
+    {
+      id: `q-dyn-123-4-${entropy}`,
+      type: "in_picture",
+      order: 4,
+      questionJp: "この場所の 雰囲気は どうですか。にぎやかですか、静かですか。",
+      questionRomaji: "Kono basho no fun'iki wa dou desu ka. Nigiyaka desu ka, shizuka desu ka.",
+      questionVi: "Không khí của nơi này như thế nào? Nhộn nhịp hay yên tĩnh?",
+      grammarPoint: "Tính từ miêu tả: な và い (Bài 4)",
+      sampleAnswerJp: `${scenario.atmosphere}。`,
+      sampleAnswerRomaji: `${scenario.atmosphere}.`,
+      sampleAnswerVi: `${scenario.atmosphereVi}.`,
+      answerGuide: "Nối tính từ để câu trả lời thêm lưu loát.",
+    },
+    {
+      id: `q-dyn-123-5-${entropy}`,
+      type: "in_picture",
+      order: 5,
+      questionJp: "テーブルの上に 何が 置いてありますか。",
+      questionRomaji: "Teeburu no ue ni nani ga oite arimasu ka.",
+      questionVi: "Trên bàn có đặt những món đồ gì?",
+      grammarPoint: "Vị trí & Danh từ (Bài 4 & 7)",
+      sampleAnswerJp: "飲み物の コップや パソコン、本が あります。",
+      sampleAnswerRomaji: "Nomimono no koppu ya pasokon, hon ga arimasu.",
+      sampleAnswerVi: "Có cốc đồ uống, máy tính xách tay và sách.",
+      answerGuide: "Quan sát kỹ các chi tiết nhỏ trên mặt bàn.",
+    },
+  ];
+
+  const extensionQuestions: SpeakingQuestion[] = [
+    {
+      id: `q-dyn-123-ext1-${entropy}`,
+      type: "extension",
+      order: 6,
+      questionJp: "休みの日に、あなたは よく 友達と どこへ 行きますか。何を しますか。",
+      questionRomaji: "Yasumi no hi ni, anata wa yoku tomodachi to doko e ikimasu ka. Nani o shimasu ka.",
+      questionVi: "Vào ngày nghỉ, bạn thường cùng bạn bè đi đâu? Làm những gì?",
+      grammarPoint: "Mục đích di chuyển & Hành động cuối tuần (Bài 5)",
+      sampleAnswerJp: "ショッピングモールへ 買い物に 行ったり、カフェで 話したりします。",
+      sampleAnswerRomaji: "Shoppingu mooru e kaimono ni ittari, kafe de hanashitari shimasu.",
+      sampleAnswerVi: "Tôi cùng bạn đi mua sắm ở trung tâm thương mại hoặc vào quán cà phê trò chuyện.",
+      answerGuide: "Nêu địa điểm『〜へ 行きます』và hoạt động『〜を します』.",
+    },
+    {
+      id: `q-dyn-123-ext2-${entropy}`,
+      type: "extension",
+      order: 7,
+      questionJp: "今、あなたがいちばん 挑戦したい（やってみたい）ことは 何ですか。",
+      questionRomaji: "Ima, anata ga ichiban chousen shitai (yatte mitai) koto wa nan desu ka.",
+      questionVi: "Bây giờ, điều mà bạn muốn thử sức / muốn làm nhất là gì?",
+      grammarPoint: "Mong muốn: Vたいです (Bài 5)",
+      sampleAnswerJp: "日本へ 留学に 行って、新しい 技術を 勉強したいです。",
+      sampleAnswerRomaji: "Nihon e ryuugaku ni itte, atarashii gijutsu o benkyou shitai desu.",
+      sampleAnswerVi: "Tôi muốn đi du học Nhật Bản và học hỏi công nghệ mới.",
+      answerGuide: "Cấu trúc:『[Động từ thể て]、[V]たいです』.",
+    },
+  ];
+
+  const exam: SpeakingExam = {
+    id: `dyn-sp-jpd123-${Date.now()}-${entropy}`,
+    course: "JPD123",
+    title: `JPD123 口頭試験 #${entropy}`,
+    titleVi: `Đề thi nói JPD123 #${entropy} · ${scenario.titleVi}`,
+    createdAt: new Date().toISOString(),
+    scene,
+    pictureQuestions,
+    extensionQuestions,
+    isAiGenerated: true,
+    provider: "Sumi FPT Speaking Dynamic Engine",
+  };
+
+  return exam;
+}

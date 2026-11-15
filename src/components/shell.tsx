@@ -8,6 +8,7 @@ const LINKS = [
   { to: "/words" as const, label: "Từ" },
   { to: "/grammar" as const, label: "Ngữ pháp" },
   { to: "/reading" as const, label: "Đọc" },
+  { to: "/speaking" as const, label: "Nói" },
   { to: "/exam" as const, label: "Đề" },
 ];
 
