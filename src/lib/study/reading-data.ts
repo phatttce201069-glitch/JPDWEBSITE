@@ -356,7 +356,7 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
     title: "デパートでの買い物と日本料理",
     titleVi: "Mua sắm ở bách hóa và món ăn Nhật",
     theme: "Mua sắm, so sánh giá cả, dụng cụ ăn uống và phương tiện",
-    content: "先週の土曜日、私は東京から来た本田さんとダナン市の区にある大きいデパートへ買い物に行きました。デパートでセールがありましたから、人がたくさんいました。私たちは白いTシャツを二まい買いました。二まいで三千円でした。とてもやすかったです。買い物をしてから、日本料理のレストランへ行きました。ナイフやスプーンなどの食事の道具をつかって、とり肉の料理やピザを食べました。デパートのピザはスーパーのピザよりずっとおいしかったです。小さいカフェでコーヒーを飲んでから、午後四時半にタクシーで帰りました。バスよりタクシーのほうがはやいですが、たかかったです。",
+    content: "先週の土曜日、私は東京から来た本田さんとダナン市の区にある大きいデパートへ買い物に行きました。デパートでセールがありましたから、人がたくさんいました。私たちは白いTシャツを二まい買いました。二まいで三千円でした。とてもやすかったです。買い物をしてから、日本料理のレストランへ行きました。ナイフやスプーンなどのしょくじのどう具をつかって、とり肉の料理やピザを食べました。デパートのピザはスーパーのピザよりずっとおいしかったです。小さいカフェでコーヒーを飲んでから、午後四時半にタクシーで帰りました。バスよりタクシーのほうがはやいですが、たかかったです。",
     sentences: [
       { jp: "先週の土曜日、私は東京から来た本田さんとダナン市の区にある大きいデパートへ買い物に行きました。", vi: "Thứ Bảy tuần trước, tôi và bạn Honda đến từ Tokyo đã đi mua sắm ở trung tâm thương mại lớn tại quận trung tâm Đà Nẵng.", romaji: "Senshuu no doyoubi, watashi wa Toukyou kara kita Honda-san to Danan-shi no ku ni aru ookii depaato e kaimono ni ikimashita." },
       { jp: "デパートでセールがありましたから、人がたくさんいました。", vi: "Vì ở trung tâm thương mại có đợt giảm giá nên rất đông người.", romaji: "Depaato de seeru ga arimashita kara, hito ga takusan imashita." },
@@ -364,7 +364,7 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
       { jp: "二まいで三千円でした。", vi: "Hai chiếc có giá 3.000 yên.", romaji: "Nimai de sanzen-en deshita." },
       { jp: "とてもやすかったです。", vi: "Đã rất rẻ.", romaji: "Totemo yasukatta desu." },
       { jp: "買い物をしてから、日本料理のレストランへ行きました。", vi: "Sau khi mua sắm xong, chúng tôi đã đến nhà hàng ẩm thực Nhật Bản.", romaji: "Kaimono o shite kara, nihon ryouri no resutoran e ikimashita." },
-      { jp: "ナイフやスプーンなどの食事の道具をつかって、とり肉の料理やピザを食べました。", vi: "Dùng các dụng cụ ăn uống như dao và thìa, chúng tôi ăn các món thịt gà và pizza.", romaji: "Naifu ya supuun nado no shokuji no dougu o tsukatte, toriniku no ryouri ya piza o tabemashita." },
+      { jp: "ナイフやスプーンなどのしょくじのどう具をつかって、とり肉の料理やピザを食べました。", vi: "Dùng các dụng cụ ăn uống như dao và thìa, chúng tôi ăn các món thịt gà và pizza.", romaji: "Naifu ya supuun nado no shokuji no dougu o tsukatte, toriniku no ryouri ya piza o tabemashita." },
       { jp: "デパートのピザはスーパーのピザよりずっとおいしかったです。", vi: "Bánh pizza ở trung tâm thương mại ngon hơn nhiều so với pizza ở siêu thị.", romaji: "Depaato no piza wa suupaa no piza yori zutto oishikatta desu." },
       { jp: "小さいカフェでコーヒーを飲んでから、午後四時半にタクシーで帰りました。", vi: "Sau khi uống cà phê ở quán nhỏ, chúng tôi bắt taxi về lúc 4 giờ rưỡi chiều.", romaji: "Chiisai kafe de koohii o nonde kara, gogo yo-jihan ni takushii de kaerimashita." },
       { jp: "バスよりタクシーのほうがはやいですが、たかかったです。", vi: "Taxi nhanh hơn xe buýt nhưng mà đắt tiền hơn.", romaji: "Basu yori takushii no hou ga hayai desu ga, takakatta desu." }
@@ -458,14 +458,14 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
     title: "歴史のあるお寺と門の観光",
     titleVi: "Tham quan ngôi chùa lịch sử và cổng lớn",
     theme: "Du lịch, danh lam thắng cảnh, phương tiện và viết tên kỷ niệm",
-    content: "来月の休みに、私の国のともだちと二人でお寺へりょこうに行きます。そのまちには大きい門とお寺がありますから、男の人も女の人もたくさん来ます。駅の前で有名なバスにのって、午前十時につきました。お寺の門の前でしゃしんをたくさんとって、きれいなたてものを見ました。たくさん歩きましたから、からだがつかれて力もなくなりましたが、とてもたのしかったです。お寺のノートに自分の名前を書いてから、よるにアパートへ帰りました。",
+    content: "来月の休みに、私の国のともだちと二人でお寺へりょこうに行きます。そのまちには大きい門とお寺がありますから、男の人も女の人もたくさん来ます。駅の前で有名なバスにのって、午前十時につきました。お寺の門の前でしゃしんをたくさんとって、きれいなたてものを見ました。たくさん歩きましたから、からだがつかれて力もなくなりましたが、とてもたのしかったです。お寺のノートにじぶんの名前を書いてから、よるにアパートへ帰りました。",
     sentences: [
       { jp: "来月の休みに、私の国のともだちと二人でお寺へりょこうに行きます。", vi: "Vào kỳ nghỉ tháng sau, tôi và người bạn cùng quê sẽ đi du lịch đến ngôi chùa cổ.", romaji: "Raigetsu no yasumi ni, watashi no kuni no tomodachi to futari de otera e ryokou ni ikimasu." },
       { jp: "そのまちには大きい門とお寺がありますから、男の人も女の人もたくさん来ます。", vi: "Vì thị trấn đó có cổng lớn và ngôi chùa nên cả nam và nữ đều đến rất đông.", romaji: "Sono machi ni wa ookii mon to otera ga arimasu kara, otoko no hito mo onna no hito mo takusan kimasu." },
       { jp: "駅の前で有名なバスにのって、午前十時につきました。", vi: "Chúng tôi lên tuyến xe buýt nổi tiếng ở trước nhà ga và đã đến nơi lúc 10 giờ sáng.", romaji: "Eki no mae de yuumeina basu ni notte, gozen juu-ji ni tsukimashita." },
       { jp: "お寺の門の前でしゃしんをたくさんとって、きれいなたてものを見ました。", vi: "Chúng tôi chụp nhiều ảnh trước cổng chùa và chiêm ngưỡng công trình tuyệt đẹp.", romaji: "Otera no mon no mae de shashin o takusan totte, kireina tatemono o mimashita." },
       { jp: "たくさん歩きましたから、からだがつかれて力もなくなりましたが、とてもたのしかったです。", vi: "Vì đi bộ nhiều nên người mệt và kiệt sức nhưng chuyến đi rất vui.", romaji: "Takusan arukimashita kara, karada ga tsukarete chikara mo nakunarimashita ga, totemo tanoshikatta desu." },
-      { jp: "お寺のノートに自分の名前を書いてから、よるにアパートへ帰りました。", vi: "Sau khi viết tên mình vào cuốn sổ lưu niệm của chùa, chúng tôi trở về căn hộ vào buổi tối.", romaji: "Otera no nooto ni jibun no namae o kaite kara, yoru ni apaato e kaerimashita." }
+      { jp: "お寺のノートにじぶんの名前を書いてから、よるにアパートへ帰りました。", vi: "Sau khi viết tên mình vào cuốn sổ lưu niệm của chùa, chúng tôi trở về căn hộ vào buổi tối.", romaji: "Otera no nooto ni jibun no namae o kaite kara, yoru ni apaato e kaerimashita." }
     ],
     translation: "Vào kỳ nghỉ tháng sau, tôi cùng một người bạn đồng hương dự định đi du lịch viếng chùa. Nơi đó có cổng chào khổng lồ và ngôi chùa thanh tịnh nên thu hút rất đông cả nam giới và nữ giới tới tham quan. Chúng tôi đón xe buýt trước nhà ga và đến nơi vào lúc 10 giờ sáng. Cả hai chụp nhiều bức ảnh kỷ niệm trước cổng chùa và ngắm nhìn các công trình kiến trúc tuyệt đẹp. Do đi bộ khá nhiều nên cơ thể thấm mệt và tiêu hao nhiều thể lực, nhưng chuyến đi vô cùng ý nghĩa và vui vẻ. Sau khi nắn nót ghi tên mình vào sổ lưu niệm tại chùa, chúng tôi trở về căn hộ khi trời đã tối.",
     romaji: "Raigetsu no yasumi ni, watashi no kuni no tomodachi to futari de otera e ryokou ni ikimasu. Sono machi ni wa ookii mon to otera ga arimasu kara, otoko no hito mo onna no hito mo takusan kimasu. Eki no mae de yuumeina basu ni notte, gozen juu-ji ni tsukimashita. Otera no mon no mae de shashin o takusan totte, kireina tatemono o mimashita. Takusan arukimashita kara, karada ga tsukarete chikara mo nakunarimashita ga, totemo tanoshikatta desu. Otera no nooto ni jibun no namae o kaite kara, yoru ni apaato e kaerimashita.",
@@ -975,14 +975,14 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
     title: "アパートでの料理作りと週末の食事",
     titleVi: "Nấu ăn tại căn hộ và bữa ăn cuối tuần",
     theme: "Nấu ăn, so sánh giá cả siêu thị vs cửa hàng tiện lợi, dụng cụ ăn uống",
-    content: "今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。午前十時に本田さんとスーパーへ行って、とり肉やさかなや野さいを買いました。ぜんぶで五千五百円でした。スーパーの食べ物はコンビニの食べ物よりやすいです。アパートに帰ってから、みんなで料理をつくりました。スプーンやフォークなどの食事の道具をつかって、大きいテーブルでスープとサラダを食べました。小さいコップでお茶やコーヒーを飲んで、午後四時半まで楽しく話しました。",
+    content: "今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。午前十時に本田さんとスーパーへ行って、とり肉やさかなや野さいを買いました。ぜんぶで五千五百円でした。スーパーの食べ物はコンビニの食べ物よりやすいです。アパートに帰ってから、みんなで料理をつくりました。スプーンやフォークなどのしょくじのどう具をつかって、大きいテーブルでスープとサラダを食べました。小さいコップでお茶やコーヒーを飲んで、午後四時半まで楽しく話しました。",
     sentences: [
       { jp: "今週の日曜日に、アパートでともだちと日本料理のパーティーをしました。", vi: "Chủ nhật tuần này, tôi đã tổ chức bữa tiệc ẩm thực Nhật Bản cùng bạn bè tại căn hộ.", romaji: "Konshuu no nichiyoubi ni, apaato de tomodachi to nihon ryouri no paatii o shimashita." },
       { jp: "午前十時に本田さんとスーパーへ行って、とり肉やさかなや野さいを買いました。", vi: "Lúc 10 giờ sáng, tôi cùng bạn Honda đi siêu thị mua thịt gà, cá và rau củ.", romaji: "Gozen juu-ji ni Honda-san to suupaa e itte, toriniku ya sakana ya yasai o kaimashita." },
       { jp: "ぜんぶで五千五百円でした。", vi: "Tổng cộng hết 5.500 yên.", romaji: "Zenbu de gosen gohyaku-en deshita." },
       { jp: "スーパーの食べ物はコンビニの食べ物よりやすいです。", vi: "Thực phẩm ở siêu thị rẻ hơn thực phẩm ở cửa hàng tiện lợi.", romaji: "Suupaa no tabemono wa konbini no tabemono yori yasui desu." },
       { jp: "アパートに帰ってから、みんなで料理をつくりました。", vi: "Sau khi về căn hộ, mọi người cùng nhau nấu nướng.", romaji: "Apaato ni kaette kara, minna de ryouri o tsukurimashita." },
-      { jp: "スプーンやフォークなどの食事の道具をつかって、大きいテーブルでスープ và サラダを食べました。", vi: "Dùng các dụng cụ ăn uống như thìa và nĩa, chúng tôi ăn súp và sa lát ở chiếc bàn lớn.", romaji: "Supuun ya fooku nado no shokuji no dougu o tsukatte, ookii teeburu de suupu to sarada o tabemashita." },
+      { jp: "スプーンやフォークなどのしょくじのどう具をつかって、大きいテーブルでスープとサラダを食べました。", vi: "Dùng các dụng cụ ăn uống như thìa và nĩa, chúng tôi ăn súp và sa lát ở chiếc bàn lớn.", romaji: "Supuun ya fooku nado no shokuji no dougu o tsukatte, ookii teeburu de suupu to sarada o tabemashita." },
       { jp: "小さいコップでお茶やコーヒーを飲んで、午後四時半まで楽しく話しました。", vi: "Chúng tôi uống trà và cà phê bằng chiếc cốc nhỏ, rồi trò chuyện vui vẻ đến 4 giờ rưỡi chiều.", romaji: "Chiisai koppu de ocha ya koohii o nonde, gogo yo-jihan made tanoshiku hanashimashita." }
     ],
     translation: "Chủ nhật tuần này, tôi tổ chức một bữa tiệc nấu các món ăn Nhật cùng bạn bè tại căn hộ của mình. Vào lúc 10 giờ sáng, tôi cùng Honda đi siêu thị mua thịt gà tươi, cá và rau củ. Tổng chi phí mua sắm hết 5.500 yên, đồ ăn ở siêu thị rẻ hơn nhiều so với mua ở cửa hàng tiện lợi. Về tới căn hộ, cả nhóm bắt tay vào nấu nướng. Chúng tôi dùng thìa và nĩa thưởng thức súp cùng sa lát trên chiếc bàn lớn. Sau bữa ăn, mọi người dùng cốc nhỏ nhâm nhi trà và cà phê, trò chuyện rôm rả đến tận 4 giờ rưỡi chiều.",

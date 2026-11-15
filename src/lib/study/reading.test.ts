@@ -142,6 +142,80 @@ test("inspectJapaneseCharOrWord correctly returns Romaji, Hiragana and Hanviet f
   assert.equal(kana.romaji, "ashita");
 });
 
+test("inspectJapaneseCharOrWord prevents substring collisions and correctly resolves compound nouns and verb inflections", () => {
+  // 1. Chống substring collision: '土曜日' không được nhầm sang chữ '日'
+  const sat = inspectJapaneseCharOrWord("土曜日");
+  assert.equal(sat.text, "土曜日");
+  assert.equal(sat.hiragana, "どようび");
+  assert.equal(sat.romaji, "doyoubi");
+  assert.equal(sat.hanviet, "THỔ DIỆU NHẬT");
+
+  // 2. '東京' không được nhầm sang '東' (higashi)
+  const tokyo = inspectJapaneseCharOrWord("東京");
+  assert.equal(tokyo.hiragana, "とうきょう");
+  assert.equal(tokyo.romaji, "Toukyou");
+  assert.equal(tokyo.hanviet, "ĐÔNG KINH");
+
+  // 3. '男の人' và '女の人' không được nhầm sang '人' (hito)
+  const man = inspectJapaneseCharOrWord("男の人");
+  assert.equal(man.hiragana, "おとこのひと");
+  assert.equal(man.romaji, "otoko no hito");
+
+  const woman = inspectJapaneseCharOrWord("女の人");
+  assert.equal(woman.hiragana, "おんなのひと");
+  assert.equal(woman.romaji, "onna no hito");
+
+  // 4. 'きょうしつ' không được nhầm sang 'きょうし' (giáo viên)
+  const classroom = inspectJapaneseCharOrWord("きょうしつ");
+  assert.equal(classroom.romaji, "kyoushitsu");
+  assert.ok(classroom.meaning.includes("lớp học") || classroom.meaning.includes("phòng học"));
+
+  // 5. Các dạng chia quá khứ của động từ
+  const kita = inspectJapaneseCharOrWord("来た");
+  assert.equal(kita.hiragana, "きた");
+  assert.equal(kita.romaji, "kita");
+
+  const kaita = inspectJapaneseCharOrWord("書いた");
+  assert.equal(kaita.hiragana, "かいた");
+  assert.equal(kaita.romaji, "kaita");
+
+  const yonda = inspectJapaneseCharOrWord("読んだ");
+  assert.equal(yonda.hiragana, "よんだ");
+  assert.equal(yonda.romaji, "yonda");
+
+  const hatarakitai = inspectJapaneseCharOrWord("働きたい");
+  assert.equal(hatarakitai.hiragana, "はたらきたい");
+  assert.equal(hatarakitai.romaji, "hatarakitai");
+
+  // 6. Cụm từ chuyên môn trong bài đọc
+  const tools = inspectJapaneseCharOrWord("食事の道具");
+  assert.equal(tools.hiragana, "しょくじのどうぐ");
+  assert.equal(tools.romaji, "shokuji no dougu");
+
+  const gakushoku = inspectJapaneseCharOrWord("学食");
+  assert.equal(gakushoku.hiragana, "がくしょく");
+  assert.equal(gakushoku.romaji, "gakushoku");
+});
+
+test("all reading passages have zero corrupted text and 100% accurate sentence Romaji", () => {
+  const allPassages = [...READING_PASSAGES_JPD113, ...READING_PASSAGES_JPD123];
+  const badPatterns = ["学たべる", "食こと", "みち具", " và ", "—", "かくいた", "くるた", "よむんだ"];
+
+  for (const p of allPassages) {
+    for (const b of badPatterns) {
+      assert.ok(!p.content.includes(b), `Content in ${p.id} must not contain bad pattern '${b}'`);
+    }
+
+    for (let i = 0; i < p.sentences.length; i++) {
+      const s = p.sentences[i];
+      for (const b of badPatterns) {
+        assert.ok(!s.jp.includes(b), `Sentence ${i + 1} in ${p.id} must not contain bad pattern '${b}'`);
+      }
+      assert.ok(s.romaji && s.romaji.trim().length > 0, `Sentence ${i + 1} in ${p.id} must have non-empty romaji`);
+    }
+  }
+});
+
 test("passageToRomaji transliterates full Japanese text into clean Romaji", () => {
   const romaji = passageToRomaji("わたしはナムです。");
   assert.ok(romaji.includes("watashi") && romaji.includes("namu") && romaji.includes("desu"));
