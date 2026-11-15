@@ -346,6 +346,845 @@ const RAW_PASSAGES_JPD113: ReadingPassage[] = [
       }
     ]
   }
+,
+  // JPD113-READ-5
+  {
+    "id": "jpd113-read-5",
+    "course": "JPD113",
+    "title": "学校の日本語のクラス",
+    "titleVi": "Lớp học tiếng Nhật tại trường học",
+    "theme": "Trường học, số người, tuổi tác và lịch học buổi sáng",
+    "content": "ここは私たちの学校です。教室に学生が七人います。九月からの新しいベトナム人と日本人の学生です。先生は日本人で、木村先生です。木村先生は三十五才です。毎日何時から何時まで勉強しますか。一時間目は午前八時半からです。日本語の授業はとても面白いです。",
+    "sentences": [
+      {
+        "jp": "ここは私たちの学校です。",
+        "vi": "Đây là trường học của chúng tôi.",
+        "romaji": "Koko wa watashitachi no gakkou desu."
+      },
+      {
+        "jp": "教室に学生が七人います。",
+        "vi": "Trong lớp học có 7 bạn sinh viên.",
+        "romaji": "Kyoushitsu ni gakusei ga shichinin imasu."
+      },
+      {
+        "jp": "九月からの新しいベトナム人と日本人の学生です。",
+        "vi": "Đó là những sinh viên người Việt Nam và Nhật Bản nhập học từ tháng 9.",
+        "romaji": "Kugatsu kara no atarashii Betonamujin to Nihonjin no gakusei desu."
+      },
+      {
+        "jp": "先生は日本人で、木村先生です。",
+        "vi": "Giáo viên là người Nhật, thầy Kimura.",
+        "romaji": "Sensei wa Nihonjin de, Kimura-sensei desu."
+      },
+      {
+        "jp": "木村先生は三十五才です。",
+        "vi": "Thầy Kimura 35 tuổi.",
+        "romaji": "Kimura-sensei wa sanjuugo-sai desu."
+      },
+      {
+        "jp": "毎日何時から何時まで勉強しますか。",
+        "vi": "Mỗi ngày học từ mấy giờ đến mấy giờ?",
+        "romaji": "Mainichi nan-ji kara nan-ji made benkyou shimasu ka."
+      },
+      {
+        "jp": "一時間目は午前八時半からです。",
+        "vi": "Tiết học thứ nhất bắt đầu từ 8 giờ rưỡi sáng.",
+        "romaji": "Ichi-jikanme wa gozen hachi-jihan kara desu."
+      },
+      {
+        "jp": "日本語の授業はとても面白いです。",
+        "vi": "Giờ học tiếng Nhật rất thú vị.",
+        "romaji": "Nihongo no jugyou wa totemo omoshiroi desu."
+      }
+    ],
+    "translation": "Đây là trường học của chúng tôi. Trong phòng học hiện có 7 bạn học sinh, gồm cả các bạn người Việt Nam và người Nhật nhập học từ tháng 9. Giáo viên phụ trách là thầy Kimura, người Nhật Bản. Năm nay thầy 35 tuổi. Lớp học bắt đầu từ mấy giờ đến mấy giờ mỗi ngày? Tiết thứ nhất bắt đầu lúc 8 giờ rưỡi sáng. Giờ học tiếng Nhật vô cùng hấp dẫn và vui vẻ.",
+    "romaji": "Koko wa watashitachi no gakkou desu. Kyoushitsu ni gakusei ga shichinin imasu. Kugatsu kara no atarashii Betonamujin to Nihonjin no gakusei desu. Sensei wa Nihonjin de, Kimura-sensei desu. Kimura-sensei wa sanjuugo-sai desu. Mainichi nan-ji kara nan-ji made benkyou shimasu ka. Ichi-jikanme wa gozen hachi-jihan kara desu. Nihongo no jugyou wa totemo omoshiroi desu.",
+    "vocabularyUsed": [
+      "ここ",
+      "私",
+      "学校",
+      "教室",
+      "学生",
+      "七人",
+      "九月",
+      "人",
+      "先生",
+      "三十五才",
+      "毎日",
+      "何時",
+      "勉強",
+      "一時間",
+      "午前",
+      "八時半",
+      "日本語",
+      "授業",
+      "面白い"
+    ],
+    "kanjiUsed": [
+      "私",
+      "学",
+      "校",
+      "生",
+      "七",
+      "人",
+      "九",
+      "月",
+      "日",
+      "本",
+      "木",
+      "才",
+      "毎",
+      "何",
+      "時",
+      "一",
+      "間",
+      "午",
+      "八",
+      "半",
+      "語"
+    ],
+    "questions": [
+      {
+        "id": "jpd113-q5-1",
+        "prompt": "教室に学生が何人いますか。",
+        "options": [
+          "七人います",
+          "五人います",
+          "九人います",
+          "十人います"
+        ],
+        "answer": "七人います",
+        "explanation": {
+          "meaning": "Trong lớp học có bao nhiêu học sinh? Đáp án: 7 người.",
+          "reason": "Dẫn chứng câu 2:「教室に学生が七人います。」",
+          "wrongOptions": [
+            {
+              "option": "五人います",
+              "reason": "Bài nêu rõ có 7 người."
+            },
+            {
+              "option": "九人います",
+              "reason": "Tháng 9 (九月) là thời điểm nhập học, không phải số học sinh."
+            },
+            {
+              "option": "十人います",
+              "reason": "Không có 10 người."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q5-2",
+        "prompt": "先生の名前は何ですか。",
+        "options": [
+          "木村先生です",
+          "田中先生です",
+          "山田先生です",
+          "佐藤先生です"
+        ],
+        "answer": "木村先生です",
+        "explanation": {
+          "meaning": "Tên của giáo viên là gì? Đáp án: Thầy Kimura.",
+          "reason": "Dẫn chứng câu 4:「先生は日本人で、木村先生です。」",
+          "wrongOptions": [
+            {
+              "option": "田中先生です",
+              "reason": "Thầy tên là Kimura (木村)."
+            },
+            {
+              "option": "山田先生です",
+              "reason": "Sai tên giáo viên."
+            },
+            {
+              "option": "佐藤先生です",
+              "reason": "Sai tên giáo viên."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q5-3",
+        "prompt": "木村先生は何才ですか。",
+        "options": [
+          "三十五才です",
+          "二十才です",
+          "四十才です",
+          "三十才です"
+        ],
+        "answer": "三十五才です",
+        "explanation": {
+          "meaning": "Thầy Kimura bao nhiêu tuổi? Đáp án: 35 tuổi.",
+          "reason": "Dẫn chứng câu 5:「木村先生は三十五才です。」",
+          "wrongOptions": [
+            {
+              "option": "二十才です",
+              "reason": "Thầy 35 tuổi (三十五才)."
+            },
+            {
+              "option": "四十才です",
+              "reason": "Sai số tuổi."
+            },
+            {
+              "option": "三十才です",
+              "reason": "Sai số tuổi."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q5-4",
+        "prompt": "一時間目は午前何時から始まりますか。",
+        "options": [
+          "午前八時半からです",
+          "午前九時からです",
+          "午前七時半からです",
+          "午前十時からです"
+        ],
+        "answer": "午前八時半からです",
+        "explanation": {
+          "meaning": "Tiết thứ nhất bắt đầu từ mấy giờ sáng? Đáp án: Từ 8 giờ rưỡi.",
+          "reason": "Dẫn chứng câu 7:「一時間目は午前八時半からです。」",
+          "wrongOptions": [
+            {
+              "option": "午前九時からです",
+              "reason": "Tiết một bắt đầu lúc 8:30 sáng."
+            },
+            {
+              "option": "午前七時半からです",
+              "reason": "Không bắt đầu lúc 7:30."
+            },
+            {
+              "option": "午前十時からです",
+              "reason": "Không bắt đầu lúc 10:00."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD113-READ-6
+  {
+    "id": "jpd113-read-6",
+    "course": "JPD113",
+    "title": "寮の生活と時間",
+    "titleVi": "Đời sống ở ký túc xá và thời gian",
+    "theme": "Phòng ở, thời gian biểu hàng ngày, thức dậy và đi bộ",
+    "content": "私の部屋は三階の三〇二号室です。部屋に机と椅子と本棚があります。毎朝六時半に起きます。午前八時から十二時半（三十分）まで学校で勉強します。学校から寮まで歩いて十五分です。午後は図書館で本を読みます。",
+    "sentences": [
+      {
+        "jp": "私の部屋は三階の三〇二号室です。",
+        "vi": "Phòng của tôi là phòng 302 ở tầng 3.",
+        "romaji": "Watashi no heya wa sangai no san-maru-ni-goushitsu desu."
+      },
+      {
+        "jp": "部屋に机と椅子と本棚があります。",
+        "vi": "Trong phòng có bàn, ghế và giá sách.",
+        "romaji": "Heya ni tsukue to isu to hondana ga arimasu."
+      },
+      {
+        "jp": "毎朝六時半に起きます。",
+        "vi": "Mỗi sáng tôi thức dậy lúc 6 giờ rưỡi.",
+        "romaji": "Maiasa roku-jihan ni okimasu."
+      },
+      {
+        "jp": "午前八時から十二時半（三十分）まで学校で勉強します。",
+        "vi": "Từ 8 giờ sáng đến 12 giờ rưỡi (30 phút) tôi học ở trường.",
+        "romaji": "Gozen hachi-ji kara juuni-jihan (sanjuppun) made gakkou de benkyou shimasu."
+      },
+      {
+        "jp": "学校から寮まで歩いて十五分です。",
+        "vi": "Từ trường về ký túc xá đi bộ mất 15 phút.",
+        "romaji": "Gakkou kara ryou made aruite juugo-fun desu."
+      },
+      {
+        "jp": "午後は図書館で本を読みます。",
+        "vi": "Buổi chiều tôi đọc sách ở thư viện.",
+        "romaji": "Gogo wa toshokan de hon o yomimasu."
+      }
+    ],
+    "translation": "Căn phòng ký túc xá của tôi là phòng 302 ở tầng 3. Trong phòng trang bị bàn học, ghế tựa và giá sách. Mỗi sáng tôi đều thức dậy lúc 6 giờ rưỡi. Từ 8 giờ sáng đến 12 giờ rưỡi trưa (30 phút), tôi học các tiết tại trường. Từ trường về lại ký túc xá đi bộ mất đúng 15 phút. Buổi chiều tôi thường ghé thư viện để đọc thêm sách.",
+    "romaji": "Watashi no heya wa sangai no san-maru-ni-goushitsu desu. Heya ni tsukue to isu to hondana ga arimasu. Maiasa roku-jihan ni okimasu. Gozen hachi-ji kara juuni-jihan (sanjuppun) made gakkou de benkyou shimasu. Gakkou kara ryou made aruite juugo-fun desu. Gogo wa toshokan de hon o yomimasu.",
+    "vocabularyUsed": [
+      "私",
+      "部屋",
+      "三階",
+      "毎朝",
+      "六時半",
+      "起きる",
+      "午前",
+      "八時",
+      "十二時半",
+      "三十分",
+      "学校",
+      "勉強",
+      "寮",
+      "歩いて",
+      "十五分",
+      "午後",
+      "図書館",
+      "本",
+      "読む"
+    ],
+    "kanjiUsed": [
+      "私",
+      "三",
+      "階",
+      "毎",
+      "朝",
+      "六",
+      "時",
+      "半",
+      "午",
+      "前",
+      "八",
+      "十",
+      "二",
+      "分",
+      "学",
+      "校",
+      "後",
+      "本",
+      "読"
+    ],
+    "questions": [
+      {
+        "id": "jpd113-q6-1",
+        "prompt": "筆者の部屋は何階ですか。",
+        "options": [
+          "三階です",
+          "一階です",
+          "二階です",
+          "四階です"
+        ],
+        "answer": "三階です",
+        "explanation": {
+          "meaning": "Phòng của tác giả ở tầng mấy? Đáp án: Tầng 3.",
+          "reason": "Dẫn chứng câu 1:「私の部屋は三階の三〇二号室です。」",
+          "wrongOptions": [
+            {
+              "option": "一階です",
+              "reason": "Phòng ở tầng 3."
+            },
+            {
+              "option": "二階です",
+              "reason": "Sai tầng."
+            },
+            {
+              "option": "四階です",
+              "reason": "Sai tầng."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q6-2",
+        "prompt": "毎朝何時に起きますか。",
+        "options": [
+          "六時半に起きます",
+          "七時に起きます",
+          "八時に起きます",
+          "六時に起きます"
+        ],
+        "answer": "六時半に起きます",
+        "explanation": {
+          "meaning": "Mỗi sáng tác giả thức dậy lúc mấy giờ? Đáp án: 6 giờ rưỡi.",
+          "reason": "Dẫn chứng câu 3:「毎朝六時半に起きます。」",
+          "wrongOptions": [
+            {
+              "option": "七時に起きます",
+              "reason": "Dậy lúc 6:30 sáng."
+            },
+            {
+              "option": "八時に起きます",
+              "reason": "8:00 là giờ bắt đầu học ở trường."
+            },
+            {
+              "option": "六時に起きます",
+              "reason": "Dậy lúc 6 giờ rưỡi."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q6-3",
+        "prompt": "学校での勉強は何時までですか。",
+        "options": [
+          "十二時半（三十分）までです",
+          "午前十一時までです",
+          "午後二時までです",
+          "午後四時までです"
+        ],
+        "answer": "十二時半（三十分）までです",
+        "explanation": {
+          "meaning": "Việc học ở trường kết thúc lúc mấy giờ? Đáp án: Đến 12 giờ rưỡi.",
+          "reason": "Dẫn chứng câu 4:「午前八時から十二時半（三十分）まで学校で勉強します。」",
+          "wrongOptions": [
+            {
+              "option": "午前十一時までです",
+              "reason": "Học đến 12:30."
+            },
+            {
+              "option": "午後二時までです",
+              "reason": "Buổi chiều tác giả đọc sách ở thư viện."
+            },
+            {
+              "option": "午後四時までです",
+              "reason": "Sai thời gian kết thúc buổi học."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q6-4",
+        "prompt": "学校から寮まで歩いて何分ですか。",
+        "options": [
+          "歩いて十五分です",
+          "歩いて十分です",
+          "歩いて三十分です",
+          "歩いて五分です"
+        ],
+        "answer": "歩いて十五分です",
+        "explanation": {
+          "meaning": "Từ trường về ký túc xá đi bộ mất bao nhiêu phút? Đáp án: 15 phút.",
+          "reason": "Dẫn chứng câu 5:「学校から寮まで歩いて十五分です。」",
+          "wrongOptions": [
+            {
+              "option": "歩いて十分です",
+              "reason": "Mất 15 phút đi bộ."
+            },
+            {
+              "option": "歩いて三十分です",
+              "reason": "Không mất 30 phút."
+            },
+            {
+              "option": "歩いて五分です",
+              "reason": "Mất 15 phút."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD113-READ-7
+  {
+    "id": "jpd113-read-7",
+    "course": "JPD113",
+    "title": "学校の売店と買い物",
+    "titleVi": "Cửa hàng trong trường học và mua sắm",
+    "theme": "Mua sắm học cụ, số lượng, đếm tiền yên và tiền lẻ",
+    "content": "学校の売店にノートやペンがあります。この白いノートは一冊百五十円です。青いペンは一本八十円です。私はノート二冊とペン三本を買いました。ぜんぶで五百四十円でした。一千円や一万円を出しておつりをもらいました。売店の人はとても親切です。",
+    "sentences": [
+      {
+        "jp": "学校の売店にノートやペンがあります。",
+        "vi": "Ở căng tin trường học có vở và bút.",
+        "romaji": "Gakkou no baiten ni nooto ya pen ga arimasu."
+      },
+      {
+        "jp": "この白いノートは一冊百五十円です。",
+        "vi": "Cuốn vở màu trắng này giá 150 yên một quyển.",
+        "romaji": "Kono shiroi nooto wa issatsu hyaku gojuu-en desu."
+      },
+      {
+        "jp": "青いペンは一本八十円です。",
+        "vi": "Cây bút màu xanh này giá 80 yên một chiếc.",
+        "romaji": "Aoi pen wa ippon hachijuu-en desu."
+      },
+      {
+        "jp": "私はノート二冊とペン三本を買いました。",
+        "vi": "Tôi đã mua 2 cuốn vở và 3 cây bút.",
+        "romaji": "Watashi wa nooto nisatsu to pen sanbon o kaimashita."
+      },
+      {
+        "jp": "ぜんぶで五百四十円でした。",
+        "vi": "Tổng cộng hết 540 yên.",
+        "romaji": "Zenbu de gohyaku yonjuu-en deshita."
+      },
+      {
+        "jp": "一千円や一万円を出しておつりをもらいました。",
+        "vi": "Tôi đưa tờ 1.000 yên hoặc 10.000 yên và nhận lại tiền thừa.",
+        "romaji": "Issen-en ya ichiman-en o dashite otsuri o moraimashita."
+      },
+      {
+        "jp": "売店の人はとても親切です。",
+        "vi": "Người bán hàng ở căng tin rất tốt bụng.",
+        "romaji": "Baiten no hito wa totemo shinsetsu desu."
+      }
+    ],
+    "translation": "Tại căng tin của trường học có bán nhiều loại vở và bút viết. Cuốn vở trắng này có giá 150 yên một quyển. Cây bút mực xanh có giá 80 yên một chiếc. Tôi đã chọn mua 2 cuốn vở và 3 cây bút. Tổng cộng hết 540 yên. Tôi đưa tiền chẵn 1.000 yên hoặc 10.000 yên và nhận lại tiền thừa đầy đủ. Cô nhân viên bán hàng ở căng tin vô cùng niềm nở và thân thiện.",
+    "romaji": "Gakkou no baiten ni nooto ya pen ga arimasu. Kono shiroi nooto wa issatsu hyaku gojuu-en desu. Aoi pen wa ippon hachijuu-en desu. Watashi wa nooto nisatsu to pen sanbon o kaimashita. Zenbu de gohyaku yonjuu-en deshita. Issen-en ya ichiman-en o dashite otsuri o moraimashita. Baiten no hito wa totemo shinsetsu desu.",
+    "vocabularyUsed": [
+      "学校",
+      "売店",
+      "ノート",
+      "ペン",
+      "白",
+      "一冊",
+      "百五十円",
+      "青",
+      "一本",
+      "八十円",
+      "私",
+      "二冊",
+      "三本",
+      "買う",
+      "五百四十円",
+      "一千円",
+      "一万円",
+      "人",
+      "親切"
+    ],
+    "kanjiUsed": [
+      "学",
+      "校",
+      "一",
+      "冊",
+      "百",
+      "五",
+      "十",
+      "円",
+      "本",
+      "八",
+      "私",
+      "二",
+      "三",
+      "買",
+      "四",
+      "千",
+      "万",
+      "人"
+    ],
+    "questions": [
+      {
+        "id": "jpd113-q7-1",
+        "prompt": "白いノートは一冊いくらですか。",
+        "options": [
+          "百五十円です",
+          "百円です",
+          "二百円です",
+          "八十円です"
+        ],
+        "answer": "百五十円です",
+        "explanation": {
+          "meaning": "Cuốn vở màu trắng giá bao nhiêu một quyển? Đáp án: 150 yên.",
+          "reason": "Dẫn chứng câu 2:「この白いノートは一冊百五十円です。」",
+          "wrongOptions": [
+            {
+              "option": "百円です",
+              "reason": "Giá là 150 yên."
+            },
+            {
+              "option": "二百円です",
+              "reason": "Sai mức giá."
+            },
+            {
+              "option": "八十円です",
+              "reason": "80 yên là giá của cây bút xanh."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q7-2",
+        "prompt": "青いペンは一本いくらですか。",
+        "options": [
+          "八十円です",
+          "五十円です",
+          "百円です",
+          "百二十円です"
+        ],
+        "answer": "八十円です",
+        "explanation": {
+          "meaning": "Cây bút màu xanh giá bao nhiêu một chiếc? Đáp án: 80 yên.",
+          "reason": "Dẫn chứng câu 3:「青いペンは一本八十円です。」",
+          "wrongOptions": [
+            {
+              "option": "五十円です",
+              "reason": "Giá là 80 yên."
+            },
+            {
+              "option": "百円です",
+              "reason": "Sai mức giá."
+            },
+            {
+              "option": "百二十円です",
+              "reason": "Sai mức giá."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q7-3",
+        "prompt": "筆者は何を買いましたか。",
+        "options": [
+          "ノート二冊とペン三本を買いました",
+          "ノート一冊と消しゴムを買いました",
+          "ペン五本を買いました",
+          "辞書を一冊買いました"
+        ],
+        "answer": "ノート二冊とペン三本を買いました",
+        "explanation": {
+          "meaning": "Tác giả đã mua những gì? Đáp án: 2 quyển vở và 3 cây bút.",
+          "reason": "Dẫn chứng câu 4:「私はノート二冊とペン三本を買いました。」",
+          "wrongOptions": [
+            {
+              "option": "ノート一冊と消しゴムを買いました",
+              "reason": "Tác giả mua 2 cuốn vở và 3 cây bút."
+            },
+            {
+              "option": "ペン五本を買いました",
+              "reason": "Chỉ mua 3 cây bút."
+            },
+            {
+              "option": "辞書を一冊買いました",
+              "reason": "Không mua từ điển."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q7-4",
+        "prompt": "ぜんぶでいくらでしたか。",
+        "options": [
+          "五百四十円でした",
+          "四百五十円でした",
+          "六百円でした",
+          "千円でした"
+        ],
+        "answer": "五百四十円でした",
+        "explanation": {
+          "meaning": "Tổng cộng hết bao nhiêu tiền? Đáp án: 540 yên.",
+          "reason": "Dẫn chứng câu 5:「ぜんぶで五百四十円でした。」",
+          "wrongOptions": [
+            {
+              "option": "四百五十円でした",
+              "reason": "Tổng tiền là 540 yên."
+            },
+            {
+              "option": "六百円でした",
+              "reason": "Sai số tiền."
+            },
+            {
+              "option": "千円でした",
+              "reason": "1.000 yên là tờ tiền khách đưa."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD113-READ-8
+  {
+    "id": "jpd113-read-8",
+    "course": "JPD113",
+    "title": "一週間の予定とカレンダー",
+    "titleVi": "Lịch trình một tuần và cuốn lịch",
+    "theme": "Các ngày trong tuần, ngày tháng, thời gian biểu và nghỉ ngơi",
+    "content": "今日は四月一日、月曜日です。月曜日と水曜日と金曜日は日本語の授業があります。火曜日と木曜日の午後はパソコンを勉強します。土曜日は休みです。友達と買い物に行きます。日曜日の午前は部屋をそうじして、午後は休みます。一年は十二か月あります。",
+    "sentences": [
+      {
+        "jp": "今日は四月一日、月曜日です。",
+        "vi": "Hôm nay là ngày 1 tháng 4, thứ Hai.",
+        "romaji": "Kyou wa shigatsu tsuitachi, getsuyoubi desu."
+      },
+      {
+        "jp": "月曜日と水曜日と金曜日は日本語の授業があります。",
+        "vi": "Thứ Hai, thứ Tư và thứ Sáu có giờ học tiếng Nhật.",
+        "romaji": "Getsuyoubi to suiyoubi to kinyoubi wa nihongo no jugyou ga arimasu."
+      },
+      {
+        "jp": "火曜日と木曜日の午後はパソコンを勉強します。",
+        "vi": "Chiều thứ Ba và thứ Năm học máy vi tính.",
+        "romaji": "Kayoubi to mokuyoubi no gogo wa pasokon o benkyou shimasu."
+      },
+      {
+        "jp": "土曜日は休みです。",
+        "vi": "Thứ Bảy là ngày nghỉ.",
+        "romaji": "Doyoubi wa yasumi desu."
+      },
+      {
+        "jp": "友達と買い物に行きます。",
+        "vi": "Tôi cùng bạn đi mua sắm.",
+        "romaji": "Tomodachi to kaimono ni ikimasu."
+      },
+      {
+        "jp": "日曜日の午前は部屋をそうじして、午後は休みます。",
+        "vi": "Sáng Chủ nhật dọn dẹp phòng, buổi chiều nghỉ ngơi.",
+        "romaji": "Nichiyoubi no gozen wa heya o souji shite, gogo wa yasumimasu."
+      },
+      {
+        "jp": "一年は十二か月あります。",
+        "vi": "Một năm có 12 tháng.",
+        "romaji": "Ichinen wa juuni-kagetsu arimasu."
+      }
+    ],
+    "translation": "Hôm nay là ngày mùng 1 tháng 4, thứ Hai. Thứ Hai, thứ Tư và thứ Sáu hàng tuần tôi đều có giờ học tiếng Nhật. Vào chiều thứ Ba và thứ Năm tôi học tin học máy tính. Thứ Bảy là ngày nghỉ, tôi cùng bạn bè đi mua sắm. Sáng Chủ nhật tôi dọn dẹp phòng ốc sạch sẽ, chiều nghỉ ngơi thư giãn. Một năm có tất cả 12 tháng.",
+    "romaji": "Kyou wa shigatsu tsuitachi, getsuyoubi desu. Getsuyoubi to suiyoubi to kinyoubi wa nihongo no jugyou ga arimasu. Kayoubi to mokuyoubi no gogo wa pasokon o benkyou shimasu. Doyoubi wa yasumi desu. Tomodachi to kaimono ni ikimasu. Nichiyoubi no gozen wa heya o souji shite, gogo wa yasumimasu. Ichinen wa juuni-kagetsu arimasu.",
+    "vocabularyUsed": [
+      "今日",
+      "四月一日",
+      "月曜日",
+      "水曜日",
+      "金曜日",
+      "日本語",
+      "授業",
+      "火曜日",
+      "木曜日",
+      "午後",
+      "パソコン",
+      "勉強",
+      "土曜日",
+      "休み",
+      "友達",
+      "買い物",
+      "行く",
+      "日曜日",
+      "午前",
+      "部屋",
+      "一年",
+      "十二か月"
+    ],
+    "kanjiUsed": [
+      "今",
+      "日",
+      "四",
+      "月",
+      "一",
+      "曜",
+      "水",
+      "金",
+      "語",
+      "火",
+      "木",
+      "午",
+      "後",
+      "土",
+      "休",
+      "買",
+      "物",
+      "行",
+      "年",
+      "十",
+      "二"
+    ],
+    "questions": [
+      {
+        "id": "jpd113-q8-1",
+        "prompt": "今日は何月何日ですか。",
+        "options": [
+          "四月一日です",
+          "四月二日です",
+          "五月一日です",
+          "三月三十日です"
+        ],
+        "answer": "四月一日です",
+        "explanation": {
+          "meaning": "Hôm nay là ngày mấy tháng mấy? Đáp án: Ngày 1 tháng 4.",
+          "reason": "Dẫn chứng câu 1:「今日は四月一日、月曜日です。」",
+          "wrongOptions": [
+            {
+              "option": "四月二日です",
+              "reason": "Hôm nay là ngày 1 tháng 4 (四月一日)."
+            },
+            {
+              "option": "五月一日です",
+              "reason": "Sai tháng."
+            },
+            {
+              "option": "三月三十日です",
+              "reason": "Sai ngày tháng."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q8-2",
+        "prompt": "日本語の授業は何曜日ですか。",
+        "options": [
+          "月曜日と水曜日と金曜日です",
+          "火曜日と木曜日です",
+          "土曜日と日曜日です",
+          "毎日です"
+        ],
+        "answer": "月曜日と水曜日と金曜日です",
+        "explanation": {
+          "meaning": "Giờ học tiếng Nhật vào những thứ mấy? Đáp án: Thứ Hai, thứ Tư và thứ Sáu.",
+          "reason": "Dẫn chứng câu 2:「月曜日と水曜日と金曜日は日本語の授業があります。」",
+          "wrongOptions": [
+            {
+              "option": "火曜日と木曜日です",
+              "reason": "Thứ Ba và thứ Năm là giờ học máy tính."
+            },
+            {
+              "option": "土曜日と日曜日です",
+              "reason": "Cuối tuần là ngày nghỉ."
+            },
+            {
+              "option": "毎日です",
+              "reason": "Học 3 buổi một tuần."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q8-3",
+        "prompt": "土曜日に何をしますか。",
+        "options": [
+          "友達と買い物に行きます",
+          "学校で勉強します",
+          "アルバイトをします",
+          "病院へ行きます"
+        ],
+        "answer": "友達と買い物に行きます",
+        "explanation": {
+          "meaning": "Thứ Bảy tác giả làm gì? Đáp án: Đi mua sắm cùng bạn.",
+          "reason": "Dẫn chứng câu 4-5:「土曜日は休みです。友達と買い物に行きます。」",
+          "wrongOptions": [
+            {
+              "option": "学校で勉強します",
+              "reason": "Thứ Bảy được nghỉ học."
+            },
+            {
+              "option": "アルバイトをします",
+              "reason": "Không đi làm thêm."
+            },
+            {
+              "option": "病院へ行きます",
+              "reason": "Không đi bệnh viện."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd113-q8-4",
+        "prompt": "日曜日の午前は何をしますか。",
+        "options": [
+          "部屋をそうじします",
+          "サッカーをします",
+          "映画を見ます",
+          "料理を作ります"
+        ],
+        "answer": "部屋をそうじします",
+        "explanation": {
+          "meaning": "Sáng Chủ nhật tác giả làm gì? Đáp án: Dọn dẹp phòng.",
+          "reason": "Dẫn chứng câu 6:「日曜日の午前は部屋をそうじして、午後は休みます。」",
+          "wrongOptions": [
+            {
+              "option": "サッカーをします",
+              "reason": "Tác giả dọn phòng vào buổi sáng."
+            },
+            {
+              "option": "映画を見ます",
+              "reason": "Không đi xem phim."
+            },
+            {
+              "option": "料理を作ります",
+              "reason": "Không nấu ăn."
+            }
+          ]
+        }
+      }
+    ]
+  },
 ];
 
 const RAW_PASSAGES_JPD123: ReadingPassage[] = [
@@ -1172,6 +2011,1818 @@ const RAW_PASSAGES_JPD123: ReadingPassage[] = [
       }
     ]
   }
+,
+  // JPD123-READ-9
+  {
+    "id": "jpd123-read-9",
+    "course": "JPD123",
+    "title": "京都の有名なお寺と門の旅行",
+    "titleVi": "Chuyến du lịch ngắm ngôi chùa nổi tiếng và cổng đền ở Kyoto",
+    "theme": "Du lịch, danh lam thắng cảnh Kyoto, tàu Shinkansen và quà lưu niệm",
+    "content": "先週、私は大学の男の学生と女の学生といっしょに、新幹線で京都へ行きました。京都は古いお寺や大きな門がたくさんあって、外国からの観光客にもとても有名な町です。午前十時半に駅に着いてから、きれいな公園を散歩して、みんなでしゃしんをたくさんとりました。午後はお寺の近くの小さい店で、おみやげの食べ物を買いました。よるにホテルへ帰る前に、みんなでカフェで冷たいジュースやコーヒーを飲みながら楽しく話しました。京都の旅行はほんとうにすばらしくて、また来年も友達と来たいです。",
+    "sentences": [
+      {
+        "jp": "先週、私は大学の男の学生と女の学生といっしょに、新幹線で京都へ行きました。",
+        "vi": "Tuần trước, tôi cùng các bạn sinh viên nam và nữ cùng trường đại học đi Kyoto bằng tàu Shinkansen.",
+        "romaji": "Senshuu, watashi wa daigaku no otoko no gakusei to onna no gakusei to issho ni, shinkansen de Kyouto e ikimashita."
+      },
+      {
+        "jp": "京都は古いお寺や大きな門がたくさんあって、外国からの観光客にもとても有名な町です。",
+        "vi": "Kyoto có nhiều ngôi chùa cổ và những chiếc cổng lớn, là thành phố rất nổi tiếng với cả du khách nước ngoài.",
+        "romaji": "Kyouto wa furui otera ya ookii mon ga takusan atte, gaikoku kara no kankoukyaku ni mo totemo yuumeina machi desu."
+      },
+      {
+        "jp": "午前十時半に駅に着いてから、きれいな公園を散歩して、みんなでしゃしんをたくさんとりました。",
+        "vi": "Sau khi đến ga lúc 10 giờ rưỡi sáng, chúng tôi đi dạo ở công viên đẹp và cùng nhau chụp nhiều ảnh.",
+        "romaji": "Gozen juu-jihan ni eki ni tsuite kara, kireina kouen o sanpo shite, minna de shashin o takusan torimashita."
+      },
+      {
+        "jp": "午後はお寺の近くの小さい店で、おみやげの食べ物を買いました。",
+        "vi": "Buổi chiều tại một cửa hàng nhỏ gần chùa, chúng tôi đã mua đồ ăn làm quà lưu niệm.",
+        "romaji": "Gogo wa otera no chikaku no chiisai mise de, omiyage no tabemono o kaimashita."
+      },
+      {
+        "jp": "よるにホテルへ帰る前に、みんなでカフェで楽しく話しました。",
+        "vi": "Trước khi trở về khách sạn vào buổi chiều tối, mọi người đã vào quán cà phê trò chuyện rất vui vẻ.",
+        "romaji": "Yuugata ni hoteru e kaeru mae ni, minna de kafe de tsumetai juusu ya koohii o nominagara tanoshiku hanashimashita."
+      },
+      {
+        "jp": "京都の旅行はほんとうにすばらしくて、また来年も友達と来たいです。",
+        "vi": "Chuyến du lịch Kyoto thực sự rất tuyệt vời, năm sau tôi lại muốn cùng bạn bè đến đây.",
+        "romaji": "Kyouto no ryokou wa hontou ni subarashikute, mata rainen mo tomodachi to kitai desu."
+      }
+    ],
+    "translation": "Tuần trước, tôi cùng các bạn sinh viên nam và nữ cùng trường đại học đi du lịch Kyoto bằng tàu Shinkansen. Kyoto có rất nhiều ngôi chùa cổ kính và cổng đền khổng lồ, là điểm đến nổi tiếng khắp thế giới. Đến ga lúc 10 giờ rưỡi sáng, cả nhóm đi dạo quanh công viên tuyệt đẹp và chụp vô số bức ảnh kỷ niệm. Buổi chiều, chúng tôi ghé một cửa hàng nhỏ gần chùa mua đặc sản làm quà lưu niệm. Trước khi trở về khách sạn nghỉ ngơi, cả nhóm cùng vào quán cà phê trò chuyện rôm rả. Chuyến đi Kyoto thật vô cùng tuyệt vời, năm sau tôi nhất định muốn cùng bạn bè quay lại nơi này.",
+    "romaji": "Senshuu, watashi wa daigaku no otoko no gakusei to onna no gakusei to issho ni, shinkansen de Kyouto e ikimashita. Kyouto wa furui otera ya ookii mon ga takusan atte, gaikoku kara no kankoukyaku ni mo totemo yuumeina machi desu. Gozen juu-jihan ni eki ni tsuite kara, kireina kouen o sanpo shite, minna de shashin o takusan torimashita. Gogo wa otera no chikaku no chiisai mise de, omiyage no tabemono o kaimashita. Yuugata ni hoteru e kaeru mae ni, minna de kafe de tanoshiku hanashimashita. Kyouto no ryokou wa hontou ni subarashikute, mata rainen mo tomodachi to kitai desu.",
+    "vocabularyUsed": [
+      "先週",
+      "私",
+      "大学",
+      "男",
+      "学生",
+      "女",
+      "新幹線",
+      "京都",
+      "行く",
+      "古い",
+      "お寺",
+      "大きい",
+      "門",
+      "外国",
+      "有名",
+      "午前",
+      "十時半",
+      "散歩",
+      "写真",
+      "午後",
+      "近く",
+      "小さい",
+      "店",
+      "お土産",
+      "食べ物",
+      "買う",
+      "夕方",
+      "ホテル",
+      "帰る",
+      "前",
+      "カフェ",
+      "話す",
+      "旅行",
+      "来年",
+      "友達",
+      "来る"
+    ],
+    "kanjiUsed": [
+      "先",
+      "週",
+      "私",
+      "大",
+      "学",
+      "男",
+      "生",
+      "女",
+      "行",
+      "京",
+      "寺",
+      "門",
+      "外",
+      "国",
+      "午",
+      "前",
+      "十",
+      "時",
+      "半",
+      "後",
+      "小",
+      "物",
+      "食",
+      "買",
+      "帰",
+      "話",
+      "来",
+      "年"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q9-1",
+        "prompt": "筆者は先週だれと京都へ行きましたか。",
+        "options": [
+          "大学の男の学生と女の学生といっしょに行きました",
+          "一人で新幹線に乗って行きました",
+          "高校の先生と行きました",
+          "家族といっしょに行きました"
+        ],
+        "answer": "大学の男の学生と女の学生といっしょに行きました",
+        "explanation": {
+          "meaning": "Tác giả đã đi du lịch Kyoto tuần trước cùng ai? Đáp án: Đi cùng các bạn sinh viên nam và nữ ở đại học.",
+          "reason": "Dẫn chứng câu 1:「大学の男の学生と女の学生といっしょに、新幹線で京都へ行きました。」",
+          "wrongOptions": [
+            {
+              "option": "一人で新幹線に乗って行きました",
+              "reason": "Tác giả đi cùng nhóm bạn bè."
+            },
+            {
+              "option": "高校の先生と行きました",
+              "reason": "Không có giáo viên đi cùng."
+            },
+            {
+              "option": "家族といっしょに行きました",
+              "reason": "Đi với bạn đại học, không đi với gia đình."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q9-2",
+        "prompt": "京都の町について、文章で何と言っていますか。",
+        "options": [
+          "古いお寺や大きな門がたくさんある有名な町です",
+          "小さなお寺しかありません",
+          "新しいビルばかりある町です",
+          "人がぜんぜんいない町です"
+        ],
+        "answer": "古いお寺や大きな門がたくさんある有名な町です",
+        "explanation": {
+          "meaning": "Về thành phố Kyoto, bài văn miêu tả điều gì? Đáp án: Là thành phố nổi tiếng có nhiều chùa cổ và cổng lớn.",
+          "reason": "Dẫn chứng câu 2:「京都は古いお寺や大きな門がたくさんあって、外国からの観光客にもとても有名な町です。」",
+          "wrongOptions": [
+            {
+              "option": "小さなお寺しかありません",
+              "reason": "Kyoto có nhiều chùa cổ và cổng lớn."
+            },
+            {
+              "option": "新しいビルばかりある町です",
+              "reason": "Bài nhấn mạnh cảnh quan lịch sử."
+            },
+            {
+              "option": "人がぜんぜんいない町です",
+              "reason": "Rất đông du khách trong và ngoài nước."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q9-3",
+        "prompt": "午前十時半に駅に着いてから何をしましたか。",
+        "options": [
+          "きれいな公園を散歩して写真を撮りました",
+          "すぐホテルへ行って寝ました",
+          "デパートで洋服を買いました",
+          "会社へ行って仕事をしました"
+        ],
+        "answer": "きれいな公園を散歩して写真を撮りました",
+        "explanation": {
+          "meaning": "Sau khi đến ga lúc 10 giờ rưỡi sáng, họ đã làm gì? Đáp án: Đi dạo công viên đẹp và chụp ảnh.",
+          "reason": "Dẫn chứng câu 3:「午前十時半に駅に着いてから、きれいな公園を散歩して、みんなでしゃしんをたくさんとりました。」",
+          "wrongOptions": [
+            {
+              "option": "すぐホテルへ行って寝ました",
+              "reason": "Họ đi dạo công viên chụp ảnh."
+            },
+            {
+              "option": "デパートで洋服を買いました",
+              "reason": "Không đi mua quần áo."
+            },
+            {
+              "option": "会社へ行って仕事をしました",
+              "reason": "Đây là chuyến du lịch thư giãn."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q9-4",
+        "prompt": "午後にお寺の近くの小さい店で何を買いましたか。",
+        "options": [
+          "おみやげの食べ物を買いました",
+          "カメラとパソコンを買いました",
+          "新しい靴と鞄を買いました",
+          "高い自動車を買いました"
+        ],
+        "answer": "おみやげの食べ物を買いました",
+        "explanation": {
+          "meaning": "Buổi chiều tại cửa hàng nhỏ gần chùa, họ đã mua gì? Đáp án: Mua đồ ăn làm quà lưu niệm.",
+          "reason": "Dẫn chứng câu 4:「午後はお寺の近くの小さい店で、おみやげの食べ物を買いました。」",
+          "wrongOptions": [
+            {
+              "option": "カメラとパソコンを買いました",
+              "reason": "Họ mua đồ ăn làm quà."
+            },
+            {
+              "option": "新しい靴と鞄を買いました",
+              "reason": "Không mua giày dép hay túi xách."
+            },
+            {
+              "option": "高い自動車を買いました",
+              "reason": "Không mua xe hơi."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-10
+  {
+    "id": "jpd123-read-10",
+    "course": "JPD123",
+    "title": "シェアハウスの料理と夕食会",
+    "titleVi": "Nấu ăn và bữa tiệc tối tại nhà chung",
+    "theme": "Nấu ăn, siêu thị, thực phẩm thịt rau và dụng cụ ăn uống",
+    "content": "今週の日曜日の午後、私たちの部屋でパーティーをしました。山田さんと田中さんはスーパーへ行って、とり肉や新鮮な野さいをたくさん買いました。山田さんは日本の料理がとても上手で、おいしいスープとサラダを作ってくれました。みんなで大きいテーブルのまわりで、フォークやスプーンなどの食事のどう具を並べました。私は冷たいお茶やジュースを飲みながら、日本のせいかつについて楽しく話しました。今晩はみんなでお腹がいっぱいになるまで食べて、ほんとうに楽しかったです。",
+    "sentences": [
+      {
+        "jp": "今週の日曜日の午後、私たちの部屋でパーティーをしました。",
+        "vi": "Chiều Chủ nhật tuần này, chúng tôi đã tổ chức một bữa tiệc tại phòng.",
+        "romaji": "Konshuu no nichiyoubi no gogo, watashitachi no heya de paatii o shimashita."
+      },
+      {
+        "jp": "山田さんと田中さんはスーパーへ行って、とり肉や新鮮な野さいをたくさん買いました。",
+        "vi": "Bạn Yamada và Tanaka đã đi siêu thị mua rất nhiều thịt gà và rau tươi.",
+        "romaji": "Yamada-san to Tanaka-san wa suupaa e itte, toriniku ya shinsenna yasai o takusan kaimashita."
+      },
+      {
+        "jp": "山田さんは日本の料理がとても上手で、おいしいスープとサラダを作ってくれました。",
+        "vi": "Yamada nấu món ăn Nhật rất giỏi và đã nấu cho chúng tôi món súp và salad ngon tuyệt.",
+        "romaji": "Yamada-san wa Nihon no ryouri ga totemo jouzu de, oishii suupu to sarada o tsukutte kuremashita."
+      },
+      {
+        "jp": "みんなで大きいテーブルのまわりで、フォークやスプーンなどの食事のどう具を並べました。",
+        "vi": "Mọi người quây quần quanh chiếc bàn lớn, sắp xếp các dụng cụ ăn uống như nĩa và thìa.",
+        "romaji": "Minna de ookii teeburu o kakonde, fooku ya supuun nado no shokuji no dougu o narabemashita."
+      },
+      {
+        "jp": "私は冷たいお茶やジュースを飲みながら、日本のせいかつについて楽しく話しました。",
+        "vi": "Tôi vừa uống trà lạnh và nước ép, vừa trò chuyện vui vẻ về cuộc sống ở Nhật Bản.",
+        "romaji": "Watashi wa tsumetai ocha ya juusu o nominagara, Nihon no seikatsu ni tsuite tanoshiku hanashimashita."
+      },
+      {
+        "jp": "今晩はみんなでお腹がいっぱいになるまで食べて、ほんとうに楽しかったです。",
+        "vi": "Tối nay mọi người cùng nhau ăn uống no nê, thực sự vô cùng vui vẻ.",
+        "romaji": "Konban wa minna de onaka ga ippai ni naru made tabete, hontou ni tanoshikatta desu."
+      }
+    ],
+    "translation": "Chiều Chủ nhật tuần này, nhóm chúng tôi tổ chức một bữa tiệc ấm cúng tại phòng. Anh Yamada và anh Tanaka đã ghé siêu thị mua thịt gà tươi cùng đủ loại rau củ quả. Anh Yamada nấu món Nhật rất khéo tay và đã nấu chiêu đãi cả phòng món súp nóng hổi và món salad tuyệt ngon. Cả nhóm quây quần bên chiếc bàn ăn lớn, bày biện các dụng cụ ăn uống như thìa và nĩa. Tôi vừa nhâm nhi cốc trà lạnh và nước trái cây tươi, vừa hào hứng sẻ chia về cuộc sống du học sinh tại xứ sở hoa anh đào. Tối nay ai nấy đều ăn uống no nê, tiếng cười ngập tràn khắp gian phòng.",
+    "romaji": "Konshuu no nichiyoubi no gogo, watashitachi no heya de paatii o shimashita. Yamada-san to Tanaka-san wa suupaa e itte, toriniku ya shinsenna yasai o takusan kaimashita. Yamada-san wa Nihon no ryouri ga totemo jouzu de, oishii suupu to sarada o tsukutte kuremashita. Minna de ookii teeburu o kakonde, fooku ya supuun nado no shokuji no dougu o narabemashita. Watashi wa tsumetai ocha ya juusu o nominagara, Nihon no seikatsu ni tsuite tanoshiku hanashimashita. Konban wa minna de onaka ga ippai ni naru made tabete, hontou ni tanoshikatta desu.",
+    "vocabularyUsed": [
+      "今週",
+      "日曜日",
+      "午後",
+      "私",
+      "部屋",
+      "パーティー",
+      "山田",
+      "田中",
+      "スーパー",
+      "行く",
+      "肉",
+      "野菜",
+      "買う",
+      "料理",
+      "上手",
+      "おいしい",
+      "スープ",
+      "サラダ",
+      "大きい",
+      "テーブル",
+      "フォーク",
+      "スプーン",
+      "食事",
+      "道具",
+      "冷たい",
+      "お茶",
+      "ジュース",
+      "飲む",
+      "日本",
+      "生活",
+      "話す",
+      "今晩",
+      "食べる"
+    ],
+    "kanjiUsed": [
+      "今",
+      "週",
+      "日",
+      "曜",
+      "午",
+      "後",
+      "私",
+      "山",
+      "田",
+      "中",
+      "行",
+      "肉",
+      "野",
+      "買",
+      "料",
+      "理",
+      "上",
+      "手",
+      "大",
+      "食",
+      "事",
+      "具",
+      "茶",
+      "飲",
+      "本",
+      "話"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q10-1",
+        "prompt": "パーティーはいつ行われましたか。",
+        "options": [
+          "今週の日曜日の午後です",
+          "先週の月曜日の朝です",
+          "毎日の夜です",
+          "来週の土曜日です"
+        ],
+        "answer": "今週の日曜日の午後です",
+        "explanation": {
+          "meaning": "Bữa tiệc được tổ chức vào khi nào? Đáp án: Chiều Chủ nhật tuần này.",
+          "reason": "Dẫn chứng câu 1:「今週の日曜日の午後、私たちの部屋でパーティーをしました。」",
+          "wrongOptions": [
+            {
+              "option": "先週の月曜日の朝です",
+              "reason": "Tiệc diễn ra chiều Chủ nhật tuần này."
+            },
+            {
+              "option": "毎日の夜です",
+              "reason": "Không phải tổ chức mỗi tối."
+            },
+            {
+              "option": "来週の土曜日です",
+              "reason": "Sai mốc thời gian."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q10-2",
+        "prompt": "山田さんと田中さんはスーパーで何を買いましたか。",
+        "options": [
+          "とり肉や新鮮な野さいを買いました",
+          "お魚とくだものだけを買いました",
+          "パンとケーキを買いました",
+          "お酒とビールだけを買いました"
+        ],
+        "answer": "とり肉や新鮮な野さいを買いました",
+        "explanation": {
+          "meaning": "Yamada và Tanaka đã mua gì ở siêu thị? Đáp án: Thịt gà và rau tươi.",
+          "reason": "Dẫn chứng câu 2:「とり肉や新鮮な野さいをたくさん買いました。」",
+          "wrongOptions": [
+            {
+              "option": "お魚とくだものだけを買いました",
+              "reason": "Họ mua thịt gà và rau."
+            },
+            {
+              "option": "パンとケーキを買いました",
+              "reason": "Không mua bánh mì hay bánh ngọt."
+            },
+            {
+              "option": "お酒とビールだけを買いました",
+              "reason": "Họ mua nguyên liệu nấu ăn."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q10-3",
+        "prompt": "山田さんはどんな人ですか。",
+        "options": [
+          "日本の料理がとても上手な人です",
+          "料理がぜんぜんできない人です",
+          "スーパーの店員さんです",
+          "料理が嫌いな人です"
+        ],
+        "answer": "日本の料理がとても上手な人です",
+        "explanation": {
+          "meaning": "Yamada là người như thế nào? Đáp án: Nấu món ăn Nhật rất giỏi.",
+          "reason": "Dẫn chứng câu 3:「山田さんは日本の料理がとても上手で、おいしいスープとサラダを作ってくれました。」",
+          "wrongOptions": [
+            {
+              "option": "料理がぜんぜんできない人です",
+              "reason": "Yamada nấu ăn rất khéo."
+            },
+            {
+              "option": "スーパーの店員さんです",
+              "reason": "Là bạn cùng phòng."
+            },
+            {
+              "option": "料理が嫌いな人です",
+              "reason": "Ngược lại với bài đọc."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q10-4",
+        "prompt": "筆者は何をしながら話しましたか。",
+        "options": [
+          "冷たいお茶やジュースを飲みながら話しました",
+          "一人でテレビを見ながら話しました",
+          "部屋をそうじしながら話しました",
+          "音楽を聞きながら宿題をしました"
+        ],
+        "answer": "冷たいお茶やジュースを飲みながら話しました",
+        "explanation": {
+          "meaning": "Tác giả vừa làm gì vừa trò chuyện? Đáp án: Vừa uống trà lạnh và nước ép vừa nói chuyện.",
+          "reason": "Dẫn chứng câu 5:「私は冷たいお茶やジュースを飲みながら、日本のせいかつについて楽しく話しました。」",
+          "wrongOptions": [
+            {
+              "option": "一人でテレビを見ながら話しました",
+              "reason": "Uống trà và nước ép cùng bạn bè."
+            },
+            {
+              "option": "部屋をそうじしながら話しました",
+              "reason": "Không vừa dọn phòng vừa nói chuyện."
+            },
+            {
+              "option": "音楽を聞きながら宿題をしました",
+              "reason": "Không làm bài tập trong bữa tiệc."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-11
+  {
+    "id": "jpd123-read-11",
+    "course": "JPD123",
+    "title": "東京のIT会社見学とインタビュー",
+    "titleVi": "Chuyến tham quan công ty CNTT tại Tokyo và phỏng vấn",
+    "theme": "Tham quan doanh nghiệp, máy tính, giới thiệu bản thân và tinh thần hợp tác",
+    "content": "先週の水曜日、私たちは東京のIT会社へ見学に行きました。会社の入口で受付の人にじぶんの名前と国を言ってから、オフィスに入りました。広い部屋で社員の人がパソコンを使いながら熱心に仕事をしていました。午後は会議室でぶちょうのせつめいを聞いて、会社についての本やしりょうを読みました。仕事には高いぎじゅつだけでなく、人とよく話してきょう力する力も大切だと教えてくれました。社員の人たちにおれいを言ってから、午後五時にアパートへ帰りました。",
+    "sentences": [
+      {
+        "jp": "先週の水曜日、私たちは東京のIT会社へ見学に行きました。",
+        "vi": "Thứ Tư tuần trước, chúng tôi đã đi tham quan một công ty công nghệ thông tin ở Tokyo.",
+        "romaji": "Senshuu no suiyoubi, watashitachi wa Toukyou no ai-tii kaisha e kengaku ni ikimashita."
+      },
+      {
+        "jp": "会社の入口で受付の人にじぶんの名前と国を言ってから、オフィスに入りました。",
+        "vi": "Tại lối vào của công ty, sau khi nói tên và quốc tịch của mình với lễ tân, chúng tôi đã bước vào văn phòng.",
+        "romaji": "Kaisha no iriguchi de uketsuke no hito ni jibun no namae to kuni o itte kara, ofisu ni hairimashita."
+      },
+      {
+        "jp": "広い部屋で社員の人がパソコンを使いながら熱心に仕事をしていました。",
+        "vi": "Trong căn phòng rộng rãi, các nhân viên đang chăm chỉ làm việc bên máy vi tính.",
+        "romaji": "Hiroi heya de shain no hito ga pasokon o tsukainagara nesshin ni shigoto o shite imashita."
+      },
+      {
+        "jp": "午後は会議室でぶちょうのせつめいを聞いて、会社についての本やしりょうを読みました。",
+        "vi": "Buổi chiều tại phòng họp, chúng tôi đã nghe giải thích của trưởng phòng và đọc sách tài liệu về công ty.",
+        "romaji": "Gogo wa kaigishitsu de buchou no setsumei o kiite, kaisha ni tsuite no hon ya shiryou o yomimashita."
+      },
+      {
+        "jp": "仕事には高いぎじゅつだけでなく、人とよく話してきょう力する力も大切だと教えてくれました。",
+        "vi": "Người ta đã dạy cho chúng tôi rằng trong công việc không chỉ cần kỹ thuật cao mà năng lực giao tiếp và hợp tác với mọi người cũng rất quan trọng.",
+        "romaji": "Shigoto ni wa takai gijutsu dakedenaku, hito to yoku hanashite kyouryoku suru chikara mo taisetsu da to oshiete kuremashita."
+      },
+      {
+        "jp": "社員の人たちにおれいを言ってから、午後五時にアパートへ帰りました。",
+        "vi": "Sau khi cảm ơn các nhân viên công ty, chúng tôi đã trở về căn hộ vào lúc 5 giờ chiều.",
+        "romaji": "Shain no hitotachi ni orei o itte kara, gogo go-ji ni apaato e kaerimashita."
+      }
+    ],
+    "translation": "Thứ Tư tuần trước, nhóm sinh viên chúng tôi có chuyến tham quan thực tế tại một công ty phần mềm ở Tokyo. Tại sảnh đón tiếp, sau khi xưng tên và quốc gia của mình với nhân viên lễ tân, chúng tôi được dẫn vào văn phòng làm việc. Trong không gian làm việc rộng rãi, các kỹ sư phần mềm đang chăm chú làm việc trên máy tính. Sang buổi chiều, chúng tôi lắng nghe trưởng phòng thuyết trình tại phòng hội nghị và đọc các tài liệu giới thiệu công ty. Chúng tôi được chia sẻ một bài học quý báu: làm việc không chỉ cần chuyên môn kỹ thuật giỏi mà kỹ năng giao tiếp và sức mạnh hợp tác đồng đội cũng vô cùng cần thiết. Sau khi gửi lời cảm ơn sâu sắc đến mọi người, đúng 5 giờ chiều chúng tôi lên tàu trở về căn hộ.",
+    "romaji": "Senshuu no suiyoubi, watashitachi wa Toukyou no ai-tii kaisha e kengaku ni ikimashita. Kaisha no iriguchi de uketsuke no hito ni jibun no namae to kuni o itte kara, ofisu ni hairimashita. Hiroi heya de shain no hito ga pasokon o tsukainagara nesshin ni shigoto o shite imashita. Gogo wa kaigishitsu de buchou no setsumei o kiite, kaisha ni tsuite no hon ya shiryou o yomimashita. Shigoto ni wa takai gijutsu dakedenaku, hito to yoku hanashite kyouryoku suru chikara mo taisetsu da to oshiete kuremashita. Shain no hitotachi ni orei o itte kara, gogo go-ji ni apaato e kaerimashita.",
+    "vocabularyUsed": [
+      "先週",
+      "水曜日",
+      "私",
+      "東京",
+      "会社",
+      "見学",
+      "行く",
+      "入口",
+      "人",
+      "自分",
+      "名前",
+      "国",
+      "言う",
+      "入る",
+      "広い",
+      "部屋",
+      "社員",
+      "パソコン",
+      "使う",
+      "仕事",
+      "午後",
+      "説明",
+      "聞く",
+      "本",
+      "読む",
+      "高い",
+      "話す",
+      "力",
+      "教える",
+      "アパート",
+      "帰る"
+    ],
+    "kanjiUsed": [
+      "先",
+      "週",
+      "水",
+      "曜",
+      "日",
+      "私",
+      "東",
+      "京",
+      "会",
+      "社",
+      "見",
+      "行",
+      "入",
+      "人",
+      "名",
+      "前",
+      "国",
+      "言",
+      "午",
+      "後",
+      "聞",
+      "本",
+      "読",
+      "高",
+      "話",
+      "力",
+      "帰"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q11-1",
+        "prompt": "会社の入口でまず何をしましたか。",
+        "options": [
+          "じぶんの名前と国を言いました",
+          "すぐにお金を払いました",
+          "お土産をわたしました",
+          "写真を撮りました"
+        ],
+        "answer": "じぶんの名前と国を言いました",
+        "explanation": {
+          "meaning": "Tại lối vào của công ty, trước tiên họ đã làm gì? Đáp án: Nói tên và quốc tịch của mình.",
+          "reason": "Dẫn chứng câu 2:「会社の入口で受付の人にじぶんの名前と国を言ってから、オフィスに入りました。」",
+          "wrongOptions": [
+            {
+              "option": "すぐにお金を払いました",
+              "reason": "Đi tham quan học tập, không phải trả tiền."
+            },
+            {
+              "option": "お土産をわたしました",
+              "reason": "Không tặng quà tại cửa."
+            },
+            {
+              "option": "写真を撮りました",
+              "reason": "Họ làm thủ tục giới thiệu tên và quốc tịch."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q11-2",
+        "prompt": "社員の人は部屋で何をしていましたか。",
+        "options": [
+          "パソコンを使いながら熱心に仕事をしていました",
+          "お茶を飲んで休んでいました",
+          "新聞を読んでいました",
+          "テレビを見ていました"
+        ],
+        "answer": "パソコンを使いながら熱心に仕事をしていました",
+        "explanation": {
+          "meaning": "Các nhân viên công ty đang làm gì trong phòng? Đáp án: Vừa dùng máy tính vừa chăm chỉ làm việc.",
+          "reason": "Dẫn chứng câu 3:「広い部屋で社員の人がパソコンを使いながら熱心に仕事をしていました。」",
+          "wrongOptions": [
+            {
+              "option": "お茶を飲んで休んでいました",
+              "reason": "Họ làm việc chăm chỉ, không ngồi uống trà."
+            },
+            {
+              "option": "新聞を読んでいました",
+              "reason": "Họ thao tác máy vi tính."
+            },
+            {
+              "option": "テレビを見ていました",
+              "reason": "Không xem tivi."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q11-3",
+        "prompt": "午後に会議室で何をしましたか。",
+        "options": [
+          "ぶちょうのせつめいを聞いて会社についての本やしりょうを読みました",
+          "テストを受けました",
+          "お弁当を食べました",
+          "みんなで歌を歌いました"
+        ],
+        "answer": "ぶちょうのせつめいを聞いて会社についての本やしりょうを読みました",
+        "explanation": {
+          "meaning": "Buổi chiều tại phòng họp họ đã làm gì? Đáp án: Nghe trưởng phòng giải thích và đọc sách tài liệu về công ty.",
+          "reason": "Dẫn chứng câu 4:「午後は会議室でぶちょうのせつめいを聞いて、会社についての本やしりょうを読みました。」",
+          "wrongOptions": [
+            {
+              "option": "テストを受けました",
+              "reason": "Không thi cử tại đây."
+            },
+            {
+              "option": "お弁当を食べました",
+              "reason": "Không ăn cơm hộp."
+            },
+            {
+              "option": "みんなで歌を歌いました",
+              "reason": "Không hát hò."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q11-4",
+        "prompt": "仕事で何が大切だと教えてくれましたか。",
+        "options": [
+          "高い技術と人と協力する力です",
+          "お金をたくさん使うことです",
+          "一人で休まずに働くことです",
+          "外国へたくさん旅行することです"
+        ],
+        "answer": "高い技術と人と協力する力です",
+        "explanation": {
+          "meaning": "Người ta đã dạy điều gì là quan trọng trong công việc? Đáp án: Kỹ thuật cao và năng lực hợp tác với mọi người.",
+          "reason": "Dẫn chứng câu 5:「仕事には高いぎじゅつだけでなく、人とよく話してきょう力する力も大切だと教えてくれました。」",
+          "wrongOptions": [
+            {
+              "option": "お金をたくさん使うことです",
+              "reason": "Cần kỹ thuật và năng lực giao tiếp hợp tác."
+            },
+            {
+              "option": "一人で休まずに働くことです",
+              "reason": "Cần hợp tác làm việc nhóm."
+            },
+            {
+              "option": "外国へたくさん旅行することです",
+              "reason": "Không phải nội dung được khuyên."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-12
+  {
+    "id": "jpd123-read-12",
+    "course": "JPD123",
+    "title": "東京での生活と週末の休み",
+    "titleVi": "Cuộc sống ở Tokyo và ngày nghỉ cuối tuần",
+    "theme": "Khu vực đô thị, lịch sinh hoạt hàng tuần, thư viện và thể thao",
+    "content": "私は今、東京の新宿区のアパートに住んでいます。この市や区はデパートやレストランが多くて、毎日とてもにぎやかです。毎週月曜日から金曜日まで大学で日本語を勉強して、夜は少し休みます。土曜日は図書館で本を読んだり、ノートに日本語の文を書いたりします。来週の休みにはいなかのきれいな田んぼや山を見に行きたいとおもっています。日曜日の午後は友達とサッカーをしてから、早くアパートへ帰ります。",
+    "sentences": [
+      {
+        "jp": "私は今、東京の新宿区のアパートに住んでいます。",
+        "vi": "Hiện tại tôi đang sống trong một căn hộ ở quận Shinjuku, Tokyo.",
+        "romaji": "Watashi wa ima, Toukyou no Shinjuku-ku no apaato ni sunde imasu."
+      },
+      {
+        "jp": "この市や区はデパートやレストランが多くて、毎日とてもにぎやかです。",
+        "vi": "Thành phố và quận này có nhiều trung tâm thương mại và nhà hàng nên mỗi ngày đều vô cùng nhộn nhịp.",
+        "romaji": "Kono shi ya ku wa depaato ya resutoran ga ookute, mainichi totemo nigiyaka desu."
+      },
+      {
+        "jp": "毎週月曜日から金曜日まで大学で日本語を勉強して、夜は少し休みます。",
+        "vi": "Mỗi tuần từ thứ Hai đến thứ Sáu tôi học tiếng Nhật ở trường đại học, tối đến thì nghỉ ngơi một chút.",
+        "romaji": "Maishuu getsuyoubi kara kinyoubi made daigaku de nihongo o benkyou shite, yoru wa sukoshi yasumimasu."
+      },
+      {
+        "jp": "土曜日は図書館で本を読んだり、ノートに日本語の文を書いたりします。",
+        "vi": "Thứ Bảy tôi thường đọc sách ở thư viện và viết các câu tiếng Nhật vào vở.",
+        "romaji": "Doyoubi wa toshokan de hon o yondari, nooto ni nihongo no bun o kaitari shimasu."
+      },
+      {
+        "jp": "来週の休みにはいなかのきれいな田んぼや山を見に行きたいとおもっています。",
+        "vi": "Vào kỳ nghỉ tuần tới, tôi dự định đi ngắm những cánh đồng lúa và núi non xinh đẹp ở miền quê.",
+        "romaji": "Raishuu no yasumi ni wa inaka no kireina tanbo ya yama o mi ni ikitai to omotte imasu."
+      },
+      {
+        "jp": "日曜日の午後は友達とサッカーをしてから、早くアパートへ帰ります。",
+        "vi": "Chiều Chủ nhật sau khi đá bóng cùng bạn bè, tôi về căn hộ sớm.",
+        "romaji": "Nichiyoubi no gogo wa tomodachi to sakkaa o shite kara, hayaku apaato e kaerimasu."
+      }
+    ],
+    "translation": "Hiện tại tôi đang sinh sống tại một căn hộ tiện nghi ở quận Shinjuku, thủ đô Tokyo. Quận đô thị sầm uất này tập trung vô số trung tâm bách hóa và nhà hàng sang trọng, lúc nào cũng tấp nập người qua lại. Mỗi tuần, từ thứ Hai đến thứ Sáu tôi đều đặn đến giảng đường học tiếng Nhật, tối về dành thời gian nghỉ ngơi dưỡng sức. Thứ Bảy tôi đến thư viện yên tĩnh đọc sách và luyện viết văn bản tiếng Nhật vào cuốn sổ tay. Tuần tới được nghỉ, tôi ấp ủ dự định đi về vùng thôn quê thanh bình ngắm những cánh đồng lúa trải dài và dãy núi non trập trùng. Chiều Chủ nhật sau khi chơi bóng đá rèn luyện sức khỏe cùng bạn bè, tôi trở về căn hộ sớm để chuẩn bị cho tuần mới.",
+    "romaji": "Watashi wa ima, Toukyou no Shinjuku-ku no apaato ni sunde imasu. Kono shi ya ku wa depaato ya resutoran ga ookute, mainichi totemo nigiyaka desu. Maishuu getsuyoubi kara kinyoubi made daigaku de nihongo o benkyou shite, yoru wa sukoshi yasumimasu. Doyoubi wa toshokan de hon o yondari, nooto ni nihongo no bun o kaitari shimasu. Raishuu no yasumi ni wa inaka no kireina tanbo ya yama o mi ni ikitai to omotte imasu. Nichiyoubi no gogo wa tomodachi to sakkaa o shite kara, hayaku apaato e kaerimasu.",
+    "vocabularyUsed": [
+      "私",
+      "今",
+      "東京",
+      "区",
+      "アパート",
+      "市",
+      "デパート",
+      "レストラン",
+      "多い",
+      "毎日",
+      "毎週",
+      "月曜日",
+      "金曜日",
+      "大学",
+      "日本語",
+      "勉強",
+      "夜",
+      "少し",
+      "休む",
+      "土曜日",
+      "図書館",
+      "本",
+      "読む",
+      "ノート",
+      "書く",
+      "来週",
+      "休み",
+      "田んぼ",
+      "山",
+      "見る",
+      "行く",
+      "日曜日",
+      "午後",
+      "友達",
+      "サッカー",
+      "早く",
+      "帰る"
+    ],
+    "kanjiUsed": [
+      "私",
+      "今",
+      "東",
+      "京",
+      "区",
+      "市",
+      "大",
+      "毎",
+      "日",
+      "週",
+      "月",
+      "曜",
+      "金",
+      "学",
+      "本",
+      "語",
+      "休",
+      "土",
+      "読",
+      "書",
+      "来",
+      "田",
+      "見",
+      "行",
+      "午",
+      "後",
+      "帰"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q12-1",
+        "prompt": "筆者はどこに住んでいますか。",
+        "options": [
+          "東京の新宿区のアパートです",
+          "京都の古いお寺です",
+          "大学の寮の小さい部屋です",
+          "外国の静かな町です"
+        ],
+        "answer": "東京の新宿区のアパートです",
+        "explanation": {
+          "meaning": "Tác giả đang sống ở đâu? Đáp án: Căn hộ ở quận Shinjuku, Tokyo.",
+          "reason": "Dẫn chứng câu 1:「私は今、東京の新宿区のアパートに住んでいます。」",
+          "wrongOptions": [
+            {
+              "option": "京都の古いお寺です",
+              "reason": "Tác giả sống ở Shinjuku, Tokyo."
+            },
+            {
+              "option": "大学の寮の小さい部屋です",
+              "reason": "Sống ở căn hộ riêng."
+            },
+            {
+              "option": "外国の静かな町です",
+              "reason": "Sống ở khu đô thị nhộn nhịp."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q12-2",
+        "prompt": "筆者は毎週何曜日から何曜日まで勉強しますか。",
+        "options": [
+          "月曜日から金曜日まで勉強します",
+          "土曜日と日曜日だけ勉強します",
+          "水曜日と木曜日だけです",
+          "毎日朝から晩まで休みます"
+        ],
+        "answer": "月曜日から金曜日まで勉強します",
+        "explanation": {
+          "meaning": "Tác giả học từ thứ mấy đến thứ mấy mỗi tuần? Đáp án: Từ thứ Hai đến thứ Sáu.",
+          "reason": "Dẫn chứng câu 3:「毎週月曜日から金曜日まで大学で日本語を勉強して、夜は少し休みます。」",
+          "wrongOptions": [
+            {
+              "option": "土曜日と日曜日だけ勉強します",
+              "reason": "Học từ thứ Hai đến thứ Sáu."
+            },
+            {
+              "option": "水曜日と木曜日だけです",
+              "reason": "Lịch học cả tuần."
+            },
+            {
+              "option": "毎日朝から晩まで休みます",
+              "reason": "Tác giả học tập rất chăm chỉ."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q12-3",
+        "prompt": "土曜日の午後は何をしますか。",
+        "options": [
+          "図書館で本を読んだりノートに文を書いたりします",
+          "一人でアパートをそうじします",
+          "会社でアルバイトをします",
+          "一日中寝ています"
+        ],
+        "answer": "図書館で本を読んだりノートに文を書いたりします",
+        "explanation": {
+          "meaning": "Thứ Bảy tác giả làm gì? Đáp án: Đọc sách ở thư viện và viết câu vào vở.",
+          "reason": "Dẫn chứng câu 4:「土曜日は図書館で本を読んだり、ノートに日本語の文を書いたりします。」",
+          "wrongOptions": [
+            {
+              "option": "一人でアパートをそうじします",
+              "reason": "Đọc sách và luyện viết ở thư viện."
+            },
+            {
+              "option": "会社でアルバイトをします",
+              "reason": "Không đi làm thêm vào thứ Bảy."
+            },
+            {
+              "option": "一日中寝ています",
+              "reason": "Dành thời gian học tập bổ ích."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q12-4",
+        "prompt": "来週の休みは何をしたいと思っていますか。",
+        "options": [
+          "いなかのきれいな田んぼや山を見に行きたいです",
+          "デパートで高い服を買いたいです",
+          "海で泳ぎたいです",
+          "国へ帰りたいです"
+        ],
+        "answer": "いなかのきれいな田んぼや山を見に行きたいです",
+        "explanation": {
+          "meaning": "Kỳ nghỉ tuần tới tác giả mong muốn làm gì? Đáp án: Đi ngắm ruộng lúa và núi non tuyệt đẹp ở miền quê.",
+          "reason": "Dẫn chứng câu 5:「来週の休みにはいなかのきれいな田んぼや山を見に行きたいとおもっています。」",
+          "wrongOptions": [
+            {
+              "option": "デパートで高い服を買いたいです",
+              "reason": "Muốn đi dã ngoại ngắm cảnh đồng quê."
+            },
+            {
+              "option": "海で泳ぎたいです",
+              "reason": "Muốn ngắm núi và ruộng đồng."
+            },
+            {
+              "option": "国へ帰りたいです",
+              "reason": "Không về nước vào dịp này."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-13
+  {
+    "id": "jpd123-read-13",
+    "course": "JPD123",
+    "title": "浅草の雷門とお寺の見学",
+    "titleVi": "Tham quan cổng Kaminarimon và ngôi chùa ở Asakusa",
+    "theme": "Du lịch Asakusa, cổng chào Kaminarimon, chùa cổ Sensoji và quán giải khát",
+    "content": "先週の日曜日、留学生の男の人と女の人で東京のあさくさへ行きました。駅を出てから、とても大きくて有名な赤色の門を見ました。この門の名前はかみなり門で、毎日世界中の国から観光客がたくさん来ています。門をとおってから古いお寺へ行って、みんなでおいのりをしました。近くの小さい店できねんの食べ物やおみやげを買って、カフェで冷たいジュースやコーヒーを飲みました。午後三時半に地下鉄で会社のアパートへ帰りました。",
+    "sentences": [
+      {
+        "jp": "先週の日曜日、留学生の男の人と女の人で東京のあさくさへ行きました。",
+        "vi": "Chủ nhật tuần trước, nhóm du học sinh gồm cả các bạn nam và nữ đã đi đến Asakusa ở Tokyo.",
+        "romaji": "Senshuu no nichiyoubi, ryuugakusei no otoko no hito to onna no hito de Toukyou no Asakusa e ikimashita."
+      },
+      {
+        "jp": "駅を出てから、とても大きくて有名な赤色の門を見ました。",
+        "vi": "Sau khi ra khỏi nhà ga, chúng tôi đã nhìn thấy chiếc cổng màu đỏ rất lớn và nổi tiếng.",
+        "romaji": "Eki o dete kara, totemo ookikute yuumeina akairo no mon o mimashita."
+      },
+      {
+        "jp": "この門の名前はかみなり門で、毎日世界中の国から観光客がたくさん来ています。",
+        "vi": "Chiếc cổng này có tên là Kaminarimon, mỗi ngày đều có rất nhiều du khách từ các quốc gia trên thế giới ghé thăm.",
+        "romaji": "Kono mon no namae wa Kaminarimon de, mainichi sekaijuu no kuni kara kankoukyaku ga takusan kite imasu."
+      },
+      {
+        "jp": "門をとおってから古いお寺へ行って、みんなでおいのりをしました。",
+        "vi": "Sau khi đi qua cổng, chúng tôi đến ngôi chùa cổ và cùng nhau cầu nguyện.",
+        "romaji": "Mon o tootte kara furui otera e itte, minna de oinori o shimashita."
+      },
+      {
+        "jp": "近くの小さい店できねんの食べ物やおみやげを買って、喫茶店で冷たいジュースを飲みました。",
+        "vi": "Tại một cửa hàng nhỏ gần đó, chúng tôi mua quà lưu niệm và đồ ăn kỷ niệm, rồi vào quán nước uống nước ép lạnh.",
+        "romaji": "Chikaku no chiisai mise de kinen no tabemono ya omiyage o katte, kafe de tsumetai juusu ya koohii o nomimashita."
+      },
+      {
+        "jp": "午後三時半に地下鉄で会社のアパートへ帰りました。",
+        "vi": "Lúc 3 giờ rưỡi chiều, chúng tôi đi tàu điện ngầm trở về căn hộ do công ty sắp xếp.",
+        "romaji": "Gogo san-jihan ni chikatetsu de kaisha no apaato e kaerimashita."
+      }
+    ],
+    "translation": "Vào ngày Chủ nhật tuần trước, các bạn lưu học sinh nam và nữ chúng tôi rủ nhau đi tham quan Asakusa, Tokyo. Vừa bước chân ra khỏi ga tàu, sừng sững trước mắt chúng tôi là chiếc cổng màu đỏ khổng lồ vô cùng nổi tiếng. Cổng này mang tên Kaminarimon (Lôi Môn), nơi đón hàng ngàn lượt khách từ khắp năm châu mỗi ngày. Bước qua cổng lớn, chúng tôi tiến vào ngôi chùa cổ kính thanh tịnh và cùng nhau dâng hương nguyện cầu bình an. Ở một gian hàng nhỏ xinh gần chùa, cả nhóm chọn mua đặc sản đồ ăn và quà lưu niệm, rồi ghé quán cà phê nhâm nhi cốc nước ép hoa quả mát lạnh. Đúng 3 giờ rưỡi chiều, chúng tôi lên tàu điện ngầm trở về căn hộ của công ty.",
+    "romaji": "Senshuu no nichiyoubi, ryuugakusei no otoko no hito to onna no hito de Toukyou no Asakusa e ikimashita. Eki o dete kara, totemo ookikute yuumeina akairo no mon o mimashita. Kono mon no namae wa Kaminarimon de, mainichi sekaijuu no kuni kara kankoukyaku ga takusan kite imasu. Mon o tootte kara furui otera e itte, minna de oinori o shimashita. Chikaku no chiisai mise de kinen no tabemono ya omiyage o katte, kissaten de tsumetai juusu o nomimashita. Gogo san-jihan ni chikatetsu de kaisha no apaato e kaerimashita.",
+    "vocabularyUsed": [
+      "先週",
+      "日曜日",
+      "留学生",
+      "男",
+      "女",
+      "東京",
+      "行く",
+      "出る",
+      "大きい",
+      "有名",
+      "門",
+      "名前",
+      "毎日",
+      "国",
+      "来る",
+      "古い",
+      "お寺",
+      "近く",
+      "小さい",
+      "店",
+      "食べ物",
+      "お土産",
+      "買う",
+      "喫茶店",
+      "冷たい",
+      "ジュース",
+      "飲む",
+      "午後",
+      "三時半",
+      "地下鉄",
+      "会社",
+      "アパート",
+      "帰る"
+    ],
+    "kanjiUsed": [
+      "先",
+      "週",
+      "日",
+      "曜",
+      "学",
+      "生",
+      "男",
+      "人",
+      "女",
+      "東",
+      "京",
+      "行",
+      "大",
+      "門",
+      "名",
+      "前",
+      "毎",
+      "国",
+      "来",
+      "寺",
+      "見",
+      "小",
+      "食",
+      "物",
+      "買",
+      "飲",
+      "午",
+      "後",
+      "三",
+      "時",
+      "半",
+      "会",
+      "社",
+      "帰"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q13-1",
+        "prompt": "筆者はだれとあさくさへ行きましたか。",
+        "options": [
+          "留学生の男の人と女の人で行きました",
+          "高校の先生と行きました",
+          "一人だけで行きました",
+          "会社の人と行きました"
+        ],
+        "answer": "留学生の男の人と女の人で行きました",
+        "explanation": {
+          "meaning": "Tác giả đã đi Asakusa cùng ai? Đáp án: Đi cùng các bạn du học sinh nam và nữ.",
+          "reason": "Dẫn chứng câu 1:「留学生の男の人と女の人で東京のあさくさへ行きました。」",
+          "wrongOptions": [
+            {
+              "option": "高校の先生と行きました",
+              "reason": "Đi cùng bạn du học sinh."
+            },
+            {
+              "option": "一人だけで行きました",
+              "reason": "Đi theo nhóm bạn bè."
+            },
+            {
+              "option": "会社的人と行きました",
+              "reason": "Nhóm du học sinh rủ nhau đi chơi."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q13-2",
+        "prompt": "駅を出てから何を見ましたか。",
+        "options": [
+          "大きくて有名な赤色の門を見ました",
+          "高いタワーを見ました",
+          "新しい自動車を見ました",
+          "大きい海を見ました"
+        ],
+        "answer": "大きくて有名な赤色の門を見ました",
+        "explanation": {
+          "meaning": "Sau khi ra khỏi ga, họ đã nhìn thấy cái gì? Đáp án: Nhìn thấy cổng lớn màu đỏ nổi tiếng (Kaminarimon).",
+          "reason": "Dẫn chứng câu 2:「駅を出てから、とても大きくて有名な赤色の門を見ました。」",
+          "wrongOptions": [
+            {
+              "option": "高いタワーを見ました",
+              "reason": "Nhìn thấy chiếc cổng lớn màu đỏ."
+            },
+            {
+              "option": "新しい自動車を見ました",
+              "reason": "Không phải nhìn ô tô mới."
+            },
+            {
+              "option": "大きい海を見ました",
+              "reason": "Asakusa ở trung tâm Tokyo, không có biển."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q13-3",
+        "prompt": "門をとおってから何をしましたか。",
+        "options": [
+          "古いお寺へ行って、みんなでおいのりをしました",
+          "すぐにレストランでごはんを食べました",
+          "ホテルで休みました",
+          "デパートへ買い物に行きました"
+        ],
+        "answer": "古いお寺へ行って、みんなでおいのりをしました",
+        "explanation": {
+          "meaning": "Sau khi đi qua cổng họ đã làm gì? Đáp án: Vào chùa cổ và cùng nhau cầu nguyện.",
+          "reason": "Dẫn chứng câu 4:「門をとおってから古いお寺へ行って、みんなでおいのりをしました。」",
+          "wrongOptions": [
+            {
+              "option": "すぐにレストランでごはんを食べました",
+              "reason": "Họ vào chùa tham quan và cầu nguyện trước."
+            },
+            {
+              "option": "ホテルで休みました",
+              "reason": "Họ tiếp tục mua sắm quà lưu niệm."
+            },
+            {
+              "option": "デパートへ買い物に行きました",
+              "reason": "Không đi trung tâm bách hóa."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q13-4",
+        "prompt": "喫茶店で何を飲みましたか。",
+        "options": [
+          "冷たいジュースを飲みました",
+          "温かいお茶を飲みました",
+          "ビールを飲みました",
+          "コーヒーを飲みました"
+        ],
+        "answer": "冷たいジュースを飲みました",
+        "explanation": {
+          "meaning": "Ở quán nước họ đã uống gì? Đáp án: Uống nước ép lạnh.",
+          "reason": "Dẫn chứng câu 5:「喫茶店で冷たいジュースを飲みました。」",
+          "wrongOptions": [
+            {
+              "option": "温かいお茶を飲みました",
+              "reason": "Họ uống nước trái cây mát lạnh (冷たいジュース)."
+            },
+            {
+              "option": "ビールを飲みました",
+              "reason": "Không uống bia."
+            },
+            {
+              "option": "コーヒーを飲みました",
+              "reason": "Bài nêu rõ nước ép (ジュース)."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-14
+  {
+    "id": "jpd123-read-14",
+    "course": "JPD123",
+    "title": "スーパーでの買い物とカレー料理",
+    "titleVi": "Mua sắm ở siêu thị và nấu món cà ri",
+    "theme": "Mua sắm, nấu ăn, nguyên liệu thực phẩm, dụng cụ ăn uống và trò chuyện",
+    "content": "毎週土曜日の午前、私は山田さんと区の大きいスーパーへ買い物に行きます。スーパーには新鮮なとり肉や魚や野さいがたくさん売られています。コンビニの物より安いですから、私たちはいつもここで食べ物を買います。アパートへ帰ってから、スプーンなどの食事のどう具をじゅんびして、おいしいカレー料理を作りました。会社や大学の友達と会話をしながら大きいテーブルで食べて、とても楽しかったです。自分で作った日本のカレー料理は、レストランの料理よりずっとおいしかったです。",
+    "sentences": [
+      {
+        "jp": "毎週土曜日の午前、私は山田さんと区の大きいスーパーへ買い物に行きます。",
+        "vi": "Sáng thứ Bảy hàng tuần, tôi cùng bạn Yamada đi mua sắm ở siêu thị lớn trong quận.",
+        "romaji": "Maishuu doyoubi no gozen, watashi wa Yamada-san to ku no ookii suupaa e kaimono ni ikimasu."
+      },
+      {
+        "jp": "スーパーには新鮮なとり肉や魚や野さいがたくさん売られています。",
+        "vi": "Tại siêu thị bày bán rất nhiều thịt gà tươi ngon, cá và rau củ quả.",
+        "romaji": "Suupaa ni wa shinsenna toriniku ya sakana ya yasai ga takusan urarete imasu."
+      },
+      {
+        "jp": "コンビニの物より安いですから、私たちはいつもここで食べ物を買います。",
+        "vi": "Vì rẻ hơn đồ ở cửa hàng tiện lợi nên chúng tôi luôn mua thức ăn ở đây.",
+        "romaji": "Konbini no mono yori yasui desu kara, watashitachi wa itsumo koko de tabemono o kaimasu."
+      },
+      {
+        "jp": "アパートへ帰ってから、スプーンなどの食事のどう具をじゅんびして、おいしいカレー料理を作りました。",
+        "vi": "Sau khi về căn hộ, chúng tôi chuẩn bị các dụng cụ ăn uống như thìa và nấu món cà ri thơm ngon.",
+        "romaji": "Apaato e kaette kara, supuun nado no shokuji no dougu o junbi shite, oishii karee ryouri o tsukurimashita."
+      },
+      {
+        "jp": "会社や大学の友達と会話をしながら大きいテーブルで食べて、とても楽しかったです。",
+        "vi": "Vừa trò chuyện với bạn bè ở công ty và trường đại học, vừa cùng ăn bên chiếc bàn lớn, chúng tôi thấy rất vui.",
+        "romaji": "Kaisha ya daigaku no tomodachi to kaiwa o shinagara ookii teeburu de tabete, totemo tanoshikatta desu."
+      },
+      {
+        "jp": "自分で作った日本のカレー料理は、レストランの料理よりずっとおいしかったです。",
+        "vi": "Món cà ri Nhật Bản tự nấu ngon hơn nhiều so với món ăn ở nhà hàng.",
+        "romaji": "Jibun de tsukutta Nihon no karee ryouri wa, resutoran no ryouri yori zutto oishikatta desu."
+      }
+    ],
+    "translation": "Cứ vào sáng thứ Bảy mỗi tuần, tôi lại cùng anh Yamada rảo bước đến siêu thị lớn trong quận để mua thực phẩm. Quầy kệ siêu thị ngập tràn thịt gà tươi, cá tươi cùng rau xanh mơn mởn. So với cửa hàng tiện lợi thì giá cả ở đây rẻ hơn rất nhiều, nên chúng tôi luôn chọn nơi này làm điểm mua sắm quen thuộc. Xách đồ về căn hộ, chúng tôi nhanh chóng chuẩn bị các dụng cụ ăn uống như thìa dĩa và bắt tay vào nấu món cơm cà ri thơm lừng. Cùng bạn bè ở trường đại học và đồng nghiệp công ty vừa rôm rả trò chuyện vừa thưởng thức món ăn bên chiếc bàn lớn, không khí tràn ngập niềm vui. Đĩa cà ri phong cách Nhật tự tay chúng tôi nấu ngon hơn hẳn đồ ăn ở các nhà hàng thông thường.",
+    "romaji": "Maishuu doyoubi no gozen, watashi wa Yamada-san to ku no ookii suupaa e kaimono ni ikimasu. Suupaa ni wa shinsenna toriniku ya sakana ya yasai ga takusan urarete imasu. Konbini no mono yori yasui desu kara, watashitachi wa itsumo koko de tabemono o kaimasu. Apaato e kaette kara, supuun nado no shokuji no dougu o junbi shite, oishii karee ryouri o tsukurimashita. Kaisha ya daigaku no tomodachi to kaiwa o shinagara ookii teeburu de tabete, totemo tanoshikatta desu. Jibun de tsukutta Nihon no karee ryouri wa, resutoran no ryouri yori zutto oishikatta desu.",
+    "vocabularyUsed": [
+      "毎週",
+      "土曜日",
+      "午前",
+      "私",
+      "山田",
+      "区",
+      "大きい",
+      "スーパー",
+      "買い物",
+      "行く",
+      "肉",
+      "野菜",
+      "コンビニ",
+      "物",
+      "安い",
+      "食べ物",
+      "買う",
+      "アパート",
+      "帰る",
+      "スプーン",
+      "食事",
+      "道具",
+      "カレー",
+      "料理",
+      "作る",
+      "会社",
+      "大学",
+      "友達",
+      "会話",
+      "テーブル",
+      "食べる",
+      "自分",
+      "日本",
+      "レストラン"
+    ],
+    "kanjiUsed": [
+      "毎",
+      "週",
+      "土",
+      "曜",
+      "日",
+      "午",
+      "前",
+      "私",
+      "山",
+      "田",
+      "区",
+      "大",
+      "買",
+      "物",
+      "行",
+      "肉",
+      "野",
+      "安",
+      "食",
+      "帰",
+      "具",
+      "料",
+      "理",
+      "会",
+      "社",
+      "学",
+      "自",
+      "分",
+      "本"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q14-1",
+        "prompt": "筆者は毎週土曜日の午前、だれとスーパーへ行きますか。",
+        "options": [
+          "山田さんと行きます",
+          "田中さんと行きます",
+          "先生と行きます",
+          "一人で行きます"
+        ],
+        "answer": "山田さんと行きます",
+        "explanation": {
+          "meaning": "Sáng thứ Bảy hàng tuần tác giả đi siêu thị cùng ai? Đáp án: Đi cùng bạn Yamada.",
+          "reason": "Dẫn chứng câu 1:「毎週土曜日の午前、私は山田さんと区の大きいスーパーへ買い物に行きます。」",
+          "wrongOptions": [
+            {
+              "option": "田中さんと行きます",
+              "reason": "Đi cùng Yamada (山田さん)."
+            },
+            {
+              "option": "先生と行きます",
+              "reason": "Không đi cùng giáo viên."
+            },
+            {
+              "option": "一人で行きます",
+              "reason": "Có bạn Yamada đồng hành."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q14-2",
+        "prompt": "スーパーで何を買いましたか。",
+        "options": [
+          "とり肉や魚や野さいを買いました",
+          "ジュースとお菓子だけ買いました",
+          "本とノートを買いました",
+          "洋服と靴を買いました"
+        ],
+        "answer": "とり肉や魚や野さいを買いました",
+        "explanation": {
+          "meaning": "Họ đã mua gì tại siêu thị? Đáp án: Thịt gà, cá và rau củ tươi.",
+          "reason": "Dẫn chứng câu 2:「スーパーには新鮮なとり肉や魚や野さいがたくさん売られています。」",
+          "wrongOptions": [
+            {
+              "option": "ジュースとお菓子だけ買いました",
+              "reason": "Họ mua thịt gà, cá và rau để nấu ăn."
+            },
+            {
+              "option": "本とノートを買いました",
+              "reason": "Không mua sách vở ở quầy thực phẩm."
+            },
+            {
+              "option": "洋服と靴を買いました",
+              "reason": "Không đi mua sắm trang phục."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q14-3",
+        "prompt": "なぜこのスーパーで食べ物を買いますか。",
+        "options": [
+          "コンビニの物より安いですから",
+          "大学からとても近いですから",
+          "日本の料理がたくさんありますから",
+          "友達が働いていますから"
+        ],
+        "answer": "コンビニの物より安いですから",
+        "explanation": {
+          "meaning": "Tại sao họ lại mua đồ ăn ở siêu thị này? Đáp án: Vì giá rẻ hơn so với cửa hàng tiện lợi.",
+          "reason": "Dẫn chứng câu 3:「コンビニの物より安いですから、私たちはいつもここで食べ物を買います。」",
+          "wrongOptions": [
+            {
+              "option": "大学からとても近いですから",
+              "reason": "Lý do là giá rẻ hơn cửa hàng tiện ích."
+            },
+            {
+              "option": "日本の料理がたくさんありますから",
+              "reason": "Họ mua nguyên liệu về tự nấu."
+            },
+            {
+              "option": "友達が働いていますから",
+              "reason": "Không có chi tiết này trong bài."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q14-4",
+        "prompt": "アパートへ帰ってから何をしましたか。",
+        "options": [
+          "食事のどう具をじゅんびしておいしいカレー料理を作りました",
+          "テレビを見て寝ました",
+          "宿題をしました",
+          "そうじをしました"
+        ],
+        "answer": "食事のどう具をじゅんびしておいしいカレー料理を作りました",
+        "explanation": {
+          "meaning": "Sau khi về căn hộ họ đã làm gì? Đáp án: Chuẩn bị dụng cụ ăn uống và nấu món cà ri ngon.",
+          "reason": "Dẫn chứng câu 4:「アパートへ帰ってから、スプーンなどの食事のどう具をじゅんびして、おいしいカレー料理を作りました。」",
+          "wrongOptions": [
+            {
+              "option": "テレビを見て寝ました",
+              "reason": "Họ cùng nhau chuẩn bị và nấu ăn."
+            },
+            {
+              "option": "宿題をしました",
+              "reason": "Họ nấu cà ri ăn cùng bạn bè."
+            },
+            {
+              "option": "そうじをしました",
+              "reason": "Không phải dọn dẹp."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-15
+  {
+    "id": "jpd123-read-15",
+    "course": "JPD123",
+    "title": "大学の日本語の授業とインタビュー",
+    "titleVi": "Giờ học tiếng Nhật ở trường đại học và phỏng vấn",
+    "theme": "Giảng đường đại học, chữ Hán, phát âm to rõ và kỹ năng giao tiếp",
+    "content": "毎日の授業で、私たちは先生の日本語のせつめいを熱心に聞きます。先生はテキストを開けてこくばんにかんじを書いて、私たちに「大きい声で読んでください」と言いました。それから、パソコンやノートを使って、隣のルームメイトといっしょに日本語で話す練習をしました。テキストの文を読んだり、ノートにじぶんの名前や国について書いたりしました。外国語を勉強することは大変ですが、人と話す力がふえてとても嬉しいです。しょうらいは日本の有名な会社で働いて、たくさんの人と会話をしたいです。",
+    "sentences": [
+      {
+        "jp": "毎日の授業で、私たちは先生の日本語のせつめいを熱心に聞きます。",
+        "vi": "Trong mỗi tiết học hàng ngày, chúng tôi đều chăm chú lắng nghe thầy giáo giải thích tiếng Nhật.",
+        "romaji": "Mainichi no jugyou de, watashitachi wa sensei no nihongo no setsumei o nesshin ni kikimasu."
+      },
+      {
+        "jp": "先生はこくばんにかんじを書いて、私たちに「大きい声で読んでください」と言いました。",
+        "vi": "Thầy viết chữ Hán lên bảng đen và dặn chúng tôi: 'Các em hãy đọc to câu văn lên nhé'.",
+        "romaji": "Sensei wa kokuban ni kanji o kaite, watashitachi ni 'ookii koe de yonde kudasai' to iimashita."
+      },
+      {
+        "jp": "それから、隣の学生といっしょに日本語で話す練習をしました。",
+        "vi": "Sau đó, tôi cùng bạn sinh viên ngồi bên cạnh luyện tập hội thoại bằng tiếng Nhật.",
+        "romaji": "Sorekara, tonari no gakusei to issho ni nihongo de hanasu renshuu o shimashita."
+      },
+      {
+        "jp": "テキストの文を読んだり、ノートにじぶんの名前や国について書いたりしました。",
+        "vi": "Chúng tôi vừa đọc câu văn trong sách giáo khoa, vừa viết tên và quốc gia của mình vào vở.",
+        "romaji": "Kyoukasho no bun o yondari, nooto ni jibun no namae ya kuni ni tsuite kaitari shimashita."
+      },
+      {
+        "jp": "外国語を勉強することは大変ですが、人と話す力がふえてとても嬉しいです。",
+        "vi": "Học ngoại ngữ tuy có nhiều vất vả nhưng năng lực giao tiếp với mọi người ngày một tiến bộ khiến tôi rất vui.",
+        "romaji": "Gaikokugo o benkyou suru koto wa taihen desu ga, hito to hanasu chikara ga fuete totemo ureshii desu."
+      },
+      {
+        "jp": "しょうらいは日本の有名な会社で働いて、たくさんの人と会話をしたいです。",
+        "vi": "Trong tương lai, tôi mong muốn được làm việc tại một công ty nổi tiếng ở Nhật Bản và trò chuyện cùng nhiều người.",
+        "romaji": "Shourai wa Nihon no yuumeina kaisha de hataraite, takusan no hito to kaiwa o shitai desu."
+      }
+    ],
+    "translation": "Trong các giờ học mỗi ngày trên giảng đường, cả lớp đều chăm chú lắng nghe thầy giáo giảng giải tỉ mỉ từng mẫu ngữ pháp tiếng Nhật. Thầy nắn nót viết từng chữ Hán lên bảng rồi ân cần nhắc nhở: 'Các em hãy mở to giọng đọc đồng thanh câu này nhé'. Sau đó, tôi bắt cặp cùng bạn sinh viên bàn bên để cùng nhau luyện tập hội thoại giao tiếp. Chúng tôi đọc to các đoạn văn trong sách giáo khoa, rồi ghi chép cẩn thận tên tuổi và quê hương đất nước của mình vào cuốn sổ tay. Việc trau dồi một ngôn ngữ mới tuy đòi hỏi nhiều công sức và sự kiên trì, nhưng nhìn thấy năng lực giao tiếp và trò chuyện của mình ngày càng vững vàng, tôi cảm thấy vô cùng hạnh phúc và tự hào. Sau này tôi khát khao được cống hiến tại một công ty danh tiếng tại Nhật Bản, tự tin đàm đạo và hợp tác cùng bạn bè khắp muôn phương.",
+    "romaji": "Mainichi no jugyou de, watashitachi wa sensei no nihongo no setsumei o nesshin ni kikimasu. Sensei wa tekisuto o akete kokuban ni kanji o kaite, watashitachi ni 'ookii koe de yonde kudasai' to iimashita. Sorekara, pasokon ya nooto o tsukatte, tonari no ruumumeito to issho ni nihongo de hanasu renshuu o shimashita. Kyoukasho no bun o yondari, nooto ni jibun no namae ya kuni ni tsuite kaitari shimashita. Gaikokugo o benkyou suru koto wa taihen desu ga, hito to hanasu chikara ga fuete totemo ureshii desu. Shourai wa Nihon no yuumeina kaisha de hataraite, takusan no hito to kaiwa o shitai desu.",
+    "vocabularyUsed": [
+      "毎日",
+      "授業",
+      "私",
+      "先生",
+      "日本語",
+      "説明",
+      "聞く",
+      "書く",
+      "大きい",
+      "声",
+      "読む",
+      "言う",
+      "学生",
+      "話す",
+      "練習",
+      "文",
+      "ノート",
+      "自分",
+      "名前",
+      "国",
+      "外国語",
+      "勉強",
+      "大変",
+      "人",
+      "力",
+      "嬉しい",
+      "日本",
+      "有名",
+      "会社",
+      "働く",
+      "会話"
+    ],
+    "kanjiUsed": [
+      "毎",
+      "日",
+      "私",
+      "先",
+      "生",
+      "本",
+      "語",
+      "聞",
+      "書",
+      "大",
+      "読",
+      "言",
+      "学",
+      "話",
+      "名",
+      "前",
+      "国",
+      "外",
+      "人",
+      "力",
+      "有",
+      "会",
+      "社"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q15-1",
+        "prompt": "学生たちは授業で先生の何を熱心に聞きますか。",
+        "options": [
+          "日本語のせつめいを熱心に聞きます",
+          "音楽を聞きます",
+          "ラジオのニュースを聞きます",
+          "友達の歌を聞きます"
+        ],
+        "answer": "日本語のせつめいを熱心に聞きます",
+        "explanation": {
+          "meaning": "Các bạn học sinh chăm chú lắng nghe điều gì của thầy giáo trong giờ học? Đáp án: Lắng nghe giải thích tiếng Nhật.",
+          "reason": "Dẫn chứng câu 1:「毎日の授業で、私たちは先生の日本語のせつめいを熱心に聞きます。」",
+          "wrongOptions": [
+            {
+              "option": "音楽を聞きます",
+              "reason": "Nghe thầy giải thích bài học, không nghe nhạc."
+            },
+            {
+              "option": "ラジオのニュースを聞きます",
+              "reason": "Không nghe đài phát thanh."
+            },
+            {
+              "option": "友達の歌を聞きます",
+              "reason": "Không nghe hát."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q15-2",
+        "prompt": "先生は黒板に何を書きましたか。",
+        "options": [
+          "かんじを書きました",
+          "えを書きました",
+          "英語を書きました",
+          "数字だけを書きました"
+        ],
+        "answer": "かんじを書きました",
+        "explanation": {
+          "meaning": "Thầy giáo đã viết gì lên bảng đen? Đáp án: Viết chữ Hán (Kanji).",
+          "reason": "Dẫn chứng câu 2:「先生はこくばんにかんじを書いて、私たちに「大きい声で読んでください」と言いました。」",
+          "wrongOptions": [
+            {
+              "option": "えを書きました",
+              "reason": "Thầy viết chữ Hán, không vẽ tranh."
+            },
+            {
+              "option": "英語を書きました",
+              "reason": "Viết chữ Hán tiếng Nhật."
+            },
+            {
+              "option": "数字だけを書きました",
+              "reason": "Không chỉ viết con số."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q15-3",
+        "prompt": "隣の学生といっしょに何をしましたか。",
+        "options": [
+          "日本語で話す練習をしました",
+          "ゲームをしました",
+          "ごはんを食べました",
+          "テレビを見ました"
+        ],
+        "answer": "日本語で話す練習をしました",
+        "explanation": {
+          "meaning": "Tác giả đã làm gì cùng bạn sinh viên ngồi cạnh? Đáp án: Luyện tập hội thoại bằng tiếng Nhật.",
+          "reason": "Dẫn chứng câu 3:「それから、隣の学生といっしょに日本語で話す練習をしました。」",
+          "wrongOptions": [
+            {
+              "option": "ゲームをしました",
+              "reason": "Họ luyện giao tiếp tiếng Nhật."
+            },
+            {
+              "option": "ごはんを食べました",
+              "reason": "Không ăn cơm trong lớp học."
+            },
+            {
+              "option": "テレビを見ました",
+              "reason": "Không xem tivi."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q15-4",
+        "prompt": "外国語の勉強について、筆者はどう思っていますか。",
+        "options": [
+          "人と話す力がふえてとても嬉しいです",
+          "つまらないと思っています",
+          "難しくて嫌いです",
+          "ぜんぜん役に立たないと思っています"
+        ],
+        "answer": "人と話す力がふえてとても嬉しいです",
+        "explanation": {
+          "meaning": "Về việc học ngoại ngữ, tác giả có suy nghĩ gì? Đáp án: Rất vui vì năng lực nói chuyện giao tiếp ngày càng tăng tiến.",
+          "reason": "Dẫn chứng câu 5:「人と話す力がふえてとても嬉しいです。」",
+          "wrongOptions": [
+            {
+              "option": "つまらないと思っています",
+              "reason": "Tác giả thấy rất vui và tự hào."
+            },
+            {
+              "option": "難しくて嫌いです",
+              "reason": "Dù vất vả nhưng tác giả rất yêu thích."
+            },
+            {
+              "option": "ぜんぜん役に立たないと思っています",
+              "reason": "Ngược lại hoàn toàn với cảm xúc tích cực của bài."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  // JPD123-READ-16
+  {
+    "id": "jpd123-read-16",
+    "course": "JPD123",
+    "title": "市での生活と週末のスポーツ",
+    "titleVi": "Đời sống ở thành phố và thể thao cuối tuần",
+    "theme": "Cuộc sống tiện ích tại đô thị, hẹn gặp cuối tuần, thể thao và ôn tập thi",
+    "content": "私は今、東京の近くのきれいな市に住んでいます。この町は大きい公園や小さい店があって、とても便利です。毎週水曜日の午後、大学のグラウンドで友達とサッカーを練習します。今週の土曜日は本田さんとテニスの試合を見に行く約束をしました。日曜日の朝はアパートで少し休んでから、午後は田んぼの近くを散歩してリフレッシュします。来週のテストのために夜は早く帰って勉強します。",
+    "sentences": [
+      {
+        "jp": "私は今、東京の近くのきれいな市に住んでいます。",
+        "vi": "Hiện tại tôi đang sống ở một thành phố xinh đẹp nằm gần Tokyo.",
+        "romaji": "Watashi wa ima, Toukyou no chikaku no kireina shi ni sunde imasu."
+      },
+      {
+        "jp": "この町は大きい公園や小さい店があって、とても便利です。",
+        "vi": "Thị trấn này có công viên rộng và những cửa hàng nhỏ, vô cùng tiện lợi.",
+        "romaji": "Kono machi wa ookii kouen ya chiisai mise ga atte, totemo benri desu."
+      },
+      {
+        "jp": "毎週水曜日の午後、大学のグラウンドで友達とサッカーを練習します。",
+        "vi": "Mỗi chiều thứ Tư, tôi cùng các bạn luyện tập bóng đá trên sân vận động của trường đại học.",
+        "romaji": "Maishuu suiyoubi no gogo, daigaku no guraundo de tomodachi to sakkaa o renshuu shimasu."
+      },
+      {
+        "jp": "今週の土曜日は本田さんとテニスの試合を見に行く約束をしました。",
+        "vi": "Thứ Bảy tuần này, tôi đã hẹn cùng bạn Honda đi xem trận đấu quần vợt.",
+        "romaji": "Konshuu no doyoubi wa Honda-san to tenisu no shiai o mi ni iku yakusoku o shimashita."
+      },
+      {
+        "jp": "日曜日の朝はアパートで少し休んでから、午後は田んぼの近くを散歩してリフレッシュします。",
+        "vi": "Sáng Chủ nhật nghỉ ngơi một chút ở căn hộ, chiều đến tôi đi dạo gần cánh đồng lúa để lấy lại năng lượng.",
+        "romaji": "Nichiyoubi no asa wa apaato de sukoshi yasunde kara, gogo wa tanbo no chikaku o sanpo shite rifuresshu shimasu."
+      },
+      {
+        "jp": "来週のテストのために夜は早く帰って勉強します。",
+        "vi": "Vì kỳ kiểm tra tuần tới, tối đến tôi về nhà sớm và chăm chỉ ôn bài.",
+        "romaji": "Raishuu no tesuto no tame ni yoru wa hayaku kaette benkyou shimasu."
+      }
+    ],
+    "translation": "Hiện tại tôi đang tận hưởng cuộc sống tại một thành phố thanh bình và xinh đẹp nằm ngay gần thủ đô Tokyo. Khu đô thị này có công viên cây xanh rộng lớn và các cửa hàng tiện ích phong phú, sinh hoạt vô cùng thuận tiện. Vào các buổi chiều thứ Tư hàng tuần, tôi cùng bạn bè trong trường đại học ra sân vận động tập luyện bóng đá. Thứ Bảy tuần này, tôi có hẹn cùng anh Honda đi xem một trận thi đấu tennis hấp dẫn. Sáng Chủ nhật tôi dành chút thời gian thảnh thơi nghỉ ngơi trong phòng, rồi chiều đến rảo bước dạo mát dọc con đường ven những ruộng lúa xanh ngát để hít thở bầu không khí trong lành. Hướng đến kỳ thi kiểm tra quan trọng vào tuần sau, mỗi tối tôi đều về căn hộ sớm để tập trung ôn tập bài vở.",
+    "romaji": "Watashi wa ima, Toukyou no chikaku no kireina shi ni sunde imasu. Kono machi wa ookii kouen ya chiisai mise ga atte, totemo benri desu. Maishuu suiyoubi no gogo, daigaku no guraundo de tomodachi to sakkaa o renshuu shimasu. Konshuu no doyoubi wa Honda-san to tenisu no shiai o mi ni iku yakusoku o shimashita. Nichiyoubi no asa wa apaato de sukoshi yasunde kara, gogo wa tanbo no chikaku o sanpo shite rifuresshu shimasu. Raishuu no tesuto no tame ni yoru wa hayaku kaette benkyou shimasu.",
+    "vocabularyUsed": [
+      "私",
+      "今",
+      "東京",
+      "近く",
+      "市",
+      "住む",
+      "町",
+      "大きい",
+      "公園",
+      "小さい",
+      "店",
+      "便利",
+      "毎週",
+      "水曜日",
+      "午後",
+      "大学",
+      "友達",
+      "サッカー",
+      "練習",
+      "今週",
+      "土曜日",
+      "テニス",
+      "試合",
+      "見る",
+      "行く",
+      "約束",
+      "日曜日",
+      "朝",
+      "アパート",
+      "少し",
+      "休む",
+      "田んぼ",
+      "散歩",
+      "来週",
+      "テスト",
+      "夜",
+      "早く",
+      "帰る",
+      "勉強"
+    ],
+    "kanjiUsed": [
+      "私",
+      "今",
+      "東",
+      "京",
+      "市",
+      "大",
+      "小",
+      "毎",
+      "週",
+      "水",
+      "曜",
+      "日",
+      "午",
+      "後",
+      "学",
+      "土",
+      "見",
+      "行",
+      "本",
+      "田",
+      "休",
+      "来",
+      "帰"
+    ],
+    "questions": [
+      {
+        "id": "jpd123-q16-1",
+        "prompt": "筆者が住んでいる町はどんな町ですか。",
+        "options": [
+          "大きい公園や小さい店があってとても便利な町です",
+          "にぎやかでうるさい町です",
+          "何も店がない不便な町です",
+          "海が近いきれいな町です"
+        ],
+        "answer": "大きい公園や小さい店があってとても便利な町です",
+        "explanation": {
+          "meaning": "Thành phố tác giả đang sống là nơi như thế nào? Đáp án: Có công viên lớn và các cửa hàng nhỏ, rất tiện lợi.",
+          "reason": "Dẫn chứng câu 2:「この町は大きい公園や小さい店があって、とても便利です。」",
+          "wrongOptions": [
+            {
+              "option": "にぎやかでうるさい町です",
+              "reason": "Bài nhấn mạnh cảnh đẹp và tính tiện lợi."
+            },
+            {
+              "option": "何も店がない不便な町です",
+              "reason": "Có nhiều cửa hàng nhỏ tiện ích."
+            },
+            {
+              "option": "海が近いきれいな町です",
+              "reason": "Gần cánh đồng lúa và công viên, không nhắc đến biển."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q16-2",
+        "prompt": "毎週水曜日の午後は何をしますか。",
+        "options": [
+          "大学のグラウンドで友達とサッカーを練習します",
+          "図書館で本を読みます",
+          "部屋をそうじします",
+          "アルバイトをします"
+        ],
+        "answer": "大学のグラウンドで友達とサッカーを練習します",
+        "explanation": {
+          "meaning": "Chiều thứ Tư hàng tuần tác giả làm gì? Đáp án: Tập bóng đá cùng bạn bè trên sân vận động trường.",
+          "reason": "Dẫn chứng câu 3:「毎週水曜日の午後、大学のグラウンドで友達とサッカーを練習します。」",
+          "wrongOptions": [
+            {
+              "option": "図書館で本を読みます",
+              "reason": "Tác giả tập luyện thể thao bóng đá."
+            },
+            {
+              "option": "部屋をそうじします",
+              "reason": "Không phải lịch dọn phòng."
+            },
+            {
+              "option": "アルバイトをします",
+              "reason": "Không đi làm thêm vào giờ này."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q16-3",
+        "prompt": "今週の土曜日はだれと約束をしましたか。",
+        "options": [
+          "本田さんとテニスの試合を見に行く約束をしました",
+          "山田さんと映画を見る約束をしました",
+          "田中さんと買い物に行く約束をしました",
+          "先生と会う約束をしました"
+        ],
+        "answer": "本田さんとテニスの試合を見に行く約束をしました",
+        "explanation": {
+          "meaning": "Thứ Bảy tuần này tác giả đã hẹn cùng ai? Đáp án: Hẹn cùng bạn Honda đi xem trận đấu tennis.",
+          "reason": "Dẫn chứng câu 4:「今週の土曜日は本田さんとテニスの試合を見に行く約束をしました。」",
+          "wrongOptions": [
+            {
+              "option": "山田さんと映画を見る約束をしました",
+              "reason": "Hẹn với Honda đi xem quần vợt."
+            },
+            {
+              "option": "田中さんと買い物に行く約束をしました",
+              "reason": "Không phải đi mua sắm cùng Tanaka."
+            },
+            {
+              "option": "先生と会う約束をしました",
+              "reason": "Không có lịch hẹn gặp thầy cô."
+            }
+          ]
+        }
+      },
+      {
+        "id": "jpd123-q16-4",
+        "prompt": "来週の何のために夜は早く帰って勉強しますか。",
+        "options": [
+          "来週のテストのためです",
+          "スピーチ大会のためです",
+          "日本旅行のためです",
+          "面接のためです"
+        ],
+        "answer": "来週のテストのためです",
+        "explanation": {
+          "meaning": "Vì sự kiện gì vào tuần sau mà buổi tối tác giả về sớm để học? Đáp án: Vì kỳ thi kiểm tra tuần tới.",
+          "reason": "Dẫn chứng câu kết:「来週のテストのために夜は早く帰って勉強します。」",
+          "wrongOptions": [
+            {
+              "option": "スピーチ大会のためです",
+              "reason": "Để chuẩn bị cho kỳ kiểm tra (テスト)."
+            },
+            {
+              "option": "日本旅行のためです",
+              "reason": "Không phải chuẩn bị đi du lịch."
+            },
+            {
+              "option": "面接のためです",
+              "reason": "Không phải chuẩn bị phỏng vấn."
+            }
+          ]
+        }
+      }
+    ]
+  },
 ];
 
 export const READING_PASSAGES_JPD113: ReadingPassage[] = RAW_PASSAGES_JPD113.map((p) =>
@@ -1211,6 +3862,13 @@ export const READING_EXAM_SETS_JPD113: ReadingPassageSet[] = [
     "Bộ đề 1: Đời sống học tập & sinh hoạt sinh viên",
     READING_PASSAGES_JPD113.slice(0, 4),
   ),
+  createExamSet(
+    "jpd113-set-2",
+    "JPD113",
+    "JPD113 読解問題セット 2",
+    "Bộ đề 2: Lớp học, thời gian biểu và mua sắm (Phủ 100% 34 Kanji Bài 1–3)",
+    READING_PASSAGES_JPD113.slice(4, 8),
+  ),
 ];
 
 export const READING_EXAM_SETS_JPD123: ReadingPassageSet[] = [
@@ -1227,5 +3885,19 @@ export const READING_EXAM_SETS_JPD123: ReadingPassageSet[] = [
     "JPD123 読解問題セット 2（第4課〜第7課の漢字全網羅）",
     "Bộ đề 2: Khám phá Tokyo, sự kiện và ẩm thực Nhật (Phủ 100% 43 Kanji Bài 4–7)",
     READING_PASSAGES_JPD123.slice(4, 8),
+  ),
+  createExamSet(
+    "jpd123-set-3",
+    "JPD123",
+    "JPD123 読解問題セット 3（第4課〜第7課の漢字全網羅）",
+    "Bộ đề 3: Du lịch Kyoto, ẩm thực và văn phòng FPT (Phủ 100% 43 Kanji Bài 4–7)",
+    READING_PASSAGES_JPD123.slice(8, 12),
+  ),
+  createExamSet(
+    "jpd123-set-4",
+    "JPD123",
+    "JPD123 読解問題セット 4（第4課〜第7課の漢字全網羅）",
+    "Bộ đề 4: Lễ hội Asakusa, mua sắm và thể thao cuối tuần (Phủ 100% 43 Kanji Bài 4–7)",
+    READING_PASSAGES_JPD123.slice(12, 16),
   ),
 ];

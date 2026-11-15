@@ -4,12 +4,15 @@ import {
   READING_PASSAGES_JPD113,
   READING_PASSAGES_JPD123,
   TARGET_KANJI_JPD123,
+  TARGET_KANJI_JPD113,
+  READING_EXAM_SETS_JPD113,
   READING_EXAM_SETS_JPD123,
 } from "./reading-data.ts";
 import {
   generateReadingPassage,
   clearRecentReadingIds,
   generateReadingExamSet,
+  buildDynamicReadingExamSet,
   clearRecentReadingSetIds,
   computePassageSetKanjiCoverage,
   sanitizeReadingPassageKanji,
@@ -269,4 +272,61 @@ test("buildReadingAiSetPrompt requires 4 exams and complete 43/43 kanji coverage
   assert.ok(upper.includes("43"));
   assert.ok(upper.includes("BÀI 4"));
   assert.ok(upper.includes("KATAKANA"));
+});
+
+test("all pre-crafted exam sets in library have verified Kanji coverage", () => {
+  // 1. Kiểm tra 4 bộ đề JPD123 - Toàn bộ 4 bộ đề phải phủ 100% (43/43) Kanji Bài 4-7
+  assert.equal(READING_EXAM_SETS_JPD123.length, 4, "JPD123 phải có đúng 4 bộ đề kiểm định sẵn có");
+  for (const set of READING_EXAM_SETS_JPD123) {
+    assert.equal(set.passages.length, 4, `Bộ đề ${set.id} phải có đúng 4 bài đọc`);
+    const cov = computePassageSetKanjiCoverage(set.passages, "JPD123");
+    assert.equal(cov.coveragePercentage, 100, `Bộ đề ${set.id} phải đạt 100% độ phủ chữ Hán`);
+    assert.equal(cov.coveredKanji.length, 43, `Bộ đề ${set.id} phải có đủ 43 chữ Hán Bài 4-7`);
+    assert.equal(cov.isCompleteCoverage, true);
+  }
+
+  // 2. Kiểm tra 2 bộ đề JPD113
+  assert.equal(READING_EXAM_SETS_JPD113.length, 2, "JPD113 phải có đúng 2 bộ đề kiểm định sẵn có");
+  for (const set of READING_EXAM_SETS_JPD113) {
+    assert.equal(set.passages.length, 4, `Bộ đề ${set.id} phải có đúng 4 bài đọc`);
+    const cov = computePassageSetKanjiCoverage(set.passages, "JPD113");
+    assert.ok(cov.coveragePercentage >= 70, `Bộ đề ${set.id} phải có độ phủ cao`);
+  }
+});
+
+test("buildDynamicReadingExamSet procedural engine generates dynamic non-repeating 100% coverage sets", () => {
+  // Test JPD123
+  const dynamicSet1 = buildDynamicReadingExamSet("JPD123");
+  assert.ok(dynamicSet1.id.startsWith("dyn-set-jpd123-"));
+  assert.equal(dynamicSet1.passages.length, 4);
+  assert.equal(dynamicSet1.targetKanjiCount, 43);
+  assert.equal(dynamicSet1.coveredKanji.length, 43);
+  assert.equal(dynamicSet1.coveragePercentage, 100);
+  assert.equal(dynamicSet1.isCompleteCoverage, true);
+
+  for (const p of dynamicSet1.passages) {
+    assert.ok(p.content.length >= 200, "Độ dài mỗi đề động JPD123 phải >= 200 chữ");
+    assert.ok(p.sentences.length >= 6, "Số câu mỗi đề động JPD123 phải >= 6 câu");
+    assert.equal(p.questions.length, 4, "Mỗi đề động phải có đúng 4 câu hỏi trắc nghiệm");
+    for (const q of p.questions) {
+      assert.equal(q.options.length, 4);
+      assert.ok(q.options.includes(q.answer));
+      assert.ok(q.explanation.meaning.length > 0);
+      assert.ok(q.explanation.reason.length > 0);
+    }
+  }
+
+  // Lần sinh thứ 2 phải có ID khác (không trùng lặp)
+  const dynamicSet2 = buildDynamicReadingExamSet("JPD123");
+  assert.notEqual(dynamicSet1.id, dynamicSet2.id, "Các lần sinh đề động liên tiếp phải có ID phân biệt");
+  assert.equal(dynamicSet2.isCompleteCoverage, true);
+
+  // Test JPD113
+  const dynamicSet113 = buildDynamicReadingExamSet("JPD113");
+  assert.ok(dynamicSet113.id.startsWith("dyn-set-jpd113-"));
+  assert.equal(dynamicSet113.passages.length, 4);
+  assert.equal(dynamicSet113.targetKanjiCount, 34);
+  assert.equal(dynamicSet113.coveredKanji.length, 34);
+  assert.equal(dynamicSet113.coveragePercentage, 100);
+  assert.equal(dynamicSet113.isCompleteCoverage, true);
 });

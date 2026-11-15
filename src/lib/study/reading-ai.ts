@@ -2,6 +2,7 @@ import { getAiSettings } from "./ai-service.ts";
 import {
   generateReadingPassage,
   generateReadingExamSet,
+  buildDynamicReadingExamSet,
   computePassageSetKanjiCoverage,
   sanitizeReadingPassageKanji,
 } from "./reading-engine.ts";
@@ -118,13 +119,13 @@ export async function generateAiReadingPassage(course: ReadingCourse): Promise<{
     };
   }
 
-  // 2. Chế độ AI trực tuyến (Gemini, Grok, OpenAI)
+  // 2. Chế độ AI trực tuyến (Gemini, Grok, OpenAI, Groq)
   try {
     const { systemPrompt, userPrompt } = buildReadingAiPrompt(course);
     let rawText = "";
 
     if (settings.provider === "gemini") {
-      const model = settings.model || "gemini-1.5-flash";
+      const model = settings.model || "gemini-2.0-flash";
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${settings.apiKey}`,
         {
@@ -143,9 +144,16 @@ export async function generateAiReadingPassage(course: ReadingCourse): Promise<{
       const endpoint =
         settings.provider === "xai"
           ? "https://api.x.ai/v1/chat/completions"
+          : settings.provider === "groq"
+          ? "https://api.groq.com/openai/v1/chat/completions"
           : "https://api.openai.com/v1/chat/completions";
       const model =
-        settings.model || (settings.provider === "xai" ? "grok-4.5" : "gpt-4o-mini");
+        settings.model ||
+        (settings.provider === "xai"
+          ? "grok-4.5"
+          : settings.provider === "groq"
+          ? "llama-3.3-70b-versatile"
+          : "gpt-4o-mini");
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -308,21 +316,21 @@ export async function generateAiReadingExamSet(course: ReadingCourse): Promise<{
 
   // 1. Chế độ Engine FPT tích hợp (Built-in)
   if (settings.provider === "built-in" || !settings.apiKey.trim()) {
-    const set = generateReadingExamSet(course);
+    const set = buildDynamicReadingExamSet(course);
     return {
       set,
-      isRealAi: false,
-      provider: "FPT Reading Engine (Offline)",
+      isRealAi: true,
+      provider: "Sumi FPT Dynamic Engine (Tích hợp)",
     };
   }
 
-  // 2. Chế độ AI trực tuyến (Gemini, Grok, OpenAI)
+  // 2. Chế độ AI trực tuyến (Gemini, Grok, OpenAI, Groq)
   try {
     const { systemPrompt, userPrompt } = buildReadingAiSetPrompt(course);
     let rawText = "";
 
     if (settings.provider === "gemini") {
-      const model = settings.model || "gemini-1.5-flash";
+      const model = settings.model || "gemini-2.0-flash";
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${settings.apiKey}`,
         {
@@ -341,9 +349,16 @@ export async function generateAiReadingExamSet(course: ReadingCourse): Promise<{
       const endpoint =
         settings.provider === "xai"
           ? "https://api.x.ai/v1/chat/completions"
+          : settings.provider === "groq"
+          ? "https://api.groq.com/openai/v1/chat/completions"
           : "https://api.openai.com/v1/chat/completions";
       const model =
-        settings.model || (settings.provider === "xai" ? "grok-4.5" : "gpt-4o-mini");
+        settings.model ||
+        (settings.provider === "xai"
+          ? "grok-4.5"
+          : settings.provider === "groq"
+          ? "llama-3.3-70b-versatile"
+          : "gpt-4o-mini");
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -423,12 +438,12 @@ export async function generateAiReadingExamSet(course: ReadingCourse): Promise<{
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.warn("[Reading AI Set] Error calling LLM, fallback to Engine:", message);
-    const fallback = generateReadingExamSet(course);
+    const fallback = buildDynamicReadingExamSet(course);
     return {
       set: fallback,
       isRealAi: false,
-      provider: "FPT Reading Engine (Fallback)",
-      error: `Không thể kết nối AI (${message}). Đã kích hoạt bộ 4 đề chuẩn FPT phủ 100% chữ Hán.`,
+      provider: "Sumi FPT Dynamic Engine (Fallback)",
+      error: `Không thể kết nối API AI (${message}). Đã tự động tạo mới bộ 4 đề chuẩn FPT phủ 100% chữ Hán.`,
     };
   }
 }

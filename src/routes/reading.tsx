@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   Sparkles,
   RefreshCw,
@@ -14,6 +14,8 @@ import {
   Eye,
   EyeOff,
   Flame,
+  Bot,
+  Settings,
 } from "lucide-react";
 import {
   generateReadingExamSet,
@@ -21,6 +23,8 @@ import {
 import { generateAiReadingExamSet } from "@/lib/study/reading-ai";
 import { ReadingViewer } from "@/components/reading-viewer";
 import { ReadingQuiz } from "@/components/reading-quiz";
+import { AiSettingsModal } from "@/components/ai-settings-modal";
+import { getAiSettings, saveAiSettings, type AiSettings } from "@/lib/study/ai-service";
 import { useStudy } from "@/lib/study/store";
 import type {
   ReadingCourse,
@@ -58,6 +62,27 @@ function ReadingPage() {
   const [showKanjiList, setShowKanjiList] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiSettings, setAiSettings] = useState<AiSettings>(() => getAiSettings());
+
+  const aiEngineLabel = useMemo(() => {
+    if (aiSettings.provider === "built-in" || !aiSettings.apiKey.trim()) {
+      return { text: "Sumi FPT Engine (Tích hợp)", icon: "🧠", isBuiltIn: true };
+    }
+    if (aiSettings.provider === "gemini") {
+      return { text: `Google Gemini (${aiSettings.model || "gemini-2.0-flash"})`, icon: "⚡", isBuiltIn: false };
+    }
+    if (aiSettings.provider === "xai") {
+      return { text: `xAI Grok (${aiSettings.model || "grok-4.5"})`, icon: "🚀", isBuiltIn: false };
+    }
+    if (aiSettings.provider === "openai") {
+      return { text: `OpenAI (${aiSettings.model || "gpt-4o-mini"})`, icon: "🌐", isBuiltIn: false };
+    }
+    if (aiSettings.provider === "groq") {
+      return { text: `Groq (${aiSettings.model || "llama-3.3-70b"})`, icon: "⚡", isBuiltIn: false };
+    }
+    return { text: "Sumi FPT Engine", icon: "🧠", isBuiltIn: true };
+  }, [aiSettings]);
 
   const prevCourseRef = useRef<ReadingCourse>(course);
   const toastTimerRef = useRef<number | null>(null);
@@ -187,29 +212,41 @@ function ReadingPage() {
           </p>
         </div>
 
-        {/* Nút chọn môn học JPD113 / JPD123 */}
-        <div className="flex items-center gap-1.5 rounded-xl border border-line bg-paper p-1 self-start sm:self-center shadow-xs">
+        {/* Nút chọn môn học JPD113 / JPD123 & Cài đặt AI */}
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <div className="flex items-center gap-1.5 rounded-xl border border-line bg-paper p-1 shadow-xs">
+            <button
+              type="button"
+              onClick={() => handleSelectCourse("JPD113")}
+              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
+                course === "JPD113"
+                  ? "bg-ink text-paper shadow-xs"
+                  : "text-stone hover:text-ink"
+              }`}
+            >
+              <span>JPD113 (Bài 1–3)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectCourse("JPD123")}
+              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
+                course === "JPD123"
+                  ? "bg-ink text-paper shadow-xs"
+                  : "text-stone hover:text-ink"
+              }`}
+            >
+              <span>JPD123 (Bài 4–7)</span>
+            </button>
+          </div>
+
           <button
             type="button"
-            onClick={() => handleSelectCourse("JPD113")}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
-              course === "JPD113"
-                ? "bg-ink text-paper shadow-xs"
-                : "text-stone hover:text-ink"
-            }`}
+            onClick={() => setShowAiModal(true)}
+            className="flex items-center gap-1.5 rounded-xl border border-line bg-paper px-3 py-2 text-xs font-semibold text-stone hover:text-ink hover:border-ink/40 shadow-xs transition-all cursor-pointer"
+            title={`Cấu hình nhà cung cấp AI: ${aiEngineLabel.text}`}
           >
-            <span>JPD113 (Bài 1–3)</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSelectCourse("JPD123")}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
-              course === "JPD123"
-                ? "bg-ink text-paper shadow-xs"
-                : "text-stone hover:text-ink"
-            }`}
-          >
-            <span>JPD123 (Bài 4–7)</span>
+            <Bot className="size-4 text-amber-600" />
+            <span className="hidden sm:inline">Cài đặt AI</span>
           </button>
         </div>
       </div>
@@ -410,6 +447,15 @@ function ReadingPage() {
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
               <button
                 type="button"
+                onClick={() => setShowAiModal(true)}
+                className="flex items-center gap-1.5 rounded-xl border border-line bg-paper px-3.5 py-2.5 text-xs font-semibold text-stone hover:text-ink shadow-xs transition-all cursor-pointer"
+              >
+                <Bot className="size-3.5 text-amber-600" />
+                <span>Cài đặt AI</span>
+              </button>
+
+              <button
+                type="button"
                 disabled={isGenerating}
                 onClick={handleGenerateNewSet}
                 className="flex items-center gap-1.5 rounded-xl bg-ink px-4 py-2.5 text-xs font-bold text-paper hover:bg-ink/90 shadow-sm transition-all cursor-pointer"
@@ -450,11 +496,26 @@ function ReadingPage() {
 
         {/* Thanh công cụ sinh bộ đề mới */}
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line/80 bg-paper/60 p-4 shadow-2xs">
-          <div className="text-xs text-stone">
-            Đang xem: <strong className="text-ink">Đề {activeExamIndex + 1}/{totalExams} · {currentPassage.title}</strong> ({currentPassage.titleVi})
+          <div className="flex flex-wrap items-center gap-2 text-xs text-stone">
+            <span>
+              Đang xem: <strong className="text-ink">Đề {activeExamIndex + 1}/{totalExams} · {currentPassage.title}</strong> ({currentPassage.titleVi})
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-md bg-stone/10 px-2 py-0.5 text-[11px] font-medium text-stone">
+              <span>{aiEngineLabel.icon}</span>
+              <span>{aiEngineLabel.text}</span>
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowAiModal(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-line bg-paper px-3 py-1.5 text-xs font-medium text-stone hover:text-ink hover:border-ink/40 transition-all shadow-xs cursor-pointer"
+            >
+              <Bot className="size-3.5 text-amber-600" />
+              <span>Cài đặt AI</span>
+            </button>
+
             <button
               type="button"
               disabled={isGenerating}
@@ -494,6 +555,21 @@ function ReadingPage() {
           onNextPassage={handleNextExam}
         />
       </div>
+
+      {/* Modal Cài đặt AI */}
+      {showAiModal && (
+        <AiSettingsModal
+          settings={aiSettings}
+          title="Cấu hình AI Đọc hiểu & Luyện thi"
+          onClose={() => setShowAiModal(false)}
+          onSave={(next) => {
+            saveAiSettings(next);
+            setAiSettings(next);
+            setShowAiModal(false);
+            showToast("Đã lưu cấu hình AI thành công!", 2500);
+          }}
+        />
+      )}
     </div>
   );
 }
