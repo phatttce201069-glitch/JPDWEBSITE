@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff, MapPin, ZoomIn, ZoomOut, Sparkles, HelpCircle, Volume2 } from "lucide-react";
 import type { SpeakingScene } from "@/lib/study/speaking-types";
 import { speakJapanese } from "@/lib/study/speech";
@@ -11,6 +11,14 @@ export function SpeakingSceneViewer({ scene }: SpeakingSceneViewerProps) {
   const [showHotspots, setShowHotspots] = useState(true);
   const [activeHotspotId, setActiveHotspotId] = useState<string | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const imageSrc = scene.imageUrl || `/images/scenes/${scene.type}.jpg`;
+
+  useEffect(() => {
+    setImageError(false);
+    setActiveHotspotId(null);
+  }, [scene.id, scene.type, scene.imageUrl]);
 
   return (
     <div className="rounded-2xl border border-line/80 bg-sheet p-4 sm:p-5 shadow-xs space-y-4">
@@ -57,13 +65,22 @@ export function SpeakingSceneViewer({ scene }: SpeakingSceneViewerProps) {
         </div>
       </div>
 
-      {/* Bức tranh Vector SVG Minh Họa */}
+      {/* Bức tranh nghệ thuật phong cách Anime & Fallback SVG */}
       <div
-        className={`relative overflow-hidden rounded-xl border border-line/90 bg-gradient-to-b from-stone-50 to-stone-100 dark:from-stone-900/40 dark:to-stone-900/60 shadow-inner transition-all duration-300 ${
-          isZoomed ? "aspect-16/11 max-h-[520px]" : "aspect-16/9 max-h-[380px]"
+        className={`relative overflow-hidden rounded-xl border border-line/90 bg-stone-900 shadow-inner transition-all duration-300 ${
+          isZoomed ? "aspect-16/11 max-h-[540px]" : "aspect-16/9 max-h-[420px]"
         }`}
       >
-        <SceneVectorIllustration type={scene.type} />
+        {!imageError ? (
+          <img
+            src={imageSrc}
+            alt={scene.titleVi}
+            onError={() => setImageError(true)}
+            className="w-full h-full object-cover select-none transition-transform duration-500"
+          />
+        ) : (
+          <SceneVectorIllustration type={scene.type} />
+        )}
 
         {/* Các điểm chú thích Hotspots trên tranh */}
         {showHotspots &&

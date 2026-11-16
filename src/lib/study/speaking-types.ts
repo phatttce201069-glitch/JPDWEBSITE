@@ -30,6 +30,7 @@ export interface SpeakingScene {
   description: string;
   descriptionJp: string;
   hotspots: SceneHotspot[];
+  imageUrl?: string;
 }
 
 export type SpeakingQuestionType = "in_picture" | "extension";

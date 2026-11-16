@@ -232,6 +232,7 @@ export async function generateAiSpeakingExam(course: SpeakingCourse): Promise<{
         ...parsed.scene,
         id: parsed.scene.id || `scene-ai-${Date.now()}`,
         hotspots: Array.isArray(parsed.scene.hotspots) ? parsed.scene.hotspots : [],
+        imageUrl: parsed.scene.imageUrl || `/images/scenes/${parsed.scene.type || "classroom"}.jpg`,
       },
       pictureQuestions: parsed.pictureQuestions.map((q, idx) =>
         ensureQuestionRomaji(q, idx, "in_picture"),

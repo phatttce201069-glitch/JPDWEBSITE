@@ -23,6 +23,7 @@ export const SPEAKING_EXAMS_JPD113: SpeakingExam[] = [
         { id: "hs-desk", labelJp: "本とペンとパソコン", labelVi: "Sách, bút và máy tính", xPercent: 52, yPercent: 68 },
         { id: "hs-bag", labelJp: "黒いかばん", labelVi: "Cặp sách màu đen", xPercent: 22, yPercent: 78 },
       ],
+      imageUrl: "/images/scenes/classroom.jpg",
     },
     pictureQuestions: [
       {
@@ -142,6 +143,7 @@ export const SPEAKING_EXAMS_JPD113: SpeakingExam[] = [
         { id: "hs-umbrella", labelJp: "傘（500円）", labelVi: "Ô che mưa (500 yên)", xPercent: 82, yPercent: 60 },
         { id: "hs-shopper", labelJp: "買い物の学生", labelVi: "Sinh viên mua sắm", xPercent: 45, yPercent: 70 },
       ],
+      imageUrl: "/images/scenes/supermarket.jpg",
     },
     pictureQuestions: [
       {
@@ -251,6 +253,7 @@ export const SPEAKING_EXAMS_JPD123: SpeakingExam[] = [
         { id: "hs-ramen-curry", labelJp: "ラーメン(800円) & カレー(900円)", labelVi: "Ramen & Cà ri", xPercent: 50, yPercent: 65 },
         { id: "hs-cutlery", labelJp: "スプーン、フォーク、はし", labelVi: "Dụng cụ ăn uống", xPercent: 38, yPercent: 76 },
       ],
+      imageUrl: "/images/scenes/restaurant.jpg",
     },
     pictureQuestions: [
       {
@@ -370,6 +373,7 @@ export const SPEAKING_EXAMS_JPD123: SpeakingExam[] = [
         { id: "hs-ac", labelJp: "エアコン（涼しい部屋）", labelVi: "Máy lạnh làm mát", xPercent: 85, yPercent: 18 },
         { id: "hs-docs", labelJp: "テキストとノート", labelVi: "Tài liệu & Sổ tay", xPercent: 48, yPercent: 78 },
       ],
+      imageUrl: "/images/scenes/fpt_campus.jpg",
     },
     pictureQuestions: [
       {
@@ -476,6 +480,7 @@ export const SPEAKING_EXAMS_JPD123: SpeakingExam[] = [
         { id: "hs-sakura-tree", labelJp: "きれいな桜の木", labelVi: "Cây hoa anh đào", xPercent: 55, yPercent: 25 },
         { id: "hs-bicycles", labelJp: "自転車（2台）", labelVi: "Xe đạp (2 chiếc)", xPercent: 82, yPercent: 72 },
       ],
+      imageUrl: "/images/scenes/park.jpg",
     },
     pictureQuestions: [
       {
@@ -582,6 +587,7 @@ export const SPEAKING_EXAMS_JPD123: SpeakingExam[] = [
         { id: "hs-mother-cart", labelJp: "お母さん（買い物かご）", labelVi: "Người mẹ chọn đồ", xPercent: 48, yPercent: 65 },
         { id: "hs-checkout-queue", labelJp: "レジの列（3人）", labelVi: "Hàng đợi thanh toán (3 người)", xPercent: 85, yPercent: 62 },
       ],
+      imageUrl: "/images/scenes/supermarket.jpg",
     },
     pictureQuestions: [
       {

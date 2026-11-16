@@ -155,6 +155,7 @@ export function buildDynamicSpeakingExam(course: SpeakingCourse): SpeakingExam {
         { id: "hs-3", labelJp: theme.itemJp, labelVi: theme.itemVi, xPercent: 55, yPercent: 68 },
         { id: "hs-4", labelJp: "学生たち", labelVi: "Các bạn sinh viên", xPercent: 20, yPercent: 75 },
       ],
+      imageUrl: `/images/scenes/${theme.type}.jpg`,
     };
 
     const pictureQuestions: SpeakingQuestion[] = [
@@ -335,6 +336,7 @@ export function buildDynamicSpeakingExam(course: SpeakingCourse): SpeakingExam {
       { id: "hs-3", labelJp: scenario.compareItem1, labelVi: "Vật thể 1", xPercent: 45, yPercent: 68 },
       { id: "hs-4", labelJp: "全体の雰囲気", labelVi: scenario.atmosphereVi, xPercent: 82, yPercent: 22 },
     ],
+    imageUrl: `/images/scenes/${scenario.type}.jpg`,
   };
 
   const pictureQuestions: SpeakingQuestion[] = [
