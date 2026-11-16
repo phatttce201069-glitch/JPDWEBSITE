@@ -11,12 +11,14 @@ export function SpeakingSceneViewer({ scene }: SpeakingSceneViewerProps) {
   const [showHotspots, setShowHotspots] = useState(true);
   const [activeHotspotId, setActiveHotspotId] = useState<string | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const imageSrc = scene.imageUrl || `/images/scenes/${scene.type}.jpg`;
 
   useEffect(() => {
     setImageError(false);
+    setImageLoaded(false);
     setActiveHotspotId(null);
   }, [scene.id, scene.type, scene.imageUrl]);
 
@@ -71,12 +73,20 @@ export function SpeakingSceneViewer({ scene }: SpeakingSceneViewerProps) {
           isZoomed ? "aspect-16/11 max-h-[540px]" : "aspect-16/9 max-h-[420px]"
         }`}
       >
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-stone-900/60 animate-pulse z-0">
+            <span className="text-xs text-stone-300 font-medium">Đang tải tranh minh họa phong cách Anime...</span>
+          </div>
+        )}
         {!imageError ? (
           <img
             src={imageSrc}
             alt={scene.titleVi}
+            onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
-            className="w-full h-full object-cover select-none transition-transform duration-500"
+            className={`w-full h-full object-cover select-none transition-all duration-500 ${
+              imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-102"
+            }`}
           />
         ) : (
           <SceneVectorIllustration type={scene.type} />
@@ -237,48 +247,97 @@ function SceneVectorIllustration({ type }: { type: string }) {
   if (type === "park") {
     return (
       <svg viewBox="0 0 800 450" className="w-full h-full object-cover select-none">
-        <rect width="800" height="450" fill="#e8f4f8" />
-        <circle cx="120" cy="80" r="38" fill="#ffd166" opacity="0.85" />
-        <ellipse cx="280" cy="90" rx="60" ry="22" fill="#fff" opacity="0.9" />
-        <ellipse cx="620" cy="70" rx="75" ry="25" fill="#fff" opacity="0.9" />
+        <defs>
+          <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#dbeafe" />
+            <stop offset="70%" stopColor="#f0fdf4" />
+            <stop offset="100%" stopColor="#fef3c7" />
+          </linearGradient>
+          <linearGradient id="sakuraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fbcfe8" />
+            <stop offset="50%" stopColor="#f472b6" />
+            <stop offset="100%" stopColor="#fda4af" />
+          </linearGradient>
+          <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#86efac" />
+            <stop offset="100%" stopColor="#22c55e" />
+          </linearGradient>
+          <linearGradient id="hillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#bbf7d0" />
+            <stop offset="100%" stopColor="#4ade80" />
+          </linearGradient>
+        </defs>
 
-        <path d="M 0 320 Q 250 240 500 290 T 800 260 L 800 450 L 0 450 Z" fill="#95d5b2" />
-        <path d="M 0 350 Q 300 280 600 340 T 800 320 L 800 450 L 0 450 Z" fill="#74c69d" />
+        {/* Bầu trời mùa xuân trong lành */}
+        <rect width="800" height="450" fill="url(#skyGrad)" />
+        <circle cx="120" cy="80" r="45" fill="#fde047" opacity="0.8" />
+        <circle cx="120" cy="80" r="58" fill="#fef08a" opacity="0.35" />
 
-        {/* Cây hoa anh đào to lớn */}
-        <path d="M 460 380 L 475 230 L 460 210 L 485 230 L 480 380 Z" fill="#774936" stroke="#523225" strokeWidth="3" />
-        <ellipse cx="460" cy="180" rx="100" ry="65" fill="#ffb7b2" opacity="0.95" />
-        <ellipse cx="400" cy="160" rx="75" ry="55" fill="#ffccd5" opacity="0.9" />
-        <ellipse cx="520" cy="165" rx="80" ry="58" fill="#ffccd5" opacity="0.9" />
-        <ellipse cx="470" cy="130" rx="65" ry="45" fill="#fff0f3" opacity="0.9" />
+        {/* Đám mây phong cách Anime */}
+        <path d="M 220 95 Q 240 75 270 85 Q 310 70 340 90 Q 370 80 390 100 Q 400 115 370 120 L 230 120 Q 210 110 220 95 Z" fill="#ffffff" opacity="0.85" />
+        <path d="M 580 80 Q 600 60 630 70 Q 670 55 700 75 Q 730 65 750 85 L 750 105 L 590 105 Z" fill="#ffffff" opacity="0.75" />
 
-        {/* Người đàn ông chạy bộ */}
-        <g transform="translate(180, 260)">
-          <circle cx="30" cy="20" r="14" fill="#fcd7b6" />
-          <path d="M 18 35 L 42 35 L 36 75 L 24 75 Z" fill="#ffffff" stroke="#ced4da" strokeWidth="1" />
-          <line x1="24" y1="75" x2="10" y2="105" stroke="#2b2621" strokeWidth="6" strokeLinecap="round" />
-          <line x1="36" y1="75" x2="52" y2="100" stroke="#2b2621" strokeWidth="6" strokeLinecap="round" />
-          <line x1="18" y1="42" x2="6" y2="60" stroke="#fcd7b6" strokeWidth="5" strokeLinecap="round" />
-          <line x1="42" y1="42" x2="56" y2="55" stroke="#fcd7b6" strokeWidth="5" strokeLinecap="round" />
+        {/* Dãy núi & đồi cỏ thoai thoải phía xa */}
+        <path d="M 0 300 Q 200 240 420 275 T 800 250 L 800 450 L 0 450 Z" fill="url(#hillGrad)" opacity="0.9" />
+        <path d="M 0 340 Q 280 290 540 330 T 800 310 L 800 450 L 0 450 Z" fill="url(#grassGrad)" />
+
+        {/* Cây hoa anh đào lớn trung tâm nghệ thuật */}
+        <path d="M 465 400 C 470 330, 460 250, 480 200 C 490 250, 482 330, 485 400 Z" fill="#582f0e" />
+        <path d="M 470 260 Q 420 230 380 215" stroke="#582f0e" strokeWidth="8" strokeLinecap="round" fill="none" />
+        <path d="M 478 245 Q 540 220 580 210" stroke="#582f0e" strokeWidth="7" strokeLinecap="round" fill="none" />
+
+        {/* Tán hoa anh đào nhiều lớp hồng bồng bềnh */}
+        <circle cx="470" cy="170" r="95" fill="url(#sakuraGrad)" opacity="0.9" />
+        <circle cx="400" cy="155" r="75" fill="#fbcfe8" opacity="0.85" />
+        <circle cx="535" cy="155" r="80" fill="#f472b6" opacity="0.8" />
+        <circle cx="470" cy="115" r="68" fill="#fff1f2" opacity="0.95" />
+        <circle cx="430" cy="190" r="55" fill="#fda4af" opacity="0.85" />
+        <circle cx="510" cy="190" r="60" fill="#f472b6" opacity="0.85" />
+
+        {/* Cánh hoa anh đào bay lượn trong gió */}
+        <ellipse cx="340" cy="220" rx="8" ry="4" fill="#f472b6" transform="rotate(-25 340 220)" opacity="0.85" />
+        <ellipse cx="370" cy="260" rx="7" ry="3.5" fill="#f472b6" transform="rotate(15 370 260)" opacity="0.85" />
+        <ellipse cx="560" cy="235" rx="8" ry="4" fill="#fbcfe8" transform="rotate(35 560 235)" opacity="0.85" />
+        <ellipse cx="600" cy="270" rx="7" ry="3.5" fill="#fda4af" transform="rotate(-15 600 270)" opacity="0.85" />
+
+        {/* Người nam chạy bộ thể thao */}
+        <g transform="translate(170, 250)">
+          <circle cx="32" cy="22" r="13" fill="#fbcfe8" />
+          <path d="M 20 20 Q 32 10 44 20 Q 40 14 32 14 Z" fill="#1e293b" />
+          {/* Áo phông trắng & Quần thể thao */}
+          <path d="M 20 34 L 44 34 L 40 68 L 24 68 Z" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+          <path d="M 23 68 L 39 68 L 38 88 L 24 88 Z" fill="#0f172a" />
+          {/* Chân chạy */}
+          <line x1="26" y1="88" x2="14" y2="120" stroke="#fbcfe8" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="36" y1="88" x2="54" y2="114" stroke="#fbcfe8" strokeWidth="5.5" strokeLinecap="round" />
+          {/* Tay vung */}
+          <line x1="22" y1="40" x2="8" y2="58" stroke="#fbcfe8" strokeWidth="4.5" strokeLinecap="round" />
+          <line x1="42" y1="40" x2="56" y2="54" stroke="#fbcfe8" strokeWidth="4.5" strokeLinecap="round" />
         </g>
 
-        {/* Hai người nữ chụp ảnh dưới tán cây */}
-        <g transform="translate(560, 250)">
-          <circle cx="20" cy="25" r="14" fill="#fcd7b6" />
-          <path d="M 10 40 Q 20 20 30 40 L 26 85 L 14 85 Z" fill="#e76f51" />
-          <circle cx="50" cy="26" r="14" fill="#fcd7b6" />
-          <path d="M 40 40 Q 50 20 60 40 L 56 85 L 44 85 Z" fill="#2a9d8f" />
-          <rect x="25" y="42" width="16" height="10" rx="2" fill="#2b2621" />
-          <line x1="18" y1="50" x2="26" y2="46" stroke="#fcd7b6" strokeWidth="4" />
+        {/* Hai bạn nữ chụp ảnh vui vẻ dưới tán hoa */}
+        <g transform="translate(560, 240)">
+          {/* Bạn nữ áo cam san hô */}
+          <circle cx="22" cy="25" r="13" fill="#fbcfe8" />
+          <path d="M 12 24 Q 22 8 32 24 Q 28 36 32 44 L 12 44 Z" fill="#78350f" />
+          <path d="M 14 38 L 30 38 L 34 85 L 10 85 Z" fill="#f97316" />
+          {/* Bạn nữ áo xanh ngọc chụp ảnh bằng smartphone */}
+          <circle cx="56" cy="26" r="13" fill="#fbcfe8" />
+          <path d="M 44 24 Q 56 10 68 24 Q 64 36 68 45 L 44 45 Z" fill="#1e293b" />
+          <path d="M 46 39 L 66 39 L 64 85 L 48 85 Z" fill="#0d9488" />
+          {/* Smartphone đưa lên cao chụp ảnh hoa */}
+          <rect x="36" y="24" width="12" height="7" rx="1.5" fill="#0f172a" stroke="#e2e8f0" strokeWidth="0.8" />
+          <line x1="28" y1="38" x2="36" y2="28" stroke="#fbcfe8" strokeWidth="3.5" strokeLinecap="round" />
         </g>
 
-        {/* Hai chiếc xe đạp */}
-        <g transform="translate(670, 320)">
-          <circle cx="20" cy="30" r="18" fill="none" stroke="#495057" strokeWidth="3" />
-          <circle cx="65" cy="30" r="18" fill="none" stroke="#495057" strokeWidth="3" />
-          <line x1="20" y1="30" x2="42" y2="15" stroke="#e63946" strokeWidth="3" />
-          <line x1="42" y1="15" x2="65" y2="30" stroke="#e63946" strokeWidth="3" />
-          <line x1="42" y1="15" x2="40" y2="8" stroke="#495057" strokeWidth="3" />
+        {/* Hai chiếc xe đạp thể thao trên thảm cỏ */}
+        <g transform="translate(660, 310)">
+          {/* Xe đạp đỏ */}
+          <circle cx="22" cy="36" r="18" fill="none" stroke="#334155" strokeWidth="3.5" />
+          <circle cx="68" cy="36" r="18" fill="none" stroke="#334155" strokeWidth="3.5" />
+          <path d="M 22 36 L 44 18 L 68 36 L 46 36 Z" stroke="#ef4444" strokeWidth="3.5" fill="none" strokeLinejoin="round" />
+          <line x1="44" y1="18" x2="42" y2="8" stroke="#0f172a" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="36" y1="8" x2="48" y2="8" stroke="#0f172a" strokeWidth="3" strokeLinecap="round" />
         </g>
       </svg>
     );

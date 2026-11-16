@@ -25,11 +25,23 @@ export function buildSpeakingAiPrompt(course: SpeakingCourse): {
 
   const rulesText =
     course === "JPD113"
-      ? `- PHẠM VI NGỮ PHÁP & TỪ VỰNG: CHỈ DÙNG kiến thức Bài 1, 2, 3 (Câu danh từ N1 は N2 です, chỉ định từ これ・それ・あれ・ここ・そこ・あそこ, hỏi giá tiền いくら, thời gian 〜時〜分, thứ trong tuần, động từ sơ cấp 行きます・来ます・帰ります・食べます・飲みます).
+      ? `- PHẠM VI NGỮ PHÁP & TỪ VỰNG: CHỈ DÙNG 100% kiến thức Bài 1, 2, 3 (Câu danh từ N1 は N2 です/じゃありません/ですか/も/の/と; chỉ định từ これ・それ・あれ・どれ・ここ・そこ・あそこ・どこ; hỏi giá tiền いくら; thời gian 〜時〜分; ngày tháng thứ; động từ sơ cấp 行きます・来ます・帰ります・食べます・飲みます・勉強します).
+- CẤM TUYỆT ĐỐI: Không dùng thể て (chưa học), không dùng thể từ điển Vる, không dùng mệnh đề định ngữ Vる/Vている N, không dùng từ ngoài Bài 1-3.
 - CHỮ HÁN: Chỉ dùng 34 chữ Hán của Bài 1-3. Bất kỳ chữ nào ngoài danh sách phải viết bằng Hiragana.`
-      : `- PHẠM VI NGỮ PHÁP & TỪ VỰNG: Đậm chất Bài 4, 5, 6, 7 (Tính từ đuôi い / な và cách chia quá khứ / phủ định; so sánh hơn A は B より, so sánh lựa chọn A と B と どちらが; thể tiếp diễn Vています; mong muốn Vたいです / N が ほしいです; mục đích di chuyển V/N に 行きます; rủ rê và từ chối khéo; lượng từ đếm vật mỏng 枚, đếm xe cộ 台; cách làm Vかた).
-- CHỮ HÁN: Chỉ dùng 77 chữ Hán của Bài 1-7. Chữ Hán chưa học bắt buộc viết bằng Hiragana (ví dụ: あけて, まって, あつい, さむい, とりたい, ともだち...).
-- TỪ VỰNG KATAKANA: Lồng ghép từ mượn trong giáo trình (レストラン, カレー, ラーメン, ジュース, コーヒー, パソコン, アニメ...).`;
+      : `- PHẠM VI NGỮ PHÁP & TỪ VỰNG: CHỈ DÙNG 100% kiến thức Bài 4, 5, 6, 7 giáo trình FPT:
+  + Bài 4: Tính từ đuôi い / な và cách chia quá khứ / phủ định; nối tính từ; thời gian di chuyển 〜から〜まで どのくらい.
+  + Bài 5: Mong muốn Vたいです / N が ほしいです; mục đích di chuyển V/N に 行きます/来ます; lý do 〜から.
+  + Bài 6: So sánh hơn A は B より, so sánh lựa chọn A と B と どちらが, so sánh nhất A の中で何がいちばん; rủ rê Vませんか / Vましょう; lượng từ đếm vật mỏng 枚, xe cộ 台.
+  + Bài 7: Thể て (chia thể て, nối hành động, tiếp diễn Vています, cách làm Vかた). Chỉ dùng 23 động từ chuẩn Bài 7.
+- CẤM TUYỆT ĐỐI CÁC CẤU TRÚC NGOÀI BÀI 4-7:
+  + CẤM dùng 『〜たり〜たり』(Bài 19) -> dùng 『〜ます。そして、〜ます』hoặc 『〜て、〜ます』.
+  + CẤM dùng 『〜ながら』(Bài 28).
+  + CẤM dùng 『〜てあります』(Bài 30) -> dùng 『〜が あります』.
+  + CẤM dùng mệnh đề định ngữ 『Vる / Vている + Danh từ』(Bài 22, ví dụ: 走っている男性, 飲んでいる人) trong câu hỏi. Dùng 『男の人/あの人は いま 何を していますか』.
+  + CẤM dùng cấu trúc N3 như 『〜として』, 『〜と比べて』.
+  + CẤM dùng từ vựng lạ ngoài bài như 『新鮮な』, 『ソフトウェア』, 『挑戦』.
+- CHỮ HÁN: Chỉ dùng 77 chữ Hán của Bài 1-7. Chữ Hán chưa học bắt buộc viết bằng Hiragana.
+- TỪ VỰNG KATAKANA: Ưu tiên từ mượn trong bài (レストラン, カレー, ラーメン, ジュース, コーヒー, パソコン, アニメ...).`;
 
   const systemPrompt = `Bạn là giảng viên tiếng Nhật trường Đại học FPT chuyên biên soạn ĐỀ THI NÓI (口頭試験 - Speaking Oral Exam) môn ${course} (Tiếng Nhật ${course === "JPD113" ? "1" : "2"}).
 Nhiệm vụ: Tạo một đề thi nói hoàn chỉnh gồm:

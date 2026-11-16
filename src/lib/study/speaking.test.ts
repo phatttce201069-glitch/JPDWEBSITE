@@ -182,3 +182,52 @@ test("buildSpeakingAiPrompt enforces 4-5 picture and 2 extension questions and s
   assert.ok(p123.systemPrompt.includes("2 CÂU HỎI MỞ RỘNG NGOÀI TRANH"));
   assert.ok(p123.systemPrompt.includes("Bài 4, 5, 6, 7"));
 });
+
+test("all speaking exams strictly avoid out-of-syllabus grammar and vocabulary", () => {
+  const forbiddenPatterns = [
+    { pattern: /いる人/, desc: "mệnh đề định ngữ いる人 (Bài 22)" },
+    { pattern: /普段/, desc: "từ vựng 普段 (ngoài giáo trình)" },
+    { pattern: /たり/, desc: "ngữ pháp 〜たり〜たり (Bài 19)" },
+    { pattern: /ながら/, desc: "ngữ pháp 〜ながら (Bài 28)" },
+    { pattern: /てあります/, desc: "ngữ pháp 〜てあります (Bài 30)" },
+    { pattern: /として/, desc: "ngữ pháp 〜として (N3)" },
+    { pattern: /と比べて/, desc: "ngữ pháp 〜と比べて (N3)" },
+    { pattern: /ソフトウェア/, desc: "từ ソフトウェア (ngoài giáo trình)" },
+    { pattern: /新鮮/, desc: "từ 新鮮 (N3)" },
+    { pattern: /優れて/, desc: "từ 優れている (N1)" },
+  ];
+
+  const allStaticExams = [...SPEAKING_EXAMS_JPD113, ...SPEAKING_EXAMS_JPD123];
+
+  for (const exam of allStaticExams) {
+    const allQuestions = [...exam.pictureQuestions, ...exam.extensionQuestions];
+    for (const q of allQuestions) {
+      const combinedText = `${q.questionJp} ${q.sampleAnswerJp}`;
+      for (const { pattern, desc } of forbiddenPatterns) {
+        assert.ok(
+          !pattern.test(combinedText),
+          `Đề ${exam.id} câu ${q.id} không được chứa ${desc}: "${combinedText}"`,
+        );
+      }
+    }
+  }
+
+  // Kiểm tra 20 đề sinh động ngẫu nhiên cũng phải hoàn toàn sạch ngữ pháp ngoại lai
+  for (let i = 0; i < 20; i++) {
+    const dyn113 = buildDynamicSpeakingExam("JPD113");
+    for (const q of [...dyn113.pictureQuestions, ...dyn113.extensionQuestions]) {
+      const text = `${q.questionJp} ${q.sampleAnswerJp}`;
+      for (const { pattern, desc } of forbiddenPatterns) {
+        assert.ok(!pattern.test(text), `Đề động 113 (${dyn113.id}) chứa ${desc}: "${text}"`);
+      }
+    }
+
+    const dyn123 = buildDynamicSpeakingExam("JPD123");
+    for (const q of [...dyn123.pictureQuestions, ...dyn123.extensionQuestions]) {
+      const text = `${q.questionJp} ${q.sampleAnswerJp}`;
+      for (const { pattern, desc } of forbiddenPatterns) {
+        assert.ok(!pattern.test(text), `Đề động 123 (${dyn123.id}) chứa ${desc}: "${text}"`);
+      }
+    }
+  }
+});
