@@ -115,12 +115,26 @@ test("buildDynamicSpeakingExam generates fresh non-repeating exams with 4-5 pict
   assert.ok(d113.pictureQuestions.length >= 4 && d113.pictureQuestions.length <= 5);
   assert.equal(d113.extensionQuestions.length, 2);
 
+  const all113 = [...d113.pictureQuestions, ...d113.extensionQuestions];
+  for (const q of all113) {
+    assert.ok(q.sampleAnswerRomaji.length > 0);
+    assert.ok(!q.sampleAnswerRomaji.includes("action"), "Romaji không được chứa placeholder action");
+    assert.ok(!/[\u4e00-\u9faf]/.test(q.sampleAnswerRomaji), "Romaji không được chứa chữ Hán chưa chuyển đổi");
+  }
+
   // Test JPD123
   const d123 = buildDynamicSpeakingExam("JPD123");
   assert.equal(d123.course, "JPD123");
   assert.ok(d123.id.startsWith("dyn-sp-jpd123-"));
   assert.ok(d123.pictureQuestions.length >= 4 && d123.pictureQuestions.length <= 5);
   assert.equal(d123.extensionQuestions.length, 2);
+
+  const all123 = [...d123.pictureQuestions, ...d123.extensionQuestions];
+  for (const q of all123) {
+    assert.ok(q.sampleAnswerRomaji.length > 0);
+    assert.ok(!q.sampleAnswerRomaji.includes("action"), "Romaji không được chứa placeholder action");
+    assert.ok(!/[\u4e00-\u9faf]/.test(q.sampleAnswerRomaji), "Romaji không được chứa chữ Hán chưa chuyển đổi");
+  }
 
   // Lần sinh tiếp theo phải có ID phân biệt
   const d123Second = buildDynamicSpeakingExam("JPD123");

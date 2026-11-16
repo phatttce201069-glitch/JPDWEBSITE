@@ -33,6 +33,28 @@ import { SavedSpeakingExamsModal } from "@/components/saved-speaking-exams-modal
 import { AiSettingsModal } from "@/components/ai-settings-modal";
 import { getAiSettings, saveAiSettings, type AiSettings } from "@/lib/study/ai-service";
 import { useStudy } from "@/lib/study/store";
+import { stopJapaneseSpeech } from "@/lib/study/speech";
+
+const PROGRESS_KEY_PREFIX = "sumi_speaking_prog_";
+
+function loadCompletedQuestions(examId: string): Record<string, boolean> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = sessionStorage.getItem(`${PROGRESS_KEY_PREFIX}${examId}`);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCompletedQuestions(examId: string, map: Record<string, boolean>) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(`${PROGRESS_KEY_PREFIX}${examId}`, JSON.stringify(map));
+  } catch {
+    // ignore
+  }
+}
 
 interface SpeakingSearch {
   course?: SpeakingCourse;
@@ -80,6 +102,7 @@ function SpeakingPage() {
 
   useEffect(() => {
     return () => {
+      stopJapaneseSpeech();
       if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
     };
   }, []);
@@ -88,9 +111,10 @@ function SpeakingPage() {
   useEffect(() => {
     if (prevCourseRef.current !== course) {
       prevCourseRef.current = course;
+      stopJapaneseSpeech();
       const next = generateSpeakingExam(course);
       setExam(next);
-      setCompletedQuestions({});
+      setCompletedQuestions(loadCompletedQuestions(next.id));
       setNotification(null);
       setSavedCount(getSavedSpeakingExams().length);
     }
@@ -101,28 +125,36 @@ function SpeakingPage() {
     });
   }, [course, setLast]);
 
+  // Nạp tiến độ khi chuyển exam
+  useEffect(() => {
+    setCompletedQuestions(loadCompletedQuestions(exam.id));
+  }, [exam.id]);
+
   function handleSelectCourse(nextCourse: SpeakingCourse) {
     if (nextCourse === course) return;
+    stopJapaneseSpeech();
     void navigate({ search: nextCourse === "JPD113" ? { course: "JPD113" } : { course: "JPD123" } });
   }
 
   // Đổi sang đề thi nói khác (chống trùng lặp)
   function handleGenerateNewExam() {
+    stopJapaneseSpeech();
     const nextExam = generateSpeakingExam(course, { excludeId: exam.id });
     setExam(nextExam);
-    setCompletedQuestions({});
+    setCompletedQuestions(loadCompletedQuestions(nextExam.id));
     setSavedCount(getSavedSpeakingExams().length);
     showToast("Đã tải đề thi nói mới, không trùng lặp!", 2500);
   }
 
   // Gọi AI sinh đề thi nói mới
   async function handleGenerateAiExam() {
+    stopJapaneseSpeech();
     setIsGenerating(true);
     setNotification(null);
     try {
       const result = await generateAiSpeakingExam(course);
       setExam(result.exam);
-      setCompletedQuestions({});
+      setCompletedQuestions(loadCompletedQuestions(result.exam.id));
       setSavedCount(getSavedSpeakingExams().length);
       if (result.error) {
         showToast(result.error, 4000);
@@ -132,7 +164,7 @@ function SpeakingPage() {
     } catch {
       const fallback = generateSpeakingExam(course, { excludeId: exam.id });
       setExam(fallback);
-      setCompletedQuestions({});
+      setCompletedQuestions(loadCompletedQuestions(fallback.id));
       setSavedCount(getSavedSpeakingExams().length);
       showToast("Đã kích hoạt đề thi nói chuẩn FPT thay thế.", 2500);
     } finally {
@@ -141,10 +173,20 @@ function SpeakingPage() {
   }
 
   function handleToggleComplete(qId: string) {
-    setCompletedQuestions((prev) => ({
-      ...prev,
-      [qId]: !prev[qId],
-    }));
+    setCompletedQuestions((prev) => {
+      const next = {
+        ...prev,
+        [qId]: !prev[qId],
+      };
+      saveCompletedQuestions(exam.id, next);
+      return next;
+    });
+  }
+
+  function handleResetProgress() {
+    setCompletedQuestions({});
+    saveCompletedQuestions(exam.id, {});
+    showToast("Đã làm mới tiến độ của đề này!", 2000);
   }
 
   const allQuestions = useMemo(
@@ -327,7 +369,7 @@ function SpeakingPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setCompletedQuestions({})}
+                onClick={handleResetProgress}
                 className="flex items-center gap-1.5 rounded-xl border border-line bg-paper px-3 py-2.5 text-xs font-medium text-stone hover:text-ink transition-all cursor-pointer"
               >
                 <RotateCcw className="size-3.5" />
@@ -412,8 +454,9 @@ function SpeakingPage() {
             setSavedCount(getSavedSpeakingExams().length);
           }}
           onSelectExam={(selected) => {
+            stopJapaneseSpeech();
             setExam(selected);
-            setCompletedQuestions({});
+            setCompletedQuestions(loadCompletedQuestions(selected.id));
             showToast(`Đã mở đề thi nói: ${selected.titleVi}`, 2500);
           }}
         />

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   Volume2,
   VolumeX,
@@ -14,9 +14,12 @@ import {
   Sparkles,
   MessageSquare,
   Image as ImageIcon,
+  Gauge,
+  Languages,
 } from "lucide-react";
 import type { SpeakingQuestion } from "@/lib/study/speaking-types";
 import { speakJapanese, stopJapaneseSpeech } from "@/lib/study/speech";
+import { toKana } from "@/lib/study/kana-reading";
 
 export interface SpeakingQuestionCardProps {
   question: SpeakingQuestion;
@@ -33,18 +36,48 @@ export function SpeakingQuestionCard({
 }: SpeakingQuestionCardProps) {
   const [showQuestionText, setShowQuestionText] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [showKanaReading, setShowKanaReading] = useState(false);
   const [isPlayingQuestion, setIsPlayingQuestion] = useState(false);
   const [isPlayingAnswer, setIsPlayingAnswer] = useState(false);
+  const [speechRate, setSpeechRate] = useState<0.9 | 0.7>(0.9);
 
   // Trạng thái ghi âm
   const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
+  // Đếm giây khi đang ghi âm
+  useEffect(() => {
+    let interval: number | null = null;
+    if (isRecording) {
+      setRecordingSeconds(0);
+      interval = window.setInterval(() => {
+        setRecordingSeconds((s) => s + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) window.clearInterval(interval);
+    };
+  }, [isRecording]);
+
+  // Dọn dẹp âm thanh & microphone stream khi component unmount
   useEffect(() => {
     return () => {
       stopJapaneseSpeech();
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
       if (audioUrl) {
         URL.revokeObjectURL(audioUrl);
       }
@@ -56,7 +89,7 @@ export function SpeakingQuestionCard({
     setIsPlayingAnswer(false);
     setIsPlayingQuestion(true);
     speakJapanese(question.questionJp, {
-      rate: 0.9,
+      rate: speechRate,
       onEnd: () => setIsPlayingQuestion(false),
       onError: () => setIsPlayingQuestion(false),
     });
@@ -67,7 +100,7 @@ export function SpeakingQuestionCard({
     setIsPlayingQuestion(false);
     setIsPlayingAnswer(true);
     speakJapanese(question.sampleAnswerJp, {
-      rate: 0.88,
+      rate: speechRate === 0.9 ? 0.88 : 0.68,
       onEnd: () => setIsPlayingAnswer(false),
       onError: () => setIsPlayingAnswer(false),
     });
@@ -89,6 +122,7 @@ export function SpeakingQuestionCard({
         return;
       }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       audioChunksRef.current = [];
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
@@ -106,8 +140,11 @@ export function SpeakingQuestionCard({
         }
         const newUrl = URL.createObjectURL(audioBlob);
         setAudioUrl(newUrl);
-        // Tắt tất cả micro tracks
-        stream.getTracks().forEach((track) => track.stop());
+        // Tắt tất cả micro tracks để giải phóng micro ngay
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+        }
       };
 
       mediaRecorder.start();
@@ -118,7 +155,17 @@ export function SpeakingQuestionCard({
     }
   }
 
+  const formatTimer = (sec: number) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, "0");
+    const s = (sec % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
   const isPicture = question.type === "in_picture";
+
+  // Hiragana tương ứng cho người học tra cứu cách đọc
+  const questionHiragana = useMemo(() => toKana(question.questionJp), [question.questionJp]);
+  const answerHiragana = useMemo(() => toKana(question.sampleAnswerJp), [question.sampleAnswerJp]);
 
   return (
     <div
@@ -149,21 +196,38 @@ export function SpeakingQuestionCard({
           )}
         </div>
 
-        {/* Nút đánh dấu đã luyện xong */}
-        {onToggleComplete && (
+        {/* Nút đánh dấu đã luyện xong & Tốc độ đọc */}
+        <div className="flex items-center gap-2">
+          {/* Nút chọn tốc độ phát âm (0.9x Chuẩn / 0.7x Chậm) */}
           <button
             type="button"
-            onClick={onToggleComplete}
-            className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
-              isCompleted
-                ? "bg-emerald-600 text-white shadow-xs"
-                : "border border-line bg-paper text-stone hover:text-ink"
+            onClick={() => setSpeechRate(speechRate === 0.9 ? 0.7 : 0.9)}
+            className={`flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition-all cursor-pointer ${
+              speechRate === 0.7
+                ? "border-amber-500/40 bg-amber-500/15 text-amber-900"
+                : "border-line bg-paper text-stone hover:text-ink"
             }`}
+            title="Nhấp để đổi tốc độ phát âm: 0.9x (chuẩn) hoặc 0.7x (chậm hơn)"
           >
-            <CheckCircle2 className="size-3.5" />
-            <span>{isCompleted ? "Đã luyện xong" : "Đánh dấu xong"}</span>
+            <Gauge className="size-3" />
+            <span>{speechRate === 0.9 ? "Tốc độ: 0.9x" : "Tốc độ: 0.7x (Chậm)"}</span>
           </button>
-        )}
+
+          {onToggleComplete && (
+            <button
+              type="button"
+              onClick={onToggleComplete}
+              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
+                isCompleted
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "border border-line bg-paper text-stone hover:text-ink"
+              }`}
+            >
+              <CheckCircle2 className="size-3.5" />
+              <span>{isCompleted ? "Đã luyện xong" : "Đánh dấu xong"}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Thanh phát âm câu hỏi & nút bấm hành động */}
@@ -191,8 +255,22 @@ export function SpeakingQuestionCard({
           </div>
         </div>
 
-        {/* Các nút toggle Hiện câu hỏi & Hiện câu trả lời mẫu */}
+        {/* Các nút toggle Hiện câu hỏi & Hiện câu trả lời mẫu & Furigana */}
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowKanaReading(!showKanaReading)}
+            className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+              showKanaReading
+                ? "border-amber-500/40 bg-amber-500/10 text-amber-800"
+                : "border-line bg-paper text-stone hover:text-ink"
+            }`}
+            title="Hiện/Ẩn cách đọc Hiragana cho các chữ Hán"
+          >
+            <Languages className="size-3.5 text-amber-600" />
+            <span>{showKanaReading ? "Ẩn Hiragana" : "Hiện Hiragana"}</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setShowQuestionText(!showQuestionText)}
@@ -228,12 +306,21 @@ export function SpeakingQuestionCard({
             <span className="font-semibold uppercase tracking-wider text-ink">Nội dung câu hỏi:</span>
             {question.grammarPoint && <span className="text-amber-700">{question.grammarPoint}</span>}
           </div>
+
           <p className="text-base sm:text-lg font-bold text-ink leading-relaxed">
             {question.questionJp}
           </p>
+
+          {showKanaReading && (
+            <div className="rounded-md bg-stone/5 px-2.5 py-1 text-xs text-amber-800 font-medium">
+              Cách đọc Hiragana: <span className="font-semibold">{questionHiragana}</span>
+            </div>
+          )}
+
           <p className="text-xs font-mono text-stone">
             {question.questionRomaji}
           </p>
+
           <p className="text-xs text-stone-700 dark:text-stone-300 border-t border-line/40 pt-1.5">
             Dịch nghĩa: <strong className="text-ink">{question.questionVi}</strong>
           </p>
@@ -266,9 +353,17 @@ export function SpeakingQuestionCard({
           <p className="text-base sm:text-lg font-bold text-ink leading-relaxed">
             {question.sampleAnswerJp}
           </p>
+
+          {showKanaReading && (
+            <div className="rounded-md bg-paper px-2.5 py-1 text-xs text-amber-800 font-medium border border-amber-500/20">
+              Cách đọc Hiragana: <span className="font-semibold">{answerHiragana}</span>
+            </div>
+          )}
+
           <p className="text-xs font-mono text-stone">
             {question.sampleAnswerRomaji}
           </p>
+
           <p className="text-xs text-stone-800 dark:text-stone-200 border-t border-amber-500/20 pt-1.5">
             Ý nghĩa: <strong className="text-ink">{question.sampleAnswerVi}</strong>
           </p>
@@ -295,12 +390,12 @@ export function SpeakingQuestionCard({
             }`}
           >
             {isRecording ? <Square className="size-3.5 fill-current" /> : <Mic className="size-3.5 text-red-500" />}
-            <span>{isRecording ? "Dừng ghi âm" : "Ghi âm câu trả lời"}</span>
+            <span>{isRecording ? `Dừng (${formatTimer(recordingSeconds)})` : "Ghi âm câu trả lời"}</span>
           </button>
 
           {isRecording && (
             <span className="text-xs font-medium text-red-600 animate-pulse">
-              ● Đang thu âm giọng nói của bạn...
+              ● Đang thu âm ({formatTimer(recordingSeconds)})...
             </span>
           )}
         </div>
