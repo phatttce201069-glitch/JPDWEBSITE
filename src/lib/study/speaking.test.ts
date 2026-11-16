@@ -51,6 +51,10 @@ test("SPEAKING_EXAMS_JPD113 contains verified speaking exams with valid scene an
       assert.ok(q.sampleAnswerJp.length > 0);
       assert.ok(q.sampleAnswerRomaji.length > 0);
       assert.ok(q.sampleAnswerVi.length > 0);
+      // Kiểm tra có đầy đủ bản trả lời ngắn gọn cho người học yếu
+      assert.ok(q.shortAnswerJp && q.shortAnswerJp.length > 0, `Đề ${exam.id} câu ${q.id} thiếu shortAnswerJp`);
+      assert.ok(q.shortAnswerRomaji && q.shortAnswerRomaji.length > 0, `Đề ${exam.id} câu ${q.id} thiếu shortAnswerRomaji`);
+      assert.ok(q.shortAnswerVi && q.shortAnswerVi.length > 0, `Đề ${exam.id} câu ${q.id} thiếu shortAnswerVi`);
     }
   }
 });
@@ -88,6 +92,10 @@ test("SPEAKING_EXAMS_JPD123 contains verified speaking exams with valid scene an
       assert.ok(q.sampleAnswerJp.length > 0);
       assert.ok(q.sampleAnswerRomaji.length > 0);
       assert.ok(q.sampleAnswerVi.length > 0);
+      // Kiểm tra có đầy đủ bản trả lời ngắn gọn cho người học yếu
+      assert.ok(q.shortAnswerJp && q.shortAnswerJp.length > 0, `Đề ${exam.id} câu ${q.id} thiếu shortAnswerJp`);
+      assert.ok(q.shortAnswerRomaji && q.shortAnswerRomaji.length > 0, `Đề ${exam.id} câu ${q.id} thiếu shortAnswerRomaji`);
+      assert.ok(q.shortAnswerVi && q.shortAnswerVi.length > 0, `Đề ${exam.id} câu ${q.id} thiếu shortAnswerVi`);
     }
   }
 });
@@ -120,6 +128,9 @@ test("buildDynamicSpeakingExam generates fresh non-repeating exams with 4-5 pict
     assert.ok(q.sampleAnswerRomaji.length > 0);
     assert.ok(!q.sampleAnswerRomaji.includes("action"), "Romaji không được chứa placeholder action");
     assert.ok(!/[\u4e00-\u9faf]/.test(q.sampleAnswerRomaji), "Romaji không được chứa chữ Hán chưa chuyển đổi");
+    assert.ok(q.shortAnswerJp && q.shortAnswerJp.length > 0, `Đề động 113 thiếu shortAnswerJp cho câu ${q.id}`);
+    assert.ok(q.shortAnswerRomaji && q.shortAnswerRomaji.length > 0, `Đề động 113 thiếu shortAnswerRomaji cho câu ${q.id}`);
+    assert.ok(q.shortAnswerVi && q.shortAnswerVi.length > 0, `Đề động 113 thiếu shortAnswerVi cho câu ${q.id}`);
   }
 
   // Test JPD123
@@ -134,6 +145,9 @@ test("buildDynamicSpeakingExam generates fresh non-repeating exams with 4-5 pict
     assert.ok(q.sampleAnswerRomaji.length > 0);
     assert.ok(!q.sampleAnswerRomaji.includes("action"), "Romaji không được chứa placeholder action");
     assert.ok(!/[\u4e00-\u9faf]/.test(q.sampleAnswerRomaji), "Romaji không được chứa chữ Hán chưa chuyển đổi");
+    assert.ok(q.shortAnswerJp && q.shortAnswerJp.length > 0, `Đề động 123 thiếu shortAnswerJp cho câu ${q.id}`);
+    assert.ok(q.shortAnswerRomaji && q.shortAnswerRomaji.length > 0, `Đề động 123 thiếu shortAnswerRomaji cho câu ${q.id}`);
+    assert.ok(q.shortAnswerVi && q.shortAnswerVi.length > 0, `Đề động 123 thiếu shortAnswerVi cho câu ${q.id}`);
   }
 
   // Lần sinh tiếp theo phải có ID phân biệt
@@ -202,7 +216,7 @@ test("all speaking exams strictly avoid out-of-syllabus grammar and vocabulary",
   for (const exam of allStaticExams) {
     const allQuestions = [...exam.pictureQuestions, ...exam.extensionQuestions];
     for (const q of allQuestions) {
-      const combinedText = `${q.questionJp} ${q.sampleAnswerJp}`;
+      const combinedText = `${q.questionJp} ${q.sampleAnswerJp} ${q.shortAnswerJp || ""}`;
       for (const { pattern, desc } of forbiddenPatterns) {
         assert.ok(
           !pattern.test(combinedText),
@@ -216,7 +230,7 @@ test("all speaking exams strictly avoid out-of-syllabus grammar and vocabulary",
   for (let i = 0; i < 20; i++) {
     const dyn113 = buildDynamicSpeakingExam("JPD113");
     for (const q of [...dyn113.pictureQuestions, ...dyn113.extensionQuestions]) {
-      const text = `${q.questionJp} ${q.sampleAnswerJp}`;
+      const text = `${q.questionJp} ${q.sampleAnswerJp} ${q.shortAnswerJp || ""}`;
       for (const { pattern, desc } of forbiddenPatterns) {
         assert.ok(!pattern.test(text), `Đề động 113 (${dyn113.id}) chứa ${desc}: "${text}"`);
       }
@@ -224,7 +238,7 @@ test("all speaking exams strictly avoid out-of-syllabus grammar and vocabulary",
 
     const dyn123 = buildDynamicSpeakingExam("JPD123");
     for (const q of [...dyn123.pictureQuestions, ...dyn123.extensionQuestions]) {
-      const text = `${q.questionJp} ${q.sampleAnswerJp}`;
+      const text = `${q.questionJp} ${q.sampleAnswerJp} ${q.shortAnswerJp || ""}`;
       for (const { pattern, desc } of forbiddenPatterns) {
         assert.ok(!pattern.test(text), `Đề động 123 (${dyn123.id}) chứa ${desc}: "${text}"`);
       }

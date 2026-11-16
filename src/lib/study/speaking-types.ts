@@ -46,6 +46,9 @@ export interface SpeakingQuestion {
   sampleAnswerJp: string;
   sampleAnswerRomaji: string;
   sampleAnswerVi: string;
+  shortAnswerJp?: string;
+  shortAnswerRomaji?: string;
+  shortAnswerVi?: string;
   answerGuide?: string;
 }
 

@@ -16,6 +16,7 @@ import {
   Image as ImageIcon,
   Gauge,
   Languages,
+  Zap,
 } from "lucide-react";
 import type { SpeakingQuestion } from "@/lib/study/speaking-types";
 import { speakJapanese, stopJapaneseSpeech } from "@/lib/study/speech";
@@ -40,6 +41,7 @@ export function SpeakingQuestionCard({
   const [isPlayingQuestion, setIsPlayingQuestion] = useState(false);
   const [isPlayingAnswer, setIsPlayingAnswer] = useState(false);
   const [speechRate, setSpeechRate] = useState<0.9 | 0.7>(0.9);
+  const [answerMode, setAnswerMode] = useState<"standard" | "short">("standard");
 
   // Trạng thái ghi âm
   const [isRecording, setIsRecording] = useState(false);
@@ -95,11 +97,19 @@ export function SpeakingQuestionCard({
     });
   }
 
-  function handlePlayAnswer() {
+  const effectiveShortJp = question.shortAnswerJp || question.sampleAnswerJp;
+  const effectiveShortRomaji = question.shortAnswerRomaji || question.sampleAnswerRomaji;
+  const effectiveShortVi = question.shortAnswerVi || question.sampleAnswerVi;
+
+  const currentAnswerJp = answerMode === "short" ? effectiveShortJp : question.sampleAnswerJp;
+  const currentAnswerRomaji = answerMode === "short" ? effectiveShortRomaji : question.sampleAnswerRomaji;
+  const currentAnswerVi = answerMode === "short" ? effectiveShortVi : question.sampleAnswerVi;
+
+  function handlePlayAnswer(targetJp?: string) {
     stopJapaneseSpeech();
     setIsPlayingQuestion(false);
     setIsPlayingAnswer(true);
-    speakJapanese(question.sampleAnswerJp, {
+    speakJapanese(targetJp || currentAnswerJp, {
       rate: speechRate === 0.9 ? 0.88 : 0.68,
       onEnd: () => setIsPlayingAnswer(false),
       onError: () => setIsPlayingAnswer(false),
@@ -165,7 +175,9 @@ export function SpeakingQuestionCard({
 
   // Hiragana tương ứng cho người học tra cứu cách đọc
   const questionHiragana = useMemo(() => toKana(question.questionJp), [question.questionJp]);
-  const answerHiragana = useMemo(() => toKana(question.sampleAnswerJp), [question.sampleAnswerJp]);
+  const standardAnswerHiragana = useMemo(() => toKana(question.sampleAnswerJp), [question.sampleAnswerJp]);
+  const shortAnswerHiragana = useMemo(() => toKana(effectiveShortJp), [effectiveShortJp]);
+  const currentAnswerHiragana = answerMode === "short" ? shortAnswerHiragana : standardAnswerHiragana;
 
   return (
     <div
@@ -329,44 +341,151 @@ export function SpeakingQuestionCard({
 
       {/* Khung hiển thị câu trả lời mẫu (khi người dùng bấm Gợi ý trả lời) */}
       {showAnswer && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-3 animate-in fade-in">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
-              <Lightbulb className="size-4 text-amber-600" />
-              <span>Câu trả lời mẫu chuẩn (Model Answer):</span>
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-4 animate-in fade-in">
+          {/* Header chọn 2 bản trả lời: Bản chuẩn vs Bản ngắn gọn */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-amber-500/20 pb-3">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-bold text-ink flex items-center gap-1.5">
+                <Lightbulb className="size-4 text-amber-600" />
+                <span>Gợi ý trả lời:</span>
+              </span>
             </div>
 
-            <button
-              type="button"
-              onClick={handlePlayAnswer}
-              className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
-                isPlayingAnswer
-                  ? "bg-amber-600 text-white animate-pulse"
-                  : "bg-paper border border-amber-500/30 text-amber-900 hover:bg-amber-100"
-              }`}
-            >
-              <Volume2 className="size-3.5" />
-              <span>{isPlayingAnswer ? "Đang đọc..." : "Nghe câu trả lời"}</span>
-            </button>
+            {/* Bộ chuyển đổi Tab: Bản chuẩn (Đầy đủ) vs Bản ngắn gọn (Dễ nói) */}
+            <div className="inline-flex rounded-lg bg-paper p-0.5 border border-line shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setAnswerMode("standard")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
+                  answerMode === "standard"
+                    ? "bg-amber-500 text-white shadow-xs"
+                    : "text-stone hover:text-ink"
+                }`}
+              >
+                <span>⭐ Bản chuẩn</span>
+                <span className="text-[10px] opacity-80 hidden sm:inline">(Đầy đủ)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAnswerMode("short")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
+                  answerMode === "short"
+                    ? "bg-emerald-600 text-white shadow-xs"
+                    : "text-stone hover:text-ink"
+                }`}
+              >
+                <Zap className="size-3" />
+                <span>⚡ Bản ngắn gọn</span>
+                <span className="text-[10px] opacity-80 hidden sm:inline">(Dễ nói)</span>
+              </button>
+            </div>
           </div>
 
-          <p className="text-base sm:text-lg font-bold text-ink leading-relaxed">
-            {question.sampleAnswerJp}
-          </p>
-
-          {showKanaReading && (
-            <div className="rounded-md bg-paper px-2.5 py-1 text-xs text-amber-800 font-medium border border-amber-500/20">
-              Cách đọc Hiragana: <span className="font-semibold">{answerHiragana}</span>
+          {/* Huy hiệu & Gợi ý cho từng chế độ */}
+          {answerMode === "standard" ? (
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-amber-900 font-bold">
+                <span>⭐ Bản trả lời chuẩn & đầy đủ cấu trúc câu</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handlePlayAnswer(question.sampleAnswerJp)}
+                className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
+                  isPlayingAnswer
+                    ? "bg-amber-600 text-white animate-pulse"
+                    : "bg-paper border border-amber-500/30 text-amber-900 hover:bg-amber-100"
+                }`}
+              >
+                <Volume2 className="size-3.5" />
+                <span>{isPlayingAnswer ? "Đang đọc..." : "Nghe bản chuẩn"}</span>
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-emerald-800 font-bold">
+                  <Zap className="size-3.5 text-emerald-600" />
+                  <span>⚡ Bản ngắn gọn (Dành cho người mới / phản xạ nhanh)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handlePlayAnswer(effectiveShortJp)}
+                  className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
+                    isPlayingAnswer
+                      ? "bg-emerald-600 text-white animate-pulse"
+                      : "bg-paper border border-emerald-500/30 text-emerald-900 hover:bg-emerald-100"
+                  }`}
+                >
+                  <Volume2 className="size-3.5" />
+                  <span>{isPlayingAnswer ? "Đang đọc..." : "Nghe bản ngắn"}</span>
+                </button>
+              </div>
+              <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-[11px] text-emerald-900 font-medium">
+                💡 <strong>Dành cho người học yếu:</strong> Câu trả lời được tối giản, 100% bám sát từ vựng & ngữ pháp bài học, ngắn gọn, dễ nhớ và tự tin nói ngay mà không lo sai cấu trúc.
+              </div>
             </div>
           )}
 
-          <p className="text-xs font-mono text-stone">
-            {question.sampleAnswerRomaji}
-          </p>
+          {/* Câu trả lời tiếng Nhật */}
+          <div className="space-y-1.5">
+            <p className="text-base sm:text-lg font-bold text-ink leading-relaxed">
+              {currentAnswerJp}
+            </p>
 
-          <p className="text-xs text-stone-800 dark:text-stone-200 border-t border-amber-500/20 pt-1.5">
-            Ý nghĩa: <strong className="text-ink">{question.sampleAnswerVi}</strong>
-          </p>
+            {showKanaReading && (
+              <div className="rounded-md bg-paper px-2.5 py-1 text-xs text-amber-800 font-medium border border-amber-500/20">
+                Cách đọc Hiragana: <span className="font-semibold">{currentAnswerHiragana}</span>
+              </div>
+            )}
+
+            <p className="text-xs font-mono text-stone">
+              {currentAnswerRomaji}
+            </p>
+
+            <p className="text-xs text-stone-800 dark:text-stone-200 border-t border-amber-500/20 pt-1.5">
+              Ý nghĩa: <strong className="text-ink">{currentAnswerVi}</strong>
+            </p>
+          </div>
+
+          {/* So sánh nhanh giữa 2 bản để học viên đối chiếu */}
+          <div className="rounded-lg bg-paper/90 border border-line/60 p-2.5 text-xs space-y-1.5">
+            <div className="flex items-center justify-between text-[11px] text-stone">
+              <span className="font-semibold text-ink">Đối chiếu 2 bản trả lời:</span>
+              <button
+                type="button"
+                onClick={() => setAnswerMode(answerMode === "standard" ? "short" : "standard")}
+                className="text-amber-700 hover:underline font-medium cursor-pointer"
+              >
+                {answerMode === "standard" ? "👉 Chuyển sang Bản ngắn gọn" : "👉 Chuyển sang Bản chuẩn"}
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-stone-700 dark:text-stone-300">
+              <div
+                onClick={() => setAnswerMode("standard")}
+                className={`rounded-md p-2 border cursor-pointer transition-all ${
+                  answerMode === "standard"
+                    ? "border-amber-500/50 bg-amber-500/10 font-medium"
+                    : "border-line/60 bg-paper hover:bg-stone/5 opacity-80"
+                }`}
+              >
+                <div className="text-[10px] text-amber-800 font-bold uppercase mb-0.5">Bản chuẩn:</div>
+                <div className="text-ink text-xs font-semibold">{question.sampleAnswerJp}</div>
+                <div className="text-[11px] text-stone">{question.sampleAnswerVi}</div>
+              </div>
+              <div
+                onClick={() => setAnswerMode("short")}
+                className={`rounded-md p-2 border cursor-pointer transition-all ${
+                  answerMode === "short"
+                    ? "border-emerald-500/50 bg-emerald-500/10 font-medium"
+                    : "border-line/60 bg-paper hover:bg-stone/5 opacity-80"
+                }`}
+              >
+                <div className="text-[10px] text-emerald-800 font-bold uppercase mb-0.5">Bản ngắn gọn (Dễ nói):</div>
+                <div className="text-ink text-xs font-semibold">{effectiveShortJp}</div>
+                <div className="text-[11px] text-stone">{effectiveShortVi}</div>
+              </div>
+            </div>
+          </div>
 
           {question.answerGuide && (
             <div className="rounded-lg bg-paper/80 p-2.5 text-xs text-stone space-y-1 border border-line/40">

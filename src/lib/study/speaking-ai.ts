@@ -48,14 +48,21 @@ Nhiệm vụ: Tạo một đề thi nói hoàn chỉnh gồm:
 1. MÔ TẢ MỘT BỨC TRANH SINH ĐỘNG (Scene) tại trường học FPT, ký túc xá, nhà ăn, siêu thị, công viên, nhà hàng Nhật, hoặc du lịch.
 2. ĐÚNG 4 ĐẾN 5 CÂU HỎI VỀ BỨC TRANH (type: "in_picture") hỏi về các nhân vật, đồ vật, vị trí, giá tiền, số lượng hoặc hành động (Vています).
 3. ĐÚNG 2 CÂU HỎI MỞ RỘNG NGOÀI TRANH (type: "extension") phỏng vấn tự do liên hệ thực tế bản thân học viên dựa trên ngữ pháp của bài học.
-Mỗi câu hỏi BẮT BUỘC có:
+Mỗi câu hỏi BẮT BUỘC có 2 BẢN TRẢ LỜI:
+1. BẢN CHUẨN (Chuẩn chỉnh & đầy đủ, lịch sự です・ます):
+- sampleAnswerJp (câu trả lời mẫu tiếng Nhật chuẩn, lịch sự です・ます)
+- sampleAnswerRomaji (Romaji câu trả lời mẫu)
+- sampleAnswerVi (dịch nghĩa câu trả lời mẫu)
+2. BẢN NGẮN GỌN (Dành cho người học yếu nhưng vẫn muốn học phản xạ đúng ngữ pháp & từ vựng trong bài, câu ngắn, dễ nhớ, không dùng từ ngoài bài):
+- shortAnswerJp (câu trả lời ngắn gọn, chuẩn ngữ pháp bài học)
+- shortAnswerRomaji (Romaji câu ngắn gọn)
+- shortAnswerVi (dịch nghĩa câu ngắn gọn)
+
+Kèm theo:
 - questionJp (tiếng Nhật)
 - questionRomaji (phiên âm Romaji)
 - questionVi (dịch nghĩa tiếng Việt)
 - grammarPoint (tên ngữ pháp áp dụng)
-- sampleAnswerJp (câu trả lời mẫu tiếng Nhật chuẩn, lịch sự です・ます)
-- sampleAnswerRomaji (Romaji câu trả lời mẫu)
-- sampleAnswerVi (dịch nghĩa câu trả lời mẫu)
 - answerGuide (hướng dẫn cách trả lời hoặc các biến thể)
 
 Mã phiên ngẫu nhiên: #${entropy}.
@@ -95,6 +102,9 @@ Chỉ xuất ra duy nhất JSON (không kèm markdown \`\`\`json) theo cấu tr�
       "sampleAnswerJp": "...",
       "sampleAnswerRomaji": "...",
       "sampleAnswerVi": "...",
+      "shortAnswerJp": "...",
+      "shortAnswerRomaji": "...",
+      "shortAnswerVi": "...",
       "answerGuide": "..."
     }
   ],
@@ -110,6 +120,9 @@ Chỉ xuất ra duy nhất JSON (không kèm markdown \`\`\`json) theo cấu tr�
       "sampleAnswerJp": "...",
       "sampleAnswerRomaji": "...",
       "sampleAnswerVi": "...",
+      "shortAnswerJp": "...",
+      "shortAnswerRomaji": "...",
+      "shortAnswerVi": "...",
       "answerGuide": "..."
     }
   ]
@@ -215,24 +228,31 @@ export async function generateAiSpeakingExam(course: SpeakingCourse): Promise<{
       throw new Error("Dữ liệu đề thi nói trả về từ AI không đúng cấu trúc.");
     }
 
-    // Đảm bảo có romaji cho câu hỏi và câu trả lời
+    // Đảm bảo có romaji cho câu hỏi và câu trả lời (cả bản chuẩn và bản ngắn gọn)
     const ensureQuestionRomaji = (
       q: Partial<Omit<SpeakingQuestion, "type">> & { type?: string },
       idx: number,
       type: "in_picture" | "extension",
-    ): SpeakingQuestion => ({
-      id: q.id || `q-${type}-${idx + 1}-${Date.now()}`,
-      type,
-      order: q.order || idx + 1,
-      questionJp: q.questionJp || "",
-      questionRomaji: q.questionRomaji || toRomaji(toKana(q.questionJp || "")),
-      questionVi: q.questionVi || "",
-      grammarPoint: q.grammarPoint,
-      sampleAnswerJp: q.sampleAnswerJp || "",
-      sampleAnswerRomaji: q.sampleAnswerRomaji || toRomaji(toKana(q.sampleAnswerJp || "")),
-      sampleAnswerVi: q.sampleAnswerVi || "",
-      answerGuide: q.answerGuide,
-    });
+    ): SpeakingQuestion => {
+      const sampleAnswerJp = q.sampleAnswerJp || "";
+      const shortAnswerJp = q.shortAnswerJp || sampleAnswerJp;
+      return {
+        id: q.id || `q-${type}-${idx + 1}-${Date.now()}`,
+        type,
+        order: q.order || idx + 1,
+        questionJp: q.questionJp || "",
+        questionRomaji: q.questionRomaji || toRomaji(toKana(q.questionJp || "")),
+        questionVi: q.questionVi || "",
+        grammarPoint: q.grammarPoint,
+        sampleAnswerJp,
+        sampleAnswerRomaji: q.sampleAnswerRomaji || toRomaji(toKana(sampleAnswerJp)),
+        sampleAnswerVi: q.sampleAnswerVi || "",
+        shortAnswerJp,
+        shortAnswerRomaji: q.shortAnswerRomaji || toRomaji(toKana(shortAnswerJp)),
+        shortAnswerVi: q.shortAnswerVi || q.sampleAnswerVi || "",
+        answerGuide: q.answerGuide,
+      };
+    };
 
     const fullExam: SpeakingExam = {
       id: parsed.id || `ai-sp-${course.toLowerCase()}-${Date.now()}`,
