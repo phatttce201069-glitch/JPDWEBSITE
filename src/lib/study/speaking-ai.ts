@@ -26,6 +26,10 @@ export function buildSpeakingAiPrompt(course: SpeakingCourse): {
   const rulesText =
     course === "JPD113"
       ? `- PHẠM VI NGỮ PHÁP & TỪ VỰNG: CHỈ DÙNG 100% kiến thức Bài 1, 2, 3 (Câu danh từ N1 は N2 です/じゃありません/ですか/も/の/と; chỉ định từ これ・それ・あれ・どれ・ここ・そこ・あそこ・どこ; hỏi giá tiền いくら; thời gian 〜時〜分; ngày tháng thứ; động từ sơ cấp 行きます・来ます・帰ります・食べます・飲みます・勉強します).
+- CÂU HỎI PHẢI NGẮN GỌN, ĐƠN GIẢN, DỄ NGHE (Dành cho người mới học tiếng Nhật):
+  + CHỈ HỎI 1 Ý TRONG 1 CÂU HỎI (TUYỆT ĐỐI CẤM câu hỏi kép ghép 2-3 câu hỏi như 『どこですか。何階ですか』hay 『何時ですか。何をしますか』).
+  + Mẫu câu hỏi chuẩn: 『だれですか』, 『何ですか』, 『どこですか』, 『何階ですか』, 『いくらですか』, 『何時ですか』, 『何曜日ですか』, 『何が ありますか』, 『何時に [Động từ] ますか』.
+  + TUYỆT ĐỐI CẤM từ lạ ngoài bài: CẤM 『雰囲気』, 『実習室』, 『将来』, 『暇なとき』, 『並んで』, 『画面』, 『自分で』.
 - CẤM TUYỆT ĐỐI: Không dùng thể て (chưa học), không dùng thể từ điển Vる, không dùng mệnh đề định ngữ Vる/Vている N, không dùng từ ngoài Bài 1-3.
 - CHỮ HÁN: Chỉ dùng 34 chữ Hán của Bài 1-3. Bất kỳ chữ nào ngoài danh sách phải viết bằng Hiragana.`
       : `- PHẠM VI NGỮ PHÁP & TỪ VỰNG: CHỈ DÙNG 100% kiến thức Bài 4, 5, 6, 7 giáo trình FPT:
@@ -33,6 +37,21 @@ export function buildSpeakingAiPrompt(course: SpeakingCourse): {
   + Bài 5: Mong muốn Vたいです / N が ほしいです; mục đích di chuyển V/N に 行きます/来ます; lý do 〜から.
   + Bài 6: So sánh hơn A は B より, so sánh lựa chọn A と B と どちらが, so sánh nhất A の中で何がいちばん; rủ rê Vませんか / Vましょう; lượng từ đếm vật mỏng 枚, xe cộ 台.
   + Bài 7: Thể て (chia thể て, nối hành động, tiếp diễn Vています, cách làm Vかた). Chỉ dùng 23 động từ chuẩn Bài 7.
+- CÂU HỎI PHẢI NGẮN GỌN, ĐƠN GIẢN, DỄ NGHE (Dành cho trình độ sơ cấp JPD123):
+  + CHỈ HỎI 1 Ý DUY NHẤT TRONG 1 CÂU HỎI (TUYỆT ĐỐI CẤM câu hỏi kép, cấm hỏi 2 vế liền nhau như 『どこへ行きますか。何をしますか』hoặc dùng dấu gạch chéo 『/』).
+  + Mẫu câu hỏi chuẩn đơn:
+    * 『男の人 / 女の人は いま 何を していますか』
+    * 『[A] と [B] と どちらが [Tính từ] ですか』
+    * 『この部屋 / この場所は [Tính từ] ですか』
+    * 『[Vị trí] に 何が ありますか / 人が 何人 いますか』
+    * 『休みの日に 何を しますか』
+    * 『いま、何が いちばん 欲しいですか』
+  + TUYỆT ĐỐI CẤM các từ vựng lạ chưa học học viên không hiểu:
+    * CẤM 『雰囲気』(N3) -> hỏi thẳng tính từ: 『このカフェは 静かですか』.
+    * CẤM 『実習室』, 『画面』 -> dùng 『部屋』, 『パソコン』.
+    * CẤM 『将来』, 『暇なとき』 -> dùng 『休みの日に』, 『日曜日に』.
+    * CẤM 『並んでいます』 -> dùng 『人が 何人 いますか』.
+    * CẤM 『自分で』.
 - CẤM TUYỆT ĐỐI CÁC CẤU TRÚC NGOÀI BÀI 4-7:
   + CẤM dùng 『〜たり〜たり』(Bài 19) -> dùng 『〜ます。そして、〜ます』hoặc 『〜て、〜ます』.
   + CẤM dùng 『〜ながら』(Bài 28).

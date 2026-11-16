@@ -209,6 +209,14 @@ test("all speaking exams strictly avoid out-of-syllabus grammar and vocabulary",
     { pattern: /ソフトウェア/, desc: "từ ソフトウェア (ngoài giáo trình)" },
     { pattern: /新鮮/, desc: "từ 新鮮 (N3)" },
     { pattern: /優れて/, desc: "từ 優れている (N1)" },
+    { pattern: /雰囲気/, desc: "từ 雰囲気 (N3, ngoài bài học)" },
+    { pattern: /実習室/, desc: "từ 実習室 (ngoài bài học)" },
+    { pattern: /将来/, desc: "từ 将来 (ngoài bài học)" },
+    { pattern: /暇なとき/, desc: "từ 暇なとき (Bài 23, chưa học)" },
+    { pattern: /並んで/, desc: "từ 並んでいます (Bài 14, chưa học)" },
+    { pattern: /画面/, desc: "từ 画面 (ngoài bài học)" },
+    { pattern: /自分で/, desc: "từ 自分で (ngoài bài học)" },
+    { pattern: /[／\/]/, desc: "ký tự gạch chéo trong câu hỏi hoặc câu trả lời" },
   ];
 
   const allStaticExams = [...SPEAKING_EXAMS_JPD113, ...SPEAKING_EXAMS_JPD123];
