@@ -221,7 +221,7 @@ test("all reading passages have zero corrupted text and 100% accurate sentence R
 
 test("passageToRomaji transliterates full Japanese text into clean Romaji", () => {
   const romaji = passageToRomaji("わたしはナムです。");
-  assert.ok(romaji.includes("watashi") && romaji.includes("namu") && romaji.includes("desu"));
+  assert.ok(romaji.toLowerCase().includes("watashi") && romaji.includes("namu") && romaji.includes("desu"));
 });
 
 test("buildReadingAiPrompt correctly configures length and kanji constraints for both courses", () => {

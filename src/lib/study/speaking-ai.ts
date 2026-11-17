@@ -12,6 +12,7 @@ import type {
 import { saveSpeakingExam } from "./speaking-storage.ts";
 import { toKana } from "./kana-reading.ts";
 import { toRomaji } from "./romaji.ts";
+import { passageToRomaji } from "./reading-inspector.ts";
 
 /**
  * Xây dựng prompt cho AI tạo đề thi nói FPT (1 bức tranh + 4-5 câu hỏi trong tranh + 2 câu hỏi ngoài tranh)
@@ -260,14 +261,14 @@ export async function generateAiSpeakingExam(course: SpeakingCourse): Promise<{
         type,
         order: q.order || idx + 1,
         questionJp: q.questionJp || "",
-        questionRomaji: q.questionRomaji || toRomaji(toKana(q.questionJp || "")),
+        questionRomaji: q.questionRomaji || passageToRomaji(q.questionJp || ""),
         questionVi: q.questionVi || "",
         grammarPoint: q.grammarPoint,
         sampleAnswerJp,
-        sampleAnswerRomaji: q.sampleAnswerRomaji || toRomaji(toKana(sampleAnswerJp)),
+        sampleAnswerRomaji: q.sampleAnswerRomaji || passageToRomaji(sampleAnswerJp),
         sampleAnswerVi: q.sampleAnswerVi || "",
         shortAnswerJp,
-        shortAnswerRomaji: q.shortAnswerRomaji || toRomaji(toKana(shortAnswerJp)),
+        shortAnswerRomaji: q.shortAnswerRomaji || passageToRomaji(shortAnswerJp),
         shortAnswerVi: q.shortAnswerVi || q.sampleAnswerVi || "",
         answerGuide: q.answerGuide,
       };

@@ -9,6 +9,7 @@ import {
 import type { ReadingCourse, ReadingPassage, ReadingPassageSet } from "./reading-types.ts";
 import { toKana } from "./kana-reading.ts";
 import { toRomaji } from "./romaji.ts";
+import { passageToRomaji } from "./reading-inspector.ts";
 
 /**
  * Xây dựng AI Prompt chuyên biệt cho việc tạo đề thi đọc hiểu FPT
@@ -192,12 +193,12 @@ export async function generateAiReadingPassage(course: ReadingCourse): Promise<{
         .map((s) => ({
           jp: s,
           vi: "",
-          romaji: toRomaji(toKana(s)),
+          romaji: passageToRomaji(s),
         }));
     }
 
     if (!parsed.romaji) {
-      parsed.romaji = toRomaji(toKana(parsed.content));
+      parsed.romaji = passageToRomaji(parsed.content);
     }
 
     const sanitized = sanitizeReadingPassageKanji(parsed, allowedBai);
@@ -408,9 +409,9 @@ export async function generateAiReadingExamSet(course: ReadingCourse): Promise<{
                 .map((s) => ({
                   jp: s,
                   vi: "",
-                  romaji: toRomaji(toKana(s)),
+                  romaji: passageToRomaji(s),
                 })),
-        romaji: p.romaji || toRomaji(toKana(p.content || "")),
+        romaji: p.romaji || passageToRomaji(p.content || ""),
         isAiGenerated: true,
       };
       return sanitizeReadingPassageKanji(ensured, allowedBai);

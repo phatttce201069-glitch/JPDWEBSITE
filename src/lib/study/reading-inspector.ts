@@ -284,10 +284,601 @@ export function inspectJapaneseCharOrWord(target: string): WordInspection {
   };
 }
 
+// Bảng từ vựng và ngữ pháp bổ trợ cho việc phân tách Romaji có dấu cách chuẩn xác
+const EXTRA_ROMAJI_TOKENS: [string, string][] = [
+  // Chủ ngữ, đại từ & chỉ định từ
+  ["私たち", "watashitachi"],
+  ["わたしたち", "watashitachi"],
+  ["あなたたち", "anatatachi"],
+  ["この", "kono"],
+  ["その", "sono"],
+  ["あの", "ano"],
+  ["どの", "dono"],
+  ["これ", "kore"],
+  ["それ", "sore"],
+  ["あれ", "are"],
+  ["どれ", "dore"],
+  ["ここ", "koko"],
+  ["そこ", "soko"],
+  ["あそこ", "asoko"],
+  ["どこ", "doko"],
+  ["だれ", "dare"],
+  ["誰", "dare"],
+  ["何", "nani"],
+  ["なん", "nan"],
+  ["いくら", "ikura"],
+  ["いくつ", "ikutsu"],
+  ["どうして", "doushite"],
+  ["なぜ", "naze"],
+  ["どんな", "donna"],
+  ["どう", "dou"],
+
+  // Màu sắc & tính từ thông dụng
+  ["白い", "shiroi"],
+  ["しろい", "shiroi"],
+  ["青い", "aoi"],
+  ["あおい", "aoi"],
+  ["黒い", "kuroi"],
+  ["くろい", "kuroi"],
+  ["赤い", "akai"],
+  ["あかい", "akai"],
+  ["新しい", "atarashii"],
+  ["あたらしい", "atarashii"],
+  ["古い", "furui"],
+  ["ふるい", "furui"],
+  ["大きい", "ookii"],
+  ["おおきい", "ookii"],
+  ["小さい", "chiisai"],
+  ["ちいさい", "chiisai"],
+  ["高い", "takai"],
+  ["たかい", "takai"],
+  ["安い", "yasui"],
+  ["やすい", "yasui"],
+  ["広い", "hiroi"],
+  ["ひろい", "hiroi"],
+  ["狭い", "semai"],
+  ["せまい", "semai"],
+  ["静か", "shizuka"],
+  ["しずか", "shizuka"],
+  ["賑やか", "nigiyaka"],
+  ["にぎやか", "nigiyaka"],
+  ["便利", "benri"],
+  ["べんり", "benri"],
+  ["親切", "shinsetsu"],
+  ["しんせつ", "shinsetsu"],
+  ["有名", "yuumei"],
+  ["ゆうめい", "yuumei"],
+  ["きれい", "kirei"],
+  ["綺麗", "kirei"],
+  ["面白い", "omoshiroi"],
+  ["おもしろい", "omoshiroi"],
+  ["おいしい", "oishii"],
+  ["美味しい", "oishii"],
+  ["楽しい", "tanoshii"],
+  ["たのしい", "tanoshii"],
+  ["忙しい", "isogashii"],
+  ["いそがしい", "isogashii"],
+  ["暇", "hima"],
+  ["ひま", "hima"],
+
+  // Thời gian, ngày tháng năm
+  ["今日", "kyou"],
+  ["きょう", "kyou"],
+  ["明日", "ashita"],
+  ["あした", "ashita"],
+  ["きのう", "kinou"],
+  ["昨日", "kinou"],
+  ["今", "ima"],
+  ["いま", "ima"],
+  ["毎朝", "maiasa"],
+  ["まいあさ", "maiasa"],
+  ["毎日", "mainichi"],
+  ["まいにち", "mainichi"],
+  ["毎週", "maishuu"],
+  ["まいしゅう", "maishuu"],
+  ["毎晩", "maiban"],
+  ["まいばん", "maiban"],
+  ["午前", "gozen"],
+  ["ごぜん", "gozen"],
+  ["午後", "gogo"],
+  ["ごご", "gogo"],
+  ["朝", "asa"],
+  ["あさ", "asa"],
+  ["昼", "hiru"],
+  ["ひる", "hiru"],
+  ["夜", "yoru"],
+  ["よる", "yoru"],
+  ["一年", "ichinen"],
+  ["いちねん", "ichinen"],
+  ["二年", "ninen"],
+  ["三年", "sannen"],
+  ["四年", "yonen"],
+  ["五年", "gonen"],
+  ["今年", "kotoshi"],
+  ["ことし", "kotoshi"],
+  ["去年", "kyonen"],
+  ["きょねん", "kyonen"],
+  ["来年", "rainen"],
+  ["らいねん", "rainen"],
+  ["何年", "nannen"],
+  ["十二か月", "juuni-kagetsu"],
+  ["四月一日", "shigatsu tsuitachi"],
+  ["一日", "tsuitachi"],
+  ["ついたち", "tsuitachi"],
+  ["二日", "futsuka"],
+  ["ふつか", "futsuka"],
+  ["三日", "mikka"],
+  ["みっか", "mikka"],
+  ["四日", "yokka"],
+  ["よっか", "yokka"],
+  ["五日", "itsuka"],
+  ["いつか", "itsuka"],
+  ["六日", "muika"],
+  ["むいか", "muika"],
+  ["七日", "nanoka"],
+  ["なのか", "nanoka"],
+  ["八日", "youka"],
+  ["ようか", "youka"],
+  ["九日", "kokonoka"],
+  ["ここのか", "kokonoka"],
+  ["十日", "tooka"],
+  ["とおか", "tooka"],
+
+  // Địa điểm & đồ vật & người
+  ["ベトナム人", "betonamujin"],
+  ["日本人", "nihonjin"],
+  ["にほんじん", "nihonjin"],
+  ["外国人", "gaikokujin"],
+  ["がいこくじん", "gaikokujin"],
+  ["木村先生", "Kimura-sensei"],
+  ["田中先生", "Tanaka-sensei"],
+  ["佐藤先生", "Satou-sensei"],
+  ["山田先生", "Yamada-sensei"],
+  ["小林先生", "Kobayashi-sensei"],
+  ["鈴木先生", "Suzuki-sensei"],
+  ["きむらせんせい", "Kimura-sensei"],
+  ["たなかせんせい", "Tanaka-sensei"],
+  ["さとうせんせい", "Satou-sensei"],
+  ["やまだせんせい", "Yamada-sensei"],
+  ["こばやしせんせい", "Kobayashi-sensei"],
+  ["すずきせんせい", "Suzuki-sensei"],
+  ["山田さん", "Yamada-san"],
+  ["本田さん", "Honda-san"],
+  ["田中さん", "Tanaka-san"],
+  ["佐藤さん", "Satou-san"],
+  ["小林さん", "Kobayashi-san"],
+  ["鈴木さん", "Suzuki-san"],
+  ["やまださん", "Yamada-san"],
+  ["ほんださん", "Honda-san"],
+  ["学校", "gakkou"],
+  ["がっこう", "gakkou"],
+  ["教室", "kyoushitsu"],
+  ["きょうしつ", "kyoushitsu"],
+  ["図書館", "toshokan"],
+  ["としょかん", "toshokan"],
+  ["売店", "baiten"],
+  ["ばいてん", "baiten"],
+  ["部屋", "heya"],
+  ["へや", "heya"],
+  ["アパート", "apaato"],
+  ["オフィス", "ofisu"],
+  ["スーパー", "suupaa"],
+  ["コンビニ", "konbini"],
+  ["ホテル", "hoteru"],
+  ["カフェ", "kafe"],
+  ["レストラン", "resutoran"],
+  ["駅", "eki"],
+  ["えき", "eki"],
+  ["公園", "kouen"],
+  ["こうえん", "kouen"],
+  ["お寺", "otera"],
+  ["おてら", "otera"],
+  ["会議室", "kaigishitsu"],
+  ["かいぎしつ", "kaigishitsu"],
+  ["授業", "jugyou"],
+  ["じゅぎょう", "jugyou"],
+  ["日本語", "nihongo"],
+  ["にほんご", "nihongo"],
+  ["英語", "eigo"],
+  ["えいご", "eigo"],
+  ["パソコン", "pasokon"],
+  ["ノート", "nooto"],
+  ["ペン", "pen"],
+  ["机", "tsukue"],
+  ["つくえ", "tsukue"],
+  ["椅子", "isu"],
+  ["いす", "isu"],
+  ["本棚", "hondana"],
+  ["ほんだな", "hondana"],
+  ["カレンダー", "karendaa"],
+  ["とり肉", "toriniku"],
+  ["とりにく", "toriniku"],
+  ["魚", "sakana"],
+  ["さかな", "sakana"],
+  ["野さい", "yasai"],
+  ["野菜", "yasai"],
+  ["やさい", "yasai"],
+  ["食べ物", "tabemono"],
+  ["たべもの", "tabemono"],
+  ["飲み物", "nomimono"],
+  ["のみもの", "nomimono"],
+  ["お土産", "omiyage"],
+  ["おみやげ", "omiyage"],
+  ["お菓子", "okashi"],
+  ["おかし", "okashi"],
+  ["料理", "ryouri"],
+  ["りょうり", "ryouri"],
+  ["カレー料理", "karee ryouri"],
+  ["カレー", "karee"],
+  ["すき焼き", "sukiyaki"],
+  ["スプーン", "supuun"],
+  ["フォーク", "fooku"],
+  ["ナイフ", "naifu"],
+  ["テーブル", "teeburu"],
+  ["ベッド", "beddo"],
+  ["サッカー", "sakkaa"],
+  ["テニス", "tenisu"],
+  ["バドミントン", "badominton"],
+  ["テレビ", "terebi"],
+  ["テスト", "tesuto"],
+  ["シャワー", "shawaa"],
+  ["ビール", "biiru"],
+  ["お茶", "ocha"],
+  ["おちゃ", "ocha"],
+  ["ジュース", "juusu"],
+  ["コーヒー", "koohii"],
+  ["水", "mizu"],
+  ["みず", "mizu"],
+  ["しりょう", "shiryou"],
+  ["資料", "shiryou"],
+  ["ぶちょう", "buchou"],
+  ["部長", "buchou"],
+  ["せつめい", "setsumei"],
+  ["説明", "setsumei"],
+  ["ぎじゅつ", "gijutsu"],
+  ["技術", "gijutsu"],
+  ["きょう力", "kyouryoku"],
+  ["協力", "kyouryoku"],
+  ["おれい", "orei"],
+  ["お礼", "orei"],
+  ["名前", "namae"],
+  ["なまえ", "namae"],
+  ["国", "kuni"],
+  ["くに", "kuni"],
+  ["田んぼ", "tanbo"],
+  ["たんぼ", "tanbo"],
+  ["山", "yama"],
+  ["やま", "yama"],
+  ["町", "machi"],
+  ["まち", "machi"],
+  ["市", "shi"],
+  ["し", "shi"],
+  ["区", "ku"],
+  ["く", "ku"],
+  ["門", "mon"],
+  ["もん", "mon"],
+
+  // Đếm số, lượng từ
+  ["百五十円", "hyaku gojuu-en"],
+  ["五百四十円", "gohyaku yonjuu-en"],
+  ["八十円", "hachijuu-en"],
+  ["五十円", "gojuu-en"],
+  ["一千円", "issen-en"],
+  ["一万円", "ichiman-en"],
+  ["二千五百円", "nisen gohyaku-en"],
+  ["五千五百円", "gosen gohyaku-en"],
+  ["三千円", "sanzen-en"],
+  ["五百円", "gohyaku-en"],
+  ["三百円", "sanbyaku-en"],
+  ["百円", "hyaku-en"],
+  ["九人", "kyuunin"],
+  ["八人", "hachinin"],
+  ["七人", "shichinin"],
+  ["六人", "rokunin"],
+  ["五人", "gonin"],
+  ["四人", "yonin"],
+  ["三人", "sannin"],
+  ["二人", "futari"],
+  ["一人", "hitori"],
+  ["何人", "nannin"],
+  ["一冊", "issatsu"],
+  ["二冊", "nisatsu"],
+  ["三冊", "sansatsu"],
+  ["何冊", "nansatsu"],
+  ["一本", "ippon"],
+  ["二本", "nihon"],
+  ["三本", "sanbon"],
+  ["何本", "nanbon"],
+  ["三階", "sangai"],
+  ["二階", "nikai"],
+  ["一階", "ikkai"],
+  ["何階", "nankai"],
+  ["十五分", "juugofun"],
+  ["十分", "juppun"],
+  ["三十分", "sanjuppun"],
+  ["二十分", "nijuppun"],
+  ["何分", "nanpun"],
+  ["一時間目", "ichijikanme"],
+  ["二時間目", "nijikanme"],
+  ["三時間目", "sanjikanme"],
+  ["何時間", "nanjikan"],
+  ["一時間", "ichijikan"],
+  ["二時間", "nijikan"],
+  ["午前八時半", "gozen hachi-jihan"],
+  ["午前九時半", "gozen ku-jihan"],
+  ["午前十時半", "gozen juu-jihan"],
+  ["十二時半", "juuni-jihan"],
+  ["六時半", "roku-jihan"],
+  ["午後五時", "gogo go-ji"],
+  ["午後四時", "gogo yo-ji"],
+  ["三十五才", "sanjuugo-sai"],
+  ["三十才", "sanjuu-sai"],
+  ["二十八才", "nijuuhachi-sai"],
+  ["十九才", "juuku-sai"],
+  ["二十才", "hatachi"],
+
+  // Động từ, cụm vị ngữ & liên từ
+  ["といっしょに", "to issho ni"],
+  ["だけでなく", "dakedenaku"],
+  ["のために", "no tame ni"],
+  ["について", "ni tsuite"],
+  ["まわりで", "no mawari de"],
+  ["まえに", "mae ni"],
+  ["前に", "mae ni"],
+  ["から", "kara"],
+  ["まで", "made"],
+  ["より", "yori"],
+  ["など", "nado"],
+  ["でも", "demo"],
+  ["また", "mata"],
+  ["そして", "soshite"],
+  ["いつも", "itsumo"],
+  ["とても", "totemo"],
+  ["ずっと", "zutto"],
+  ["みんなで", "minna de"],
+  ["ぜんぶで", "zenbu de"],
+  ["ぜんぶ", "zenbu"],
+  ["じぶんで", "jibun de"],
+  ["自分で", "jibun de"],
+  ["自分で作った", "jibun de tsukutta"],
+  ["じぶんでつくった", "jibun de tsukutta"],
+  ["作った", "tsukutta"],
+  ["つくった", "tsukutta"],
+  ["入りました", "hairimashita"],
+  ["はいりました", "hairimashita"],
+  ["入ります", "hairimasu"],
+  ["はいります", "hairimasu"],
+  ["行きました", "ikimashita"],
+  ["いきました", "ikimashita"],
+  ["行きます", "ikimasu"],
+  ["いきます", "ikimasu"],
+  ["帰りました", "kaerimashita"],
+  ["かえりました", "kaerimashita"],
+  ["帰ります", "kaerimasu"],
+  ["かえります", "kaerimasu"],
+  ["帰ってから", "kaette kara"],
+  ["かえってから", "kaette kara"],
+  ["作りました", "tsukurimashita"],
+  ["つくりました", "tsukurimashita"],
+  ["作ります", "tsukurimasu"],
+  ["つくります", "tsukurimasu"],
+  ["話しました", "hanashimashita"],
+  ["はなしました", "hanashimashita"],
+  ["話します", "hanashimasu"],
+  ["はなします", "hanashimasu"],
+  ["読みました", "yomimashita"],
+  ["よみました", "yomimashita"],
+  ["読みます", "yomimasu"],
+  ["よみます", "yomimasu"],
+  ["書きました", "kakimashita"],
+  ["かきました", "kakimashita"],
+  ["書きます", "kakimasu"],
+  ["かきます", "kakimasu"],
+  ["聞きました", "kikimashita"],
+  ["ききました", "kikimashita"],
+  ["聞いて", "kiite"],
+  ["きいて", "kiite"],
+  ["聞きます", "kikimasu"],
+  ["ききます", "kikimasu"],
+  ["見学に行きました", "kengaku ni ikimashita"],
+  ["けんがくにいきました", "kengaku ni ikimashita"],
+  ["見学に行きます", "kengaku ni ikimasu"],
+  ["けんがくにいきます", "kengaku ni ikimasu"],
+  ["買い物に行きました", "kaimono ni ikimashita"],
+  ["かいものにいきました", "kaimono ni ikimashita"],
+  ["買い物に行きます", "kaimono ni ikimasu"],
+  ["かいものにいきます", "kaimono ni ikimasu"],
+  ["散歩しました", "sanpo shimashita"],
+  ["散歩して", "sanpo shite"],
+  ["散歩します", "sanpo shimasu"],
+  ["住んでいます", "sunde imasu"],
+  ["すんでいます", "sunde imasu"],
+  ["教えてくれました", "oshiete kuremashita"],
+  ["おしえてくれました", "oshiete kuremashita"],
+  ["言いました", "iimashita"],
+  ["いいました", "iimashita"],
+  ["言ってから", "itte kara"],
+  ["いってから", "itte kara"],
+  ["着いてから", "tsuite kara"],
+  ["ついてから", "tsuite kara"],
+  ["使いながら", "tsukainagara"],
+  ["つかいながら", "tsukainagara"],
+  ["飲みながら", "nominagara"],
+  ["のみながら", "nominagara"],
+  ["思い出しながら", "omoidashinagara"],
+  ["おもい出しながら", "omoidashinagara"],
+  ["勉強しますか", "benkyou shimasu ka"],
+  ["べんきょうしますか", "benkyou shimasu ka"],
+  ["勉強します", "benkyou shimasu"],
+  ["勉強して", "benkyou shite"],
+  ["勉強しました", "benkyou shimashita"],
+  ["べんきょうします", "benkyou shimasu"],
+  ["べんきょうして", "benkyou shite"],
+  ["べんきょうしています", "benkyou shite imasu"],
+  ["勉強しています", "benkyou shite imasu"],
+  ["練習をします", "renshuu o shimasu"],
+  ["練習します", "renshuu shimasu"],
+  ["れんしゅうをします", "renshuu o shimasu"],
+  ["れんしゅうします", "renshuu shimasu"],
+  ["売られています", "urarete imasu"],
+  ["うられています", "urarete imasu"],
+  ["売っています", "utte imasu"],
+  ["うっています", "utte imasu"],
+  ["買いました", "kaimashita"],
+  ["かいました", "kaimashita"],
+  ["買います", "kaimasu"],
+  ["かいます", "kaimasu"],
+  ["起きます", "okimasu"],
+  ["おきます", "okimasu"],
+  ["寝ました", "nemashita"],
+  ["ねました", "nemashita"],
+  ["寝ます", "nemasu"],
+  ["ねます", "nemasu"],
+  ["歩いて", "aruite"],
+  ["あるいて", "aruite"],
+  ["出しました", "dashimashita"],
+  ["だしました", "dashimashita"],
+  ["出します", "dashimasu"],
+  ["だします", "dashimasu"],
+  ["出して", "dashite"],
+  ["だして", "dashite"],
+  ["もらいました", "moraimashita"],
+  ["あります", "arimasu"],
+  ["ありました", "arimashita"],
+  ["います", "imasu"],
+  ["いました", "imashita"],
+  ["でした", "deshita"],
+  ["ですから", "desu kara"],
+  ["ですが", "desu ga"],
+  ["です", "desu"],
+  ["だ", "da"],
+
+  // Trợ từ đơn
+  ["は", "wa"],
+  ["へ", "e"],
+  ["を", "o"],
+  ["が", "ga"],
+  ["に", "ni"],
+  ["で", "de"],
+  ["と", "to"],
+  ["も", "mo"],
+  ["や", "ya"],
+  ["の", "no"],
+  ["か", "ka"],
+  ["ね", "ne"],
+  ["よ", "yo"],
+  ["、", ","],
+  ["。", "."],
+  ["！", "!"],
+  ["？", "?"],
+];
+
+let cachedRomajiDict: Map<string, string> | null = null;
+let cachedSortedKeys: string[] | null = null;
+
+function getRomajiDict(): { dict: Map<string, string>; sortedKeys: string[] } {
+  if (cachedRomajiDict && cachedSortedKeys) {
+    return { dict: cachedRomajiDict, sortedKeys: cachedSortedKeys };
+  }
+
+  const dict = new Map<string, string>();
+
+  // 1. Thêm các từ đặc biệt đã cấu hình
+  for (const [key, val] of Object.entries(READING_SPECIAL_WORDS)) {
+    if (val.romaji) {
+      dict.set(key, val.romaji);
+      if (val.hiragana && val.hiragana !== key) dict.set(val.hiragana, val.romaji);
+    }
+  }
+
+  // 2. Thêm từ vựng giáo trình
+  for (const v of vocabulary) {
+    const cleanWord = v.word.replace(/（.*?）/g, "").trim();
+    const rom = toRomaji(v.reading);
+    if (cleanWord && !dict.has(cleanWord)) dict.set(cleanWord, rom);
+    if (v.reading && !dict.has(v.reading)) dict.set(v.reading, rom);
+  }
+
+  // 3. Thêm bảng từ vựng và ngữ pháp bổ trợ
+  for (const [k, r] of EXTRA_ROMAJI_TOKENS) {
+    dict.set(k, r);
+  }
+
+  const sortedKeys = Array.from(dict.keys()).sort((a, b) => b.length - a.length);
+  cachedRomajiDict = dict;
+  cachedSortedKeys = sortedKeys;
+
+  return { dict, sortedKeys };
+}
+
+/**
+ * Phân tích và chuyển đổi một câu tiếng Nhật thành Romaji có dấu cách, hạt từ và dấu câu chuẩn.
+ */
+function singleSentenceToRomaji(sentence: string): string {
+  const clean = sentence.trim();
+  if (!clean) return "";
+
+  const { dict, sortedKeys } = getRomajiDict();
+  let i = 0;
+  const tokens: string[] = [];
+
+  while (i < clean.length) {
+    let matched = false;
+    for (const key of sortedKeys) {
+      if (clean.startsWith(key, i)) {
+        tokens.push(dict.get(key)!);
+        i += key.length;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      const rest = clean.slice(i);
+      const kataMatch = rest.match(/^[ァ-ヴー]+/);
+      if (kataMatch) {
+        tokens.push(toRomaji(kataMatch[0]));
+        i += kataMatch[0].length;
+        continue;
+      }
+      const engMatch = rest.match(/^[A-Za-z0-9-]+/);
+      if (engMatch) {
+        tokens.push(engMatch[0]);
+        i += engMatch[0].length;
+        continue;
+      }
+      const char = clean[i];
+      if (/\s/.test(char)) {
+        i++;
+        continue;
+      }
+      tokens.push(toRomaji(toKana(char)));
+      i++;
+    }
+  }
+
+  let out = tokens
+    .join(" ")
+    .replace(/\s+([,.:;!?])/g, (_match, p1) => p1)
+    .replace(/([,.:;!?])(?=[^\s])/g, (_match, p1) => p1 + " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (out.length > 0) {
+    out = out.charAt(0).toUpperCase() + out.slice(1);
+  }
+
+  return out;
+}
+
 /**
  * Phân tích và chuyển đổi toàn bộ văn bản bài đọc sang Romaji hoàn chỉnh
  */
 export function passageToRomaji(text: string): string {
-  const kanaText = toKana(text);
-  return toRomaji(kanaText);
+  if (!text || !text.trim()) return "";
+
+  // Tách theo câu dựa trên dấu chấm hoặc dòng mới
+  const parts = text.split(/(?<=[。！？\n])/);
+  const converted = parts.map((part) => singleSentenceToRomaji(part)).filter(Boolean);
+
+  return converted.join(" ");
 }

@@ -20,6 +20,7 @@ import {
   toKana,
 } from "./kana-reading.ts";
 import { toRomaji } from "./romaji.ts";
+import { passageToRomaji } from "./reading-inspector.ts";
 import { shuffle } from "./fpt-jpd123-engine.ts";
 
 export { computePassageSetKanjiCoverage };
@@ -184,17 +185,18 @@ export function sanitizeReadingPassageKanji(
   const cleanContent = replaceUntaughtKanjiWithKana(passage.content, allowedChars);
   const cleanSentences: ReadingSentence[] = passage.sentences.map((s) => {
     const cleanJp = replaceUntaughtKanjiWithKana(s.jp, allowedChars);
-    const kanaReading = toKana(cleanJp);
-    const autoRomaji = toRomaji(kanaReading);
+    const autoRomaji = passageToRomaji(cleanJp);
     return {
       jp: cleanJp,
       vi: s.vi,
-      romaji: s.romaji || autoRomaji,
+      romaji: s.romaji && s.romaji.trim() && !/[、。]/.test(s.romaji) ? s.romaji : autoRomaji,
     };
   });
 
-  const fullKana = toKana(cleanContent);
-  const fullRomaji = toRomaji(fullKana);
+  const fullRomaji =
+    passage.romaji && passage.romaji.trim() && !/[、。]/.test(passage.romaji)
+      ? passage.romaji
+      : cleanSentences.map((s) => s.romaji).filter(Boolean).join(" ");
 
   const cleanQuestions: ReadingQuestion[] = passage.questions.map((q) => {
     const cleanPrompt = replaceUntaughtKanjiWithKana(q.prompt, allowedChars);
@@ -212,7 +214,7 @@ export function sanitizeReadingPassageKanji(
     ...passage,
     content: cleanContent,
     sentences: cleanSentences,
-    romaji: passage.romaji || fullRomaji,
+    romaji: fullRomaji,
     questions: cleanQuestions,
   };
 }
@@ -295,23 +297,50 @@ export function buildDynamicReadingExamSet(
   if (course === "JPD123") {
     // 1. Passage 1: Du lịch, Thắng cảnh, Chùa cổ, Cổng lớn, Shinkansen, Quà lưu niệm
     const city = pick([
-      { name: "東京", nameVi: "Tokyo", spots: "浅草のかみなり門やお寺", transport: "地下鉄", drink: "冷たいジュースやコーヒー" },
-      { name: "京都", nameVi: "Kyoto", spots: "古いお寺や大きな門", transport: "新幹線", drink: "冷たいお茶やコーヒー" },
-      { name: "鎌倉", nameVi: "Kamakura", spots: "有名な古いお寺や大きい門", transport: "電車", drink: "冷たいジュースやお茶" },
+      { name: "東京", nameVi: "Tokyo", romaji: "Toukyou", spots: "浅草のかみなり門やお寺", spotsRomaji: "Asakusa no kaminarimon ya otera", transport: "地下鉄", transportRomaji: "chikatetsu", drink: "冷たいジュースやコーヒー", drinkRomaji: "tsumetai juusu ya koohii" },
+      { name: "京都", nameVi: "Kyoto", romaji: "Kyouto", spots: "古いお寺や大きな門", spotsRomaji: "furui otera ya ookina mon", transport: "新幹線", transportRomaji: "shinkansen", drink: "冷たいお茶やコーヒー", drinkRomaji: "tsumetai ocha ya koohii" },
+      { name: "鎌倉", nameVi: "Kamakura", romaji: "Kamakura", spots: "有名な古いお寺や大きい門", spotsRomaji: "yuumeina furui otera ya ookii mon", transport: "電車", transportRomaji: "densha", drink: "冷たいジュースやお茶", drinkRomaji: "tsumetai juusu ya ocha" },
     ]);
     const companion = pick([
-      { text: "大学の男の学生と女の学生", textVi: "các bạn sinh viên nam và nữ cùng trường đại học" },
-      { text: "ベトナムからの留学生の男の人と女の人", textVi: "các bạn du học sinh nam và nữ người Việt Nam" },
+      { text: "大学の男の学生と女の学生", textVi: "các bạn sinh viên nam và nữ cùng trường đại học", romaji: "daigaku no otoko no gakusei to onna no gakusei" },
+      { text: "ベトナムからの留学生の男の人と女の人", textVi: "các bạn du học sinh nam và nữ người Việt Nam", romaji: "Betonamu kara no ryuugakusei no otoko no hito to onna no hito" },
     ]);
-    const arrTime = pick(["午前十時半", "午前九時半"]);
+    const arrTime = pick([
+      { text: "午前十時半", textVi: "10 giờ rưỡi sáng", romaji: "Gozen juu-jihan" },
+      { text: "午前九時半", textVi: "9 giờ rưỡi sáng", romaji: "Gozen ku-jihan" },
+    ]);
 
     const p1Sentences: ReadingSentence[] = [
-      { jp: `先週、私は${companion.text}といっしょに、${city.transport}で${city.name}へ旅行に行きました。`, vi: `Tuần trước, tôi cùng ${companion.textVi} đi du lịch ${city.nameVi} bằng ${city.transport}.`, romaji: "" },
-      { jp: `${city.name}は${city.spots}がたくさんあって、外国からの観光客にもとても有名な町です。`, vi: `${city.nameVi} có rất nhiều thắng cảnh lịch sử và cổng lớn, là thành phố nổi tiếng khắp nơi.`, romaji: "" },
-      { jp: `${arrTime}に駅に着いてから、きれいな公園を散歩して、みんなでしゃしんをたくさんとりました。`, vi: `Sau khi đến ga lúc ${arrTime}, cả nhóm đi dạo công viên đẹp và cùng nhau chụp nhiều ảnh.`, romaji: "" },
-      { jp: "午後はお寺の近くの小さい店で、おみやげの食べ物を買いました。", vi: "Buổi chiều tại một cửa hàng nhỏ gần chùa, chúng tôi đã mua đặc sản làm quà lưu niệm.", romaji: "" },
-      { jp: `よるにホテルへ帰る前に、みんなでカフェで${city.drink}を飲みながら楽しく話しました。`, vi: "Trước khi trở về khách sạn vào buổi tối, mọi người vào quán cà phê uống nước và trò chuyện rôm rả.", romaji: "" },
-      { jp: "日本の旅行は本当に面白くて、また来年も友達と来たいとおもっています。", vi: "Chuyến du lịch Nhật Bản thực sự rất thú vị, năm sau tôi lại muốn cùng bạn bè đến đây.", romaji: "" },
+      {
+        jp: `先週、私は${companion.text}といっしょに、${city.transport}で${city.name}へ旅行に行きました。`,
+        vi: `Tuần trước, tôi cùng ${companion.textVi} đi du lịch ${city.nameVi} bằng ${city.transport}.`,
+        romaji: `Senshuu, watashi wa ${companion.romaji} to issho ni, ${city.transportRomaji} de ${city.romaji} e ryokou ni ikimashita.`,
+      },
+      {
+        jp: `${city.name}は${city.spots}がたくさんあって、外国からの観光客にもとても有名な町です。`,
+        vi: `${city.nameVi} có rất nhiều thắng cảnh lịch sử và cổng lớn, là thành phố nổi tiếng khắp nơi.`,
+        romaji: `${city.romaji} wa ${city.spotsRomaji} ga takusan atte, gaikoku kara no kankoukyaku ni mo totemo yuumeina machi desu.`,
+      },
+      {
+        jp: `${arrTime.text}に駅に着いてから、きれいな公園を散歩して、みんなでしゃしんをたくさんとりました。`,
+        vi: `Sau khi đến ga lúc ${arrTime.text}, cả nhóm đi dạo công viên đẹp và cùng nhau chụp nhiều ảnh.`,
+        romaji: `${arrTime.romaji} ni eki ni tsuite kara, kireina kouen o sanpo shite, minna de shashin o takusan torimashita.`,
+      },
+      {
+        jp: "午後はお寺の近くの小さい店で、おみやげの食べ物を買いました。",
+        vi: "Buổi chiều tại một cửa hàng nhỏ gần chùa, chúng tôi đã mua đặc sản làm quà lưu niệm.",
+        romaji: "Gogo wa otera no chikaku no chiisai mise de, omiyage no tabemono o kaimashita.",
+      },
+      {
+        jp: `よるにホテルへ帰る前に、みんなでカフェで${city.drink}を飲みながら楽しく話しました。`,
+        vi: "Trước khi trở về khách sạn vào buổi tối, mọi người vào quán cà phê uống nước và trò chuyện rôm rả.",
+        romaji: `Yoru ni hoteru e kaeru mae ni, minna de kafe de ${city.drinkRomaji} o nominagara tanoshiku hanashimashita.`,
+      },
+      {
+        jp: "日本の旅行は本当に面白くて、また来年も友達と来たいとおもっています。",
+        vi: "Chuyến du lịch Nhật Bản thực sự rất thú vị, năm sau tôi lại muốn cùng bạn bè đến đây.",
+        romaji: "Nihon no ryokou wa hontou ni omoshirokute, mata rainen mo tomodachi to kitai to omotte imasu.",
+      },
     ];
     const p1Content = p1Sentences.map((s) => s.jp).join("");
 
@@ -323,8 +352,8 @@ export function buildDynamicReadingExamSet(
       theme: "Du lịch, danh lam thắng cảnh, phương tiện giao thông và quà lưu niệm",
       content: p1Content,
       sentences: p1Sentences,
-      translation: `Tuần trước, tôi cùng ${companion.textVi} đi du lịch ${city.nameVi} bằng ${city.transport}. Nơi đây có rất nhiều chùa cổ và cổng lớn nổi tiếng. Sau khi đến ga lúc ${arrTime}, cả nhóm đi dạo công viên và chụp nhiều ảnh. Buổi chiều, chúng tôi mua quà lưu niệm ở một quán nhỏ gần chùa. Buổi tối trước khi về khách sạn, mọi người ghé quán cà phê uống nước và trò chuyện vui vẻ. Chuyến đi thật tuyệt vời, năm sau tôi nhất định muốn cùng bạn bè quay lại đây.`,
-      romaji: "",
+      translation: `Tuần trước, tôi cùng ${companion.textVi} đi du lịch ${city.nameVi} bằng ${city.transport}. Nơi đây có rất nhiều chùa cổ và cổng lớn nổi tiếng. Sau khi đến ga lúc ${arrTime.text}, cả nhóm đi dạo công viên và chụp nhiều ảnh. Buổi chiều, chúng tôi mua quà lưu niệm ở một quán nhỏ gần chùa. Buổi tối trước khi về khách sạn, mọi người ghé quán cà phê uống nước và trò chuyện vui vẻ. Chuyến đi thật tuyệt vời, năm sau tôi nhất định muốn cùng bạn bè quay lại đây.`,
+      romaji: p1Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["先週", "私", "男", "女", "行く", "お寺", "門", "外国", "有名", "午後", "小さい", "食べ物", "買う", "ホテル", "帰る", "飲む", "話す", "旅行", "来年"],
       kanjiUsed: ["先", "週", "私", "男", "女", "行", "寺", "門", "外", "国", "午", "後", "小", "食", "物", "買", "帰", "飲", "話", "来", "年"],
       questions: [
@@ -412,21 +441,52 @@ export function buildDynamicReadingExamSet(
     };
 
     // 2. Passage 2: Mua sắm, Nấu ăn & Đồ dùng
-    const cookFriend = pick(["山田さん", "本田さん", "田中さん"]);
-    const dish = pick([
-      { name: "カレー料理", nameVi: "món cơm cà ri", tool: "スプーンなどの食事のどう具" },
-      { name: "すき焼き料理", nameVi: "món lẩu Sukiyaki", tool: "フォークやスプーンなどの食事のどう具" },
-      { name: "日本の料理", nameVi: "các món ăn Nhật Bản", tool: "スプーンやナイフなどの食事のどう具" },
+    const cookFriend = pick([
+      { text: "山田さん", romaji: "Yamada-san" },
+      { text: "本田さん", romaji: "Honda-san" },
+      { text: "田中さん", romaji: "Tanaka-san" },
     ]);
-    const marketDay = pick(["毎週土曜日", "毎週日曜日"]);
+    const dish = pick([
+      { name: "カレー料理", nameVi: "món cơm cà ri", romaji: "karee ryouri", tool: "スプーンなどの食事のどう具", toolRomaji: "supuun nado no shokuji no dougu" },
+      { name: "すき焼き料理", nameVi: "món lẩu Sukiyaki", romaji: "sukiyaki ryouri", tool: "フォークやスプーンなどの食事のどう具", toolRomaji: "fooku ya supuun nado no shokuji no dougu" },
+      { name: "日本の料理", nameVi: "các món ăn Nhật Bản", romaji: "Nihon no ryouri", tool: "スプーンやナイフなどの食事のどう具", toolRomaji: "supuun ya naifu nado no shokuji no dougu" },
+    ]);
+    const marketDay = pick([
+      { text: "毎週土曜日", textVi: "thứ Bảy hàng tuần", romaji: "Maishuu doyoubi" },
+      { text: "毎週日曜日", textVi: "Chủ nhật hàng tuần", romaji: "Maishuu nichiyoubi" },
+    ]);
 
     const p2Sentences: ReadingSentence[] = [
-      { jp: `${marketDay}の午前、私は${cookFriend}と区の大きいスーパーへ買い物に行きます。`, vi: `Vào sáng ${marketDay}, tôi cùng ${cookFriend} đi mua sắm ở siêu thị lớn trong quận.`, romaji: "" },
-      { jp: "スーパーには新鮮なとり肉や魚や野さいがたくさん売られています。", vi: "Tại siêu thị bày bán rất nhiều thịt gà tươi, cá và rau củ quả.", romaji: "" },
-      { jp: "コンビニの物より安いですから、私たちはいつもここで食べ物を買います。", vi: "Vì rẻ hơn đồ ở cửa hàng tiện lợi nên chúng tôi luôn mua thức ăn ở đây.", romaji: "" },
-      { jp: `アパートへ帰ってから、${dish.tool}をじゅんびして、おいしい${dish.name}を作りました。`, vi: `Sau khi về căn hộ, chúng tôi chuẩn bị dụng cụ ăn uống và nấu ${dish.nameVi} thơm ngon.`, romaji: "" },
-      { jp: "みんなで大きいテーブルのまわりで食べて、とても楽しかったです。", vi: "Mọi người quây quần ăn uống bên chiếc bàn lớn, không khí vô cùng vui vẻ.", romaji: "" },
-      { jp: "自分で作った日本の料理は、レストランの料理よりずっとおいしかったです。", vi: "Món ăn Nhật Bản tự tay nấu ngon hơn nhiều so với món ăn ở nhà hàng.", romaji: "" },
+      {
+        jp: `${marketDay.text}の午前、私は${cookFriend.text}と区の大きいスーパーへ買い物に行きます。`,
+        vi: `Vào sáng ${marketDay.textVi}, tôi cùng ${cookFriend.text} đi mua sắm ở siêu thị lớn trong quận.`,
+        romaji: `${marketDay.romaji} no gozen, watashi wa ${cookFriend.romaji} to ku no ookii suupaa e kaimono ni ikimasu.`,
+      },
+      {
+        jp: "スーパーには新鮮なとり肉や魚や野さいがたくさん売られています。",
+        vi: "Tại siêu thị bày bán rất nhiều thịt gà tươi, cá và rau củ quả.",
+        romaji: "Suupaa ni wa shinsen na toriniku ya sakana ya yasai ga takusan urarete imasu.",
+      },
+      {
+        jp: "コンビニの物より安いですから、私たちはいつもここで食べ物を買います。",
+        vi: "Vì rẻ hơn đồ ở cửa hàng tiện lợi nên chúng tôi luôn mua thức ăn ở đây.",
+        romaji: "Konbini no mono yori yasui desu kara, watashitachi wa itsumo koko de tabemono o kaimasu.",
+      },
+      {
+        jp: `アパートへ帰ってから、${dish.tool}をじゅんびして、おいしい${dish.name}を作りました。`,
+        vi: `Sau khi về căn hộ, chúng tôi chuẩn bị dụng cụ ăn uống và nấu ${dish.nameVi} thơm ngon.`,
+        romaji: `Apaato e kaette kara, ${dish.toolRomaji} o junbi shite, oishii ${dish.romaji} o tsukurimashita.`,
+      },
+      {
+        jp: "みんなで大きいテーブルのまわりで食べて、とても楽しかったです。",
+        vi: "Mọi người quây quần ăn uống bên chiếc bàn lớn, không khí vô cùng vui vẻ.",
+        romaji: "Minna de ookii teeburu no mawari de tabete, totemo tanoshikatta desu.",
+      },
+      {
+        jp: "自分で作った日本の料理は、レストランの料理よりずっとおいしかったです。",
+        vi: "Món ăn Nhật Bản tự tay nấu ngon hơn nhiều so với món ăn ở nhà hàng.",
+        romaji: "Jibun de tsukutta Nihon no ryouri wa, resutoran no ryouri yori zutto oishikatta desu.",
+      },
     ];
     const p2Content = p2Sentences.map((s) => s.jp).join("");
 
@@ -438,8 +498,8 @@ export function buildDynamicReadingExamSet(
       theme: "Mua sắm, nấu ăn, thực phẩm thịt rau và dụng cụ ăn uống",
       content: p2Content,
       sentences: p2Sentences,
-      translation: `Vào sáng ${marketDay}, tôi cùng bạn ${cookFriend} đến siêu thị lớn trong quận để mua sắm. Siêu thị ngập tràn thịt gà, cá và rau củ tươi ngon. Vì giá rẻ hơn cửa hàng tiện lợi nên chúng tôi luôn mua thực phẩm ở đây. Về đến phòng, cả nhóm chuẩn bị dụng cụ ăn uống rồi cùng nấu ${dish.nameVi}. Tự tay nấu món Nhật và thưởng thức bên chiếc bàn lớn mang lại cảm giác vô cùng ấm cúng và ngon miệng.`,
-      romaji: "",
+      translation: `Vào sáng ${marketDay.textVi}, tôi cùng bạn ${cookFriend.text} đến siêu thị lớn trong quận để mua sắm. Siêu thị ngập tràn thịt gà, cá và rau củ tươi ngon. Vì giá rẻ hơn cửa hàng tiện lợi nên chúng tôi luôn mua thực phẩm ở đây. Về đến phòng, cả nhóm chuẩn bị dụng cụ ăn uống rồi cùng nấu ${dish.nameVi}. Tự tay nấu món Nhật và thưởng thức bên chiếc bàn lớn mang lại cảm giác vô cùng ấm cúng và ngon miệng.`,
+      romaji: p2Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["毎週", "午前", "私", "区", "大きい", "スーパー", "買い物", "行く", "肉", "野菜", "コンビニ", "物", "安い", "食べ物", "買う", "アパート", "帰る", "食事", "道具", "料理", "作る", "食べる"],
       kanjiUsed: ["毎", "週", "午", "前", "私", "区", "大", "買", "物", "行", "肉", "野", "安", "食", "帰", "具", "料", "理", "本", "田"],
       questions: [
@@ -528,12 +588,36 @@ export function buildDynamicReadingExamSet(
 
     // 3. Passage 3: Học tập & Công ty CNTT FPT
     const p3Sentences: ReadingSentence[] = [
-      { jp: "先週の水曜日、私たちは東京のIT会社へ見学に行きました。", vi: "Thứ Tư tuần trước, chúng tôi đã đi tham quan một công ty CNTT tại Tokyo.", romaji: "" },
-      { jp: "会社の入口で受付の人にじぶんの名前と国を言ってから、オフィスに入りました。", vi: "Tại lối vào, sau khi nói tên và quốc tịch của mình với lễ tân, chúng tôi bước vào văn phòng.", romaji: "" },
-      { jp: "広い部屋で社員の人がパソコンを使いながら熱心に仕事をしていました。", vi: "Trong văn phòng rộng lớn, các nhân viên chăm chỉ làm việc bên máy vi tính.", romaji: "" },
-      { jp: "午後は会議室でぶちょうのせつめいを聞いて、会社についての本やしりょうを読みました。", vi: "Buổi chiều tại phòng họp, chúng tôi nghe giải thích và đọc các tài liệu về công ty.", romaji: "" },
-      { jp: "仕事には高いぎじゅつだけでなく、人とよく話してきょう力する力も大切だと教えてくれました。", vi: "Người ta đã dạy chúng tôi rằng trong công việc năng lực giao tiếp và hợp tác là vô cùng quan trọng.", romaji: "" },
-      { jp: "社員の人たちにおれいを言ってから、午後五時にアパートへ帰りました。", vi: "Sau khi cảm ơn các nhân viên, đúng 5 giờ chiều chúng tôi lên tàu trở về căn hộ.", romaji: "" },
+      {
+        jp: "先週の水曜日、私たちは東京のIT会社へ見学に行きました。",
+        vi: "Thứ Tư tuần trước, chúng tôi đã đi tham quan một công ty CNTT tại Tokyo.",
+        romaji: "Senshuu no suiyoubi, watashitachi wa Toukyou no IT kaisha e kengaku ni ikimashita.",
+      },
+      {
+        jp: "会社の入口で受付の人にじぶんの名前と国を言ってから、オフィスに入りました。",
+        vi: "Tại lối vào, sau khi nói tên và quốc tịch của mình với lễ tân, chúng tôi bước vào văn phòng.",
+        romaji: "Kaisha no iriguchi de uketsuke no hito ni jibun no namae to kuni o itte kara, ofisu ni hairimashita.",
+      },
+      {
+        jp: "広い部屋で社員の人がパソコンを使いながら熱心に仕事をしていました。",
+        vi: "Trong văn phòng rộng lớn, các nhân viên chăm chỉ làm việc bên máy vi tính.",
+        romaji: "Hiroi heya de shain no hito ga pasokon o tsukainagara nesshin ni shigoto o shite imashita.",
+      },
+      {
+        jp: "午後は会議室でぶちょうのせつめいを聞いて、会社についての本やしりょうを読みました。",
+        vi: "Buổi chiều tại phòng họp, chúng tôi nghe giải thích và đọc các tài liệu về công ty.",
+        romaji: "Gogo wa kaigishitsu de buchou no setsumei o kiite, kaisha ni tsuite no hon ya shiryou o yomimashita.",
+      },
+      {
+        jp: "仕事には高いぎじゅつだけでなく、人とよく話してきょう力する力も大切だと教えてくれました。",
+        vi: "Người ta đã dạy chúng tôi rằng trong công việc năng lực giao tiếp và hợp tác là vô cùng quan trọng.",
+        romaji: "Shigoto ni wa takai gijutsu dakedenaku, hito to yoku hanashite kyouryoku suru chikara mo taisetsu da to oshiete kuremashita.",
+      },
+      {
+        jp: "社員の人たちにおれいを言ってから、午後五時にアパートへ帰りました。",
+        vi: "Sau khi cảm ơn các nhân viên, đúng 5 giờ chiều chúng tôi lên tàu trở về căn hộ.",
+        romaji: "Shain no hitotachi ni orei o itte kara, gogo go-ji ni apaato e kaerimashita.",
+      },
     ];
     const p3Content = p3Sentences.map((s) => s.jp).join("");
 
@@ -546,7 +630,7 @@ export function buildDynamicReadingExamSet(
       content: p3Content,
       sentences: p3Sentences,
       translation: "Thứ Tư tuần trước, chúng tôi có chuyến tham quan thực tế tại một công ty công nghệ ở Tokyo. Sau khi đăng ký tên và quốc tịch ở quầy lễ tân, chúng tôi được vào xem môi trường làm việc chuyên nghiệp. Buổi chiều, chúng tôi lắng nghe giới thiệu và đọc tài liệu công ty. Chúng tôi hiểu rằng bên cạnh kỹ thuật giỏi, kỹ năng giao tiếp và tinh thần hợp tác đồng đội có ý nghĩa quyết định. Kết thúc chuyến đi, chúng tôi cảm ơn mọi người và trở về căn hộ lúc 5 giờ chiều.",
-      romaji: "",
+      romaji: p3Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["先週", "水曜日", "私", "東京", "会社", "見学", "行く", "入口", "人", "名前", "国", "言う", "入る", "広い", "部屋", "社員", "パソコン", "午後", "聞く", "本", "読む", "話す", "力", "帰る"],
       kanjiUsed: ["先", "週", "水", "曜", "日", "私", "東", "京", "会", "社", "見", "行", "入", "人", "名", "前", "国", "言", "午", "後", "聞", "本", "読", "話", "力", "帰"],
       questions: [
@@ -635,17 +719,41 @@ export function buildDynamicReadingExamSet(
 
     // 4. Passage 4: Đời sống, Khu phố, Thể thao & Nghỉ ngơi
     const sportAction = pick([
-      { name: "サッカー", action: "友達とサッカーの練習をします", actVi: "luyện tập bóng đá cùng bạn bè" },
-      { name: "テニス", action: "本田さんとテニスの試合を見に行きます", actVi: "đi xem trận thi đấu tennis cùng bạn Honda" },
+      { name: "サッカー", action: "友達とサッカーの練習をします", actVi: "luyện tập bóng đá cùng bạn bè", romaji: "tomodachi to sakkaa no renshuu o shimasu" },
+      { name: "テニス", action: "本田さんとテニスの試合を見に行きます", actVi: "đi xem trận thi đấu tennis cùng bạn Honda", romaji: "Honda-san to tenisu no shiai o mi ni ikimasu" },
     ]);
 
     const p4Sentences: ReadingSentence[] = [
-      { jp: "私は今、東京の近くのきれいな市にあるアパートに住んでいます。", vi: "Hiện tại tôi đang sống ở một căn hộ thuộc thành phố xinh đẹp gần Tokyo.", romaji: "" },
-      { jp: "この町は大きい公園や小さい店があって、毎日とても便利でにぎやかです。", vi: "Thị trấn này có công viên rộng và những cửa hàng nhỏ, sinh hoạt vô cùng tiện lợi.", romaji: "" },
-      { jp: "毎週月曜日から金曜日まで大学で日本語を勉強して、夜は少し休みます。", vi: "Mỗi tuần từ thứ Hai đến thứ Sáu tôi học tiếng Nhật ở trường, tối về nghỉ ngơi một chút.", romaji: "" },
-      { jp: "土曜日は図書館で本を読んだり、ノートにかんじの文を書いたりします。", vi: "Thứ Bảy tôi đến thư viện đọc sách và luyện viết các câu chữ Hán vào vở.", romaji: "" },
-      { jp: `日曜日の午後は${sportAction.action}。`, vi: `Chiều Chủ nhật tôi ${sportAction.actVi}.`, romaji: "" },
-      { jp: "来週のテストのために夜は早く帰って、いなかのきれいな田んぼや山をおもい出しながら勉強します。", vi: "Vì kỳ thi tuần tới, tối đến tôi về sớm và chăm chỉ ôn bài, nhớ về ruộng lúa và núi non quê hương.", romaji: "" },
+      {
+        jp: "私は今、東京の近くのきれいな市にあるアパートに住んでいます。",
+        vi: "Hiện tại tôi đang sống ở một căn hộ thuộc thành phố xinh đẹp gần Tokyo.",
+        romaji: "Watashi wa ima, Toukyou no chikaku no kireina shi ni aru apaato ni sunde imasu.",
+      },
+      {
+        jp: "この町は大きい公園や小さい店があって、毎日とても便利でにぎやかです。",
+        vi: "Thị trấn này có công viên rộng và những cửa hàng nhỏ, sinh hoạt vô cùng tiện lợi.",
+        romaji: "Kono machi wa ookii kouen ya chiisai mise ga atte, mainichi totemo benri de nigiyaka desu.",
+      },
+      {
+        jp: "毎週月曜日から金曜日まで大学で日本語を勉強して、夜は少し休みます。",
+        vi: "Mỗi tuần từ thứ Hai đến thứ Sáu tôi học tiếng Nhật ở trường, tối về nghỉ ngơi một chút.",
+        romaji: "Maishuu getsuyoubi kara kinyoubi made daigaku de nihongo o benkyou shite, yoru wa sukoshi yasumimasu.",
+      },
+      {
+        jp: "土曜日は図書館で本を読んだり、ノートにかんじの文を書いたりします。",
+        vi: "Thứ Bảy tôi đến thư viện đọc sách và luyện viết các câu chữ Hán vào vở.",
+        romaji: "Doyoubi wa toshokan de hon o yondari, nooto ni kanji no bun o kaitari shimasu.",
+      },
+      {
+        jp: `日曜日の午後は${sportAction.action}。`,
+        vi: `Chiều Chủ nhật tôi ${sportAction.actVi}.`,
+        romaji: `Nichiyoubi no gogo wa ${sportAction.romaji}.`,
+      },
+      {
+        jp: "来週のテストのために夜は早く帰って、いなかのきれいな田んぼや山をおもい出しながら勉強します。",
+        vi: "Vì kỳ thi tuần tới, tối đến tôi về sớm và chăm chỉ ôn bài, nhớ về ruộng lúa và núi non quê hương.",
+        romaji: "Raishuu no tesuto no tame ni yoru wa hayaku kaette, inaka no kireina tanbo ya yama o omoidashinagara benkyou shimasu.",
+      },
     ];
     const p4Content = p4Sentences.map((s) => s.jp).join("");
 
@@ -658,7 +766,7 @@ export function buildDynamicReadingExamSet(
       content: p4Content,
       sentences: p4Sentences,
       translation: `Hiện tại tôi đang sống tại một căn hộ tiện nghi ở thành phố xinh đẹp gần Tokyo. Nơi đây có công viên lớn và các cửa hàng tiện lợi. Từ thứ Hai đến thứ Sáu tôi chăm chỉ học tiếng Nhật tại trường. Thứ Bảy tôi đến thư viện đọc sách và luyện viết chữ Hán. Chiều Chủ nhật tôi ${sportAction.actVi}. Hướng đến bài kiểm tra tuần sau, mỗi tối tôi đều về phòng sớm để tập trung học tập.`,
-      romaji: "",
+      romaji: p4Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["私", "今", "東京", "市", "アパート", "町", "大きい", "公園", "小さい", "店", "毎日", "便利", "毎週", "月曜日", "金曜日", "大学", "日本語", "勉強", "夜", "少し", "休む", "土曜日", "図書館", "本", "読む", "ノート", "書く", "日曜日", "午後", "友達", "来週", "テスト", "早く", "帰る", "田んぼ", "山"],
       kanjiUsed: ["私", "今", "東", "京", "市", "大", "小", "毎", "日", "週", "月", "曜", "金", "学", "本", "語", "休", "土", "読", "書", "午", "後", "来", "帰", "田"],
       questions: [
@@ -748,9 +856,33 @@ export function buildDynamicReadingExamSet(
     passages = [p1, p2, p3, p4];
   } else {
     // JPD113 4 dynamic passages
-    const teacherName = pick(["木村先生", "田中先生", "佐藤先生"]);
-    const studentCount = pick(["七人", "八人", "九人"]);
-    const age = pick(["三十五才", "三十才", "二十八才"]);
+    const teacherName = pick([
+      { text: "木村先生", romaji: "Kimura-sensei" },
+      { text: "田中先生", romaji: "Tanaka-sensei" },
+      { text: "佐藤先生", romaji: "Satou-sensei" },
+    ]);
+    const studentCount = pick([
+      { text: "七人", romaji: "shichinin" },
+      { text: "八人", romaji: "hachinin" },
+      { text: "九人", romaji: "kyuunin" },
+    ]);
+    const age = pick([
+      { text: "三十五才", romaji: "sanjuugo-sai" },
+      { text: "三十才", romaji: "sanjuu-sai" },
+      { text: "二十八才", romaji: "nijuuhachi-sai" },
+    ]);
+
+    const p1Sentences: ReadingSentence[] = [
+      { jp: "ここは私たちの学校です。", vi: "Đây là trường học của chúng tôi.", romaji: "Koko wa watashitachi no gakkou desu." },
+      { jp: `教室に学生が${studentCount.text}います。`, vi: `Trong lớp học có ${studentCount.text} bạn sinh viên.`, romaji: `Kyoushitsu ni gakusei ga ${studentCount.romaji} imasu.` },
+      { jp: "九月からの新しいベトナム人と日本人の学生です。", vi: "Đó là những sinh viên người Việt Nam và Nhật Bản nhập học từ tháng 9.", romaji: "Kugatsu kara no atarashii betonamujin to nihonjin no gakusei desu." },
+      { jp: `先生は日本人で、${teacherName.text}です。`, vi: `Giáo viên là người Nhật, ${teacherName.text}.`, romaji: `Sensei wa nihonjin de, ${teacherName.romaji} desu.` },
+      { jp: `${teacherName.text}は${age.text}です。`, vi: `${teacherName.text} ${age.text}.`, romaji: `${teacherName.romaji} wa ${age.romaji} desu.` },
+      { jp: "毎日何時から何時まで勉強しますか。", vi: "Mỗi ngày học từ mấy giờ đến mấy giờ?", romaji: "Mainichi nanji kara nanji made benkyou shimasu ka." },
+      { jp: "一時間目は午前八時半からです。", vi: "Tiết học thứ nhất bắt đầu từ 8 giờ rưỡi sáng.", romaji: "Ichijikanme wa gozen hachi-jihan kara desu." },
+      { jp: "日本語の授業はとても面白いです。", vi: "Giờ học tiếng Nhật rất thú vị.", romaji: "Nihongo no jugyou wa totemo omoshiroi desu." },
+    ];
+    const p1Content = p1Sentences.map((s) => s.jp).join("");
 
     const p1: ReadingPassage = {
       id: `dyn-jpd113-read-1-${entropy}`,
@@ -758,32 +890,23 @@ export function buildDynamicReadingExamSet(
       title: "学校の日本語のクラス",
       titleVi: "Lớp học tiếng Nhật tại trường học",
       theme: "Trường học, số người, tuổi tác và tiết học",
-      content: `ここは私たちの学校です。教室に学生が${studentCount}います。九月からの新しいベトナム人と日本人の学生です。先生は日本人で、${teacherName}です。${teacherName}は${age}です。毎日何時から何時まで勉強しますか。一時間目は午前八時半からです。日本語の授業はとても面白いです。`,
-      sentences: [
-        { jp: "ここは私たちの学校です。", vi: "Đây là trường học của chúng tôi.", romaji: "" },
-        { jp: `教室に学生が${studentCount}います。`, vi: `Trong lớp học có ${studentCount} bạn sinh viên.`, romaji: "" },
-        { jp: "九月からの新しいベトナム人と日本人の学生です。", vi: "Đó là những sinh viên người Việt Nam và Nhật Bản nhập học từ tháng 9.", romaji: "" },
-        { jp: `先生は日本人で、${teacherName}です。`, vi: `Giáo viên là người Nhật, ${teacherName}.`, romaji: "" },
-        { jp: `${teacherName}は${age}です。`, vi: `${teacherName} ${age}.`, romaji: "" },
-        { jp: "毎日何時から何時まで勉強しますか。", vi: "Mỗi ngày học từ mấy giờ đến mấy giờ?", romaji: "" },
-        { jp: "一時間目は午前八時半からです。", vi: "Tiết học thứ nhất bắt đầu từ 8 giờ rưỡi sáng.", romaji: "" },
-        { jp: "日本語の授業はとても面白いです。", vi: "Giờ học tiếng Nhật rất thú vị.", romaji: "" },
-      ],
-      translation: `Đây là trường học của chúng tôi. Trong lớp có ${studentCount} học sinh. Thầy giáo là ${teacherName}, ${age}. Mỗi ngày tiết đầu bắt đầu từ 8 giờ rưỡi sáng. Giờ học rất vui và bổ ích.`,
-      romaji: "",
+      content: p1Content,
+      sentences: p1Sentences,
+      translation: `Đây là trường học của chúng tôi. Trong lớp có ${studentCount.text} học sinh. Thầy giáo là ${teacherName.text}, ${age.text}. Mỗi ngày tiết đầu bắt đầu từ 8 giờ rưỡi sáng. Giờ học rất vui và bổ ích.`,
+      romaji: p1Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["ここ", "私", "学校", "教室", "学生", "九月", "人", "先生", "毎日", "何時", "勉強", "一時間", "午前", "八時半", "日本語", "授業"],
       kanjiUsed: ["私", "学", "校", "生", "九", "月", "日", "本", "木", "才", "毎", "何", "時", "一", "間", "午", "八", "半", "語"],
       questions: [
         {
           id: `dyn-113-q1-1-${entropy}`,
           prompt: "教室に学生が何人いますか。",
-          options: [`${studentCount}います`, "五人います", "十人います", "三人います"],
-          answer: `${studentCount}います`,
+          options: [`${studentCount.text}います`, "五人います", "十人います", "三人います"],
+          answer: `${studentCount.text}います`,
           explanation: {
             meaning: "Trong lớp học có bao nhiêu học sinh?",
-            reason: `Dẫn chứng câu 2:「教室に学生が${studentCount}います。」`,
+            reason: `Dẫn chứng câu 2:「教室に学生が${studentCount.text}います。」`,
             wrongOptions: [
-              { option: "五人います", reason: `Bài nêu rõ có ${studentCount}.` },
+              { option: "五人います", reason: `Bài nêu rõ có ${studentCount.text}.` },
               { option: "十人います", reason: "Sai số lượng." },
               { option: "三人います", reason: "Sai số lượng." },
             ],
@@ -792,13 +915,13 @@ export function buildDynamicReadingExamSet(
         {
           id: `dyn-113-q1-2-${entropy}`,
           prompt: "先生の名前は何ですか。",
-          options: [`${teacherName}です`, "山田先生です", "小林先生です", "鈴木先生です"],
-          answer: `${teacherName}です`,
+          options: [`${teacherName.text}です`, "山田先生です", "小林先生です", "鈴木先生です"],
+          answer: `${teacherName.text}です`,
           explanation: {
             meaning: "Tên của giáo viên là gì?",
-            reason: `Dẫn chứng câu 4:「先生は日本人で、${teacherName}です。」`,
+            reason: `Dẫn chứng câu 4:「先生は日本人で、${teacherName.text}です。」`,
             wrongOptions: [
-              { option: "山田先生です", reason: `Thầy tên là ${teacherName}.` },
+              { option: "山田先生です", reason: `Thầy tên là ${teacherName.text}.` },
               { option: "小林先生です", reason: "Sai tên giáo viên." },
               { option: "鈴木先生です", reason: "Sai tên giáo viên." },
             ],
@@ -837,8 +960,48 @@ export function buildDynamicReadingExamSet(
       ],
     };
 
-    const roomFloor = pick(["三階", "二階"]);
-    const walkMin = pick(["十五分", "十分"]);
+    const roomFloor = pick([
+      { text: "三階", romaji: "sangai" },
+      { text: "二階", romaji: "nikai" },
+    ]);
+    const walkMin = pick([
+      { text: "十五分", romaji: "juugofun" },
+      { text: "十分", romaji: "juppun" },
+    ]);
+
+    const p2Sentences: ReadingSentence[] = [
+      {
+        jp: `私の部屋は${roomFloor.text}の部屋です。`,
+        vi: `Phòng của tôi là căn phòng ở ${roomFloor.text}.`,
+        romaji: `Watashi no heya wa ${roomFloor.romaji} no heya desu.`,
+      },
+      {
+        jp: "部屋に机と椅子と本棚があります。",
+        vi: "Trong phòng có bàn, ghế và giá sách.",
+        romaji: "Heya ni tsukue to isu to hondana ga arimasu.",
+      },
+      {
+        jp: "毎朝六時半に起きます。",
+        vi: "Mỗi sáng tôi thức dậy lúc 6 giờ rưỡi.",
+        romaji: "Maiasa roku-jihan ni okimasu.",
+      },
+      {
+        jp: "午前八時から十二時半まで四時間、学校で勉強します。",
+        vi: "Từ 8 giờ sáng đến 12 giờ rưỡi, tôi học 4 tiếng ở trường.",
+        romaji: "Gozen hachi-ji kara juuni-jihan made yojikan, gakkou de benkyou shimasu.",
+      },
+      {
+        jp: `学校から寮まで歩いて${walkMin.text}です。`,
+        vi: `Từ trường về ký túc xá đi bộ mất ${walkMin.text}.`,
+        romaji: `Gakkou kara ryou made aruite ${walkMin.romaji} desu.`,
+      },
+      {
+        jp: "午後は図書館で本を読みます。",
+        vi: "Buổi chiều tôi đọc sách ở thư viện.",
+        romaji: "Gogo wa toshokan de hon o yomimasu.",
+      },
+    ];
+    const p2Content = p2Sentences.map((s) => s.jp).join("");
 
     const p2: ReadingPassage = {
       id: `dyn-jpd113-read-2-${entropy}`,
@@ -846,19 +1009,12 @@ export function buildDynamicReadingExamSet(
       title: "寮の生活と時間",
       titleVi: "Đời sống ở ký túc xá và thời gian",
       theme: "Phòng ở, thời gian biểu hàng ngày, thức dậy và đi bộ",
-      content: `私の部屋は${roomFloor}の部屋です。部屋に机と椅子と本棚があります。毎朝六時半に起きます。午前八時から十二時半（三十分）まで学校で勉強します。学校から寮まで歩いて${walkMin}です。午後は図書館で本を読みます。`,
-      sentences: [
-        { jp: `私の部屋は${roomFloor}の部屋です。`, vi: `Phòng của tôi là căn phòng ở ${roomFloor}.`, romaji: "" },
-        { jp: "部屋に机と椅子と本棚があります。", vi: "Trong phòng có bàn, ghế và giá sách.", romaji: "" },
-        { jp: "毎朝六時半に起きます。", vi: "Mỗi sáng tôi thức dậy lúc 6 giờ rưỡi.", romaji: "" },
-        { jp: "午前八時から十二時半（三十分）まで学校で勉強します。", vi: "Từ 8 giờ sáng đến 12 giờ rưỡi tôi học ở trường.", romaji: "" },
-        { jp: `学校から寮まで歩いて${walkMin}です。`, vi: `Từ trường về ký túc xá đi bộ mất ${walkMin}.`, romaji: "" },
-        { jp: "午後は図書館で本を読みます。", vi: "Buổi chiều tôi đọc sách ở thư viện.", romaji: "" },
-      ],
-      translation: `Căn phòng của tôi ở ${roomFloor}. Mỗi sáng tôi dậy lúc 6 giờ rưỡi. Từ 8 giờ đến 12 giờ rưỡi trưa tôi học ở trường. Đi bộ từ trường về phòng mất ${walkMin}. Buổi chiều tôi đọc sách ở thư viện.`,
-      romaji: "",
+      content: p2Content,
+      sentences: p2Sentences,
+      translation: `Căn phòng của tôi ở ${roomFloor.text}. Mỗi sáng tôi dậy lúc 6 giờ rưỡi. Từ 8 giờ đến 12 giờ rưỡi trưa tôi học ở trường. Đi bộ từ trường về phòng mất ${walkMin.text}. Buổi chiều tôi đọc sách ở thư viện.`,
+      romaji: p2Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["私", "部屋", "毎朝", "六時半", "起きる", "午前", "八時", "十二時半", "三十分", "学校", "勉強", "歩いて", "午後", "図書館", "本", "読む"],
-      kanjiUsed: ["私", "毎", "朝", "六", "時", "半", "午", "前", "八", "十", "二", "分", "学", "校", "後", "本", "読"],
+      kanjiUsed: ["私", "毎", "朝", "六", "時", "半", "午", "前", "八", "十", "二", "四", "間", "分", "学", "校", "後", "本", "読"],
       questions: [
         {
           id: `dyn-113-q2-1-${entropy}`,
@@ -878,11 +1034,11 @@ export function buildDynamicReadingExamSet(
         {
           id: `dyn-113-q2-2-${entropy}`,
           prompt: "学校での勉強は何時までですか。",
-          options: ["十二時半（三十分）までです", "午前十一時までです", "午後二時までです", "午後四時までです"],
-          answer: "十二時半（三十分）までです",
+          options: ["十二時半までです", "午前十一時までです", "午後二時までです", "午後四時までです"],
+          answer: "十二時半までです",
           explanation: {
             meaning: "Việc học ở trường kết thúc lúc mấy giờ?",
-            reason: "Dẫn chứng câu 4:「午前八時から十二時半（三十分）まで学校で勉強します。」",
+            reason: "Dẫn chứng câu 4:「午前八時から十二時半まで四時間、学校で勉強します。」",
             wrongOptions: [
               { option: "午前十一時までです", reason: "Học đến 12:30." },
               { option: "午後二時までです", reason: "Buổi chiều đọc sách ở thư viện." },
@@ -893,13 +1049,13 @@ export function buildDynamicReadingExamSet(
         {
           id: `dyn-113-q2-3-${entropy}`,
           prompt: "学校から寮まで歩いて何分ですか。",
-          options: [`歩いて${walkMin}です`, "歩いて三十分です", "歩いて五分です", "歩いて一時間です"],
-          answer: `歩いて${walkMin}です`,
+          options: [`歩いて${walkMin.text}です`, "歩いて三十分です", "歩いて五分です", "歩いて一時間です"],
+          answer: `歩いて${walkMin.text}です`,
           explanation: {
             meaning: "Từ trường về phòng đi bộ mất bao nhiêu phút?",
-            reason: `Dẫn chứng câu 5:「学校から寮まで歩いて${walkMin}です。」`,
+            reason: `Dẫn chứng câu 5:「学校から寮まで歩いて${walkMin.text}です。」`,
             wrongOptions: [
-              { option: "歩いて三十分です", reason: `Mất ${walkMin} đi bộ.` },
+              { option: "歩いて三十分です", reason: `Mất ${walkMin.text} đi bộ.` },
               { option: "歩いて五分です", reason: "Sai số phút." },
               { option: "歩いて一時間です", reason: "Không mất 1 tiếng." },
             ],
@@ -923,24 +1079,55 @@ export function buildDynamicReadingExamSet(
       ],
     };
 
+    const p3Sentences: ReadingSentence[] = [
+      {
+        jp: "学校の売店にノートやペンがあります。",
+        vi: "Ở căng tin trường học có vở và bút.",
+        romaji: "Gakkou no baiten ni nooto ya pen ga arimasu.",
+      },
+      {
+        jp: "この白いノートは一冊百五十円です。",
+        vi: "Cuốn vở màu trắng này giá 150 yên một quyển.",
+        romaji: "Kono shiroi nooto wa issatsu hyaku gojuu-en desu.",
+      },
+      {
+        jp: "青いペンは一本八十円です。",
+        vi: "Cây bút màu xanh này giá 80 yên một chiếc.",
+        romaji: "Aoi pen wa ippon hachijuu-en desu.",
+      },
+      {
+        jp: "私はノート二冊とペン三本を買いました。",
+        vi: "Tôi đã mua 2 cuốn vở và 3 cây bút.",
+        romaji: "Watashi wa nooto nisatsu to pen sanbon o kaimashita.",
+      },
+      {
+        jp: "ぜんぶで五百四十円でした。",
+        vi: "Tổng cộng hết 540 yên.",
+        romaji: "Zenbu de gohyaku yonjuu-en deshita.",
+      },
+      {
+        jp: "一千円や一万円を出しておつりをもらいました。",
+        vi: "Tôi đưa tờ 1.000 yên hoặc 10.000 yên và nhận lại tiền thừa.",
+        romaji: "Issen-en ya ichiman-en o dashite otsuri o moraimashita.",
+      },
+      {
+        jp: "売店の人はとても親切です。",
+        vi: "Người bán hàng ở căng tin rất tốt bụng.",
+        romaji: "Baiten no hito wa totemo shinsetsu desu.",
+      },
+    ];
+    const p3Content = p3Sentences.map((s) => s.jp).join("");
+
     const p3: ReadingPassage = {
       id: `dyn-jpd113-read-3-${entropy}`,
       course: "JPD113",
       title: "学校の売店と買い物",
       titleVi: "Cửa hàng trong trường học và mua sắm",
       theme: "Mua sắm học cụ, số lượng, đếm tiền yên và tiền lẻ",
-      content: "学校の売店にノートやペンがあります。この白いノートは一冊百五十円です。青いペンは一本八十円です。私はノート二冊とペン三本を買いました。ぜんぶで五百四十円でした。一千円や一万円を出しておつりをもらいました。売店の人はとても親切です。",
-      sentences: [
-        { jp: "学校の売店にノートやペンがあります。", vi: "Ở căng tin trường học có vở và bút.", romaji: "" },
-        { jp: "この白いノートは一冊百五十円です。", vi: "Cuốn vở màu trắng này giá 150 yên một quyển.", romaji: "" },
-        { jp: "青いペンは一本八十円です。", vi: "Cây bút màu xanh này giá 80 yên một chiếc.", romaji: "" },
-        { jp: "私はノート二冊とペン三本を買いました。", vi: "Tôi đã mua 2 cuốn vở và 3 cây bút.", romaji: "" },
-        { jp: "ぜんぶで五百四十円でした。", vi: "Tổng cộng hết 540 yên.", romaji: "" },
-        { jp: "一千円や一万円を出しておつりをもらいました。", vi: "Tôi đưa tờ 1.000 yên hoặc 10.000 yên và nhận lại tiền thừa.", romaji: "" },
-        { jp: "売店の人はとても親切です。", vi: "Người bán hàng ở căng tin rất tốt bụng.", romaji: "" },
-      ],
+      content: p3Content,
+      sentences: p3Sentences,
       translation: "Ở căng tin trường học có bán tập vở và bút viết. Vở trắng giá 150 yên, bút xanh giá 80 yên. Tôi mua 2 quyển vở và 3 cây bút hết 540 yên. Người bán hàng rất tốt bụng.",
-      romaji: "",
+      romaji: p3Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["学校", "売店", "ノート", "ペン", "白", "一冊", "百五十円", "青", "一本", "八十円", "私", "二冊", "三本", "買う", "五百四十円", "一千円", "一万円", "人", "親切"],
       kanjiUsed: ["学", "校", "一", "冊", "百", "五", "十", "円", "本", "八", "私", "二", "三", "買", "四", "千", "万", "人"],
       questions: [
@@ -1007,24 +1194,55 @@ export function buildDynamicReadingExamSet(
       ],
     };
 
+    const p4Sentences: ReadingSentence[] = [
+      {
+        jp: "今日は四月一日、月曜日です。",
+        vi: "Hôm nay là ngày 1 tháng 4, thứ Hai.",
+        romaji: "Kyou wa shigatsu tsuitachi, getsuyoubi desu.",
+      },
+      {
+        jp: "月曜日と水曜日と金曜日は日本語の授業があります。",
+        vi: "Thứ Hai, thứ Tư và thứ Sáu có giờ học tiếng Nhật.",
+        romaji: "Getsuyoubi to suiyoubi to kinyoubi wa nihongo no jugyou ga arimasu.",
+      },
+      {
+        jp: "火曜日と木曜日の午後はパソコンを勉強します。",
+        vi: "Chiều thứ Ba và thứ Năm học máy tính.",
+        romaji: "Kayoubi to mokuyoubi no gogo wa pasokon o benkyou shimasu.",
+      },
+      {
+        jp: "土曜日は休みです。",
+        vi: "Thứ Bảy là ngày nghỉ.",
+        romaji: "Doyoubi wa yasumi desu.",
+      },
+      {
+        jp: "友達と買い物に行きます。",
+        vi: "Tôi cùng bạn đi mua sắm.",
+        romaji: "Tomodachi to kaimono ni ikimasu.",
+      },
+      {
+        jp: "日曜日の午前は部屋をそうじして、午後は休みます。",
+        vi: "Sáng Chủ nhật dọn dẹp phòng, chiều nghỉ ngơi.",
+        romaji: "Nichiyoubi no gozen wa heya o souji shite, gogo wa yasumimasu.",
+      },
+      {
+        jp: "一年は十二か月あります。",
+        vi: "Một năm có 12 tháng.",
+        romaji: "Ichinen wa juuni-kagetsu arimasu.",
+      },
+    ];
+    const p4Content = p4Sentences.map((s) => s.jp).join("");
+
     const p4: ReadingPassage = {
       id: `dyn-jpd113-read-4-${entropy}`,
       course: "JPD113",
       title: "一週間の予定とカレンダー",
       titleVi: "Lịch trình một tuần và cuốn lịch",
       theme: "Các ngày trong tuần, ngày tháng, thời gian biểu và nghỉ ngơi",
-      content: "今日は四月一日、月曜日です。月曜日と水曜日と金曜日は日本語の授業があります。火曜日と木曜日の午後はパソコンを勉強します。土曜日は休みです。友達と買い物に行きます。日曜日の午前は部屋をそうじして、午後は休みます。一年は十二か月あります。",
-      sentences: [
-        { jp: "今日は四月一日、月曜日です。", vi: "Hôm nay là ngày 1 tháng 4, thứ Hai.", romaji: "" },
-        { jp: "月曜日と水曜日と金曜日は日本語の授業があります。", vi: "Thứ Hai, thứ Tư và thứ Sáu có giờ học tiếng Nhật.", romaji: "" },
-        { jp: "火曜日と木曜日の午後はパソコンを勉強します。", vi: "Chiều thứ Ba và thứ Năm học máy tính.", romaji: "" },
-        { jp: "土曜日は休みです。", vi: "Thứ Bảy là ngày nghỉ.", romaji: "" },
-        { jp: "友達と買い物に行きます。", vi: "Tôi cùng bạn đi mua sắm.", romaji: "" },
-        { jp: "日曜日の午前は部屋をそうじして、午後は休みます。", vi: "Sáng Chủ nhật dọn dẹp phòng, chiều nghỉ ngơi.", romaji: "" },
-        { jp: "一年は十二か月あります。", vi: "Một năm có 12 tháng.", romaji: "" },
-      ],
+      content: p4Content,
+      sentences: p4Sentences,
       translation: "Hôm nay là thứ Hai, ngày 1 tháng 4. Thứ Hai, thứ Tư, thứ Sáu học tiếng Nhật; thứ Ba, thứ Năm học vi tính. Thứ Bảy được nghỉ đi mua sắm, Chủ nhật dọn phòng và nghỉ ngơi. Một năm có 12 tháng.",
-      romaji: "",
+      romaji: p4Sentences.map((s) => s.romaji).join(" "),
       vocabularyUsed: ["今日", "四月一日", "月曜日", "水曜日", "金曜日", "日本語", "授業", "火曜日", "木曜日", "午後", "パソコン", "勉強", "土曜日", "休み", "友達", "買い物", "行く", "日曜日", "午前", "部屋", "一年", "十二か月"],
       kanjiUsed: ["今", "日", "四", "月", "一", "曜", "水", "金", "語", "火", "木", "午", "後", "土", "休", "買", "物", "行", "年", "十", "二"],
       questions: [
@@ -1094,8 +1312,21 @@ export function buildDynamicReadingExamSet(
     passages = [p1, p2, p3, p4];
   }
 
-  // 1. Kiểm tra các chữ Hán mục tiêu đã xuất hiện trong 4 bài đọc
-  const preCoverage = computePassageSetKanjiCoverage(passages, course);
+  // 1. Sanitize các đề bài trước theo đúng danh mục chữ Hán được phép của môn
+  const sanitizedPassages = passages.map((p) => {
+    const s = sanitizeReadingPassageKanji(p, allowedBai);
+    return {
+      ...s,
+      questions: s.questions.map((q) => ({
+        ...q,
+        options: shuffle([...q.options]),
+      })),
+      isAiGenerated: true,
+    };
+  });
+
+  // 2. Kiểm tra các chữ Hán mục tiêu còn thiếu sau khi đã chuẩn hóa cấp độ
+  const preCoverage = computePassageSetKanjiCoverage(sanitizedPassages, course);
 
   if (!preCoverage.isCompleteCoverage && preCoverage.missingKanji.length > 0) {
     const missing = preCoverage.missingKanji;
@@ -1158,7 +1389,7 @@ export function buildDynamicReadingExamSet(
         pieces.push("月曜日から土曜日まで");
       }
       if (missing.includes("間") || missing.includes("分") || missing.includes("時")) {
-        pieces.push("二時間三十分");
+        pieces.push("四時間三十分");
       }
       if (missing.includes("何") || missing.includes("年")) {
         pieces.push("何年");
@@ -1186,28 +1417,17 @@ export function buildDynamicReadingExamSet(
     }
 
     if (extraJp) {
-      const p4 = passages[3];
+      const p4 = sanitizedPassages[3];
       p4.content += extraJp;
+      const extraRomaji = passageToRomaji(extraJp);
       p4.sentences.push({
         jp: extraJp,
         vi: extraVi,
-        romaji: toRomaji(toKana(extraJp)),
+        romaji: extraRomaji,
       });
+      p4.romaji = p4.sentences.map((s) => s.romaji).filter(Boolean).join(" ");
     }
   }
-
-  // 2. Sanitize and randomize
-  const sanitizedPassages = passages.map((p) => {
-    const s = sanitizeReadingPassageKanji(p, allowedBai);
-    return {
-      ...s,
-      questions: s.questions.map((q) => ({
-        ...q,
-        options: shuffle([...q.options]),
-      })),
-      isAiGenerated: true,
-    };
-  });
 
   const finalCoverage = computePassageSetKanjiCoverage(sanitizedPassages, course);
 
